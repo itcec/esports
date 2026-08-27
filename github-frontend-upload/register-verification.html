@@ -2,36 +2,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
 .cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
 .cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-grid-bg{background-image:linear-gradient(rgba(180,197,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(180,197,255,.06) 1px,transparent 1px);background-size:36px 36px;}
 .cyber-panel{position:relative;}
 .cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
 .cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
 .cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
-
-.reg-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background-color: #050B14;
-  background-image: url('assets/registration.gif');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  pointer-events: none;
-}
-@media (max-width: 768px), (orientation: portrait) {
-  .reg-bg {
-    background-position: left center;
-  }
-}
-.reg-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background: radial-gradient(circle at 80% 20%, rgba(18, 100, 255, 0.12), transparent 50%),
-              linear-gradient(135deg, rgba(5, 11, 20, 0.76) 0%, rgba(8, 20, 34, 0.88) 100%);
-  pointer-events: none;
-}
-</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background text-on-background font-body-md"><div class="reg-bg" aria-hidden="true"></div><div class="reg-overlay" aria-hidden="true"></div><main class="w-full relative z-10"><div class="flex flex-col w-full relative min-h-[calc(100vh-64px)] p-md lg:p-xl gap-xl pb-40">
+.cyber-scan{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.cyber-scan::before{content:'';position:absolute;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,rgba(180,197,255,.06),transparent);animation:cyber-scan-move 9s linear infinite;}
+@keyframes cyber-scan-move{0%{top:-140px;}100%{top:100%;}}
+@media (prefers-reduced-motion:reduce){.cyber-scan::before{animation:none;display:none;}}
+</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background text-on-background font-body-md"><div class="cyber-scan" aria-hidden="true"></div><main class="w-full cyber-grid-bg"><div class="flex flex-col w-full relative min-h-[calc(100vh-64px)] p-md lg:p-xl gap-xl">
 <!-- Progress Indicator -->
 <div class="flex flex-col gap-xs lg:hidden">
 <div class="flex justify-between items-center text-label-caps text-on-surface-variant">
@@ -75,15 +55,15 @@
 <!-- Header & Instructions -->
 <div class="flex flex-col lg:flex-row justify-between items-start gap-lg relative z-10">
 <div class="flex flex-col gap-sm max-w-2xl">
-<h1 class="text-headline-lg-mobile lg:text-headline-xl text-on-background uppercase tracking-tight cyber-title" id="verify-main-title">
+<h1 class="text-headline-lg-mobile lg:text-headline-xl text-on-background uppercase tracking-tight cyber-title">
         PLAYER IDENTITY <br/><span class="text-primary">VERIFICATION</span>
 </h1>
-<p class="text-body-lg text-on-surface-variant" id="verify-sub-title">
-        Enter each player's Student ID. (Faculty teams are exempt from Student ID entry). No photos needed — the organizers cross-check these against official school records manually.
+<p class="text-body-lg text-on-surface-variant">
+        Enter each player's Student ID (or employee ID for faculty teams). No photos needed — the organizers cross-check these against official records manually.
       </p>
-<div class="flex items-start gap-sm bg-surface-container-low/95 backdrop-blur-sm p-md rounded-xl mt-4 border border-outline-variant/30 cyber-panel" id="verify-info-banner">
-<span class="material-symbols-outlined text-secondary shrink-0" id="verify-info-icon">info</span>
-<p class="text-body-md text-on-surface-variant" id="verify-info-text">
+<div class="flex items-start gap-sm bg-surface-container-low p-md rounded-xl mt-4 border border-outline-variant/30 cyber-panel">
+<span class="material-symbols-outlined text-secondary shrink-0">info</span>
+<p class="text-body-md text-on-surface-variant">
           Every player's verification status starts as Pending and is updated by tournament admins after your registration is submitted.
         </p>
 </div>
@@ -99,20 +79,20 @@
 <div class="relative z-10 mt-lg flex flex-col gap-md">
 <h3 class="text-label-caps text-on-surface-variant cyber-mono" id="roster-verify-heading">ROSTER (0)</h3>
 <div class="flex flex-col gap-sm" id="verify-rows"></div>
-<div class="bg-surface-container-high/60 backdrop-blur-sm p-md rounded-xl border border-surface-container-highest flex gap-md items-start mt-sm cyber-panel">
+<div class="bg-surface-container-high/50 p-md rounded-xl border border-surface-container-highest flex gap-md items-start mt-sm cyber-panel">
 <span class="material-symbols-outlined text-tertiary-container mt-1">info</span>
 <div class="flex flex-col gap-1">
 <span class="text-body-md text-on-background font-bold">Verification Guidelines</span>
 <ul class="text-body-md text-on-surface-variant list-disc pl-4 space-y-1">
-<li>For student divisions, enter the Student ID exactly as it appears on official school records.</li>
-<li id="guideline-faculty-note">Faculty and staff exhibition teams are exempt from Student ID input.</li>
+<li>Enter the ID exactly as it appears on official records.</li>
+<li>Every starter and substitute needs an ID on file before submission.</li>
 <li>Mismatches or duplicates are flagged during organizer review, not automatically.</li>
 </ul>
 </div>
 </div>
 </div>
 <template id="verify-row-template">
-<div class="flex flex-col sm:flex-row sm:items-center gap-sm p-md rounded-lg bg-surface-container-low/95 backdrop-blur-sm border border-white/5 cyber-panel shadow-md">
+<div class="flex flex-col sm:flex-row sm:items-center gap-sm p-md rounded-lg bg-surface-container-low cyber-panel">
 <div class="flex items-center gap-sm flex-1 min-w-0">
 <span class="row-badge w-9 h-9 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold text-[13px] shrink-0 cyber-mono"></span>
 <div class="min-w-0">
@@ -120,21 +100,21 @@
 <div class="row-meta text-label-caps text-on-surface-variant truncate"></div>
 </div>
 </div>
-<div class="sm:w-72 shrink-0 row-input-wrap">
+<div class="sm:w-64 shrink-0">
 <input class="row-student-id w-full bg-[#050B14] text-on-background text-body-md px-3 py-2 rounded border border-surface-variant focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50" placeholder="Student ID number" type="text"/>
 </div>
-<span class="row-status px-2.5 py-1 rounded text-[10px] font-bold uppercase shrink-0 bg-surface-container-highest text-on-surface-variant self-start sm:self-center">Pending</span>
+<span class="row-status px-2 py-1 rounded text-[10px] font-bold uppercase shrink-0 bg-surface-container-highest text-on-surface-variant self-start sm:self-center">Pending</span>
 </div>
 </template>
 <template id="verify-empty-template">
-<div class="p-lg rounded-lg bg-surface-container-low/95 border border-dashed border-outline-variant text-center flex flex-col items-center gap-sm">
+<div class="p-lg rounded-lg bg-surface-container-low border border-dashed border-outline-variant text-center flex flex-col items-center gap-sm">
 <span class="material-symbols-outlined text-[32px] text-on-surface-variant">group_off</span>
 <p class="text-body-md text-on-surface-variant">No roster found yet.</p>
 <a class="text-primary font-bold hover:underline" href="register-roster.html">Go back and build your roster first</a>
 </div>
 </template>
 <!-- Action Bar -->
-<div class="fixed bottom-0 left-0 right-0 p-md bg-surface-container-low/95 backdrop-blur-md border-t border-white/10 flex justify-between items-center gap-sm z-50 shadow-2xl">
+<div class="fixed bottom-0 left-0 right-0 lg:static lg:mt-xl p-md bg-surface-container-low lg:bg-transparent border-t border-white/10 lg:border-none flex justify-between items-center gap-sm z-50 lg:p-0">
 <a class="px-lg py-sm rounded-lg text-on-surface-variant text-label-caps font-bold hover:text-on-background transition-colors flex items-center gap-2" href="register-roster.html" id="back-btn">
 <span class="material-symbols-outlined text-[16px]">arrow_back</span> BACK
       </a>
@@ -150,15 +130,7 @@
     const players = draft.players || [];
     const container = document.getElementById('verify-rows');
     const heading = document.getElementById('roster-verify-heading');
-    const isFaculty = draft.division === 'Faculty';
-
     heading.textContent = 'ROSTER (' + players.length + ')';
-
-    if (isFaculty) {
-      document.getElementById('verify-sub-title').textContent = 'Faculty Exhibition Division — Faculty and staff members do not need to input Student IDs. Eligibility is confirmed via CEC employee records.';
-      document.getElementById('verify-info-icon').textContent = 'verified';
-      document.getElementById('verify-info-text').textContent = 'Faculty teams are exempt from Student ID entry. Your roster will be processed automatically for the exhibition bracket.';
-    }
 
     if (!players.length) {
       container.appendChild(document.getElementById('verify-empty-template').content.cloneNode(true));
@@ -172,28 +144,15 @@
       node.querySelector('.row-badge').textContent = badge;
       node.querySelector('.row-name').textContent = p.realName + (p.ign ? ' · ' + p.ign : '');
       node.querySelector('.row-meta').textContent = (p.rosterType === 'Substitute' ? 'SUBSTITUTE' : 'STARTER') + (p.role ? ' · ' + p.role.toUpperCase() : '');
-      
-      const inputWrap = node.querySelector('.row-input-wrap');
       const input = node.querySelector('.row-student-id');
-      const statusBadge = node.querySelector('.row-status');
-
-      if (isFaculty) {
-        inputWrap.innerHTML = '<div class="text-xs px-3 py-2 bg-primary/10 border border-primary/20 text-primary rounded font-bold uppercase tracking-wider flex items-center gap-1.5"><span class="material-symbols-outlined text-[15px]">verified</span> Faculty Member (ID Exempt)</div>';
-        statusBadge.textContent = 'EXEMPT';
-        statusBadge.className = 'row-status px-2.5 py-1 rounded text-[10px] font-bold uppercase shrink-0 bg-primary/20 text-primary self-start sm:self-center';
-      } else {
-        input.value = p.studentId || '';
-        input.dataset.slot = p.slot;
-        input.dataset.rosterType = p.rosterType;
-      }
+      input.value = p.studentId || '';
+      input.dataset.slot = p.slot;
+      input.dataset.rosterType = p.rosterType;
       container.appendChild(node);
     });
 
     function saveStudentIds() {
       const updated = players.map(p => {
-        if (isFaculty) {
-          return Object.assign({}, p, { studentId: 'Faculty (Exempt)' });
-        }
         const input = container.querySelector('.row-student-id[data-slot="' + p.slot + '"][data-roster-type="' + p.rosterType + '"]');
         return Object.assign({}, p, { studentId: input ? input.value.trim() : (p.studentId || '') });
       });

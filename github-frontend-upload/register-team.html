@@ -2,38 +2,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
 .cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
 .cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-grid-bg{background-image:linear-gradient(rgba(180,197,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(180,197,255,.06) 1px,transparent 1px);background-size:36px 36px;}
 .cyber-panel{position:relative;}
 .cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
 .cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
 .cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
-
-.reg-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background-color: #050B14;
-  background-image: url('assets/registration.gif');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  pointer-events: none;
-}
-@media (max-width: 768px), (orientation: portrait) {
-  .reg-bg {
-    background-position: left center;
-  }
-}
-.reg-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background: radial-gradient(circle at 80% 20%, rgba(18, 100, 255, 0.12), transparent 50%),
-              linear-gradient(135deg, rgba(5, 11, 20, 0.76) 0%, rgba(8, 20, 34, 0.88) 100%);
-  pointer-events: none;
-}
-</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background text-on-background font-body-md"><div class="reg-bg" aria-hidden="true"></div><div class="reg-overlay" aria-hidden="true"></div><main class="w-full relative z-10"><div class="flex flex-col w-full relative pb-36">
+.cyber-scan{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.cyber-scan::before{content:'';position:absolute;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,rgba(180,197,255,.06),transparent);animation:cyber-scan-move 9s linear infinite;}
+@keyframes cyber-scan-move{0%{top:-140px;}100%{top:100%;}}
+@media (prefers-reduced-motion:reduce){.cyber-scan::before{animation:none;display:none;}}
+</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background text-on-background font-body-md"><div class="cyber-scan" aria-hidden="true"></div><main class="w-full"><div class="flex flex-col w-full relative pb-xl">
 <!-- Ambient background glow -->
-<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<div class="absolute inset-0 overflow-hidden pointer-events-none cyber-grid-bg">
 <div class="absolute top-0 right-0 w-1/2 h-[500px] bg-primary/5 rounded-full blur-[120px] mix-blend-screen opacity-50"></div>
 <div class="absolute bottom-0 left-0 w-1/2 h-[500px] bg-secondary-container/5 rounded-full blur-[120px] mix-blend-screen opacity-30"></div>
 </div>
@@ -53,7 +33,7 @@
         </p>
 </div>
 <!-- Quick Status -->
-<div class="bg-surface-container/95 backdrop-blur-sm border border-white/10 rounded-lg p-md flex items-center gap-md">
+<div class="bg-surface-container border border-white/10 rounded-lg p-md flex items-center gap-md">
 <div class="w-12 h-12 bg-surface-variant rounded-full flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-on-surface-variant">verified_user</span>
 </div>
@@ -128,7 +108,7 @@
 </div>
 <form class="flex flex-col gap-xl">
 <!-- Team Badge (no image upload — color + auto-generated initials) -->
-<div class="bg-surface-container-low/95 backdrop-blur-sm rounded-xl p-lg relative overflow-hidden group shadow-md transition-shadow duration-300 hover:shadow-lg cyber-panel border border-white/5">
+<div class="bg-surface-container-low rounded-xl p-lg relative overflow-hidden group shadow-md transition-shadow duration-300 hover:shadow-lg cyber-panel">
 <div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br from-primary to-transparent pointer-events-none"></div>
 <label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Team Badge</label>
 <p class="font-body-md text-body-md text-on-surface-variant mb-md">No logo to upload — pick a color and your badge is generated from your team name's initials.</p>
@@ -213,7 +193,7 @@
 <div class="lg:col-span-4 z-10">
 <aside class="sticky top-xl flex flex-col gap-lg">
 <!-- Decorative Status Card -->
-<div class="bg-surface-container/95 backdrop-blur-sm shadow-xl rounded-xl overflow-hidden relative cyber-panel border border-white/5">
+<div class="bg-surface-container shadow-xl rounded-xl overflow-hidden relative cyber-panel">
 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error via-primary to-secondary"></div>
 <div class="p-lg relative z-10 flex flex-col gap-sm">
 <div class="flex items-start gap-sm">
