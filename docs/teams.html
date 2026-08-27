@@ -207,6 +207,15 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       return;
     }
 
+    var DEPT_LOGOS = {
+      'IT': 'assets/IT.png',
+      'HTM': 'assets/HTM.png',
+      'CTE': 'assets/CTE.png',
+      'CRIM': 'assets/CRIM.png',
+      'HM': 'assets/HTM.png',
+      'TM': 'assets/HTM.png'
+    };
+
     rows.forEach(function(t){
       var p = parseCourse(t.Course);
       var card = document.createElement('div');
@@ -217,16 +226,23 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       
       var iconHtml = t.icon 
         ? '<img src="' + t.icon + '" alt="Emblem" class="w-6 h-6 object-contain filter invert" />'
-        : initials(t.TeamName);
+        : (t.badgeIcon ? '<img src="' + t.badgeIcon + '" alt="Emblem" class="w-6 h-6 object-contain filter invert" />' : initials(t.TeamName));
+
+      var deptLogoHtml = DEPT_LOGOS[p.dept]
+        ? '<img src="' + DEPT_LOGOS[p.dept] + '" alt="' + p.dept + ' Logo" class="w-5 h-5 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/15 shrink-0" />'
+        : '';
 
       card.innerHTML =
-        '<div class="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white font-bold cyber-mono border border-white/15 shadow-sm overflow-hidden" style="background:' + (t.color || colorFor(t.TeamID)) + '">' + iconHtml + '</div>' +
+        '<div class="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white font-bold cyber-mono border border-white/15 shadow-sm overflow-hidden" style="background:' + (t.color || t.teamColor || colorFor(t.TeamID)) + '">' + iconHtml + '</div>' +
         '<div class="min-w-0 flex flex-col flex-1">' +
           '<div class="flex items-center justify-between gap-1">' +
             '<span class="font-headline-md text-[17px] text-on-surface truncate cyber-title">' + (t.TeamName || 'Team') + '</span>' +
             (isFac ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 font-bold uppercase shrink-0">FACULTY</span>' : '') +
           '</div>' +
-          '<span class="font-label-caps text-xs text-on-surface-variant truncate mt-0.5">' + (p.dept ? p.dept + ' · ' : '') + 'Captain: ' + (t.CaptainName || 'TBA') + '</span>' +
+          '<div class="flex items-center gap-1.5 mt-0.5">' +
+            deptLogoHtml +
+            '<span class="font-label-caps text-xs text-on-surface-variant truncate">' + (p.dept ? p.dept + ' · ' : '') + 'Captain: ' + (t.CaptainName || 'TBA') + '</span>' +
+          '</div>' +
         '</div>';
       gridEl.appendChild(card);
     });

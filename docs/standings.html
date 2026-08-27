@@ -93,17 +93,31 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   var tabs = document.getElementById('division-tabs');
   var tracker = document.getElementById('tracker');
 
-  function row(left, right){
+  var DEPT_LOGOS = {
+    'IT': 'assets/IT.png',
+    'HTM': 'assets/HTM.png',
+    'CTE': 'assets/CTE.png',
+    'CRIM': 'assets/CRIM.png'
+  };
+
+  function row(left, right, deptKey){
+    var logoHtml = deptKey && DEPT_LOGOS[deptKey] 
+      ? '<img src="' + DEPT_LOGOS[deptKey] + '" alt="' + deptKey + ' Logo" class="w-6 h-6 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/10 shrink-0" />'
+      : '';
+
     return '<div class="px-md py-sm flex justify-between items-center gap-sm border-t border-white/10 first:border-t-0">' +
-      '<span class="font-body-md text-body-md text-on-surface">' + left + '</span>' +
+      '<div class="flex items-center gap-2">' +
+        logoHtml +
+        '<span class="font-body-md text-body-md text-on-surface font-semibold">' + left + '</span>' +
+      '</div>' +
       '<span class="font-label-caps text-label-caps text-on-surface-variant">' + right + '</span>' +
     '</div>';
   }
   function panel(title, note, rowsHtml){
-    return '<section class="bg-surface-container border border-white/10 rounded-xl overflow-hidden">' +
-      '<div class="px-md py-sm bg-surface-container-high flex flex-wrap justify-between items-center gap-xs">' +
-        '<h2 class="font-headline-md text-headline-md text-on-surface">' + title + '</h2>' +
-        (note ? '<span class="font-label-caps text-label-caps text-on-surface-variant">' + note + '</span>' : '') +
+    return '<section class="bg-surface-container border border-white/10 rounded-xl overflow-hidden shadow-lg cyber-panel">' +
+      '<div class="px-md py-sm bg-surface-container-high/90 flex flex-wrap justify-between items-center gap-xs border-b border-white/10">' +
+        '<h2 class="font-headline-md text-headline-md text-on-surface cyber-title text-base">' + title + '</h2>' +
+        (note ? '<span class="font-label-caps text-xs text-primary font-bold">' + note + '</span>' : '') +
       '</div>' + rowsHtml + '</section>';
   }
 
@@ -122,7 +136,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
         row('Champion','To be decided') + row('Runner-up','To be decided') + row('3rd place','To be decided') + row('4th place','To be decided'));
     } else {
       html += panel('Department Champions', 'Sessions September 5 – 19',
-        d.depts.map(function(x){ return row(x[0] + ' Department', 'To be decided · ' + x[1]); }).join(''));
+        d.depts.map(function(x){ return row(x[0] + ' Department', 'To be decided · ' + x[1], x[0]); }).join(''));
       html += panel('Final Placement', 'Grand Finals Day · October 2',
         row('1st — Champion','To be decided') + row('2nd — Runner-up','To be decided') + row('3rd place','To be decided') + row('4th place','To be decided'));
     }

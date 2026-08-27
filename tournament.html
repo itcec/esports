@@ -60,142 +60,851 @@
   transform: translateY(-2px);
 }
 </style><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background font-body-md text-on-background"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><header class="fixed top-0 w-full z-50 bg-[#081422]/85 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"><div class="h-16 w-full max-w-container-max mx-auto px-lg flex items-center justify-between gap-md"><a class="flex items-center gap-2.5 sm:gap-3 shrink-0 group" href="index.html"><div class="flex items-center gap-1.5 p-1 rounded-lg bg-surface-container-high/60 border border-white/10 shadow-sm backdrop-blur-sm"><img src="assets/school_logo.jpg" alt="CEC Seal" class="h-7 w-7 rounded object-cover shadow-sm border border-white/10" /><img src="assets/e-sportslogo.png" alt="CEC Esports Logo" class="h-7 w-7 object-contain drop-shadow-[0_0_8px_rgba(180,197,255,0.4)]" /><img src="assets/intrams_logo.png" alt="Intramurals 2026 Logo" class="h-7 w-7 object-contain" /></div><div class="flex flex-col"><span class="font-headline-md text-[18px] sm:text-headline-md uppercase tracking-tight text-on-surface leading-none group-hover:text-primary transition-colors">CEC <span class="text-primary">Esports</span></span><span class="text-[10px] font-label-caps text-on-surface-variant/80 tracking-widest hidden sm:block">INTRAMURALS 2026</span></div></a><nav class="hidden lg:flex items-center gap-md"><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="index.html">HOME</a><a aria-current="page" class="font-label-caps text-label-caps text-primary font-bold" href="tournament.html">TOURNAMENT</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="standings.html">STANDINGS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="rules.html">RULES</a></nav><div class="flex items-center gap-sm"><a class="hidden sm:inline-flex items-center gap-xs bg-primary hover:bg-primary-fixed-dim transition-colors text-on-primary font-label-caps text-label-caps px-md py-sm rounded shadow-lg font-bold" href="register-team.html">REGISTER</a><button aria-controls="mobile-nav" aria-expanded="false" aria-label="Toggle menu" class="lg:hidden text-on-surface-variant hover:text-on-surface transition-colors" id="nav-toggle" type="button"><span class="material-symbols-outlined" id="nav-toggle-icon">menu</span></button></div></div><nav aria-label="Mobile" class="hidden lg:hidden flex-col gap-base bg-surface-container/95 backdrop-blur-xl border-t border-white/10 px-lg py-sm" id="mobile-nav"><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="index.html">HOME</a><a aria-current="page" class="font-label-caps text-label-caps text-primary font-bold py-sm" href="tournament.html">TOURNAMENT</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="standings.html">STANDINGS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="rules.html">RULES</a><a class="font-label-caps text-label-caps text-on-primary bg-primary rounded px-md py-sm mt-xs text-center font-bold" href="register-team.html">REGISTER YOUR TEAM</a></nav></header><main class="w-full pt-16 relative z-10"><div class="flex flex-col w-full relative">
-<div class="max-w-container-max mx-auto px-lg py-xl w-full flex flex-col gap-xl">
-<!-- Header -->
-<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-lg">
-<div class="flex flex-col gap-sm">
-<div class="inline-flex items-center gap-xs px-sm py-base rounded-full bg-surface-container-high w-fit border border-primary/20">
-<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-<span class="font-label-caps text-label-caps text-on-surface">REGISTRATION OPEN · CLOSES SEP 1</span>
-</div>
-<h1 class="font-headline-xl text-headline-xl text-on-background tracking-tight cyber-title">
-          TOURNAMENT &amp; SCHEDULE
-        </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mt-xs">
-          How the CEC Esports Intramurals 2026 is structured, and when every division plays. All matches are online and streamed from the Computer Laboratory Annex Building.
-        </p>
-</div>
-<div class="flex flex-wrap gap-xs">
-<a class="bg-primary hover:bg-primary-fixed-dim text-on-primary px-md py-sm rounded-lg font-label-caps text-label-caps transition-colors flex items-center gap-xs" href="bracket.html">
-<span class="material-symbols-outlined text-[18px]">account_tree</span>
-          VIEW BRACKETS
-        </a>
-<a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-md py-sm rounded-lg font-label-caps text-label-caps border border-primary/20 transition-colors flex items-center gap-xs" href="teams.html">
-<span class="material-symbols-outlined text-[18px]">groups</span>
-          VIEW TEAMS
-        </a>
-<a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-md py-sm rounded-lg font-label-caps text-label-caps border border-primary/20 transition-colors flex items-center gap-xs" href="#schedule">
-<span class="material-symbols-outlined text-[18px]">calendar_today</span>
-          SCHEDULE
-        </a>
-<a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-md py-sm rounded-lg font-label-caps text-label-caps border border-primary/20 transition-colors flex items-center gap-xs" href="rules.html">
-<span class="material-symbols-outlined text-[18px]">gavel</span>
-          RULES
-        </a>
-</div>
-</div>
-<!-- Stats -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-md">
-<div class="bg-surface-container border border-white/10 p-md rounded-xl flex flex-col gap-xs border-l-2 border-l-primary">
-<span class="font-label-caps text-label-caps text-on-surface-variant">TEAMS</span>
-<span class="font-stats-impact text-stats-impact text-on-surface">48</span>
-</div>
-<div class="bg-surface-container border border-white/10 p-md rounded-xl flex flex-col gap-xs border-l-2 border-l-secondary">
-<span class="font-label-caps text-label-caps text-on-surface-variant">DIVISIONS</span>
-<span class="font-stats-impact text-stats-impact text-on-surface">3</span>
-</div>
-<div class="bg-surface-container border border-white/10 p-md rounded-xl flex flex-col gap-xs border-l-2 border-l-tertiary">
-<span class="font-label-caps text-label-caps text-on-surface-variant">MATCH DAYS</span>
-<span class="font-stats-impact text-stats-impact text-on-surface">6</span>
-</div>
-<div class="bg-surface-container border border-white/10 p-md rounded-xl flex flex-col gap-xs border-l-2 border-l-outline">
-<span class="font-label-caps text-label-caps text-on-surface-variant">WINDOW</span>
-<span class="font-headline-md text-headline-md text-on-surface">Sep 5 – Oct 2</span>
-</div>
-</div>
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
-<!-- Main column -->
-<div class="lg:col-span-8 flex flex-col gap-lg">
-<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
-<div class="bg-surface-container border border-white/10 p-lg rounded-xl flex flex-col gap-xs">
-<h3 class="font-label-caps text-label-caps text-primary mb-sm">BRACKET FORMAT</h3>
-<p class="font-headline-md text-headline-md text-on-surface mb-xs">Department single-elimination</p>
-<p class="font-body-md text-body-md text-on-surface-variant">Each department plays its entire bracket in one session to crown a department champion. The four champions meet on Grand Finals Day, October 2.</p>
-</div>
-<div class="bg-surface-container border border-white/10 p-lg rounded-xl flex flex-col gap-xs">
-<h3 class="font-label-caps text-label-caps text-secondary mb-sm">MATCH FORMAT</h3>
-<p class="font-headline-md text-headline-md text-on-surface mb-xs">BO1 · BO3 · BO5</p>
-<p class="font-body-md text-body-md text-on-surface-variant">Rounds before the semifinals are Best-of-1. Semifinals and the 3rd/4th placement match are Best-of-3. Finals and grand finals are Best-of-5.</p>
-</div>
-</div>
-<!-- Schedule -->
-<div class="bg-surface-container border border-white/10 rounded-xl flex flex-col scroll-mt-24 cyber-panel" id="schedule">
-<div class="p-md border-b border-white/10 flex flex-wrap justify-between items-center gap-xs">
-<h3 class="font-headline-md text-headline-md text-on-surface">FULL SCHEDULE</h3>
-<span class="font-label-caps text-label-caps text-on-surface-variant">ALL SESSIONS 2:00–5:00 PM</span>
-</div>
-<div class="divide-y divide-white/10">
-<div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
-<div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 5</div><div class="font-label-caps text-label-caps text-primary">SAT · STUDENT M &amp; W</div></div>
-<div class="flex-1"><div class="font-body-md text-body-md text-on-surface font-bold">IT Department brackets</div><div class="font-body-md text-body-md text-on-surface-variant">Full single-elimination (BO1) — crowns the IT department champion. Men's: 8 teams. Women's: 4 teams.</div></div>
-</div>
-<div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
-<div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 11</div><div class="font-label-caps text-label-caps text-secondary">FRI · FACULTY</div></div>
-<div class="flex-1"><div class="font-body-md text-body-md text-on-surface font-bold">Quarterfinals</div><div class="font-body-md text-body-md text-on-surface-variant">Single-elimination (BO1) — 4 matches. First-round matchups set by an official bracket draw beforehand.</div></div>
-</div>
-<div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
-<div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 12</div><div class="font-label-caps text-label-caps text-primary">SAT · STUDENT M &amp; W</div></div>
-<div class="flex-1"><div class="font-body-md text-body-md text-on-surface font-bold">HTM Department brackets</div><div class="font-body-md text-body-md text-on-surface-variant">Full single-elimination (BO1) — crowns the HTM department champion.</div></div>
-</div>
-<div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
-<div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 18</div><div class="font-label-caps text-label-caps text-secondary">FRI · FACULTY</div></div>
-<div class="flex-1"><div class="font-body-md text-body-md text-on-surface font-bold">Semifinals &amp; finals</div><div class="font-body-md text-body-md text-on-surface-variant">Semifinals (BO3), 3rd/4th placement match (BO3), and the final (BO5) — the exhibition champion is decided.</div></div>
-</div>
-<div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
-<div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 19</div><div class="font-label-caps text-label-caps text-primary">SAT · STUDENT M &amp; W</div></div>
-<div class="flex-1"><div class="font-body-md text-body-md text-on-surface font-bold">CTE &amp; CRIM Department brackets</div><div class="font-body-md text-body-md text-on-surface-variant">Both departments (4 teams each) run their full single-elimination brackets — crowns the CTE and CRIM champions.</div></div>
-</div>
-<div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs bg-primary/5">
-<div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-primary">Oct 2</div><div class="font-label-caps text-label-caps text-primary">FRI · GRAND FINALS DAY</div></div>
-<div class="flex-1 flex flex-col gap-xs">
-<div class="font-body-md text-body-md text-on-surface font-bold">Department champions play for the title</div>
-<div class="font-body-md text-body-md text-on-surface-variant">Men's — SF1: IT vs HTM · SF2: CTE vs CRIM.</div>
-<div class="font-body-md text-body-md text-on-surface-variant">Women's — SF1: HTM vs CRIM · SF2: IT vs CTE.</div>
-<div class="font-body-md text-body-md text-on-surface-variant">Semifinals BO3 · 3rd/4th placement BO3 · Grand Final BO5.</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<!-- Sidebar -->
-<div class="lg:col-span-4 flex flex-col gap-lg">
-<div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-md">
-<h3 class="font-label-caps text-label-caps text-on-surface-variant">TOURNAMENT PROGRESS</h3>
-<div class="flex flex-col relative">
-<div class="absolute left-[11px] top-4 bottom-4 w-[2px] bg-white/10"></div>
-<div class="flex gap-md items-start py-sm relative">
-<div class="w-6 h-6 rounded-full bg-secondary-container flex items-center justify-center z-10 animate-pulse shrink-0"><div class="w-2 h-2 rounded-full bg-on-secondary-container"></div></div>
-<div class="flex flex-col -mt-1"><span class="font-body-md text-body-md text-on-surface font-bold">Registration</span><span class="font-body-md text-body-md text-primary">Closes September 1, 2026</span></div>
-</div>
-<div class="flex gap-md items-start py-sm opacity-60 relative">
-<div class="w-6 h-6 rounded-full bg-surface-container-highest border-2 border-outline-variant z-10 shrink-0"></div>
-<div class="flex flex-col -mt-1"><span class="font-body-md text-body-md text-on-surface">Department brackets</span><span class="font-body-md text-body-md text-on-surface-variant">September 5 – 19</span></div>
-</div>
-<div class="flex gap-md items-start py-sm opacity-60 relative">
-<div class="w-6 h-6 rounded-full bg-surface-container-highest border-2 border-outline-variant z-10 shrink-0"></div>
-<div class="flex flex-col -mt-1"><span class="font-body-md text-body-md text-on-surface">Grand Finals Day</span><span class="font-body-md text-body-md text-on-surface-variant">October 2, 2026</span></div>
-</div>
-</div>
-</div>
-<div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-sm">
-<h3 class="font-label-caps text-label-caps text-on-surface-variant">WHERE &amp; WHEN</h3>
-<div class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">wifi</span><span class="font-body-md text-body-md text-on-surface-variant">Every match is online — join from your own device and location.</span></div>
-<div class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">videocam</span><span class="font-body-md text-body-md text-on-surface-variant">Officiated and streamed from the Computer Laboratory Annex Building.</span></div>
-<div class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">calendar_today</span><span class="font-body-md text-body-md text-on-surface-variant">Student: every Saturday. Faculty: Fridays, September 11 &amp; 18.</span></div>
-<div class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">schedule</span><span class="font-body-md text-body-md text-on-surface-variant">Be online and ready 15 minutes before your match time.</span></div>
-</div>
-</div>
-</div>
-</div>
-</div></main><footer class="w-full bg-surface-container-lowest py-xl border-t border-white/10 relative z-10"><div class="max-w-container-max mx-auto px-lg flex flex-col md:flex-row justify-between items-center gap-md text-center md:text-left"><div class="flex flex-col gap-base"><span class="font-label-caps text-label-caps text-on-surface">CEC ESPORTS INTRAMURALS 2026</span><span class="font-body-md text-body-md text-on-surface-variant">© 2026 CEC Blue Dragon Esports · Cebu Eastern College, Incorporated</span></div><div class="flex flex-wrap justify-center gap-md font-label-caps text-label-caps text-on-surface-variant"><a class="hover:text-primary" href="index.html">HOME</a><a class="hover:text-primary" href="rules.html">RULES</a><a class="hover:text-primary" href="register-team.html">REGISTER</a><a class="hover:text-primary text-xs opacity-70" href="admin.html">STAFF PORTAL</a></div></div></footer><script>(function(){var t=document.getElementById('nav-toggle'),n=document.getElementById('mobile-nav'),i=document.getElementById('nav-toggle-icon');if(!t||!n)return;t.addEventListener('click',function(){var open=n.classList.contains('hidden');n.classList.toggle('hidden',!open);n.classList.toggle('flex',open);t.setAttribute('aria-expanded',String(open));if(i)i.textContent=open?'close':'menu';});})();</script></body></html>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background font-body-md text-on-background"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><header class="fixed top-0 w-full z-50 bg-[#081422]/85 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"><div class="h-16 w-full max-w-container-max mx-auto px-lg flex items-center justify-between gap-md"><a class="flex items-center gap-2.5 sm:gap-3 shrink-0 group" href="index.html"><div class="flex items-center gap-1.5 p-1 rounded-lg bg-surface-container-high/60 border border-white/10 shadow-sm backdrop-blur-sm"><img src="assets/school_logo.jpg" alt="CEC Seal" class="h-7 w-7 rounded object-cover shadow-sm border border-white/10" /><img src="assets/e-sportslogo.png" alt="CEC Esports Logo" class="h-7 w-7 object-contain drop-shadow-[0_0_8px_rgba(180,197,255,0.4)]" /><img src="assets/intrams_logo.png" alt="Intramurals 2026 Logo" class="h-7 w-7 object-contain" /></div><div class="flex flex-col"><span class="font-headline-md text-[18px] sm:text-headline-md uppercase tracking-tight text-on-surface leading-none group-hover:text-primary transition-colors">CEC <span class="text-primary">Esports</span></span><span class="text-[10px] font-label-caps text-on-surface-variant/80 tracking-widest hidden sm:block">INTRAMURALS 2026</span></div></a><nav class="hidden lg:flex items-center gap-md"><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="index.html">HOME</a><a aria-current="page" class="font-label-caps text-label-caps text-primary font-bold flex items-center gap-1.5" href="tournament.html"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>LIVE / SCHEDULE</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="standings.html">STANDINGS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="rules.html">RULES</a></nav><div class="flex items-center gap-sm"><button id="open-live-settings-btn" type="button" class="inline-flex items-center gap-1 bg-surface-container-high hover:bg-surface-container-highest border border-primary/30 text-primary font-label-caps text-xs px-3 py-2 rounded-lg transition-colors" title="Manage live match details & stream URL"><span class="material-symbols-outlined text-[16px]">tune</span><span class="hidden sm:inline">STAFF CONTROLS</span></button><a class="hidden sm:inline-flex items-center gap-xs bg-primary hover:bg-primary-fixed-dim transition-colors text-on-primary font-label-caps text-label-caps px-md py-sm rounded shadow-lg font-bold" href="register-team.html">REGISTER</a><button aria-controls="mobile-nav" aria-expanded="false" aria-label="Toggle menu" class="lg:hidden text-on-surface-variant hover:text-on-surface transition-colors" id="nav-toggle" type="button"><span class="material-symbols-outlined" id="nav-toggle-icon">menu</span></button></div></div><nav aria-label="Mobile" class="hidden lg:hidden flex-col gap-base bg-surface-container/95 backdrop-blur-xl border-t border-white/10 px-lg py-sm" id="mobile-nav"><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="index.html">HOME</a><a aria-current="page" class="font-label-caps text-label-caps text-primary font-bold py-sm flex items-center gap-2" href="tournament.html"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>LIVE / SCHEDULE</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="standings.html">STANDINGS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="rules.html">RULES</a><a class="font-label-caps text-label-caps text-on-primary bg-primary rounded px-md py-sm mt-xs text-center font-bold" href="register-team.html">REGISTER YOUR TEAM</a></nav></header>
+
+<main class="w-full pt-16 relative z-10">
+  <!-- LIVE BROADCAST ARENA (TOP HERO) -->
+  <section class="w-full bg-gradient-to-b from-[#050e1c] via-surface-container-lowest to-[#081422] border-b border-white/10 py-8 md:py-12">
+    <div class="max-w-container-max mx-auto px-lg flex flex-col gap-lg">
+      
+      <!-- Top Live Status Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-md">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/40 text-red-400 font-label-caps text-xs font-bold shadow-[0_0_12px_rgba(239,68,68,0.3)]">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-red-500 -ml-4.5"></span>
+            LIVE BROADCAST
+          </div>
+          <span class="font-label-caps text-xs text-on-surface-variant uppercase tracking-widest hidden sm:inline" id="live-stage-title">CEC ESPORTS ARENA · OFFICIAL STREAM</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="quick-edit-btn" type="button" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container border border-white/10 hover:border-primary/40 text-on-surface hover:text-primary text-xs font-label-caps transition-colors">
+            <span class="material-symbols-outlined text-[16px] text-primary">videocam</span>
+            CHANGE STREAM / MATCH
+          </button>
+        </div>
+      </div>
+
+      <!-- Match Versus Hero Card -->
+      <div class="bg-surface-container/90 backdrop-blur-xl border border-white/15 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-2xl relative overflow-hidden cyber-panel">
+        <div class="grid grid-cols-1 md:grid-cols-12 items-center gap-6">
+          
+          <!-- Team 1 Showcase -->
+          <div class="md:col-span-5 flex items-center justify-start md:justify-end gap-4 text-left md:text-right order-1">
+            <div class="flex flex-col">
+              <div class="flex items-center md:justify-end gap-2">
+                <span class="text-[11px] font-label-caps text-primary font-bold tracking-wider px-2 py-0.5 rounded bg-primary/10 border border-primary/20" id="team1-dept-tag">IT DEPARTMENT</span>
+                <span class="text-xs text-on-surface-variant font-label-caps" id="team1-standing-seed">3-0 · SEED #1</span>
+              </div>
+              <h2 class="font-headline-lg text-2xl sm:text-3xl text-on-surface font-black uppercase tracking-tight cyber-title mt-1" id="team1-name-display">IT TITAN DRAGONS</h2>
+              <span class="text-xs font-body-md text-on-surface-variant" id="team1-sub-desc">College of Computer Studies</span>
+            </div>
+
+            <!-- Team 1 Badges (Emblem & Dept Logo) -->
+            <div class="relative shrink-0 flex items-center">
+              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center shadow-lg border-2 border-white/20 overflow-hidden" id="team1-emblem-badge" style="background:#1264ff">
+                <img id="team1-emblem-img" src="assets/icons/lorc/dragon-head.svg" alt="Team 1 Emblem" class="w-10 h-10 sm:w-12 sm:h-12 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
+              </div>
+              <img id="team1-dept-logo" src="assets/IT.png" alt="IT Logo" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white/20 object-contain bg-surface-container-lowest -ml-4 -bottom-1 relative shadow-md" />
+            </div>
+
+            <!-- Team 1 Score -->
+            <div class="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-surface-container-lowest border border-white/10 shadow-inner">
+              <span class="font-headline-xl text-3xl text-primary font-black cyber-mono" id="team1-score-display">2</span>
+            </div>
+          </div>
+
+          <!-- Center VS Hub -->
+          <div class="md:col-span-2 flex flex-col items-center justify-center text-center gap-1.5 order-3 md:order-2 py-2 border-y md:border-y-0 md:border-x border-white/10">
+            <!-- Mobile Score Bar -->
+            <div class="flex md:hidden items-center justify-center gap-4 text-2xl font-black cyber-mono text-on-surface mb-1">
+              <span class="text-primary px-3 py-1 bg-surface-container-lowest rounded-lg border border-white/10" id="team1-score-display-mob">2</span>
+              <span class="text-on-surface-variant text-base">:</span>
+              <span class="text-secondary px-3 py-1 bg-surface-container-lowest rounded-lg border border-white/10" id="team2-score-display-mob">1</span>
+            </div>
+
+            <div class="relative">
+              <span class="font-headline-xl text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-secondary drop-shadow-[0_0_15px_rgba(180,197,255,0.6)] cyber-title">VS</span>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[11px] font-label-caps font-bold" id="match-format-badge">BO3 · GAME 3</span>
+            <span class="text-[10px] text-on-surface-variant uppercase font-label-caps tracking-widest" id="match-status-note">MATCH POINT · MAP: SANCTUM</span>
+          </div>
+
+          <!-- Team 2 Showcase -->
+          <div class="md:col-span-5 flex items-center justify-end md:justify-start gap-4 text-right md:text-left order-2 md:order-3">
+            <!-- Team 2 Score -->
+            <div class="hidden md:flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-surface-container-lowest border border-white/10 shadow-inner">
+              <span class="font-headline-xl text-3xl text-secondary font-black cyber-mono" id="team2-score-display">1</span>
+            </div>
+
+            <!-- Team 2 Badges (Emblem & Dept Logo) -->
+            <div class="relative shrink-0 flex items-center">
+              <img id="team2-dept-logo" src="assets/CRIM.png" alt="CRIM Logo" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white/20 object-contain bg-surface-container-lowest -mr-4 -bottom-1 relative shadow-md z-10" />
+              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center shadow-lg border-2 border-white/20 overflow-hidden" id="team2-emblem-badge" style="background:#ff4b4b">
+                <img id="team2-emblem-img" src="assets/icons/lorc/werewolf.svg" alt="Team 2 Emblem" class="w-10 h-10 sm:w-12 sm:h-12 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" />
+              </div>
+            </div>
+
+            <div class="flex flex-col">
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-label-caps text-secondary font-bold tracking-wider px-2 py-0.5 rounded bg-secondary/10 border border-secondary/20" id="team2-dept-tag">CRIM DEPARTMENT</span>
+                <span class="text-xs text-on-surface-variant font-label-caps" id="team2-standing-seed">3-0 · SEED #2</span>
+              </div>
+              <h2 class="font-headline-lg text-2xl sm:text-3xl text-on-surface font-black uppercase tracking-tight cyber-title mt-1" id="team2-name-display">CRIM IRON WEREWOLVES</h2>
+              <span class="text-xs font-body-md text-on-surface-variant" id="team2-sub-desc">College of Criminology</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- LIVE STREAM EMBED PLAYER FRAME -->
+      <div class="flex flex-col gap-3">
+        <div class="relative w-full rounded-2xl overflow-hidden bg-black border-2 border-primary/30 shadow-[0_0_35px_rgba(18,100,255,0.25)] aspect-video">
+          
+          <!-- Live Stream Frame Iframe (Dynamic YouTube / Discord / FB Live / Twitch Embed) -->
+          <iframe id="live-stream-frame" class="w-full h-full border-0 hidden" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+          <!-- Fallback Native Video Player (Plays VideoIntro.mp4 when no external stream active) -->
+          <div id="fallback-video-container" class="relative w-full h-full flex items-center justify-center bg-black">
+            <video id="stream-fallback-video" class="w-full h-full object-cover" src="assets/VideoIntro.mp4" autoplay loop muted playsinline></video>
+            
+            <!-- Watermark / Stream Overlay -->
+            <div class="absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+              <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+              <span class="text-[11px] font-label-caps text-white font-bold">CEC OFFICIAL OBSERVER FEED</span>
+            </div>
+            
+            <!-- Video Control Pill -->
+            <div class="absolute bottom-4 right-4 z-20 flex items-center gap-2 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15">
+              <button id="stream-audio-btn" type="button" class="text-xs font-label-caps text-on-surface hover:text-primary flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]" id="stream-audio-icon">volume_off</span>
+                <span id="stream-audio-text">UNMUTE</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stream Information & Quick Link Bar -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-xl bg-surface-container border border-white/10">
+          <div class="flex items-center gap-2 text-xs font-body-md text-on-surface-variant">
+            <span class="material-symbols-outlined text-primary text-[18px]">cell_tower</span>
+            <span>Broadcast Feed: <strong class="text-on-surface" id="stream-source-label">Computer Laboratory Annex Building</strong></span>
+          </div>
+
+          <!-- Quick Stream URL Input & Preset Switcher -->
+          <div class="flex items-center gap-2">
+            <input id="quick-stream-url" type="text" placeholder="Paste YouTube Live, Twitch, or FB link..." class="bg-surface-container-lowest text-xs text-on-surface px-3 py-1.5 rounded-lg border border-white/10 focus:outline-none focus:border-primary w-48 sm:w-64" />
+            <button id="apply-stream-url-btn" type="button" class="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-colors">
+              APPLY
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM ROSTERS, STATS & DETAILS (BELOW VIDEO) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg mt-2">
+        
+        <!-- Team 1 Roster & Standing Breakdown -->
+        <div class="bg-surface-container/90 border border-white/10 rounded-xl p-lg flex flex-col gap-md cyber-panel">
+          <div class="flex items-center justify-between border-b border-white/10 pb-sm">
+            <div class="flex items-center gap-2">
+              <img id="team1-roster-dept-logo" src="assets/IT.png" class="w-6 h-6 object-contain" alt="Dept Logo" />
+              <h3 class="font-headline-md text-headline-md text-primary" id="team1-roster-title">IT Titan Dragons — Lineup</h3>
+            </div>
+            <span class="text-xs font-label-caps text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded">DEPARTMENT STANDING: 3-0</span>
+          </div>
+
+          <!-- Starting 5 Table -->
+          <div class="flex flex-col gap-1.5" id="team1-roster-list">
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">1</span>
+                <span class="font-bold text-on-surface">SlayerX</span>
+                <span class="text-xs text-on-surface-variant">(Captain · Juan Dela Cruz)</span>
+              </div>
+              <span class="text-xs font-label-caps text-primary bg-primary/10 px-2 py-0.5 rounded">JUNGLER / LING</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">2</span>
+                <span class="font-bold text-on-surface">Viper_CEC</span>
+                <span class="text-xs text-on-surface-variant">(Mark Rivera)</span>
+              </div>
+              <span class="text-xs font-label-caps text-primary bg-primary/10 px-2 py-0.5 rounded">MID LANE / VALENTINA</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">3</span>
+                <span class="font-bold text-on-surface">KuroBlade</span>
+                <span class="text-xs text-on-surface-variant">(John Santos)</span>
+              </div>
+              <span class="text-xs font-label-caps text-primary bg-primary/10 px-2 py-0.5 rounded">GOLD LANE / BEATRIX</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">4</span>
+                <span class="font-bold text-on-surface">ShieldMaster</span>
+                <span class="text-xs text-on-surface-variant">(Carl Reyes)</span>
+              </div>
+              <span class="text-xs font-label-caps text-primary bg-primary/10 px-2 py-0.5 rounded">ROAMER / TIGREAL</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">5</span>
+                <span class="font-bold text-on-surface">DragonLord</span>
+                <span class="text-xs text-on-surface-variant">(Dave Garcia)</span>
+              </div>
+              <span class="text-xs font-label-caps text-primary bg-primary/10 px-2 py-0.5 rounded">EXP LANE / YU ZHONG</span>
+            </div>
+          </div>
+
+          <!-- Substitutes -->
+          <div class="flex items-center gap-2 pt-2 border-t border-white/5 text-xs text-on-surface-variant">
+            <span class="font-label-caps text-primary font-bold">RESERVES / SUBS:</span>
+            <span id="team1-subs-display">Shadow (Christian Lim), Ace (Kenneth Tan)</span>
+          </div>
+        </div>
+
+        <!-- Team 2 Roster & Standing Breakdown -->
+        <div class="bg-surface-container/90 border border-white/10 rounded-xl p-lg flex flex-col gap-md cyber-panel">
+          <div class="flex items-center justify-between border-b border-white/10 pb-sm">
+            <div class="flex items-center gap-2">
+              <img id="team2-roster-dept-logo" src="assets/CRIM.png" class="w-6 h-6 object-contain" alt="Dept Logo" />
+              <h3 class="font-headline-md text-headline-md text-secondary" id="team2-roster-title">CRIM Iron Werewolves — Lineup</h3>
+            </div>
+            <span class="text-xs font-label-caps text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded">DEPARTMENT STANDING: 3-0</span>
+          </div>
+
+          <!-- Starting 5 Table -->
+          <div class="flex flex-col gap-1.5" id="team2-roster-list">
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-secondary/20 text-secondary text-[10px] font-bold flex items-center justify-center">1</span>
+                <span class="font-bold text-on-surface">WolfAlpha</span>
+                <span class="text-xs text-on-surface-variant">(Captain · Ricardo Gomez)</span>
+              </div>
+              <span class="text-xs font-label-caps text-secondary bg-secondary/10 px-2 py-0.5 rounded">JUNGLER / LANCELOT</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-secondary/20 text-secondary text-[10px] font-bold flex items-center justify-center">2</span>
+                <span class="font-bold text-on-surface">CrimsonFury</span>
+                <span class="text-xs text-on-surface-variant">(Marco Silva)</span>
+              </div>
+              <span class="text-xs font-label-caps text-secondary bg-secondary/10 px-2 py-0.5 rounded">MID LANE / PHARSA</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-secondary/20 text-secondary text-[10px] font-bold flex items-center justify-center">3</span>
+                <span class="font-bold text-on-surface">GhostMarksman</span>
+                <span class="text-xs text-on-surface-variant">(Eduardo Ramos)</span>
+              </div>
+              <span class="text-xs font-label-caps text-secondary bg-secondary/10 px-2 py-0.5 rounded">GOLD LANE / CLAUDE</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-secondary/20 text-secondary text-[10px] font-bold flex items-center justify-center">4</span>
+                <span class="font-bold text-on-surface">IronTitan</span>
+                <span class="text-xs text-on-surface-variant">(Gabriel Perez)</span>
+              </div>
+              <span class="text-xs font-label-caps text-secondary bg-secondary/10 px-2 py-0.5 rounded">ROAMER / KHUFRA</span>
+            </div>
+            <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-secondary/20 text-secondary text-[10px] font-bold flex items-center justify-center">5</span>
+                <span class="font-bold text-on-surface">BrawlerJax</span>
+                <span class="text-xs text-on-surface-variant">(Jerome Alvarez)</span>
+              </div>
+              <span class="text-xs font-label-caps text-secondary bg-secondary/10 px-2 py-0.5 rounded">EXP LANE / CHOU</span>
+            </div>
+          </div>
+
+          <!-- Substitutes -->
+          <div class="flex items-center gap-2 pt-2 border-t border-white/5 text-xs text-on-surface-variant">
+            <span class="font-label-caps text-secondary font-bold">RESERVES / SUBS:</span>
+            <span id="team2-subs-display">NightHawk (Joshua Mendoza), Reaper (Alvin Castro)</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LIVE & MATCH MANAGER MODAL (STAFF CONTROLS) -->
+  <div id="live-settings-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+    <div class="bg-surface-container/95 border border-white/15 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden cyber-panel">
+      
+      <!-- Modal Header -->
+      <div class="p-lg bg-surface-container-high/90 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-primary">tune</span>
+          <h3 class="font-headline-md text-headline-md text-on-surface cyber-title text-lg">Live Broadcast &amp; Match Controls</h3>
+        </div>
+        <button type="button" id="close-live-settings-btn" class="text-on-surface-variant hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <form id="live-settings-form" class="p-lg overflow-y-auto flex-1 flex flex-col gap-md">
+        
+        <!-- Stream URL Setting -->
+        <div class="flex flex-col gap-1">
+          <label class="font-label-caps text-xs text-primary uppercase font-bold">Live Stream Link / Embed URL</label>
+          <input id="setting-stream-url" type="text" placeholder="YouTube watch/live URL, Twitch, FB Live, or Discord link" class="w-full bg-surface-container-lowest text-sm text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:border-primary" />
+          <span class="text-[11px] text-on-surface-variant">Leave blank to loop the official CEC Video Intro. YouTube links are automatically converted to live embeds.</span>
+        </div>
+
+        <!-- Match Stage & Format -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+          <div class="flex flex-col gap-1">
+            <label class="font-label-caps text-xs text-on-surface-variant uppercase">Match Stage &amp; Division</label>
+            <input id="setting-stage-title" type="text" placeholder="e.g. SEMIFINALS · BEST-OF-3" class="w-full bg-surface-container-lowest text-sm text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:border-primary" />
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="font-label-caps text-xs text-on-surface-variant uppercase">Format Badge / Status</label>
+            <input id="setting-format-badge" type="text" placeholder="e.g. BO3 · GAME 3" class="w-full bg-surface-container-lowest text-sm text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:border-primary" />
+          </div>
+        </div>
+
+        <!-- Team 1 Settings -->
+        <div class="p-md rounded-xl bg-surface-container-lowest/80 border border-primary/20 flex flex-col gap-sm">
+          <span class="font-label-caps text-xs text-primary font-bold uppercase">Team 1 Settings</span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-sm">
+            <div class="sm:col-span-2 flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Team 1 Name</label>
+              <input id="setting-team1-name" type="text" placeholder="e.g. IT Titan Dragons" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Score</label>
+              <input id="setting-team1-score" type="number" min="0" max="5" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10 font-bold" />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Department</label>
+              <select id="setting-team1-dept" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10">
+                <option value="IT">IT Department (assets/IT.png)</option>
+                <option value="HTM">HTM Department (assets/HTM.png)</option>
+                <option value="CTE">CTE Department (assets/CTE.png)</option>
+                <option value="CRIM">CRIM Department (assets/CRIM.png)</option>
+                <option value="Faculty">Faculty Exhibition</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Emblem Icon</label>
+              <select id="setting-team1-icon" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10">
+                <option value="assets/icons/lorc/dragon-head.svg">Dragon Head</option>
+                <option value="assets/icons/lorc/double-dragon.svg">Twin Dragons</option>
+                <option value="assets/icons/lorc/wyvern.svg">Wyvern</option>
+                <option value="assets/icons/delapouite/oni.svg">Oni Demon</option>
+                <option value="assets/icons/delapouite/horus.svg">Horus Falcon</option>
+                <option value="assets/icons/delapouite/griffin-symbol.svg">Griffin</option>
+                <option value="assets/icons/lorc/werewolf.svg">Werewolf</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 2 Settings -->
+        <div class="p-md rounded-xl bg-surface-container-lowest/80 border border-secondary/20 flex flex-col gap-sm">
+          <span class="font-label-caps text-xs text-secondary font-bold uppercase">Team 2 Settings</span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-sm">
+            <div class="sm:col-span-2 flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Team 2 Name</label>
+              <input id="setting-team2-name" type="text" placeholder="e.g. CRIM Iron Werewolves" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Score</label>
+              <input id="setting-team2-score" type="number" min="0" max="5" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10 font-bold" />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Department</label>
+              <select id="setting-team2-dept" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10">
+                <option value="CRIM">CRIM Department (assets/CRIM.png)</option>
+                <option value="IT">IT Department (assets/IT.png)</option>
+                <option value="HTM">HTM Department (assets/HTM.png)</option>
+                <option value="CTE">CTE Department (assets/CTE.png)</option>
+                <option value="Faculty">Faculty Exhibition</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Emblem Icon</label>
+              <select id="setting-team2-icon" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10">
+                <option value="assets/icons/lorc/werewolf.svg">Werewolf</option>
+                <option value="assets/icons/lorc/dragon-head.svg">Dragon Head</option>
+                <option value="assets/icons/delapouite/oni.svg">Oni Demon</option>
+                <option value="assets/icons/delapouite/ice-golem.svg">Ice Golem</option>
+                <option value="assets/icons/delapouite/kraken-tentacle.svg">Kraken</option>
+                <option value="assets/icons/lorc/hydra.svg">Hydra</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Registration & Event Dates -->
+        <div class="p-md rounded-xl bg-surface-container-lowest/80 border border-white/10 flex flex-col gap-sm">
+          <span class="font-label-caps text-xs text-on-surface-variant font-bold uppercase">Dates &amp; Registration Deadline</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Registration Deadline</label>
+              <input id="setting-reg-deadline" type="text" placeholder="September 1, 2026" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-[11px] font-label-caps text-on-surface-variant">Grand Finals Date</label>
+              <input id="setting-finals-date" type="text" placeholder="October 2, 2026" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10" />
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- Modal Footer -->
+      <div class="p-md bg-surface-container-high/90 border-t border-white/10 flex justify-between items-center">
+        <button type="button" id="reset-live-defaults-btn" class="text-xs font-label-caps text-on-surface-variant hover:text-error transition-colors">RESET TO DEFAULTS</button>
+        <div class="flex gap-2">
+          <button type="button" id="cancel-live-settings-btn" class="px-3 py-1.5 rounded text-xs font-label-caps text-on-surface hover:bg-white/10">CANCEL</button>
+          <button type="button" id="save-live-settings-btn" class="px-4 py-1.5 rounded bg-primary text-on-primary font-bold font-label-caps text-xs hover:bg-primary-fixed-dim transition-colors">SAVE &amp; BROADCAST</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TOURNAMENT DETAILS & FULL SCHEDULE (ORIGINAL CONTENT) -->
+  <section class="w-full py-xl">
+    <div class="max-w-container-max mx-auto px-lg flex flex-col gap-xl">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-lg border-b border-white/10 pb-lg">
+        <div class="flex flex-col gap-sm">
+          <div class="inline-flex items-center gap-xs px-sm py-base rounded-full bg-surface-container-high w-fit border border-primary/20">
+            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span class="font-label-caps text-label-caps text-on-surface" id="reg-status-badge">REGISTRATION CLOSES SEPTEMBER 1, 2026</span>
+          </div>
+          <h2 class="font-headline-xl text-headline-xl text-on-background tracking-tight cyber-title">
+            TOURNAMENT SCHEDULE &amp; STRUCTURE
+          </h2>
+          <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+            How the CEC Esports Intramurals 2026 is structured, and when every division plays. All matches are online and streamed from the Computer Laboratory Annex Building.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-xs">
+          <a class="bg-primary hover:bg-primary-fixed-dim text-on-primary px-md py-sm rounded-lg font-label-caps text-label-caps transition-colors flex items-center gap-xs font-bold" href="bracket.html">
+            <span class="material-symbols-outlined text-[18px]">account_tree</span>
+            VIEW BRACKETS
+          </a>
+          <a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-md py-sm rounded-lg font-label-caps text-label-caps border border-primary/20 transition-colors flex items-center gap-xs" href="teams.html">
+            <span class="material-symbols-outlined text-[18px]">groups</span>
+            VIEW TEAMS
+          </a>
+          <a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-md py-sm rounded-lg font-label-caps text-label-caps border border-primary/20 transition-colors flex items-center gap-xs" href="rules.html">
+            <span class="material-symbols-outlined text-[18px]">gavel</span>
+            RULES
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+        <div class="bg-surface-container border border-white/10 p-md rounded-xl flex flex-col gap-xs border-l-4 border-l-primary">
+          <span class="font-label-caps text-label-caps text-on-surface-variant">TEAMS</span>
+          <span class="font-stats-impact text-stats-impact text-on-surface">48</span>
+        </div>
+        <div class="bg-surface-container border border-white/10 p-md rounded-xl flex flex-col gap-xs border-l-4 border-l-secondary">
+          <span class="font-label-caps text-label-caps text-on-surface-variant">DIVISIONS</span>
+          <span class="font-stats-impact text-stats-impact text-on-surface">3</span>
+        </div>
+        <div class="bg-surface-container border border-white/10 p-md rounded-xl flex flex-col gap-xs border-l-4 border-l-[#ffb020]">
+          <span class="font-label-caps text-label-caps text-on-surface-variant">MATCH DAYS</span>
+          <span class="font-stats-impact text-stats-impact text-on-surface">6</span>
+        </div>
+        <div class="bg-surface-container border border-white/10 p-md rounded-xl flex flex-col gap-xs border-l-4 border-l-[#00e676]">
+          <span class="font-label-caps text-label-caps text-on-surface-variant">WINDOW</span>
+          <span class="font-headline-md text-headline-md text-on-surface" id="stat-window-dates">Sep 5 – Oct 2</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+        <!-- Main Schedule Column -->
+        <div class="lg:col-span-8 flex flex-col gap-lg">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+            <div class="bg-surface-container border border-white/10 p-lg rounded-xl flex flex-col gap-xs">
+              <h3 class="font-label-caps text-label-caps text-primary mb-sm font-bold">BRACKET FORMAT</h3>
+              <p class="font-headline-md text-headline-md text-on-surface mb-xs">Department single-elimination</p>
+              <p class="font-body-md text-body-md text-on-surface-variant">Each department plays its entire bracket in one session to crown a department champion. The four champions meet on Grand Finals Day, October 2.</p>
+            </div>
+            <div class="bg-surface-container border border-white/10 p-lg rounded-xl flex flex-col gap-xs">
+              <h3 class="font-label-caps text-label-caps text-secondary mb-sm font-bold">MATCH FORMAT</h3>
+              <p class="font-headline-md text-headline-md text-on-surface mb-xs">BO1 · BO3 · BO5</p>
+              <p class="font-body-md text-body-md text-on-surface-variant">Rounds before the semifinals are Best-of-1. Semifinals and the 3rd/4th placement match are Best-of-3. Finals and grand finals are Best-of-5.</p>
+            </div>
+          </div>
+
+          <!-- Schedule Table -->
+          <div class="bg-surface-container border border-white/10 rounded-xl flex flex-col scroll-mt-24 cyber-panel" id="schedule">
+            <div class="p-md border-b border-white/10 flex flex-wrap justify-between items-center gap-xs">
+              <h3 class="font-headline-md text-headline-md text-on-surface">FULL SCHEDULE BY DEPARTMENT</h3>
+              <span class="font-label-caps text-label-caps text-on-surface-variant">ALL SESSIONS 2:00–5:00 PM</span>
+            </div>
+            <div class="divide-y divide-white/10">
+              <div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
+                <div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 5</div><div class="font-label-caps text-label-caps text-primary font-bold">SAT · STUDENT M &amp; W</div></div>
+                <div class="flex-1 flex items-center justify-between">
+                  <div>
+                    <div class="font-body-md text-body-md text-on-surface font-bold">IT Department brackets</div>
+                    <div class="font-body-md text-body-md text-on-surface-variant">Full single-elimination (BO1) — crowns the IT department champion. Men's: 8 teams. Women's: 4 teams.</div>
+                  </div>
+                  <img src="assets/IT.png" class="w-10 h-10 object-contain ml-2 shrink-0" alt="IT Dept" />
+                </div>
+              </div>
+              <div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
+                <div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 11</div><div class="font-label-caps text-label-caps text-[#ffb020] font-bold">FRI · FACULTY</div></div>
+                <div class="flex-1"><div class="font-body-md text-body-md text-on-surface font-bold">Quarterfinals</div><div class="font-body-md text-body-md text-on-surface-variant">Single-elimination (BO1) — 4 matches. First-round matchups set by an official bracket draw beforehand.</div></div>
+              </div>
+              <div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
+                <div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 12</div><div class="font-label-caps text-label-caps text-primary font-bold">SAT · STUDENT M &amp; W</div></div>
+                <div class="flex-1 flex items-center justify-between">
+                  <div>
+                    <div class="font-body-md text-body-md text-on-surface font-bold">HTM Department brackets</div>
+                    <div class="font-body-md text-body-md text-on-surface-variant">Full single-elimination (BO1) — crowns the HTM department champion.</div>
+                  </div>
+                  <img src="assets/HTM.png" class="w-10 h-10 object-contain ml-2 shrink-0" alt="HTM Dept" />
+                </div>
+              </div>
+              <div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
+                <div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 18</div><div class="font-label-caps text-label-caps text-[#ffb020] font-bold">FRI · FACULTY</div></div>
+                <div class="flex-1"><div class="font-body-md text-body-md text-on-surface font-bold">Semifinals &amp; finals</div><div class="font-body-md text-body-md text-on-surface-variant">Semifinals (BO3), 3rd/4th placement match (BO3), and the final (BO5) — the exhibition champion is decided.</div></div>
+              </div>
+              <div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs">
+                <div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-on-surface">Sep 19</div><div class="font-label-caps text-label-caps text-primary font-bold">SAT · STUDENT M &amp; W</div></div>
+                <div class="flex-1 flex items-center justify-between">
+                  <div>
+                    <div class="font-body-md text-body-md text-on-surface font-bold">CTE &amp; CRIM Department brackets</div>
+                    <div class="font-body-md text-body-md text-on-surface-variant">Both departments (4 teams each) run their full single-elimination brackets — crowns the CTE and CRIM champions.</div>
+                  </div>
+                  <div class="flex items-center gap-2 ml-2 shrink-0">
+                    <img src="assets/CTE.png" class="w-9 h-9 object-contain" alt="CTE Dept" />
+                    <img src="assets/CRIM.png" class="w-9 h-9 object-contain" alt="CRIM Dept" />
+                  </div>
+                </div>
+              </div>
+              <div class="p-md flex flex-col sm:flex-row sm:gap-md gap-xs bg-primary/10 border-l-4 border-l-primary">
+                <div class="sm:w-40 shrink-0"><div class="font-headline-md text-headline-md text-primary font-black">Oct 2</div><div class="font-label-caps text-label-caps text-primary font-bold">FRI · GRAND FINALS DAY</div></div>
+                <div class="flex-1 flex flex-col gap-xs">
+                  <div class="font-body-md text-body-md text-on-surface font-bold">Department champions play for the title</div>
+                  <div class="font-body-md text-body-md text-on-surface-variant">Men's — SF1: IT vs HTM · SF2: CTE vs CRIM.</div>
+                  <div class="font-body-md text-body-md text-on-surface-variant">Women's — SF1: HTM vs CRIM · SF2: IT vs CTE.</div>
+                  <div class="font-body-md text-body-md text-on-surface-variant">Semifinals BO3 · 3rd/4th placement BO3 · Grand Final BO5.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-4 flex flex-col gap-lg">
+          <div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-md">
+            <h3 class="font-label-caps text-label-caps text-on-surface-variant font-bold">TOURNAMENT PROGRESS</h3>
+            <div class="flex flex-col relative">
+              <div class="absolute left-[11px] top-4 bottom-4 w-[2px] bg-white/10"></div>
+              <div class="flex gap-md items-start py-sm relative">
+                <div class="w-6 h-6 rounded-full bg-secondary-container flex items-center justify-center z-10 animate-pulse shrink-0"><div class="w-2 h-2 rounded-full bg-on-secondary-container"></div></div>
+                <div class="flex flex-col -mt-1"><span class="font-body-md text-body-md text-on-surface font-bold">Registration</span><span class="font-body-md text-body-md text-primary font-bold" id="sidebar-deadline-text">Closes September 1, 2026</span></div>
+              </div>
+              <div class="flex gap-md items-start py-sm opacity-70 relative">
+                <div class="w-6 h-6 rounded-full bg-surface-container-highest border-2 border-outline-variant z-10 shrink-0"></div>
+                <div class="flex flex-col -mt-1"><span class="font-body-md text-body-md text-on-surface font-bold">Department brackets</span><span class="font-body-md text-body-md text-on-surface-variant">September 5 – 19</span></div>
+              </div>
+              <div class="flex gap-md items-start py-sm opacity-70 relative">
+                <div class="w-6 h-6 rounded-full bg-surface-container-highest border-2 border-outline-variant z-10 shrink-0"></div>
+                <div class="flex flex-col -mt-1"><span class="font-body-md text-body-md text-on-surface font-bold">Grand Finals Day</span><span class="font-body-md text-body-md text-on-surface-variant" id="sidebar-finals-text">October 2, 2026</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-sm">
+            <h3 class="font-label-caps text-label-caps text-on-surface-variant font-bold">WHERE &amp; WHEN</h3>
+            <div class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">wifi</span><span class="font-body-md text-body-md text-on-surface-variant">Every match is online — join from your own device and location.</span></div>
+            <div class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">videocam</span><span class="font-body-md text-body-md text-on-surface-variant">Officiated and streamed from the Computer Laboratory Annex Building.</span></div>
+            <div class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">calendar_today</span><span class="font-body-md text-body-md text-on-surface-variant">Student: every Saturday. Faculty: Fridays, September 11 &amp; 18.</span></div>
+            <div class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">schedule</span><span class="font-body-md text-body-md text-on-surface-variant">Be online and ready 15 minutes before your match time.</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer class="w-full bg-surface-container-lowest py-xl border-t border-white/10 relative z-10">
+  <div class="max-w-container-max mx-auto px-lg flex flex-col md:flex-row justify-between items-center gap-md text-center md:text-left">
+    <div class="flex flex-col gap-base">
+      <span class="font-label-caps text-label-caps text-on-surface">CEC ESPORTS INTRAMURALS 2026</span>
+      <span class="font-body-md text-body-md text-on-surface-variant">© 2026 CEC Blue Dragon Esports · Cebu Eastern College, Incorporated</span>
+    </div>
+    <div class="flex flex-wrap justify-center gap-md font-label-caps text-label-caps text-on-surface-variant">
+      <a class="hover:text-primary" href="index.html">HOME</a>
+      <a class="hover:text-primary" href="rules.html">RULES</a>
+      <a class="hover:text-primary" href="register-team.html">REGISTER</a>
+      <a class="hover:text-primary text-xs opacity-70" href="admin.html">STAFF PORTAL</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  // Mobile Nav Toggle
+  var t=document.getElementById('nav-toggle'),n=document.getElementById('mobile-nav'),i=document.getElementById('nav-toggle-icon');
+  if(t&&n){
+    t.addEventListener('click',function(){
+      var open=n.classList.contains('hidden');
+      n.classList.toggle('hidden',!open);
+      n.classList.toggle('flex',open);
+      t.setAttribute('aria-expanded',String(open));
+      if(i)i.textContent=open?'close':'menu';
+    });
+  }
+
+  // Audio Fallback Player Control
+  const fallbackVideo = document.getElementById('stream-fallback-video');
+  const audioBtn = document.getElementById('stream-audio-btn');
+  const audioIcon = document.getElementById('stream-audio-icon');
+  const audioText = document.getElementById('stream-audio-text');
+
+  if(audioBtn && fallbackVideo) {
+    audioBtn.addEventListener('click', function() {
+      fallbackVideo.muted = !fallbackVideo.muted;
+      audioIcon.textContent = fallbackVideo.muted ? 'volume_off' : 'volume_up';
+      audioText.textContent = fallbackVideo.muted ? 'UNMUTE' : 'MUTE';
+    });
+  }
+
+  // Live Stream & Match State Management
+  const DEPT_LOGOS = {
+    'IT': 'assets/IT.png',
+    'HTM': 'assets/HTM.png',
+    'CTE': 'assets/CTE.png',
+    'CRIM': 'assets/CRIM.png',
+    'Faculty': 'assets/school_logo.jpg'
+  };
+
+  const DEFAULT_STATE = {
+    streamUrl: '',
+    stageTitle: 'MEN\'S DIVISION · SEMIFINALS (BO3)',
+    formatBadge: 'BO3 · GAME 3',
+    statusNote: 'MATCH POINT · MAP: SANCTUM',
+    team1Name: 'IT TITAN DRAGONS',
+    team1Dept: 'IT',
+    team1Score: '2',
+    team1Icon: 'assets/icons/lorc/dragon-head.svg',
+    team1Seed: '3-0 · SEED #1',
+    team1Sub: 'College of Computer Studies',
+    team2Name: 'CRIM IRON WEREWOLVES',
+    team2Dept: 'CRIM',
+    team2Score: '1',
+    team2Icon: 'assets/icons/lorc/werewolf.svg',
+    team2Seed: '3-0 · SEED #2',
+    team2Sub: 'College of Criminology',
+    regDeadline: 'September 1, 2026',
+    finalsDate: 'October 2, 2026'
+  };
+
+  function getLiveState() {
+    try {
+      const saved = localStorage.getItem('CECLiveMatchState');
+      return saved ? JSON.parse(saved) : DEFAULT_STATE;
+    } catch(e) {
+      return DEFAULT_STATE;
+    }
+  }
+
+  function saveLiveState(state) {
+    try {
+      localStorage.setItem('CECLiveMatchState', JSON.stringify(state));
+    } catch(e) {}
+  }
+
+  // Parse various video streaming URLs to embeddable formats
+  function formatStreamEmbedUrl(url) {
+    if (!url || !url.trim()) return '';
+    url = url.trim();
+
+    // YouTube URLs (watch?v=, youtu.be/, youtube.com/live/, youtube.com/embed/)
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      let videoId = '';
+      if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1].split(/[?&]/)[0];
+      } else if (url.includes('youtube.com/live/')) {
+        videoId = url.split('youtube.com/live/')[1].split(/[?&]/)[0];
+      } else if (url.includes('youtube.com/watch')) {
+        const match = url.match(/[?&]v=([^&]+)/);
+        if (match) videoId = match[1];
+      } else if (url.includes('youtube.com/embed/')) {
+        videoId = url.split('youtube.com/embed/')[1].split(/[?&]/)[0];
+      }
+      if (videoId) {
+        return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&rel=0`;
+      }
+    }
+
+    // Twitch
+    if (url.includes('twitch.tv/')) {
+      const channel = url.split('twitch.tv/')[1].split(/[?&/]/)[0];
+      return `https://player.twitch.tv/?channel=${channel}&parent=${window.location.hostname || 'localhost'}&autoplay=true`;
+    }
+
+    // Facebook / Discord / Direct embed
+    return url;
+  }
+
+  function renderLiveArena() {
+    const state = getLiveState();
+
+    // Text & Scores
+    document.getElementById('live-stage-title').textContent = 'CEC ESPORTS ARENA · ' + state.stageTitle;
+    document.getElementById('match-format-badge').textContent = state.formatBadge;
+    document.getElementById('match-status-note').textContent = state.statusNote;
+
+    // Team 1
+    document.getElementById('team1-name-display').textContent = state.team1Name;
+    document.getElementById('team1-score-display').textContent = state.team1Score;
+    document.getElementById('team1-score-display-mob').textContent = state.team1Score;
+    document.getElementById('team1-dept-tag').textContent = (state.team1Dept || 'IT') + ' DEPARTMENT';
+    document.getElementById('team1-standing-seed').textContent = state.team1Seed;
+    document.getElementById('team1-sub-desc').textContent = state.team1Sub;
+    document.getElementById('team1-emblem-img').src = state.team1Icon || 'assets/icons/lorc/dragon-head.svg';
+    document.getElementById('team1-dept-logo').src = DEPT_LOGOS[state.team1Dept] || 'assets/IT.png';
+    document.getElementById('team1-roster-title').textContent = state.team1Name + ' — Lineup';
+    document.getElementById('team1-roster-dept-logo').src = DEPT_LOGOS[state.team1Dept] || 'assets/IT.png';
+
+    // Team 2
+    document.getElementById('team2-name-display').textContent = state.team2Name;
+    document.getElementById('team2-score-display').textContent = state.team2Score;
+    document.getElementById('team2-score-display-mob').textContent = state.team2Score;
+    document.getElementById('team2-dept-tag').textContent = (state.team2Dept || 'CRIM') + ' DEPARTMENT';
+    document.getElementById('team2-standing-seed').textContent = state.team2Seed;
+    document.getElementById('team2-sub-desc').textContent = state.team2Sub;
+    document.getElementById('team2-emblem-img').src = state.team2Icon || 'assets/icons/lorc/werewolf.svg';
+    document.getElementById('team2-dept-logo').src = DEPT_LOGOS[state.team2Dept] || 'assets/CRIM.png';
+    document.getElementById('team2-roster-title').textContent = state.team2Name + ' — Lineup';
+    document.getElementById('team2-roster-dept-logo').src = DEPT_LOGOS[state.team2Dept] || 'assets/CRIM.png';
+
+    // Dates
+    if(document.getElementById('reg-status-badge')) document.getElementById('reg-status-badge').textContent = 'REGISTRATION CLOSES ' + (state.regDeadline || 'SEPTEMBER 1, 2026').toUpperCase();
+    if(document.getElementById('sidebar-deadline-text')) document.getElementById('sidebar-deadline-text').textContent = 'Closes ' + (state.regDeadline || 'September 1, 2026');
+    if(document.getElementById('sidebar-finals-text')) document.getElementById('sidebar-finals-text').textContent = state.finalsDate || 'October 2, 2026';
+
+    // Video Stream Frame vs Fallback
+    const iframe = document.getElementById('live-stream-frame');
+    const fallback = document.getElementById('fallback-video-container');
+    const sourceLabel = document.getElementById('stream-source-label');
+
+    const embedUrl = formatStreamEmbedUrl(state.streamUrl);
+    if (embedUrl) {
+      iframe.src = embedUrl;
+      iframe.classList.remove('hidden');
+      fallback.classList.add('hidden');
+      sourceLabel.textContent = 'Live External Observer Feed';
+    } else {
+      iframe.src = '';
+      iframe.classList.add('hidden');
+      fallback.classList.remove('hidden');
+      sourceLabel.textContent = 'Computer Laboratory Annex Building';
+    }
+  }
+
+  // Quick Stream Bar
+  const quickStreamInput = document.getElementById('quick-stream-url');
+  const applyStreamBtn = document.getElementById('apply-stream-url-btn');
+  if(applyStreamBtn && quickStreamInput) {
+    applyStreamBtn.addEventListener('click', function() {
+      const state = getLiveState();
+      state.streamUrl = quickStreamInput.value.trim();
+      saveLiveState(state);
+      renderLiveArena();
+      quickStreamInput.value = '';
+    });
+  }
+
+  // Modal Controls
+  const modal = document.getElementById('live-settings-modal');
+  const openBtn = document.getElementById('open-live-settings-btn');
+  const quickEditBtn = document.getElementById('quick-edit-btn');
+  const closeBtn = document.getElementById('close-live-settings-btn');
+  const cancelBtn = document.getElementById('cancel-live-settings-btn');
+  const saveBtn = document.getElementById('save-live-settings-btn');
+  const resetBtn = document.getElementById('reset-live-defaults-btn');
+
+  function openSettings() {
+    const s = getLiveState();
+    document.getElementById('setting-stream-url').value = s.streamUrl || '';
+    document.getElementById('setting-stage-title').value = s.stageTitle || '';
+    document.getElementById('setting-format-badge').value = s.formatBadge || '';
+    document.getElementById('setting-team1-name').value = s.team1Name || '';
+    document.getElementById('setting-team1-score').value = s.team1Score || '0';
+    document.getElementById('setting-team1-dept').value = s.team1Dept || 'IT';
+    document.getElementById('setting-team1-icon').value = s.team1Icon || 'assets/icons/lorc/dragon-head.svg';
+    document.getElementById('setting-team2-name').value = s.team2Name || '';
+    document.getElementById('setting-team2-score').value = s.team2Score || '0';
+    document.getElementById('setting-team2-dept').value = s.team2Dept || 'CRIM';
+    document.getElementById('setting-team2-icon').value = s.team2Icon || 'assets/icons/lorc/werewolf.svg';
+    document.getElementById('setting-reg-deadline').value = s.regDeadline || 'September 1, 2026';
+    document.getElementById('setting-finals-date').value = s.finalsDate || 'October 2, 2026';
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function closeSettings() {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  if (openBtn) openBtn.addEventListener('click', openSettings);
+  if (quickEditBtn) quickEditBtn.addEventListener('click', openSettings);
+  if (closeBtn) closeBtn.addEventListener('click', closeSettings);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeSettings);
+
+  if (saveBtn) {
+    saveBtn.addEventListener('click', function() {
+      const s = getLiveState();
+      s.streamUrl = document.getElementById('setting-stream-url').value.trim();
+      s.stageTitle = document.getElementById('setting-stage-title').value.trim() || 'CEC ESPORTS ARENA';
+      s.formatBadge = document.getElementById('setting-format-badge').value.trim() || 'BO3';
+      s.team1Name = document.getElementById('setting-team1-name').value.trim() || 'Team 1';
+      s.team1Score = document.getElementById('setting-team1-score').value || '0';
+      s.team1Dept = document.getElementById('setting-team1-dept').value;
+      s.team1Icon = document.getElementById('setting-team1-icon').value;
+      s.team2Name = document.getElementById('setting-team2-name').value.trim() || 'Team 2';
+      s.team2Score = document.getElementById('setting-team2-score').value || '0';
+      s.team2Dept = document.getElementById('setting-team2-dept').value;
+      s.team2Icon = document.getElementById('setting-team2-icon').value;
+      s.regDeadline = document.getElementById('setting-reg-deadline').value.trim() || 'September 1, 2026';
+      s.finalsDate = document.getElementById('setting-finals-date').value.trim() || 'October 2, 2026';
+
+      saveLiveState(s);
+      renderLiveArena();
+      closeSettings();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+      if (confirm('Reset live stream and match info to defaults?')) {
+        saveLiveState(DEFAULT_STATE);
+        renderLiveArena();
+        openSettings();
+      }
+    });
+  }
+
+  // Initial Render on page load
+  renderLiveArena();
+})();
+</script>
+</body></html>

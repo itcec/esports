@@ -357,6 +357,7 @@
 </div>
 </div>
 </div>
+</div>
 <script src="assets/js/registration-api.js"></script>
 <script>
   (function(){
@@ -371,23 +372,108 @@
     });
   })();
 
-  const AVAILABLE_EMBLEMS = [
-    { id: 'dragon', name: 'Dragon Head', path: 'assets/icons/lorc/dragon-head.svg' },
-    { id: 'wyvern', name: 'Wyvern', path: 'assets/icons/lorc/wyvern.svg' },
-    { id: 'double-dragon', name: 'Double Dragon', path: 'assets/icons/lorc/double-dragon.svg' },
-    { id: 'hydra', name: 'Hydra', path: 'assets/icons/lorc/hydra.svg' },
-    { id: 'werewolf', name: 'Werewolf', path: 'assets/icons/lorc/werewolf.svg' },
-    { id: 'minotaur', name: 'Minotaur', path: 'assets/icons/lorc/minotaur.svg' },
-    { id: 'griffin', name: 'Griffin', path: 'assets/icons/delapouite/griffin-symbol.svg' },
-    { id: 'oni', name: 'Oni Demon', path: 'assets/icons/delapouite/oni.svg' },
-    { id: 'horned-skull', name: 'Horned Skull', path: 'assets/icons/lorc/horned-skull.svg' },
-    { id: 'diablo-skull', name: 'Diablo Skull', path: 'assets/icons/lorc/diablo-skull.svg' },
-    { id: 'daemon-skull', name: 'Daemon Skull', path: 'assets/icons/lorc/daemon-skull.svg' },
-    { id: 'ice-golem', name: 'Ice Golem', path: 'assets/icons/delapouite/ice-golem.svg' },
-    { id: 'anubis', name: 'Anubis', path: 'assets/icons/delapouite/anubis.svg' },
-    { id: 'horus', name: 'Horus Falcon', path: 'assets/icons/delapouite/horus.svg' },
-    { id: 'kraken', name: 'Kraken', path: 'assets/icons/delapouite/kraken-tentacle.svg' },
-    { id: 'devil-mask', name: 'Devil Mask', path: 'assets/icons/delapouite/devil-mask.svg' }
+  // All 120+ SVG Emblems from assets/icons/
+  const ALL_EMBLEMS = [
+    // Top Popular (Quick bar)
+    { id: 'dragon-head', name: 'Dragon Head', path: 'assets/icons/lorc/dragon-head.svg', cat: 'dragon' },
+    { id: 'double-dragon', name: 'Twin Dragons', path: 'assets/icons/lorc/double-dragon.svg', cat: 'dragon' },
+    { id: 'wyvern', name: 'Wyvern', path: 'assets/icons/lorc/wyvern.svg', cat: 'dragon' },
+    { id: 'sea-dragon', name: 'Sea Dragon', path: 'assets/icons/lorc/sea-dragon.svg', cat: 'dragon' },
+    { id: 'drakkar-dragon', name: 'Drakkar Dragon', path: 'assets/icons/delapouite/drakkar-dragon.svg', cat: 'dragon' },
+    { id: 'spiked-dragon-head', name: 'Spiked Dragon', path: 'assets/icons/delapouite/spiked-dragon-head.svg', cat: 'dragon' },
+    { id: 'werewolf', name: 'Werewolf', path: 'assets/icons/lorc/werewolf.svg', cat: 'beast' },
+    { id: 'hydra', name: 'Hydra', path: 'assets/icons/lorc/hydra.svg', cat: 'dragon' },
+    { id: 'minotaur', name: 'Minotaur', path: 'assets/icons/lorc/minotaur.svg', cat: 'beast' },
+    { id: 'griffin-symbol', name: 'Griffin Crest', path: 'assets/icons/delapouite/griffin-symbol.svg', cat: 'beast' },
+    { id: 'oni', name: 'Oni Demon', path: 'assets/icons/delapouite/oni.svg', cat: 'mythic' },
+    { id: 'horus', name: 'Horus Falcon', path: 'assets/icons/delapouite/horus.svg', cat: 'mythic' },
+    { id: 'anubis', name: 'Anubis', path: 'assets/icons/delapouite/anubis.svg', cat: 'mythic' },
+    { id: 'ice-golem', name: 'Ice Golem', path: 'assets/icons/delapouite/ice-golem.svg', cat: 'mythic' },
+    { id: 'rock-golem', name: 'Rock Golem', path: 'assets/icons/delapouite/rock-golem.svg', cat: 'mythic' },
+    { id: 'golem-head', name: 'Golem Head', path: 'assets/icons/delapouite/golem-head.svg', cat: 'mythic' },
+    { id: 'kraken-tentacle', name: 'Kraken', path: 'assets/icons/delapouite/kraken-tentacle.svg', cat: 'beast' },
+    { id: 'horned-skull', name: 'Horned Skull', path: 'assets/icons/lorc/horned-skull.svg', cat: 'skull' },
+    { id: 'diablo-skull', name: 'Diablo Skull', path: 'assets/icons/lorc/diablo-skull.svg', cat: 'skull' },
+    { id: 'daemon-skull', name: 'Daemon Skull', path: 'assets/icons/lorc/daemon-skull.svg', cat: 'skull' },
+    { id: 'cracked-alien-skull', name: 'Alien Skull', path: 'assets/icons/lorc/cracked-alien-skull.svg', cat: 'skull' },
+    { id: 'grim-reaper', name: 'Grim Reaper', path: 'assets/icons/lorc/grim-reaper.svg', cat: 'skull' },
+    { id: 'devil-mask', name: 'Devil Mask', path: 'assets/icons/delapouite/devil-mask.svg', cat: 'mythic' },
+    { id: 'djinn', name: 'Djinn Spirit', path: 'assets/icons/delapouite/djinn.svg', cat: 'mythic' },
+    { id: 'egyptian-sphinx', name: 'Egyptian Sphinx', path: 'assets/icons/delapouite/egyptian-sphinx.svg', cat: 'mythic' },
+    { id: 'greek-sphinx', name: 'Greek Sphinx', path: 'assets/icons/delapouite/greek-sphinx.svg', cat: 'mythic' },
+    { id: 'gargoyle', name: 'Gargoyle', path: 'assets/icons/delapouite/gargoyle.svg', cat: 'mythic' },
+    { id: 'giant', name: 'Giant Titan', path: 'assets/icons/delapouite/giant.svg', cat: 'mythic' },
+    { id: 'cyclops', name: 'Cyclops', path: 'assets/icons/lorc/cyclops.svg', cat: 'mythic' },
+    { id: 'jawless-cyclop', name: 'Jawless Cyclop', path: 'assets/icons/delapouite/jawless-cyclop.svg', cat: 'mythic' },
+    { id: 'goblin-head', name: 'Goblin Head', path: 'assets/icons/delapouite/goblin-head.svg', cat: 'beast' },
+    { id: 'orc-head', name: 'Orc Head', path: 'assets/icons/delapouite/orc-head.svg', cat: 'beast' },
+    { id: 'ogre', name: 'Ogre', path: 'assets/icons/delapouite/ogre.svg', cat: 'beast' },
+    { id: 'centaur', name: 'Centaur', path: 'assets/icons/delapouite/centaur.svg', cat: 'mythic' },
+    { id: 'unicorn', name: 'Unicorn', path: 'assets/icons/delapouite/unicorn.svg', cat: 'mythic' },
+    { id: 'mermaid', name: 'Mermaid', path: 'assets/icons/delapouite/mermaid.svg', cat: 'mythic' },
+    { id: 'mummy-head', name: 'Mummy Head', path: 'assets/icons/delapouite/mummy-head.svg', cat: 'skull' },
+    { id: 'vampire-dracula', name: 'Dracula', path: 'assets/icons/delapouite/vampire-dracula.svg', cat: 'skull' },
+    { id: 'resting-vampire', name: 'Vampire', path: 'assets/icons/delapouite/resting-vampire.svg', cat: 'skull' },
+    { id: 'shambling-zombie', name: 'Zombie', path: 'assets/icons/delapouite/shambling-zombie.svg', cat: 'skull' },
+    { id: 'floating-ghost', name: 'Ghost', path: 'assets/icons/delapouite/floating-ghost.svg', cat: 'skull' },
+    { id: 'spectre', name: 'Spectre', path: 'assets/icons/lorc/spectre.svg', cat: 'skull' },
+    { id: 'haunting', name: 'Haunting Wraith', path: 'assets/icons/lorc/haunting.svg', cat: 'skull' },
+    { id: 'elysium-shade', name: 'Elysium Shade', path: 'assets/icons/delapouite/elysium-shade.svg', cat: 'skull' },
+    { id: 'ifrit', name: 'Ifrit Fire Lord', path: 'assets/icons/lorc/ifrit.svg', cat: 'mythic' },
+    { id: 'harpy', name: 'Harpy', path: 'assets/icons/lorc/harpy.svg', cat: 'beast' },
+    { id: 'lizardman', name: 'Lizardman', path: 'assets/icons/lorc/lizardman.svg', cat: 'beast' },
+    { id: 'triton-head', name: 'Triton Sea Lord', path: 'assets/icons/lorc/triton-head.svg', cat: 'mythic' },
+    { id: 'dinosaur-rex', name: 'T-Rex Skull', path: 'assets/icons/lorc/dinosaur-rex.svg', cat: 'beast' },
+    { id: 'dinosaur-bones', name: 'Dino Bones', path: 'assets/icons/lorc/dinosaur-bones.svg', cat: 'beast' },
+    { id: 'beast-eye', name: 'Beast Eye', path: 'assets/icons/lorc/beast-eye.svg', cat: 'beast' },
+    { id: 'spider-eye', name: 'Spider Eye', path: 'assets/icons/delapouite/spider-eye.svg', cat: 'beast' },
+    { id: 'bestial-fangs', name: 'Bestial Fangs', path: 'assets/icons/lorc/bestial-fangs.svg', cat: 'beast' },
+    { id: 'pretty-fangs', name: 'Viper Fangs', path: 'assets/icons/lorc/pretty-fangs.svg', cat: 'beast' },
+    { id: 'evil-bat', name: 'Evil Bat', path: 'assets/icons/lorc/evil-bat.svg', cat: 'beast' },
+    { id: 'swamp-bat', name: 'Swamp Bat', path: 'assets/icons/delapouite/swamp-bat.svg', cat: 'beast' },
+    { id: 'sea-creature', name: 'Sea Leviathan', path: 'assets/icons/skoll/sea-creature.svg', cat: 'beast' },
+    { id: 'fish-monster', name: 'Fish Monster', path: 'assets/icons/delapouite/fish-monster.svg', cat: 'beast' },
+    { id: 'troll', name: 'War Troll', path: 'assets/icons/skoll/troll.svg', cat: 'beast' },
+    { id: 'brute', name: 'Cyber Brute', path: 'assets/icons/delapouite/brute.svg', cat: 'beast' },
+    { id: 'sasquatch', name: 'Sasquatch', path: 'assets/icons/delapouite/sasquatch.svg', cat: 'beast' },
+    { id: 'troglodyte', name: 'Troglodyte', path: 'assets/icons/delapouite/troglodyte.svg', cat: 'beast' },
+    { id: 'carnivorous-plant', name: 'Carnivore Plant', path: 'assets/icons/delapouite/carnivorous-plant.svg', cat: 'beast' },
+    { id: 'evil-tree', name: 'Treant', path: 'assets/icons/lorc/evil-tree.svg', cat: 'mythic' },
+    { id: 'ent-mouth', name: 'Ancient Ent', path: 'assets/icons/lorc/ent-mouth.svg', cat: 'mythic' },
+    { id: 'tree-face', name: 'Forest Spirit', path: 'assets/icons/cathelineau/tree-face.svg', cat: 'mythic' },
+    { id: 'medusa-head', name: 'Medusa', path: 'assets/icons/cathelineau/medusa-head.svg', cat: 'mythic' },
+    { id: 'fomorian', name: 'Fomorian Giant', path: 'assets/icons/cathelineau/fomorian.svg', cat: 'mythic' },
+    { id: 'bad-gnome', name: 'Bad Gnome', path: 'assets/icons/cathelineau/bad-gnome.svg', cat: 'mythic' },
+    { id: 'witch-face', name: 'Shadow Witch', path: 'assets/icons/cathelineau/witch-face.svg', cat: 'mythic' },
+    { id: 'witch-flight', name: 'Witch Flight', path: 'assets/icons/lorc/witch-flight.svg', cat: 'mythic' },
+    { id: 'fairy', name: 'Fairy Blade', path: 'assets/icons/lorc/fairy.svg', cat: 'mythic' },
+    { id: 'kenku-head', name: 'Raven Kenku', path: 'assets/icons/delapouite/kenku-head.svg', cat: 'beast' },
+    { id: 'horned-reptile', name: 'Horned Basilisk', path: 'assets/icons/delapouite/horned-reptile.svg', cat: 'beast' },
+    { id: 'toad-teeth', name: 'Venom Toad', path: 'assets/icons/lorc/toad-teeth.svg', cat: 'beast' },
+    { id: 'spark-spirit', name: 'Spark Spirit', path: 'assets/icons/lorc/spark-spirit.svg', cat: 'mythic' },
+    { id: 'slime', name: 'Toxic Slime', path: 'assets/icons/delapouite/slime.svg', cat: 'beast' },
+    { id: 'transparent-slime', name: 'Acid Ooze', path: 'assets/icons/cathelineau/transparent-slime.svg', cat: 'beast' },
+    { id: 'alien-bug', name: 'Alien Swarm', path: 'assets/icons/delapouite/alien-bug.svg', cat: 'beast' },
+    { id: 'alien-egg', name: 'Alien Hive', path: 'assets/icons/delapouite/alien-egg.svg', cat: 'beast' },
+    { id: 'metroid', name: 'Parasite Prime', path: 'assets/icons/delapouite/metroid.svg', cat: 'beast' },
+    { id: 'brain-tentacle', name: 'Mind Flayer', path: 'assets/icons/delapouite/brain-tentacle.svg', cat: 'beast' },
+    { id: 'floating-tentacles', name: 'Void Tentacles', path: 'assets/icons/delapouite/floating-tentacles.svg', cat: 'beast' },
+    { id: 'purple-tentacle', name: 'Chasm Tentacle', path: 'assets/icons/delapouite/purple-tentacle.svg', cat: 'beast' },
+    { id: 'mimic-chest', name: 'Loot Mimic', path: 'assets/icons/delapouite/mimic-chest.svg', cat: 'mythic' },
+    { id: 'thwomp', name: 'Iron Crusher', path: 'assets/icons/delapouite/thwomp.svg', cat: 'mythic' },
+    { id: 'bullet-bill', name: 'Cyber Missile', path: 'assets/icons/delapouite/bullet-bill.svg', cat: 'beast' },
+    { id: 'pick-of-destiny', name: 'Destiny Crest', path: 'assets/icons/delapouite/pick-of-destiny.svg', cat: 'mythic' },
+    { id: 'tarot-15-the-devil', name: 'The Devil Tarot', path: 'assets/icons/caro-asercion/tarot-15-the-devil.svg', cat: 'mythic' },
+    { id: 'cloaked-figure', name: 'Shadow Rider', path: 'assets/icons/caro-asercion/cloaked-figure-on-horseback.svg', cat: 'mythic' },
+    { id: 'imp-laugh', name: 'Chaos Imp', path: 'assets/icons/lorc/imp-laugh.svg', cat: 'mythic' },
+    { id: 'imp', name: 'Shadow Imp', path: 'assets/icons/lorc/imp.svg', cat: 'mythic' },
+    { id: 'evil-minion', name: 'Evil Minion', path: 'assets/icons/lorc/evil-minion.svg', cat: 'mythic' },
+    { id: 'evil-book', name: 'Spell Grimoire', path: 'assets/icons/lorc/evil-book.svg', cat: 'mythic' },
+    { id: 'evil-moon', name: 'Eclipse Moon', path: 'assets/icons/lorc/evil-moon.svg', cat: 'mythic' },
+    { id: 'evil-comet', name: 'Doom Comet', path: 'assets/icons/lorc/evil-comet.svg', cat: 'mythic' },
+    { id: 'dragon-spiral', name: 'Dragon Spiral', path: 'assets/icons/lorc/dragon-spiral.svg', cat: 'dragon' },
+    { id: 'hydra-shot', name: 'Hydra Blast', path: 'assets/icons/lorc/hydra-shot.svg', cat: 'dragon' },
+    { id: 'faithtoken-dragon', name: 'Imperial Dragon', path: 'assets/icons/faithtoken/dragon-head.svg', cat: 'dragon' }
   ];
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -402,7 +488,7 @@
       if (swatch) swatch.checked = true;
     }
 
-    let selectedBadgeIcon = draft.badgeIcon || AVAILABLE_EMBLEMS[0].path;
+    let selectedBadgeIcon = draft.badgeIcon || ALL_EMBLEMS[0].path;
 
     const DEPT_OPTIONS = {
       "Men's": ["IT", "HTM", "CTE", "CRIM"],
@@ -426,32 +512,98 @@
     const badgePreview = document.getElementById('team-badge-preview');
     const badgeIconImg = document.getElementById('badge-icon-img');
     const badgeIconName = document.getElementById('badge-icon-name');
-    const grid = document.getElementById('emblem-selector-grid');
+    const quickGrid = document.getElementById('emblem-selector-grid');
     const colorInputs = document.querySelectorAll('input[name="team-color"]');
 
-    // Populate Emblem Grid
-    AVAILABLE_EMBLEMS.forEach(item => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'flex flex-col items-center justify-center p-2 rounded-lg border transition-all ' + 
-        (selectedBadgeIcon === item.path ? 'bg-primary/20 border-primary shadow-[0_0_10px_rgba(18,100,255,0.4)]' : 'bg-surface-container/60 border-white/10 hover:border-white/30');
-      btn.innerHTML = `<img src="${item.path}" alt="${item.name}" class="w-8 h-8 object-contain filter invert opacity-90" />
-                       <span class="text-[9px] font-label-caps text-on-surface-variant truncate w-full text-center mt-1">${item.name}</span>`;
-      btn.addEventListener('click', () => {
-        selectedBadgeIcon = item.path;
-        updateBadge();
-        // Update selection UI
-        grid.querySelectorAll('button').forEach(b => {
-          b.className = 'flex flex-col items-center justify-center p-2 rounded-lg border transition-all bg-surface-container/60 border-white/10 hover:border-white/30';
+    // Quick Selector (Top 16 Emblems)
+    const quickList = ALL_EMBLEMS.slice(0, 16);
+    function renderQuickGrid() {
+      quickGrid.innerHTML = '';
+      quickList.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'flex flex-col items-center justify-center p-2 rounded-lg border transition-all ' + 
+          (selectedBadgeIcon === item.path ? 'bg-primary/25 border-primary shadow-[0_0_10px_rgba(18,100,255,0.4)] scale-105' : 'bg-surface-container/60 border-white/10 hover:border-white/30');
+        btn.innerHTML = `<img src="${item.path}" alt="${item.name}" class="w-8 h-8 object-contain filter invert opacity-90" />
+                         <span class="text-[9px] font-label-caps text-on-surface-variant truncate w-full text-center mt-1">${item.name}</span>`;
+        btn.addEventListener('click', () => {
+          selectedBadgeIcon = item.path;
+          updateBadge();
+          renderQuickGrid();
         });
-        btn.className = 'flex flex-col items-center justify-center p-2 rounded-lg border transition-all bg-primary/20 border-primary shadow-[0_0_10px_rgba(18,100,255,0.4)]';
+        quickGrid.appendChild(btn);
       });
-      grid.appendChild(btn);
+    }
+    renderQuickGrid();
+
+    // Modal Handling & Filtering
+    const modal = document.getElementById('emblem-modal');
+    const openModalBtn = document.getElementById('open-emblem-modal-btn');
+    const closeModalBtn = document.getElementById('close-emblem-modal-btn');
+    const modalDoneBtn = document.getElementById('modal-done-btn');
+    const modalGrid = document.getElementById('modal-emblems-grid');
+    const modalSearch = document.getElementById('modal-emblem-search');
+    const catPills = document.querySelectorAll('.cat-pill');
+    let activeCat = 'all';
+
+    function openModal() {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      renderModalIcons();
+    }
+    function closeModal() {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      renderQuickGrid();
+    }
+    if (openModalBtn) openModalBtn.addEventListener('click', openModal);
+    if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+    if (modalDoneBtn) modalDoneBtn.addEventListener('click', closeModal);
+
+    function renderModalIcons() {
+      const q = (modalSearch.value || '').toLowerCase().trim();
+      const filtered = ALL_EMBLEMS.filter(e => {
+        const matchCat = activeCat === 'all' || e.cat === activeCat || (activeCat === 'dragon' && (e.cat === 'dragon' || e.id.includes('dragon') || e.id.includes('wyvern') || e.id.includes('hydra')));
+        const matchQ = !q || e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q);
+        return matchCat && matchQ;
+      });
+
+      modalGrid.innerHTML = '';
+      const noFound = document.getElementById('no-icons-found');
+      if (noFound) noFound.classList.toggle('hidden', filtered.length > 0);
+
+      filtered.forEach(item => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isSelected = selectedBadgeIcon === item.path;
+        btn.className = 'flex flex-col items-center justify-center p-3 rounded-xl border transition-all group ' + 
+          (isSelected ? 'bg-primary/25 border-primary shadow-[0_0_15px_rgba(18,100,255,0.45)] scale-105' : 'bg-surface-container/70 border-white/10 hover:border-primary/40 hover:bg-surface-container-high');
+        btn.innerHTML = `<img src="${item.path}" alt="${item.name}" class="w-10 h-10 object-contain filter invert opacity-90 group-hover:scale-110 transition-transform" />
+                         <span class="text-[10px] font-label-caps text-on-surface truncate w-full text-center mt-1.5">${item.name}</span>`;
+        btn.addEventListener('click', () => {
+          selectedBadgeIcon = item.path;
+          updateBadge();
+          renderModalIcons();
+        });
+        modalGrid.appendChild(btn);
+      });
+    }
+
+    if (modalSearch) modalSearch.addEventListener('input', renderModalIcons);
+    catPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        catPills.forEach(p => {
+          p.className = 'cat-pill px-3 py-1.5 rounded-lg text-xs font-label-caps text-on-surface-variant hover:text-on-surface bg-surface-container-lowest border border-white/10';
+        });
+        pill.className = 'cat-pill active px-3 py-1.5 rounded-lg text-xs font-label-caps font-bold bg-primary text-on-primary';
+        activeCat = pill.dataset.cat;
+        renderModalIcons();
+      });
     });
 
     function updateBadge() {
       if (badgeIconImg) badgeIconImg.src = selectedBadgeIcon;
-      const curItem = AVAILABLE_EMBLEMS.find(e => e.path === selectedBadgeIcon);
+      const curItem = ALL_EMBLEMS.find(e => e.path === selectedBadgeIcon);
       if (badgeIconName && curItem) badgeIconName.textContent = curItem.name.toUpperCase();
       const checked = document.querySelector('input[name="team-color"]:checked');
       if (checked && badgePreview) badgePreview.style.background = checked.dataset.color;

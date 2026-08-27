@@ -192,9 +192,24 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   var tabs = document.getElementById('division-tabs');
   var body = document.getElementById('bracket-body');
 
+  var DEPT_CRESTS = {
+    'IT': 'assets/IT.png',
+    'HTM': 'assets/HTM.png',
+    'CTE': 'assets/CTE.png',
+    'CRIM': 'assets/CRIM.png',
+    'HM': 'assets/HTM.png',
+    'TM': 'assets/HTM.png'
+  };
+
   function renderMatchCard(m, highlight) {
     var a = m.a || { name: "TBD", icon: "assets/icons/lorc/dragon-head.svg", dept: "PENDING" };
     var b = m.b || { name: "TBD", icon: "assets/icons/lorc/wyvern.svg", dept: "PENDING" };
+
+    var aDeptKey = (a.dept || a.name || '').match(/IT|HTM|CTE|CRIM|HM|TM/);
+    var aLogoHtml = (aDeptKey && DEPT_CRESTS[aDeptKey[0]]) ? '<img src="' + DEPT_CRESTS[aDeptKey[0]] + '" class="w-4 h-4 object-contain ml-1 shrink-0" alt="Dept" />' : '';
+
+    var bDeptKey = (b.dept || b.name || '').match(/IT|HTM|CTE|CRIM|HM|TM/);
+    var bLogoHtml = (bDeptKey && DEPT_CRESTS[bDeptKey[0]]) ? '<img src="' + DEPT_CRESTS[bDeptKey[0]] + '" class="w-4 h-4 object-contain ml-1 shrink-0" alt="Dept" />' : '';
 
     return '<div class="bg-surface-container glass-hover rounded-xl overflow-hidden border ' + 
       (highlight ? 'border-primary/50 shadow-[0_0_25px_rgba(18,100,255,0.35)]' : 'border-white/10 shadow-md') + '">' +
@@ -213,7 +228,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
               '<img src="' + (a.icon || 'assets/icons/lorc/dragon-head.svg') + '" alt="Emblem" class="w-5 h-5 object-contain filter invert drop-shadow" />' +
             '</div>' +
             '<div class="flex flex-col min-w-0">' +
-              '<span class="font-bold text-on-surface text-sm truncate cyber-title">' + a.name + '</span>' +
+              '<div class="flex items-center gap-1"><span class="font-bold text-on-surface text-sm truncate cyber-title">' + a.name + '</span>' + aLogoHtml + '</div>' +
               '<span class="text-[10px] font-label-caps text-on-surface-variant">' + (a.dept || '') + '</span>' +
             '</div>' +
           '</div>' +
@@ -226,7 +241,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
               '<img src="' + (b.icon || 'assets/icons/lorc/werewolf.svg') + '" alt="Emblem" class="w-5 h-5 object-contain filter invert drop-shadow" />' +
             '</div>' +
             '<div class="flex flex-col min-w-0">' +
-              '<span class="font-bold text-on-surface text-sm truncate cyber-title">' + b.name + '</span>' +
+              '<div class="flex items-center gap-1"><span class="font-bold text-on-surface text-sm truncate cyber-title">' + b.name + '</span>' + bLogoHtml + '</div>' +
               '<span class="text-[10px] font-label-caps text-on-surface-variant">' + (b.dept || '') + '</span>' +
             '</div>' +
           '</div>' +
