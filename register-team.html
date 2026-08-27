@@ -1,4 +1,4 @@
-<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Register — Step 1 · Team Info — CEC Esports Intramurals 2026</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
 .cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
 .cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
@@ -22,20 +22,19 @@
 <header class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-lg">
 <div class="max-w-2xl">
 <div class="flex items-center gap-xs mb-md">
-<span class="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_12px_rgba(180,197,255,0.8)]"></span>
-<p class="font-label-caps text-label-caps text-primary tracking-widest uppercase cyber-mono">Mobile Legends: Bang Bang Collegiate Series</p>
+<span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+<p class="font-label-caps text-label-caps text-primary tracking-widest uppercase cyber-mono">CEC Esports Intramurals 2026 · Mobile Legends</p>
 </div>
-<h1 class="font-headline-xl text-headline-xl text-on-background mb-xs uppercase tracking-tighter cyber-title">
-          Tournament Registration
+<h1 class="font-headline-xl text-headline-xl text-on-background mb-xs uppercase tracking-tight cyber-title">
+          Team Registration
         </h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant">
-          Complete the multi-step verification process to secure your team's slot in the upcoming seasonal qualifiers.
+          Complete the four steps below to enter your team. Registration closes September 1, 2026.
         </p>
 </div>
 <!-- Quick Status -->
-<div class="bg-surface-container/80 backdrop-blur-sm rounded-lg p-md flex items-center gap-md relative overflow-hidden group hover:bg-surface-container transition-colors duration-300 shadow-lg">
-<div class="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-<div class="w-12 h-12 bg-surface-variant rounded-full flex items-center justify-center relative">
+<div class="bg-surface-container border border-white/10 rounded-lg p-md flex items-center gap-md">
+<div class="w-12 h-12 bg-surface-variant rounded-full flex items-center justify-center shrink-0">
 <span class="material-symbols-outlined text-on-surface-variant">verified_user</span>
 </div>
 <div>
@@ -135,11 +134,28 @@
 <div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
 </div>
 </div>
-<!-- Course / Program -->
+<!-- Division -->
 <div class="flex flex-col relative group">
-<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="course">Course / Program <span class="text-error">*</span></label>
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="division">Division <span class="text-error">*</span></label>
 <div class="relative">
-<input class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all placeholder:text-outline shadow-sm border border-transparent focus:border-primary/50" id="course" placeholder="e.g. BS Computer Science" required="" type="text"/>
+<select class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all shadow-sm border border-transparent focus:border-primary/50 appearance-none cursor-pointer" id="division" required="">
+<option disabled="" selected="" value="">Select division</option>
+<option value="Men's">Student — Men's (College)</option>
+<option value="Women's">Student — Women's (College)</option>
+<option value="Faculty">Faculty Exhibition</option>
+</select>
+<div class="absolute right-md top-1/2 -translate-y-1/2 pointer-events-none"><span class="material-symbols-outlined text-outline">expand_more</span></div>
+<div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
+</div>
+</div>
+<!-- Department -->
+<div class="flex flex-col relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="department">Department <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all shadow-sm border border-transparent focus:border-primary/50 appearance-none cursor-pointer" id="department" required="">
+<option disabled="" selected="" value="">Select division first</option>
+</select>
+<div class="absolute right-md top-1/2 -translate-y-1/2 pointer-events-none"><span class="material-symbols-outlined text-outline">expand_more</span></div>
 <div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
 </div>
 </div>
@@ -147,25 +163,7 @@
 <div class="flex flex-col relative group">
 <label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="captain-name">Captain IGN / Name <span class="text-error">*</span></label>
 <div class="relative">
-<input class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all placeholder:text-outline shadow-sm border border-transparent focus:border-primary/50" id="captain-name" placeholder="e.g. xX_Slayer_Xx" required="" type="text"/>
-<div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
-</div>
-</div>
-<!-- Year Level -->
-<div class="flex flex-col relative group">
-<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="year-level">Year Level <span class="text-error">*</span></label>
-<div class="relative">
-<select class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all shadow-sm border border-transparent focus:border-primary/50 appearance-none cursor-pointer" id="year-level">
-<option disabled="" selected="" value="">Select Year</option>
-<option value="1">Freshman</option>
-<option value="2">Sophomore</option>
-<option value="3">Junior</option>
-<option value="4">Senior</option>
-<option value="5">Graduate</option>
-</select>
-<div class="absolute right-md top-1/2 -translate-y-1/2 pointer-events-none">
-<span class="material-symbols-outlined text-outline">expand_more</span>
-</div>
+<input class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all placeholder:text-outline shadow-sm border border-transparent focus:border-primary/50" id="captain-name" placeholder="Captain's in-game name" required="" type="text"/>
 <div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
 </div>
 </div>
@@ -201,59 +199,35 @@
 <div class="flex items-start gap-sm">
 <span class="material-symbols-outlined text-error mt-1">warning</span>
 <div>
-<h3 class="font-headline-md text-headline-md text-on-background uppercase tracking-tight mb-xs">Critical Notice</h3>
+<h3 class="font-headline-md text-headline-md text-on-background uppercase tracking-tight mb-xs">Roster lock</h3>
 <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-                    Your roster will be <strong class="text-on-background">permanently locked</strong> upon final submission in Step 5. Ensure all player igns and academic details are verified.
+                    Your roster is <strong class="text-on-background">locked on final submission</strong>. After that, player changes need organizer approval. Double-check every in-game name and Student ID first.
                   </p>
 </div>
 </div>
 </div>
-<!-- Graphic background -->
-<div class="absolute -bottom-10 -right-10 opacity-10 pointer-events-none">
-<span class="material-symbols-outlined text-[120px]">gpp_maybe</span>
-</div>
 </div>
 <!-- Tournament Info Box -->
-<div class="bg-surface-container-low rounded-xl p-lg shadow-md border border-surface-container-highest flex flex-col gap-md cyber-panel">
-<h4 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest border-b border-surface-container-highest pb-xs cyber-mono">Tournament Scope</h4>
+<div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-sm cyber-panel">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest border-b border-white/10 pb-xs cyber-mono">At a glance</h4>
 <ul class="flex flex-col gap-sm">
-<li class="flex items-center justify-between">
-<span class="font-body-md text-body-md text-on-surface-variant">Format</span>
-<span class="font-body-lg text-body-lg text-on-background font-bold uppercase tracking-tight">5v5 Draft</span>
+<li class="flex items-center justify-between gap-sm">
+<span class="font-body-md text-body-md text-on-surface-variant">Game</span>
+<span class="font-body-lg text-body-lg text-on-background font-bold">MLBB · Draft Pick</span>
 </li>
-<li class="flex items-center justify-between">
-<span class="font-body-md text-body-md text-on-surface-variant">Min. Players</span>
-<span class="font-body-lg text-body-lg text-on-background font-bold">5</span>
+<li class="flex items-center justify-between gap-sm">
+<span class="font-body-md text-body-md text-on-surface-variant">Roster</span>
+<span class="font-body-lg text-body-lg text-on-background font-bold">5 starters + up to 2 subs</span>
 </li>
-<li class="flex items-center justify-between">
-<span class="font-body-md text-body-md text-on-surface-variant">Max Subs</span>
-<span class="font-body-lg text-body-lg text-on-background font-bold">2</span>
+<li class="flex items-center justify-between gap-sm">
+<span class="font-body-md text-body-md text-on-surface-variant">Where</span>
+<span class="font-body-lg text-body-lg text-on-background font-bold">Online</span>
 </li>
-<li class="flex items-center justify-between">
-<span class="font-body-md text-body-md text-on-surface-variant">Region Lock</span>
-<span class="font-body-lg text-body-lg text-on-background font-bold uppercase tracking-tight">NA East</span>
+<li class="flex items-center justify-between gap-sm">
+<span class="font-body-md text-body-md text-on-surface-variant">Closes</span>
+<span class="font-body-lg text-body-lg text-on-background font-bold">Sep 1, 2026</span>
 </li>
 </ul>
-<!-- Abstract Data Viz -->
-<div aria-hidden="true" class="mt-sm w-full h-16 relative bg-surface-dim rounded flex items-end gap-1 px-2 py-1 opacity-80">
-<div class="w-full bg-primary/20 h-[30%] rounded-t-sm"></div>
-<div class="w-full bg-primary/40 h-[60%] rounded-t-sm"></div>
-<div class="w-full bg-primary/60 h-[40%] rounded-t-sm"></div>
-<div class="w-full bg-primary/80 h-[80%] rounded-t-sm"></div>
-<div class="w-full bg-primary h-[50%] rounded-t-sm"></div>
-<div class="w-full bg-primary/30 h-[90%] rounded-t-sm"></div>
-<div class="absolute inset-0 flex items-center justify-center">
-<span class="font-label-caps text-label-caps text-on-surface-variant mix-blend-difference tracking-widest uppercase text-[10px]">Slot Availability</span>
-</div>
-</div>
-</div>
-<!-- Abstract Graphic Placeholder -->
-<div class="hidden lg:block w-full h-48 rounded-xl bg-surface-container relative overflow-hidden shadow-lg border border-surface-container-highest group">
-<div class="bg-cover bg-center w-full h-full opacity-60 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-700 group-hover:scale-105" data-alt="A stylized, low-poly 3D render of an esports trophy or emblem floating against a dark, moody background with subtle neon blue and red rim lighting. Cinematic, high contrast, competitive gaming aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDs6aZbaQHWUpjU59WiPF0lGXo3mzmJOUimqCT7sBtVUd0NqxkL3TiWd3y9lG_nNNGh6uztbOx15HOjryo4FJghqtFmj-inC7uVuJ20o0K97sAKZs9Ycj2C-xFV1LQClGrN2T-U4RG_0Lxk3Z20Hx4ovukAwuxiES5Z-LNNGXRE1drFivnXDAbzyiSDTEkBKzZgW8fjuOZeDKLsq6ij1bctuzBpZVCFxYzxdx08NG8iW3uztv_BSvpYDA')"></div>
-<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
-<div class="absolute bottom-md left-md">
-<p class="font-label-caps text-label-caps text-primary tracking-widest uppercase [writing-mode:vertical-rl] rotate-180 opacity-80">Season 04</p>
-</div>
 </div>
 </aside>
 </div>
@@ -273,7 +247,7 @@
 <script src="assets/js/registration-api.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const fields = ['team-name', 'course', 'captain-name', 'year-level', 'team-contact', 'team-desc'];
+    const fields = ['team-name', 'captain-name', 'team-contact', 'team-desc'];
     const draft = RegistrationDraft.get();
     fields.forEach(id => {
       const el = document.getElementById(id);
@@ -283,6 +257,25 @@
       const swatch = document.querySelector('input[name="team-color"][value="' + draft.teamColor + '"]');
       if (swatch) swatch.checked = true;
     }
+
+    const DEPT_OPTIONS = {
+      "Men's": ["IT", "HTM", "CTE", "CRIM"],
+      "Women's": ["IT", "HTM", "CTE", "CRIM"],
+      "Faculty": ["IT", "CTE-A", "CTE-B", "HM", "TM", "CRIM", "SHS", "JHS"]
+    };
+    const divisionSel = document.getElementById('division');
+    const departmentSel = document.getElementById('department');
+
+    function fillDepartments(selected) {
+      const opts = DEPT_OPTIONS[divisionSel.value] || [];
+      departmentSel.innerHTML = '<option disabled ' + (opts.length ? '' : 'selected') + ' value="">' +
+        (opts.length ? 'Select department' : 'Select division first') + '</option>' +
+        opts.map(d => '<option value="' + d + '"' + (d === selected ? ' selected' : '') + '>' + d + '</option>').join('');
+      if (!opts.includes(selected)) departmentSel.value = '';
+    }
+    if (draft.division) divisionSel.value = draft.division;
+    fillDepartments(draft.department);
+    divisionSel.addEventListener('change', () => fillDepartments());
 
     const badgePreview = document.getElementById('team-badge-preview');
     const teamNameInput = document.getElementById('team-name');
@@ -305,6 +298,9 @@
         const el = document.getElementById(id);
         if (el) data[id] = el.value;
       });
+      data.division = divisionSel.value;
+      data.department = departmentSel.value;
+      data.course = (data.division && data.department) ? (data.division + ' — ' + data.department) : '';
       const checkedColor = document.querySelector('input[name="team-color"]:checked');
       data.teamColor = checkedColor ? checkedColor.value : '#1264ff';
       return data;
