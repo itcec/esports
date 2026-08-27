@@ -2,18 +2,38 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
 .cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
 .cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
-.cyber-grid-bg{background-image:linear-gradient(rgba(180,197,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(180,197,255,.06) 1px,transparent 1px);background-size:36px 36px;}
 .cyber-panel{position:relative;}
 .cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
 .cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
 .cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
-.cyber-scan{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
-.cyber-scan::before{content:'';position:absolute;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,rgba(180,197,255,.06),transparent);animation:cyber-scan-move 9s linear infinite;}
-@keyframes cyber-scan-move{0%{top:-140px;}100%{top:100%;}}
-@media (prefers-reduced-motion:reduce){.cyber-scan::before{animation:none;display:none;}}
-</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background text-on-background font-body-md"><div class="cyber-scan" aria-hidden="true"></div><main class="w-full cyber-grid-bg"><div class="flex flex-col w-full relative min-h-screen">
+
+.reg-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: #050B14;
+  background-image: url('assets/registration.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  pointer-events: none;
+}
+@media (max-width: 768px), (orientation: portrait) {
+  .reg-bg {
+    background-position: left center;
+  }
+}
+.reg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(18, 100, 255, 0.12), transparent 50%),
+              linear-gradient(135deg, rgba(5, 11, 20, 0.76) 0%, rgba(8, 20, 34, 0.88) 100%);
+  pointer-events: none;
+}
+</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background text-on-background font-body-md"><div class="reg-bg" aria-hidden="true"></div><div class="reg-overlay" aria-hidden="true"></div><main class="w-full relative z-10"><div class="flex flex-col w-full relative min-h-screen pb-36">
 <!-- Progress Tracker -->
-<section class="w-full bg-surface-container-low px-lg py-sm flex items-center justify-between shadow-sm z-10 sticky top-0 border-b border-outline-variant/30">
+<section class="w-full bg-surface-container-low/95 backdrop-blur-md px-lg py-sm flex items-center justify-between shadow-sm z-10 sticky top-0 border-b border-outline-variant/30">
 <div class="flex items-center gap-xs">
 <span class="font-headline-lg-mobile text-on-background">FINAL REGISTRATION REVIEW</span>
 </div>
@@ -58,7 +78,7 @@
 <!-- Main Content Area -->
 <div class="flex-1 flex flex-col gap-lg">
 <!-- Team Info Summary -->
-<div class="bg-surface-container rounded-xl shadow-md p-lg relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+<div class="bg-surface-container/95 backdrop-blur-sm rounded-xl shadow-md p-lg relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300 border border-white/5">
 <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
 <div class="flex items-start justify-between mb-md">
 <h2 class="font-headline-md text-on-surface cyber-title">TEAM INFORMATION</h2>
@@ -83,7 +103,7 @@
 </div>
 </div>
 <!-- Roster Summary -->
-<div class="bg-surface-container rounded-xl shadow-md overflow-hidden group">
+<div class="bg-surface-container/95 backdrop-blur-sm rounded-xl shadow-md overflow-hidden group border border-white/5">
 <div class="p-lg flex items-center justify-between border-b border-surface-variant">
 <h2 class="font-headline-md text-on-surface flex items-center gap-xs cyber-title">
 <span class="material-symbols-outlined text-secondary">groups</span>
@@ -103,7 +123,7 @@
 <th class="py-xs px-md">Position</th>
 <th class="py-xs px-md">Name / IGN</th>
 <th class="py-xs px-md">Role</th>
-<th class="py-xs px-md">Student ID</th>
+<th class="py-xs px-md" id="th-student-id">Student ID</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-surface-variant/50" id="roster-summary-body">
@@ -129,9 +149,9 @@
 <!-- Sidebar / Action Area -->
 <div class="w-full lg:w-[380px] flex flex-col gap-md">
 <!-- Verification Status -->
-<div class="bg-surface-container rounded-xl shadow-md p-md relative overflow-hidden">
+<div class="bg-surface-container/95 backdrop-blur-sm rounded-xl shadow-md p-md relative overflow-hidden border border-white/5">
 <div class="flex items-center justify-between mb-sm relative z-10">
-<span class="font-label-caps text-on-surface-variant uppercase">Student IDs on File</span>
+<span class="font-label-caps text-on-surface-variant uppercase" id="verification-card-title">Student IDs on File</span>
 <span class="font-headline-md text-primary cyber-mono" id="verification-count">0 / 0</span>
 </div>
 <div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden mb-sm relative z-10">
@@ -156,7 +176,7 @@
             </p>
 </div>
 <!-- Consent -->
-<div class="bg-surface-container rounded-xl p-md flex flex-col gap-sm shadow-md">
+<div class="bg-surface-container/95 backdrop-blur-sm rounded-xl p-md flex flex-col gap-sm shadow-md border border-white/5">
 <label class="flex items-start gap-xs cursor-pointer group">
 <div class="relative flex items-center justify-center mt-1">
 <input class="peer sr-only" id="consent-accurate" type="checkbox"/>
@@ -164,7 +184,7 @@
 <span class="material-symbols-outlined text-[14px] text-on-primary opacity-0 peer-checked:opacity-100 font-bold scale-50 peer-checked:scale-100 transition-all">check</span>
 </div>
 </div>
-<span class="font-body-md text-on-surface-variant text-sm group-hover:text-on-surface transition-colors">
+<span class="font-body-md text-on-surface-variant text-sm group-hover:text-on-surface transition-colors" id="consent-accurate-text">
                     I confirm that all submitted player information is accurate and matches current student records.
                 </span>
 </label>
@@ -205,10 +225,17 @@
   document.addEventListener('DOMContentLoaded', () => {
     const draft = RegistrationDraft.get();
     const players = draft.players || [];
+    const isFaculty = draft.division === 'Faculty';
 
     document.getElementById('summary-team-name').textContent = draft['team-name'] || '(not set)';
     document.getElementById('summary-course').textContent = draft.course || '(not set)';
     document.getElementById('summary-captain').textContent = draft['captain-name'] || '(not set)';
+
+    if (isFaculty) {
+      document.getElementById('th-student-id').textContent = 'Verification';
+      document.getElementById('verification-card-title').textContent = 'Faculty Verification';
+      document.getElementById('consent-accurate-text').textContent = 'I confirm that all submitted roster information is accurate and represents official CEC faculty/staff members.';
+    }
 
     const tbody = document.getElementById('roster-summary-body');
     const emptyRow = document.getElementById('roster-summary-empty');
@@ -217,24 +244,31 @@
       const rowTemplate = document.getElementById('roster-summary-row-template');
       players.forEach(p => {
         const node = rowTemplate.content.cloneNode(true);
-        const hasStudentId = !!(p.studentId && p.studentId.trim());
+        const hasStudentId = isFaculty || !!(p.studentId && p.studentId.trim() && p.studentId !== 'Missing');
         const icon = node.querySelector('.row-status-icon');
-        icon.querySelector('span').textContent = hasStudentId ? 'schedule' : 'error_outline';
-        icon.classList.toggle('text-tertiary', hasStudentId);
+        icon.querySelector('span').textContent = isFaculty ? 'verified' : (hasStudentId ? 'schedule' : 'error_outline');
+        icon.classList.toggle('text-tertiary', hasStudentId && !isFaculty);
+        icon.classList.toggle('text-primary', isFaculty);
         icon.classList.toggle('text-error', !hasStudentId);
         node.querySelector('.row-type').textContent = p.rosterType === 'Substitute' ? 'SUB' : 'STARTER';
         node.querySelector('.row-name-ign').textContent = p.realName + (p.ign ? ' (' + p.ign + ')' : '');
         node.querySelector('.row-role').textContent = p.role || '—';
-        node.querySelector('.row-student-id').textContent = hasStudentId ? p.studentId : 'Missing';
+        node.querySelector('.row-student-id').textContent = isFaculty ? 'Faculty (Exempt)' : (hasStudentId ? p.studentId : 'Missing');
         tbody.appendChild(node);
       });
     }
 
-    const withStudentId = players.filter(p => p.studentId && p.studentId.trim()).length;
-    document.getElementById('verification-count').textContent = withStudentId + ' / ' + players.length;
-    document.getElementById('verification-bar').style.width = (players.length ? withStudentId / players.length * 100 : 0) + '%';
-    if (players.length && withStudentId < players.length) {
-      document.getElementById('verification-note').textContent = (players.length - withStudentId) + ' player(s) still need a Student ID — go back to Step 3 to add it.';
+    if (isFaculty) {
+      document.getElementById('verification-count').textContent = 'EXEMPT (' + players.length + ' Players)';
+      document.getElementById('verification-bar').style.width = '100%';
+      document.getElementById('verification-note').textContent = 'Faculty Exhibition Division — Student ID not required. Roster is verified via school faculty records.';
+    } else {
+      const withStudentId = players.filter(p => p.studentId && p.studentId.trim() && p.studentId !== 'Missing').length;
+      document.getElementById('verification-count').textContent = withStudentId + ' / ' + players.length;
+      document.getElementById('verification-bar').style.width = (players.length ? withStudentId / players.length * 100 : 0) + '%';
+      if (players.length && withStudentId < players.length) {
+        document.getElementById('verification-note').textContent = (players.length - withStudentId) + ' player(s) still need a Student ID — go back to Step 3 to add it.';
+      }
     }
 
     const submitBtn = document.getElementById('submit-btn');
