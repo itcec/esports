@@ -1,0 +1,227 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
+.cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
+.cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-grid-bg{background-image:linear-gradient(rgba(180,197,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(180,197,255,.06) 1px,transparent 1px);background-size:36px 36px;}
+.cyber-panel{position:relative;}
+.cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
+.cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
+.cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
+.cyber-scan{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.cyber-scan::before{content:'';position:absolute;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,rgba(180,197,255,.06),transparent);animation:cyber-scan-move 9s linear infinite;}
+@keyframes cyber-scan-move{0%{top:-140px;}100%{top:100%;}}
+@media (prefers-reduced-motion:reduce){.cyber-scan::before{animation:none;display:none;}}
+</style><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background font-body-md text-on-background"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-white/5"><div class="h-16 w-full max-w-container-max mx-auto px-lg flex items-center justify-between"><div class="flex items-center gap-md"><img alt="CEC Blue Dragon Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtflK-0B79t1BrLhawWaBZ7QVa1GKQP9UMJoEs7saqWekX77vzv7RmD-UdZ61f1S5uwwty466VIAfM-YDQM6DUilvpVO5I_IX5FulUdIAwk2C0RGCy50n9rQ2rRrpd902MxdcEFAi_sE9a1b_VWVOHASI6gSk2RiwUm9xj3V1bi-p3mXx3r8juduO9upir5Tmuk_LCzYkygzS8i9RtglplujcPk6Z738QKKhaqrACy85AQZrtjMNskUA"/><span class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface">CEC ESPORTS</span></div><nav class="hidden xl:flex items-center gap-lg"><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="index.html">HOME</a><a aria-current="page" class="transition-colors text-primary font-bold" href="tournament.html">TOURNAMENT</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="standings.html">STANDINGS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="rules.html">RULES</a></nav><div class="flex items-center gap-md"><button class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">search</span></button><button class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">notifications</span></button><img alt="Profile" class="w-8 h-8 rounded-full border border-outline/20 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNmEZSzK71T_eP5VNCoOzUqyJz6C6SNviMxSVGDxDSiJFcw3V6dYb-_0Ahs4SshRWdODi1tTMR6YxbZkCkLvdmLkSPPUfMCctz5gzdrlnLenbM4R9Xt3wuLu3ooR4YZbuXHgfghByAZkDlUMtZjMTwZD9sg8bQJNVcSJ4wrK8xyhRmJetog_haY_sdTTFRQiyknXEgtkmYPUsR0UcLNpFGsJ-X7geAZbrjKyBOYJgGtVMPtokUkSKbfQ"/></div></div></header><div class="cyber-scan" aria-hidden="true"></div><main class="w-full pt-16 cyber-grid-bg"><div class="flex flex-col w-full relative">
+<!-- decorative background layer -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden flex justify-center -z-10">
+<div class="w-[80vw] h-[80vw] max-w-[800px] max-h-[800px] bg-secondary-container/10 rounded-full blur-[100px] -top-32 absolute"></div>
+</div>
+<div class="max-w-container-max mx-auto px-lg py-xl w-full flex flex-col gap-xl">
+<!-- Hero / Header Area -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-lg">
+<div class="flex flex-col gap-sm">
+<div class="inline-flex items-center gap-xs px-sm py-base rounded-full bg-surface-container-high w-fit shadow-md border border-primary/20">
+<span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="font-label-caps text-label-caps text-secondary-container">REGISTRATION OPEN</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-background tracking-tight cyber-title">
+          TOURNAMENT OVERVIEW
+        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mt-xs">
+          Format, standings, live matches, and everything else you need to follow Season 2026.
+        </p>
+</div>
+<!-- Quick Nav -->
+<div class="flex flex-wrap gap-xs">
+<a class="bg-primary hover:bg-primary-container text-on-primary px-md py-sm rounded-lg font-label-caps text-label-caps transition-all shadow-md hover:shadow-lg flex items-center gap-xs" href="bracket.html">
+<span class="material-symbols-outlined text-[18px]">account_tree</span>
+          VIEW BRACKET
+        </a>
+<a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-md py-sm rounded-lg font-label-caps text-label-caps border border-primary/20 transition-all shadow-sm flex items-center gap-xs" href="teams.html">
+<span class="material-symbols-outlined text-[18px]">groups</span>
+          VIEW TEAMS
+        </a>
+<a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-md py-sm rounded-lg font-label-caps text-label-caps border border-primary/20 transition-all shadow-sm flex items-center gap-xs" href="#live-matches">
+<span class="material-symbols-outlined text-[18px]">calendar_today</span>
+          LIVE &amp; UPCOMING
+        </a>
+<a class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface px-md py-sm rounded-lg font-label-caps text-label-caps border border-primary/20 transition-all shadow-sm flex items-center gap-xs" href="rules.html">
+<span class="material-symbols-outlined text-[18px]">gavel</span>
+          RULES
+        </a>
+</div>
+</div>
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+<div class="bg-surface-container shadow-sm p-md rounded-xl flex flex-col gap-xs border-l-2 border-primary">
+<span class="font-label-caps text-label-caps text-on-surface-variant">TEAMS</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-stats-impact text-stats-impact text-on-surface">12</span>
+<span class="font-body-md text-body-md text-on-surface-variant">/ 16</span>
+</div>
+</div>
+<div class="bg-surface-container shadow-sm p-md rounded-xl flex flex-col gap-xs border-l-2 border-secondary">
+<span class="font-label-caps text-label-caps text-on-surface-variant">PLAYERS</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-stats-impact text-stats-impact text-on-surface">84</span>
+</div>
+</div>
+<div class="bg-surface-container shadow-sm p-md rounded-xl flex flex-col gap-xs border-l-2 border-tertiary">
+<span class="font-label-caps text-label-caps text-on-surface-variant">MATCHES</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-stats-impact text-stats-impact text-on-surface">0</span>
+<span class="font-body-md text-body-md text-on-surface-variant">/ 15</span>
+</div>
+</div>
+<div class="bg-surface-container shadow-sm p-md rounded-xl flex flex-col gap-xs border-l-2 border-outline">
+<span class="font-label-caps text-label-caps text-on-surface-variant">FORMAT</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-md text-headline-md text-on-surface truncate">Single Elim</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Main Content Column -->
+<div class="lg:col-span-8 flex flex-col gap-lg">
+<!-- Tournament Info Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="bg-gradient-to-br from-surface-container-high to-surface-container p-lg rounded-xl shadow-md relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-[120px]">swords</span>
+</div>
+<h3 class="font-label-caps text-label-caps text-primary mb-sm">TOURNAMENT FORMAT</h3>
+<p class="font-headline-md text-headline-md text-on-surface mb-xs">Single Elimination</p>
+<p class="font-body-md text-body-md text-on-surface-variant">Teams are seeded based on registration order. One loss results in elimination from the main bracket.</p>
+</div>
+<div class="bg-gradient-to-br from-surface-container-high to-surface-container p-lg rounded-xl shadow-md relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-[120px]">sports_esports</span>
+</div>
+<h3 class="font-label-caps text-label-caps text-secondary mb-sm">MATCH FORMAT</h3>
+<p class="font-headline-md text-headline-md text-on-surface mb-xs">Best of 3 (BO3)</p>
+<p class="font-body-md text-body-md text-on-surface-variant">All matches leading up to the finals are BO3. Grand Finals will be a grueling Best of 5 (BO5) series.</p>
+</div>
+</div>
+<!-- Live & Upcoming Matches -->
+<div class="bg-surface-container shadow-md rounded-xl flex flex-col cyber-panel" id="live-matches">
+<div class="p-md border-b border-white/5 flex justify-between items-center">
+<h3 class="font-headline-md text-headline-md text-on-surface">LIVE &amp; UPCOMING MATCHES</h3>
+<a class="font-label-caps text-label-caps text-primary hover:text-primary-container transition-colors" href="bracket.html">FULL BRACKET</a>
+</div>
+<div class="p-md flex flex-col gap-sm">
+<!-- Live match -->
+<div class="flex flex-wrap items-center justify-between gap-sm p-md bg-surface-container-high rounded-lg border border-error/30">
+<div class="flex items-center gap-sm flex-wrap">
+<span class="inline-flex items-center gap-xs px-sm py-base rounded-full bg-error/20 text-error font-label-caps text-label-caps"><span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>LIVE</span>
+<span class="font-body-md text-body-md text-on-surface font-bold">Crimson Vipers</span>
+<span class="font-stats-impact text-stats-impact text-primary">1 – 0</span>
+<span class="font-body-md text-body-md text-on-surface font-bold">Azure Wolves</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">BO3 · Round of 16</span>
+</div>
+<!-- Upcoming matches -->
+<div class="flex flex-wrap items-center justify-between gap-sm p-md bg-surface rounded-lg border border-white/5">
+<div class="flex items-center gap-sm flex-wrap">
+<span class="font-body-md text-body-md text-on-surface">Royal Kings</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">vs</span>
+<span class="font-body-md text-body-md text-on-surface">Shadow Wolves</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">TODAY · 7:00 PM</span>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-sm p-md bg-surface rounded-lg border border-white/5">
+<div class="flex items-center gap-sm flex-wrap">
+<span class="font-body-md text-body-md text-on-surface">Neon Spartans</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant">vs</span>
+<span class="font-body-md text-body-md text-on-surface">TBD</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">TOMORROW · 3:00 PM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sidebar Column -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<!-- Tournament Progress -->
+<div class="bg-surface-container shadow-md rounded-xl p-lg flex flex-col gap-md">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant">TOURNAMENT PROGRESS</h3>
+<div class="flex flex-col relative">
+<div class="absolute left-[11px] top-4 bottom-4 w-[2px] bg-white/5 -z-10"></div>
+<div class="flex gap-md items-start py-sm">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center shadow-[0_0_10px_rgba(180,197,255,0.3)] z-10">
+<span class="material-symbols-outlined text-[14px] text-on-primary font-bold">check</span>
+</div>
+<div class="flex flex-col -mt-1">
+<span class="font-body-md text-body-md text-on-surface font-bold">Announced</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-sm">Oct 15, 2024</span>
+</div>
+</div>
+<div class="flex gap-md items-start py-sm">
+<div class="w-6 h-6 rounded-full bg-secondary-container flex items-center justify-center shadow-[0_0_10px_rgba(62,144,255,0.3)] z-10 animate-pulse">
+<div class="w-2 h-2 rounded-full bg-on-secondary-container"></div>
+</div>
+<div class="flex flex-col -mt-1">
+<span class="font-body-md text-body-md text-on-surface font-bold">Registration</span>
+<span class="font-body-sm text-body-sm text-primary text-sm">Closes Nov 1, 2024</span>
+</div>
+</div>
+<div class="flex gap-md items-start py-sm opacity-50">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest border-2 border-outline-variant flex items-center justify-center z-10"></div>
+<div class="flex flex-col -mt-1">
+<span class="font-body-md text-body-md text-on-surface">Group Stage</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-sm">TBD</span>
+</div>
+</div>
+<div class="flex gap-md items-start py-sm opacity-50">
+<div class="w-6 h-6 rounded-full bg-surface-container-highest border-2 border-outline-variant flex items-center justify-center z-10"></div>
+<div class="flex flex-col -mt-1">
+<span class="font-body-md text-body-md text-on-surface">Playoffs</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-sm">TBD</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Registered Teams Preview -->
+<div class="bg-surface-container shadow-md rounded-xl flex flex-col">
+<div class="p-md border-b border-white/5 flex justify-between items-center">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant">LATEST REGISTRATIONS</h3>
+<a class="font-label-caps text-label-caps text-primary hover:text-primary-container transition-colors" href="teams.html">VIEW ALL</a>
+</div>
+<div class="p-xs">
+<div class="flex flex-col">
+<!-- Team Row -->
+<div class="flex items-center gap-sm p-sm hover:bg-surface-container-high transition-colors rounded-lg group cursor-pointer">
+<div class="w-10 h-10 rounded bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover mix-blend-screen opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Fierce red dragon esports team logo on dark background, minimalistic, flat vector style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7LTRtyLnwDtp6wzB6FZ_4e1dafE_DNgx5rven4a8O5CHKbEQoOS0DzaY7lxMbbLGS9YMQ1NjsWqEvjLrktrLl3YYRigO_JPKNd4x--8WNfuo7yP9fHzRDK8tqnPPzs8FMPnivN18SeFGAr_KmrscgouEhs3O3AEPYjHOP4PdpRDg4BD-8bqwitslPvJBeBOy6WiCgjRtGrTovE9sO1HGpHL3KAZRPmsNkLOT5PYcRO7ZirzYLy_wcMw"/>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-bold truncate">Crimson Vipers</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant truncate">5 Players</span>
+</div>
+</div>
+<!-- Team Row -->
+<div class="flex items-center gap-sm p-sm hover:bg-surface-container-high transition-colors rounded-lg group cursor-pointer">
+<div class="w-10 h-10 rounded bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover mix-blend-screen opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Neon blue wolf head esports team logo on dark background, aggressive, vector graphics" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzRyuGqrSTCev1nD5twCh3gzGjl3FoMVUeHAznyf8FIrNxeEZfGQ3dbwzs_se-n9Xx6MUd4Te39XqweBmR594VvWdVDNAWUxYLp-FCxVYqYmxFQB5DOenc5afB4Za9F-OhGPj0qGFafoXKxbosAta4p6yxx_judw6mTiX4s9FT5a0MoHrlTcGOitMsrIE81iB8OUWRpjHxajYwYSBg5VtsasPsL8tNtzzej4n0Kh4eRUeOV1o7FBpijQ"/>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-bold truncate">Azure Wolves</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant truncate">5 Players + 1 Sub</span>
+</div>
+</div>
+<!-- Team Row -->
+<div class="flex items-center gap-sm p-sm hover:bg-surface-container-high transition-colors rounded-lg group cursor-pointer">
+<div class="w-10 h-10 rounded bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover mix-blend-screen opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Golden crown with crossed swords esports logo on dark background, regal, sharp edges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaQC2tykMw7usFDzPFcdssFMhIIeS9Q_STE7HgnE3dII2It-12SHOfsRYO50_K78nl2X4xoROaWWio06T8OJzVBijkLr4612h5OU9l9UzQx8Jt693dRI7OIceR45P9ZPicnONbJ4dcHYVf2EGhraVXpUAbL8LjH9NssJDZtYWh0p7ZLK20nlyesY2uPBdD9V_QAogGOsZaKgCkiOh8r7d3aeI4xeu9oSltSiF9nt6Wx9vXqmSOof3F9Q"/>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<span class="font-body-md text-body-md text-on-surface font-bold truncate">Royal Kings</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant truncate">5 Players</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main><footer class="w-full bg-surface-container-lowest py-xl border-t border-white/5"><div class="max-w-container-max mx-auto px-lg flex flex-col md:flex-row justify-between items-center gap-lg text-on-surface-variant font-label-caps text-label-caps"><div>© 2024 CEC ESPORTS TOURNAMENT PLATFORM</div><div class="flex gap-md"><a class="hover:text-primary" href="#">PRIVACY POLICY</a><a class="hover:text-primary" href="#">TERMS OF SERVICE</a><a class="hover:text-primary" href="#">CONTACT</a></div></div></footer></body></html>

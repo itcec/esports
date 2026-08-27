@@ -1,0 +1,166 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
+.cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
+.cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-grid-bg{background-image:linear-gradient(rgba(180,197,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(180,197,255,.06) 1px,transparent 1px);background-size:36px 36px;}
+.cyber-panel{position:relative;}
+.cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
+.cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
+.cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
+.cyber-scan{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.cyber-scan::before{content:'';position:absolute;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,rgba(180,197,255,.06),transparent);animation:cyber-scan-move 9s linear infinite;}
+@keyframes cyber-scan-move{0%{top:-140px;}100%{top:100%;}}
+@media (prefers-reduced-motion:reduce){.cyber-scan::before{animation:none;display:none;}}
+</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background text-on-background font-body-md"><div class="cyber-scan" aria-hidden="true"></div><main class="w-full cyber-grid-bg"><div class="flex flex-col w-full min-h-[calc(100vh-64px)] justify-center items-center p-lg relative overflow-hidden bg-background text-on-background">
+<!-- Ambient Depth Background -->
+<div class="absolute inset-0 pointer-events-none opacity-40">
+<div class="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary-container rounded-full blur-[120px] mix-blend-screen opacity-20"></div>
+<div class="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-secondary-container rounded-full blur-[150px] mix-blend-screen opacity-10"></div>
+<!-- Decorative Grid Lines -->
+<div class="absolute inset-0" style="background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 40px 40px;"></div>
+</div>
+<!-- Main Content Container -->
+<div class="relative z-10 w-full max-w-4xl flex flex-col items-center">
+<!-- Cinematic Success Indicator -->
+<div class="flex flex-col items-center mb-xl relative">
+<div class="w-32 h-32 rounded-full border border-surface-variant flex items-center justify-center bg-surface-container-low mb-lg shadow-2xl relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/10 rounded-full scale-0 group-hover:scale-100 transition-transform duration-500 ease-out"></div>
+<span class="material-symbols-outlined text-[64px] text-primary drop-shadow-[0_0_15px_rgba(180,197,255,0.5)] z-10" style="font-variation-settings: 'FILL' 1;">
+                    check_circle
+                </span>
+<!-- Animated Ring -->
+<svg class="absolute inset-0 w-full h-full -rotate-90" viewbox="0 0 100 100">
+<circle class="text-primary/20" cx="50" cy="50" fill="none" r="48" stroke="currentColor" stroke-width="2"></circle>
+<circle class="text-primary animate-[stroke_1.5s_ease-out_forwards]" cx="50" cy="50" fill="none" r="48" stroke="currentColor" stroke-dasharray="301" stroke-dashoffset="301" stroke-width="2"></circle>
+</svg>
+</div>
+<div class="flex flex-col items-center text-center">
+<div class="font-label-caps text-label-caps text-secondary tracking-widest mb-xs flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                    TRANSACTION COMPLETE
+                </div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight mb-md cyber-title">
+                    TEAM REGISTRATION <br/> <span class="text-primary">SUBMITTED</span>
+</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-lg">
+                    Your team's entry into the CEC MLBB Collegiate Series has been securely logged. The administration team will review your credentials shortly.
+                </p>
+</div>
+</div>
+<!-- Data Card -->
+<div class="w-full bg-surface-container/80 backdrop-blur-md rounded-xl p-0 border border-surface-variant shadow-xl overflow-hidden mb-xl relative group cyber-panel">
+<!-- Card Header / ID -->
+<div class="bg-surface-container-high px-lg py-md flex flex-col md:flex-row justify-between items-start md:items-center gap-md border-b border-surface-variant">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant">REGISTRATION ID</span>
+<span class="font-stats-impact text-stats-impact text-on-surface cyber-mono tracking-wider" id="reg-id">PENDING</span>
+</div>
+<!-- Status Badge -->
+<div class="px-sm py-xs border border-secondary/30 rounded flex items-center gap-xs bg-secondary/10">
+<span class="material-symbols-outlined text-[16px] text-secondary">pending</span>
+<span class="font-label-caps text-label-caps text-secondary">UNDER REVIEW</span>
+</div>
+</div>
+<!-- Card Body / Details -->
+<div class="p-lg grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Team Info -->
+<div class="flex flex-col gap-sm">
+<div class="flex items-center gap-md p-md bg-surface-container-low rounded-lg border border-surface-variant/50">
+<div class="w-16 h-16 rounded-full flex items-center justify-center shrink-0 font-headline-md text-headline-md text-white cyber-mono" id="success-badge" style="background:#1264ff">CT</div>
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-base">TEAM NAME</span>
+<span class="font-headline-md text-headline-md text-on-surface uppercase tracking-wide" id="success-team-name">—</span>
+</div>
+</div>
+<div class="flex flex-col p-md bg-surface-container-low rounded-lg border border-surface-variant/50">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-xs">CAPTAIN</span>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px] text-tertiary">person</span>
+<span class="font-body-lg text-body-lg text-on-surface" id="success-captain">—</span>
+</div>
+</div>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-2 gap-sm">
+<div class="flex flex-col p-md bg-surface-container-low rounded-lg border border-surface-variant/50 justify-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-xs">SUBMITTED DATE</span>
+<span class="font-body-lg text-body-lg text-on-surface cyber-mono" id="success-date">—</span>
+<span class="font-body-md text-body-md text-on-surface-variant cyber-mono mt-base" id="success-time">—</span>
+</div>
+<div class="flex flex-col p-md bg-surface-container-low rounded-lg border border-surface-variant/50 justify-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-xs">ROSTER COUNT</span>
+<div class="flex items-end gap-xs">
+<span class="font-stats-impact text-stats-impact text-primary" id="success-roster-count">0</span>
+<span class="font-body-md text-body-md text-on-surface-variant mb-base">Players</span>
+</div>
+</div>
+<div class="flex flex-col p-md bg-surface-container-low rounded-lg border border-surface-variant/50 col-span-2 relative overflow-hidden group/verify">
+<!-- Subtle progress bg -->
+<div class="absolute left-0 top-0 bottom-0 w-full bg-primary/10 -z-10 transition-transform duration-700 origin-left scale-x-100"></div>
+<div class="flex justify-between items-center z-10">
+<div class="flex flex-col">
+<span class="font-label-caps text-label-caps text-on-surface-variant mb-xs">VERIFICATION STATUS</span>
+<span class="font-body-lg text-body-lg text-on-surface flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">pending</span>
+<span id="success-verify-count">0/0 Pending</span>
+                                </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Left border accent -->
+<div class="absolute left-0 top-0 bottom-0 w-[2px] bg-primary"></div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col sm:flex-row gap-md w-full max-w-2xl justify-center items-center">
+<a class="w-full sm:w-auto px-xl py-sm bg-primary text-on-primary font-label-caps text-label-caps uppercase rounded hover:bg-primary/90 transition-colors flex items-center justify-center gap-xs shadow-lg shadow-primary/20" href="dashboard.html">
+                GO TO TEAM DASHBOARD
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+<button class="w-full sm:w-auto px-xl py-sm border border-primary text-primary font-label-caps text-label-caps uppercase rounded hover:bg-primary/10 transition-colors flex items-center justify-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                DOWNLOAD RECEIPT
+            </button>
+</div>
+<div class="mt-xl">
+<a class="text-on-surface-variant hover:text-on-surface font-label-caps text-label-caps uppercase transition-colors flex items-center gap-xs opacity-70 hover:opacity-100" href="tournament.html">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+                RETURN TO TOURNAMENT
+            </a>
+</div>
+</div>
+</div>
+<style>
+    @keyframes stroke {
+        to { stroke-dashoffset: 0; }
+    }
+</style>
+<script src="assets/js/registration-api.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const draft = RegistrationDraft.get();
+    const players = draft.players || [];
+    const teamName = draft['team-name'] || 'Your Team';
+
+    document.getElementById('reg-id').textContent = draft.submittedTeamId || 'PENDING';
+    document.getElementById('success-team-name').textContent = teamName;
+    document.getElementById('success-captain').textContent = draft['captain-name'] || '—';
+    document.getElementById('success-roster-count').textContent = players.length;
+
+    const withStudentId = players.filter(p => p.studentId && p.studentId.trim()).length;
+    document.getElementById('success-verify-count').textContent = withStudentId + '/' + players.length + ' Pending';
+
+    const initials = teamName.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'CT';
+    const badge = document.getElementById('success-badge');
+    badge.textContent = initials;
+    badge.style.background = draft.teamColor || '#1264ff';
+
+    const now = new Date();
+    document.getElementById('success-date').textContent = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+    document.getElementById('success-time').textContent = now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+
+    // Registration is complete — clear the draft so a future visit starts fresh.
+    RegistrationDraft.clear();
+  });
+</script></main></body></html>

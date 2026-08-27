@@ -1,0 +1,268 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-highest": "#2a3645", "on-secondary": "#003064", "surface-tint": "#b4c5ff", "error-container": "#93000a", "on-secondary-fixed-variant": "#00468d", "on-tertiary-container": "#f4f6ff", "primary-fixed-dim": "#b4c5ff", "secondary-fixed-dim": "#aac7ff", "on-tertiary": "#2a313b", "tertiary-fixed": "#dce3f0", "primary": "#b4c5ff", "on-secondary-container": "#002957", "background": "#081422", "tertiary-container": "#6a717d", "outline": "#8c90a2", "primary-container": "#1264ff", "on-primary-fixed": "#00174b", "on-error": "#690005", "secondary": "#aac7ff", "secondary-fixed": "#d6e3ff", "surface-variant": "#2a3645", "on-primary-container": "#f6f6ff", "surface": "#081422", "on-surface": "#d7e3f7", "inverse-on-surface": "#263140", "tertiary-fixed-dim": "#c0c7d4", "outline-variant": "#424656", "on-tertiary-fixed-variant": "#404752", "inverse-primary": "#0052dc", "surface-container-high": "#1f2b39", "surface-container-lowest": "#030f1c", "error": "#ffb4ab", "inverse-surface": "#d7e3f7", "surface-dim": "#081422", "on-error-container": "#ffdad6", "on-primary": "#002a78", "primary-fixed": "#dbe1ff", "on-surface-variant": "#c2c6d8", "on-secondary-fixed": "#001b3e", "on-tertiary-fixed": "#151c26", "tertiary": "#c0c7d4", "on-background": "#d7e3f7", "secondary-container": "#3e90ff", "on-primary-fixed-variant": "#003ea8", "surface-bright": "#2e3a49", "surface-container": "#15202f", "surface-container-low": "#101c2a" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "base": "4px", "lg": "24px", "container-max": "1280px", "gutter": "16px", "sm": "12px", "xl": "40px", "md": "16px", "xs": "8px" }, "fontFamily": { "headline-lg": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], "headline-xl": ["Hanken Grotesk"], "body-md": ["Inter"], "headline-lg-mobile": ["Hanken Grotesk"], "stats-impact": ["Hanken Grotesk"], "label-caps": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "800" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "700" }], "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "800" }], "stats-impact": ["24px", { "lineHeight": "24px", "letterSpacing": "0.05em", "fontWeight": "900" }], "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "700" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }] } } } }</script><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
+.cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
+.cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-grid-bg{background-image:linear-gradient(rgba(180,197,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(180,197,255,.06) 1px,transparent 1px);background-size:36px 36px;}
+.cyber-panel{position:relative;}
+.cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
+.cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
+.cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
+.cyber-scan{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.cyber-scan::before{content:'';position:absolute;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,rgba(180,197,255,.06),transparent);animation:cyber-scan-move 9s linear infinite;}
+@keyframes cyber-scan-move{0%{top:-140px;}100%{top:100%;}}
+@media (prefers-reduced-motion:reduce){.cyber-scan::before{animation:none;display:none;}}
+</style></head><body class="bg-background font-body-md text-on-surface"><div class="cyber-scan" aria-hidden="true"></div><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col border-r border-outline-variant/20 shadow-xl"><div class="px-md py-lg flex items-center gap-xs border-b border-outline-variant/10"><img alt="CEC Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XQ0_rZDcLi3eTVgonrROHwrqzhJu-o4vBXp77jyWbdXEHrZlx0o4M-LV7q645F9I6TtxkXskXS3PMg2U6LO6Wfuydlv-pHpqc6BsHK4B-FLIZn-5YkSc3Y1jSGFna-9d9aLToiYTgY49yVZUYWfy3tjVhLdQjNAcnokv13CLNjg4CgRY_Psga2-_sTDqfqkuU_jOG8jHvRhQzUHZqo1QcEZ5FR-U-57QfU9F9TRc6MO5uoFXZ3v9I2g8UJ"/><span class="font-headline-md text-headline-md text-primary tracking-tighter uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md space-y-base overflow-y-auto"><a aria-current="page" class="flex items-center px-md py-sm rounded-DEFAULT transition-all group bg-primary-container text-on-primary-container font-bold" href="admin.html"><span class="material-symbols-outlined mr-sm text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a class="flex items-center px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all group" href="admin-registrations.html"><span class="material-symbols-outlined mr-sm text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a class="flex items-center px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all group" href="admin-bracket-builder.html"><span class="material-symbols-outlined mr-sm text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all group" href="admin-officiating.html"><span class="material-symbols-outlined mr-sm text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all group" href="admin-disputes.html"><span class="material-symbols-outlined mr-sm text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-background/80 backdrop-blur-xl border-b border-outline-variant/10 z-40 flex items-center justify-between px-lg"><div class="flex items-center gap-md"><div class="flex items-center gap-xs px-sm py-[4px] bg-error/10 border border-error/20 rounded-full"><span class="w-2 h-2 rounded-full bg-error animate-pulse"></span><span class="text-[11px] font-label-caps text-error uppercase">Live Operations</span></div></div><div class="flex items-center gap-lg"><button class="flex items-center gap-xs text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">search</span></button><button class="relative flex items-center gap-xs text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span></button><div class="h-8 w-[1px] bg-outline-variant/20"></div><div class="flex items-center gap-sm"><div class="text-right hidden sm:block"><div class="text-xs font-label-caps text-on-surface-variant uppercase">Tournament Lead</div><div class="text-sm font-bold text-on-surface">Admin_Core</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/20"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 bg-background min-h-screen cyber-grid-bg"><div class="flex flex-col w-full p-lg gap-lg">
+<!-- Header / Title -->
+<div class="flex justify-between items-end">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface cyber-title">Overview</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Collegiate Esports Championship - Season 5 (MLBB)</p>
+</div>
+<div class="flex gap-sm">
+<button class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps text-label-caps px-md py-sm rounded-DEFAULT transition-colors flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+                REFRESH DATA
+            </button>
+<button class="bg-primary hover:bg-primary/90 text-on-primary font-label-caps text-label-caps px-md py-sm rounded-DEFAULT transition-colors shadow-lg shadow-primary/20 flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                NEW EVENT
+            </button>
+</div>
+</div>
+<!-- Stats Bar (High Density) -->
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-xs bg-surface-container rounded-lg p-xs">
+<!-- Teams -->
+<div class="bg-surface p-sm rounded-DEFAULT flex flex-col justify-between h-full relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant relative z-10">TEAMS</span>
+<div class="font-stats-impact text-stats-impact text-on-surface mt-sm relative z-10">12</div>
+</div>
+<div class="bg-surface p-sm rounded-DEFAULT flex flex-col justify-between h-full relative overflow-hidden group">
+<div class="absolute inset-0 bg-tertiary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant relative z-10">PENDING</span>
+<div class="font-stats-impact text-stats-impact text-tertiary mt-sm relative z-10">3</div>
+</div>
+<div class="bg-surface p-sm rounded-DEFAULT flex flex-col justify-between h-full relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant relative z-10">APPROVED</span>
+<div class="font-stats-impact text-stats-impact text-primary mt-sm relative z-10">9</div>
+</div>
+<div class="bg-surface p-sm rounded-DEFAULT flex flex-col justify-between h-full relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant relative z-10">PLAYERS</span>
+<div class="font-stats-impact text-stats-impact text-on-surface mt-sm relative z-10">84</div>
+</div>
+<!-- Matches -->
+<div class="bg-surface p-sm rounded-DEFAULT flex flex-col justify-between h-full relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant relative z-10">MATCHES</span>
+<div class="font-stats-impact text-stats-impact text-on-surface mt-sm relative z-10">15</div>
+</div>
+<div class="bg-surface p-sm rounded-DEFAULT flex flex-col justify-between h-full relative overflow-hidden group">
+<div class="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant relative z-10">COMPLETED</span>
+<div class="font-stats-impact text-stats-impact text-on-surface mt-sm relative z-10">7</div>
+</div>
+<div class="bg-surface p-sm rounded-DEFAULT flex flex-col justify-between h-full relative overflow-hidden group">
+<div class="absolute inset-0 bg-error/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-label-caps text-label-caps text-on-surface-variant relative z-10 flex items-center gap-[4px]"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>DISPUTES</span>
+<div class="font-stats-impact text-stats-impact text-error mt-sm relative z-10">1</div>
+</div>
+<div class="bg-surface p-sm rounded-DEFAULT flex flex-col justify-between h-full relative overflow-hidden group border-l-2 border-error bg-error/5">
+<div class="absolute inset-0 bg-error/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<span class="font-label-caps text-label-caps text-error relative z-10 flex items-center gap-[4px]"><span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>LIVE</span>
+<div class="font-stats-impact text-stats-impact text-on-surface mt-sm relative z-10">1</div>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-lg h-full">
+<!-- Left Column: Progress & Pending -->
+<div class="xl:col-span-8 flex flex-col gap-lg">
+<!-- Tournament Progress -->
+<div class="bg-surface-container rounded-xl p-lg flex flex-col gap-md relative overflow-hidden shadow-md">
+<div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+<h2 class="font-headline-md text-headline-md text-on-surface relative z-10">Tournament Progress</h2>
+<div class="relative mt-sm z-10">
+<!-- Connecting Line -->
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-surface-container-highest -translate-y-1/2 z-0"></div>
+<div class="absolute top-1/2 left-0 w-[35%] h-[2px] bg-primary -translate-y-1/2 z-0 shadow-[0_0_8px_rgba(180,197,255,0.5)]"></div>
+<!-- Steps -->
+<div class="flex justify-between relative z-10">
+<!-- Step 1: Completed -->
+<div class="flex flex-col items-center gap-sm w-24">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface text-center">Registration</span>
+</div>
+<!-- Step 2: Current -->
+<div class="flex flex-col items-center gap-sm w-24">
+<div class="w-8 h-8 rounded-full bg-surface-container border-2 border-primary flex items-center justify-center text-primary relative">
+<div class="absolute -inset-1 rounded-full border border-primary/30 animate-[spin_4s_linear_infinite]"></div>
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+</div>
+<span class="font-label-caps text-label-caps text-primary text-center">Verification</span>
+</div>
+<!-- Step 3: Upcoming -->
+<div class="flex flex-col items-center gap-sm w-24">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">account_tree</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-center">Seeding</span>
+</div>
+<!-- Step 4: Upcoming -->
+<div class="flex flex-col items-center gap-sm w-24">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">sports_esports</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-center">Competition</span>
+</div>
+<!-- Step 5: Upcoming -->
+<div class="flex flex-col items-center gap-sm w-24">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">emoji_events</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-center">Finals</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pending Actions -->
+<div class="bg-surface-container rounded-xl flex flex-col overflow-hidden shadow-md">
+<div class="p-md bg-surface-container-low flex justify-between items-center border-b border-surface-container-highest">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-error">priority_high</span>
+                        Pending Actions
+                    </h2>
+<span class="bg-error/20 text-error font-label-caps text-label-caps px-sm py-[2px] rounded-full">4 TASKS</span>
+</div>
+<div class="flex flex-col divide-y divide-surface-container-highest">
+<!-- Action Item 1: Dispute -->
+<div class="p-md flex items-center justify-between hover:bg-surface-container-highest/50 transition-colors group">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center text-error group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">gavel</span>
+</div>
+<div>
+<h3 class="font-body-md text-body-md text-on-surface font-bold">1 Active Dispute</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-[2px]">Match #402 • Team A vs Team B • Rule 3.4 Violation</p>
+</div>
+</div>
+<a class="bg-surface-container-highest text-on-surface hover:text-primary font-label-caps text-label-caps px-sm py-sm rounded-DEFAULT transition-colors" href="admin-dispute-review.html">REVIEW</a>
+</div>
+<!-- Action Item 2: Registration -->
+<div class="p-md flex items-center justify-between hover:bg-surface-container-highest/50 transition-colors group">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">how_to_reg</span>
+</div>
+<div>
+<h3 class="font-body-md text-body-md text-on-surface font-bold">3 Team Registrations Awaiting Review</h3>
+<p class="font-label-caps text-label-caps text-on-surface-variant mt-[2px]">Roster verification required • Deadline in 2 hrs</p>
+</div>
+</div>
+<a class="bg-surface-container-highest text-on-surface hover:text-primary font-label-caps text-label-caps px-sm py-sm rounded-DEFAULT transition-colors" href="admin-registrations.html">PROCESS</a>
+</div>
+</div>
+</div>
+<!-- Visual Graphic / Data placeholder -->
+<div class="relative w-full h-48 rounded-xl overflow-hidden shadow-lg bg-surface-container">
+<div class="absolute inset-0 bg-cover bg-center mix-blend-overlay opacity-40" data-alt="Abstract 3D rendering of a server room or data center, cinematic lighting, cool blue and dark metallic tones, tech-focused, representing the digital infrastructure of an esports tournament." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBKcyiJiF6w9gGo7nW-NX-PLwY_vXX8sEOxdaFMBaIBuu8Nq8N-iXEVaVSGn0u3ePLqdvoOa9XXf_eD90lzzPq6HZhxbbGzzPCx6jpMze5WxaD-NJKp-J2MfXsXzZ-_IIlo4o67Lx-76HA4PhxcNl0ZUD4zqUX3FOU18b7nU0x4ENzPxNtauDXGnFfmZq6h-6sGj-j6UeAMr-8AM4HOwLrbFbhhwsE7nk0JfWHymAooctF50N6e1UrSUw')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container via-surface-container/50 to-transparent"></div>
+<div class="absolute bottom-md left-md">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">System Status</span>
+<h3 class="font-headline-md text-headline-md text-on-surface mt-xs">All services operational</h3>
+</div>
+</div>
+</div>
+<!-- Right Column: Live & Activity -->
+<div class="xl:col-span-4 flex flex-col gap-lg">
+<!-- Live Match Status -->
+<div class="bg-surface-container rounded-xl flex flex-col overflow-hidden shadow-md border-l-2 border-error cyber-panel">
+<div class="p-md bg-surface-container-low flex justify-between items-center border-b border-surface-container-highest">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-sm">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+                        Live Matches
+                    </h2>
+</div>
+<div class="p-md flex flex-col gap-md">
+<!-- Live Match Card -->
+<div class="bg-surface rounded-DEFAULT p-sm relative group overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-error/5 to-transparent pointer-events-none"></div>
+<div class="flex justify-between items-center mb-sm">
+<span class="font-label-caps text-label-caps text-on-surface-variant">Quarter-Finals • BO3</span>
+<span class="font-label-caps text-label-caps text-error bg-error/10 px-[6px] py-[2px] rounded-sm">GAME 2</span>
+</div>
+<div class="flex items-center justify-between">
+<!-- Team 1 -->
+<div class="flex items-center gap-sm w-[40%]">
+<div class="w-8 h-8 bg-surface-container-highest rounded-full overflow-hidden flex-shrink-0 border border-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Fierce animal mascot logo for esports team, red and black colors, sharp edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAjFfFFhN2RSJVFZuamSC1Uat95s_rSICkhwFY6UgWO8AJQ3CygrbdOs3nAPQkOGW4nzoUK1Xx2hkJSVh9S8gimZqzhnV4VjmgM8ekcGPw75LwJQac4H7f9TwPRlOcPce59NyuqcN_n8zqFpwnF4CWyC150oRH0vHcWnwHIAj8n6ix6ksYKooiviac43dTKskKeZ1wwbb4mDhPoh6kfqPjilf6Saq-wws_cC0svvVGt6hUORZeg6XZpQ"/>
+</div>
+<span class="font-body-md text-body-md text-on-surface font-bold truncate">Nova</span>
+</div>
+<!-- Score -->
+<div class="flex flex-col items-center justify-center w-[20%]">
+<div class="font-stats-impact text-stats-impact text-on-surface tracking-widest">1 - 0</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-[2px]">18:42</span>
+</div>
+<!-- Team 2 -->
+<div class="flex items-center justify-end gap-sm w-[40%]">
+<span class="font-body-md text-body-md text-on-surface-variant truncate text-right">Zenith</span>
+<div class="w-8 h-8 bg-surface-container-highest rounded-full overflow-hidden flex-shrink-0 border border-surface-container-high opacity-70">
+<img class="w-full h-full object-cover grayscale mix-blend-screen" data-alt="Abstract geometrical logo for esports team, blue and silver colors, sleek." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARlhbsfy96qIVDlVYiWv4VD_pjwElK4xSuXY1vTIiyZAhXWZ36I4GmNwIct7Le2PEdDQ_hQOjIZ0U38MCm12mIMaEUTCJdbp1nz_gNqr67vZdh3Fz2o0Xmh3G0ob0Cwkz5y36v7AYColgYcq8229XsW_9BS0wsU-RahortVGhgOZt6BkQGx_H9bR-CYt4cgmAd1pzv52HVC3wJQyPTkKjV5-DM9zHUwyHMCROhIV0WzAPE2fUczjVkNQ"/>
+</div>
+</div>
+</div>
+<div class="mt-sm pt-sm border-t border-surface-container-highest flex justify-between">
+<a class="text-primary font-label-caps text-label-caps hover:text-primary-fixed-dim transition-colors" href="admin-officiating.html">WATCH STREAM</a>
+<a class="text-on-surface-variant font-label-caps text-label-caps hover:text-on-surface transition-colors" href="admin-officiating.html">MATCH ROOM</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="bg-surface-container rounded-xl flex flex-col flex-1 overflow-hidden shadow-md">
+<div class="p-md bg-surface-container-low border-b border-surface-container-highest">
+<h2 class="font-headline-md text-headline-md text-on-surface">Recent Activity</h2>
+</div>
+<div class="p-md flex-1 overflow-y-auto">
+<div class="relative pl-sm border-l border-surface-container-highest flex flex-col gap-md">
+<!-- Activity Item -->
+<div class="relative">
+<div class="absolute -left-[21px] top-1 w-[10px] h-[10px] rounded-full bg-primary ring-4 ring-surface-container"></div>
+<div class="ml-sm">
+<p class="font-body-md text-body-md text-on-surface text-sm"><span class="font-bold">Admin_Core</span> approved registration for <span class="text-primary">Team Apex</span></p>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-[2px] block">10 mins ago</span>
+</div>
+</div>
+<!-- Activity Item -->
+<div class="relative">
+<div class="absolute -left-[21px] top-1 w-[10px] h-[10px] rounded-full bg-surface-container-highest ring-4 ring-surface-container"></div>
+<div class="ml-sm">
+<p class="font-body-md text-body-md text-on-surface-variant text-sm"><span class="font-bold text-on-surface">System</span> updated match schedule for Bracket A</p>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-[2px] block">45 mins ago</span>
+</div>
+</div>
+<!-- Activity Item -->
+<div class="relative">
+<div class="absolute -left-[21px] top-1 w-[10px] h-[10px] rounded-full bg-error ring-4 ring-surface-container"></div>
+<div class="ml-sm">
+<p class="font-body-md text-body-md text-on-surface text-sm"><span class="font-bold">Official_Ref1</span> opened a dispute on Match #402</p>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-[2px] block">1 hr ago</span>
+</div>
+</div>
+<!-- Activity Item -->
+<div class="relative">
+<div class="absolute -left-[21px] top-1 w-[10px] h-[10px] rounded-full bg-surface-container-highest ring-4 ring-surface-container"></div>
+<div class="ml-sm">
+<p class="font-body-md text-body-md text-on-surface-variant text-sm"><span class="font-bold text-on-surface">Admin_Core</span> published rule set v1.2</p>
+<span class="font-label-caps text-label-caps text-on-surface-variant mt-[2px] block">3 hrs ago</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

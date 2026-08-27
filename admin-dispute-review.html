@@ -1,0 +1,223 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-highest": "#2a3645", "on-secondary": "#003064", "surface-tint": "#b4c5ff", "error-container": "#93000a", "on-secondary-fixed-variant": "#00468d", "on-tertiary-container": "#f4f6ff", "primary-fixed-dim": "#b4c5ff", "secondary-fixed-dim": "#aac7ff", "on-tertiary": "#2a313b", "tertiary-fixed": "#dce3f0", "primary": "#b4c5ff", "on-secondary-container": "#002957", "background": "#081422", "tertiary-container": "#6a717d", "outline": "#8c90a2", "primary-container": "#1264ff", "on-primary-fixed": "#00174b", "on-error": "#690005", "secondary": "#aac7ff", "secondary-fixed": "#d6e3ff", "surface-variant": "#2a3645", "on-primary-container": "#f6f6ff", "surface": "#081422", "on-surface": "#d7e3f7", "inverse-on-surface": "#263140", "tertiary-fixed-dim": "#c0c7d4", "outline-variant": "#424656", "on-tertiary-fixed-variant": "#404752", "inverse-primary": "#0052dc", "surface-container-high": "#1f2b39", "surface-container-lowest": "#030f1c", "error": "#ffb4ab", "inverse-surface": "#d7e3f7", "surface-dim": "#081422", "on-error-container": "#ffdad6", "on-primary": "#002a78", "primary-fixed": "#dbe1ff", "on-surface-variant": "#c2c6d8", "on-secondary-fixed": "#001b3e", "on-tertiary-fixed": "#151c26", "tertiary": "#c0c7d4", "on-background": "#d7e3f7", "secondary-container": "#3e90ff", "on-primary-fixed-variant": "#003ea8", "surface-bright": "#2e3a49", "surface-container": "#15202f", "surface-container-low": "#101c2a" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "base": "4px", "lg": "24px", "container-max": "1280px", "gutter": "16px", "sm": "12px", "xl": "40px", "md": "16px", "xs": "8px" }, "fontFamily": { "headline-lg": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], "headline-xl": ["Hanken Grotesk"], "body-md": ["Inter"], "headline-lg-mobile": ["Hanken Grotesk"], "stats-impact": ["Hanken Grotesk"], "label-caps": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "800" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "700" }], "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "800" }], "stats-impact": ["24px", { "lineHeight": "24px", "letterSpacing": "0.05em", "fontWeight": "900" }], "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "700" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }] } } } }</script><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
+.cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
+.cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-grid-bg{background-image:linear-gradient(rgba(180,197,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(180,197,255,.06) 1px,transparent 1px);background-size:36px 36px;}
+.cyber-panel{position:relative;}
+.cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
+.cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
+.cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
+.cyber-scan{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.cyber-scan::before{content:'';position:absolute;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,rgba(180,197,255,.06),transparent);animation:cyber-scan-move 9s linear infinite;}
+@keyframes cyber-scan-move{0%{top:-140px;}100%{top:100%;}}
+@media (prefers-reduced-motion:reduce){.cyber-scan::before{animation:none;display:none;}}
+</style></head><body class="bg-background font-body-md text-on-surface"><div class="cyber-scan" aria-hidden="true"></div><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low z-50 flex flex-col border-r border-outline-variant/20 shadow-xl"><div class="px-md py-lg flex items-center gap-xs border-b border-outline-variant/10"><img alt="CEC Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XQ0_rZDcLi3eTVgonrROHwrqzhJu-o4vBXp77jyWbdXEHrZlx0o4M-LV7q645F9I6TtxkXskXS3PMg2U6LO6Wfuydlv-pHpqc6BsHK4B-FLIZn-5YkSc3Y1jSGFna-9d9aLToiYTgY49yVZUYWfy3tjVhLdQjNAcnokv13CLNjg4CgRY_Psga2-_sTDqfqkuU_jOG8jHvRhQzUHZqo1QcEZ5FR-U-57QfU9F9TRc6MO5uoFXZ3v9I2g8UJ"/><span class="font-headline-md text-headline-md text-primary tracking-tighter uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md space-y-base overflow-y-auto"><a class="flex items-center px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all group" href="admin.html"><span class="material-symbols-outlined mr-sm text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a class="flex items-center px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all group" href="admin-registrations.html"><span class="material-symbols-outlined mr-sm text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a class="flex items-center px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all group" href="admin-bracket-builder.html"><span class="material-symbols-outlined mr-sm text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center px-md py-sm rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-all group" href="admin-officiating.html"><span class="material-symbols-outlined mr-sm text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a aria-current="page" class="flex items-center px-md py-sm rounded-DEFAULT transition-all group bg-primary-container text-on-primary-container font-bold" href="admin-disputes.html"><span class="material-symbols-outlined mr-sm text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-background/80 backdrop-blur-xl border-b border-outline-variant/10 z-40 flex items-center justify-between px-lg"><div class="flex items-center gap-md"><div class="flex items-center gap-xs px-sm py-[4px] bg-error/10 border border-error/20 rounded-full"><span class="w-2 h-2 rounded-full bg-error animate-pulse"></span><span class="text-[11px] font-label-caps text-error uppercase">Live Operations</span></div></div><div class="flex items-center gap-lg"><button class="flex items-center gap-xs text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">search</span></button><button class="relative flex items-center gap-xs text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span></button><div class="h-8 w-[1px] bg-outline-variant/20"></div><div class="flex items-center gap-sm"><div class="text-right hidden sm:block"><div class="text-xs font-label-caps text-on-surface-variant uppercase">Tournament Lead</div><div class="text-sm font-bold text-on-surface">Admin_Core</div></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/20"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 bg-background min-h-screen cyber-grid-bg"><div class="flex flex-col w-full h-full pb-xl">
+<!-- Hero / Header Section -->
+<div class="w-full relative py-xl px-lg lg:px-xl bg-surface-container-low shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-md">
+<div class="flex flex-col gap-sm">
+<div class="flex items-center gap-sm">
+<span class="px-xs py-base bg-error/10 text-error font-label-caps text-label-caps uppercase rounded-sm border border-error/20 flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+                    Active Dispute
+                </span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Match #4092</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface cyber-title">NVK vs FNT</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Reporting Team: <span class="font-bold text-on-surface">NVK</span> claim use of unverified substitute player (Game 2).
+            </p>
+</div>
+<div class="flex flex-col sm:items-end gap-xs text-right">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Time Elapsed</span>
+<div class="font-stats-impact text-stats-impact text-error">02:14:38</div>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg p-lg lg:p-xl -mt-4 relative z-10">
+<!-- Left Column: Evidence & Communication -->
+<div class="col-span-1 lg:col-span-8 flex flex-col gap-lg">
+<!-- Evidence Viewer -->
+<div class="bg-surface-container rounded-lg shadow-md p-md flex flex-col gap-md border border-outline-variant/10 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none"></div>
+<div class="flex items-center justify-between relative z-10">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">visibility</span>
+                        Evidence Viewer
+                    </h2>
+<div class="flex gap-xs">
+<button class="px-sm py-xs bg-surface-container-high hover:bg-surface-bright transition-colors rounded-sm text-on-surface font-label-caps text-label-caps">Screenshots (2)</button>
+<button class="px-sm py-xs bg-surface hover:bg-surface-bright transition-colors rounded-sm text-on-surface-variant font-label-caps text-label-caps">Log Fragments (1)</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-sm relative z-10">
+<!-- Placeholder Evidence 1 -->
+<div class="relative group rounded-md overflow-hidden bg-surface flex flex-col border border-outline-variant/20">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Screenshot of an esports game post-match lobby showing a list of players. High contrast, neon blue and dark grey tones. Technical overlay UI elements visible. A red bounding box highlights a specific player name indicating an unverified sub. Corporate modern aesthetic, broadcast overlay style." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBHQjMdAdNLRb9IlEb4cIOnfXj1K9i5u9G7iarirLBOlT2aYGOVEey28d8lUwLmtHiOL10Sj_89RejIxG_cH5KMO-huK5mdSrMOY8-lKIlY0sz4B-aJ-tAApW-g0bQEnmTXdVhcNYW8nePugWAQfiPc2fH3HFWtICRdA2ZuWC-yQoQIt76PUAvyn7_HQZHswJRfhixl4jG4gzi8v0W-fHWaeudBDPqDIjU539rxBLYEx_XWgRhk6vfSnw')"></div>
+<div class="p-sm bg-surface-container-high flex justify-between items-center group-hover:bg-surface-bright transition-colors">
+<span class="font-label-caps text-label-caps text-on-surface">Battle Results (Game 2)</span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors text-[18px]">open_in_full</button>
+</div>
+</div>
+<!-- Placeholder Evidence 2 -->
+<div class="relative group rounded-md overflow-hidden bg-surface flex flex-col border border-outline-variant/20">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Screenshot of an esports game lobby showing the draft phase. Detailed UI elements, dark mode interface, sci-fi metallic borders. Highlighting the chat box in the bottom left where a player name mismatch is discussed. Professional command center aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD9sVaCtPIioHjdOebFS5Lt28Qu4MlTQ9hnskGVBpA1qxMcqsPKym3J9v80WUQltzSroxHuQz0g8R_rCMxX196Xu6QdNVz7MX9XTUy5bFPuy4PsFLaAqUro-na_CE4N9darzBbYbg1dVJRIWk15k70TwF3-6pfvw4hkQVmgc4jVl5E6gSl84rs1YrDjH3cOM1tz0U4anUiKKAQqxB1ex8pWbkXjzIVKEMN0weghtON1DXrBr8OFqURhog')"></div>
+<div class="p-sm bg-surface-container-high flex justify-between items-center group-hover:bg-surface-bright transition-colors">
+<span class="font-label-caps text-label-caps text-on-surface">Draft Lobby (Game 2)</span>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors text-[18px]">open_in_full</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Communication Log -->
+<div class="bg-surface-container rounded-lg shadow-md p-md flex flex-col gap-md border border-outline-variant/10">
+<h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">chat</span>
+                    Communication Log
+                </h2>
+<div class="flex flex-col gap-md max-h-[400px] overflow-y-auto pr-sm custom-scrollbar">
+<!-- NVK Message -->
+<div class="flex flex-col gap-xs w-full max-w-[85%]">
+<div class="flex items-baseline gap-sm">
+<span class="font-label-caps text-label-caps text-primary uppercase font-bold">NVK_Captain</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">14:22 EST</span>
+</div>
+<div class="bg-surface-container-high p-sm rounded-r-lg rounded-bl-lg text-body-md font-body-md text-on-surface shadow-sm border border-outline-variant/10">
+                            FNT played Game 2 with a substitute ('FNT_Shadow') who was not registered on their roster prior to the match start time. We requested a pause during draft but they proceeded.
+                        </div>
+</div>
+<!-- FNT Message -->
+<div class="flex flex-col gap-xs w-full max-w-[85%] self-end items-end">
+<div class="flex items-baseline gap-sm flex-row-reverse">
+<span class="font-label-caps text-label-caps text-secondary-fixed-dim uppercase font-bold">FNT_Captain</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">14:28 EST</span>
+</div>
+<div class="bg-surface-bright p-sm rounded-l-lg rounded-br-lg text-body-md font-body-md text-on-surface shadow-sm text-right border border-outline-variant/10">
+                            Our primary mid-laner disconnected due to an ISP outage. 'FNT_Shadow' is our registered emergency sub. We notified the admins in Discord channel #match-help 10 mins before game 2 started.
+                        </div>
+</div>
+<!-- Admin Note -->
+<div class="flex items-center justify-center my-sm relative">
+<div class="h-[1px] w-full bg-outline-variant/20 absolute"></div>
+<span class="bg-surface-container px-sm font-label-caps text-label-caps text-on-surface-variant uppercase relative z-10 flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+                             Admin Joined Log
+                        </span>
+</div>
+<!-- Admin Message -->
+<div class="flex flex-col gap-xs w-full max-w-[85%]">
+<div class="flex items-baseline gap-sm">
+<span class="font-label-caps text-label-caps text-error uppercase font-bold">CEC_Admin_Core</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">14:35 EST</span>
+</div>
+<div class="bg-surface p-sm rounded-r-lg rounded-bl-lg text-body-md font-body-md text-on-surface shadow-sm border-l-2 border-error">
+                            FNT, please provide the Discord message link or screenshot confirming notification prior to Game 2 draft phase. Checking database for 'FNT_Shadow' registration timestamp.
+                        </div>
+</div>
+</div>
+<!-- Reply Input -->
+<div class="mt-sm flex gap-sm items-end relative">
+<div class="flex-1 bg-surface rounded-sm border border-outline-variant/30 focus-within:border-primary focus-within:shadow-[0_0_8px_rgba(180,197,255,0.2)] transition-all flex flex-col">
+<textarea class="w-full bg-transparent text-on-surface font-body-md p-sm resize-none focus:outline-none min-h-[80px]" placeholder="Type your official response or request more info..."></textarea>
+<div class="flex justify-between items-center px-sm pb-xs">
+<div class="flex gap-xs">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">attach_file</span></button>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant text-[10px]">Admin View</span>
+</div>
+</div>
+<button class="bg-primary hover:bg-primary-fixed transition-colors text-on-primary p-sm rounded-sm shadow-md flex items-center justify-center">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right Column: Official Ruling Panel -->
+<div class="col-span-1 lg:col-span-4 flex flex-col gap-lg">
+<div class="bg-surface-container rounded-lg shadow-lg p-md flex flex-col border-t-4 border-primary relative overflow-hidden">
+<div class="absolute -right-12 -top-12 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
+<h2 class="font-headline-md text-headline-md text-on-surface mb-md">Official Ruling Panel</h2>
+<div class="flex flex-col gap-sm mb-lg">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Select Action</span>
+<label class="flex items-center justify-between p-sm rounded-sm border border-outline-variant/20 hover:bg-surface-container-high cursor-pointer transition-colors group">
+<div class="flex items-center gap-sm">
+<div class="w-4 h-4 rounded-full border border-primary flex items-center justify-center group-has-[:checked]:bg-primary">
+<input checked="" class="sr-only" name="ruling" type="radio"/>
+<div class="w-2 h-2 rounded-full bg-on-primary hidden group-has-[:checked]:block"></div>
+</div>
+<span class="font-body-md text-body-md text-on-surface font-bold">Uphold Dispute</span>
+</div>
+<span class="font-label-caps text-label-caps text-error">NVK Wins</span>
+</label>
+<label class="flex items-center justify-between p-sm rounded-sm border border-outline-variant/20 hover:bg-surface-container-high cursor-pointer transition-colors group">
+<div class="flex items-center gap-sm">
+<div class="w-4 h-4 rounded-full border border-outline-variant flex items-center justify-center group-has-[:checked]:bg-primary group-has-[:checked]:border-primary">
+<input class="sr-only" name="ruling" type="radio"/>
+<div class="w-2 h-2 rounded-full bg-on-primary hidden group-has-[:checked]:block"></div>
+</div>
+<span class="font-body-md text-body-md text-on-surface font-bold">Dismiss Dispute</span>
+</div>
+<span class="font-label-caps text-label-caps text-on-surface-variant">FNT Wins</span>
+</label>
+<label class="flex items-center justify-between p-sm rounded-sm border border-outline-variant/20 hover:bg-surface-container-high cursor-pointer transition-colors group">
+<div class="flex items-center gap-sm">
+<div class="w-4 h-4 rounded-full border border-outline-variant flex items-center justify-center group-has-[:checked]:bg-primary group-has-[:checked]:border-primary">
+<input class="sr-only" name="ruling" type="radio"/>
+<div class="w-2 h-2 rounded-full bg-on-primary hidden group-has-[:checked]:block"></div>
+</div>
+<span class="font-body-md text-body-md text-on-surface font-bold">Issue Warning</span>
+</div>
+<span class="font-label-caps text-label-caps text-secondary">Proceed</span>
+</label>
+</div>
+<div class="flex flex-col gap-xs mb-lg">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Official Justification</span>
+<textarea class="w-full bg-surface rounded-sm border border-outline-variant/30 focus:border-primary focus:outline-none p-sm font-body-md text-body-md text-on-surface min-h-[120px] resize-none" placeholder="Provide detailed reasoning for the audit log..."></textarea>
+</div>
+<div class="flex flex-col gap-sm mt-auto pt-sm">
+<a class="w-full bg-primary hover:bg-primary-fixed transition-colors text-on-primary font-bold font-label-caps text-label-caps py-sm px-md rounded-sm uppercase shadow-md flex items-center justify-center gap-sm" href="admin-disputes.html">
+<span class="material-symbols-outlined text-[18px]">gavel</span>
+                        Finalize Ruling
+                    </a>
+<button class="w-full bg-transparent border border-primary/40 hover:bg-primary/10 transition-colors text-primary font-bold font-label-caps text-label-caps py-sm px-md rounded-sm uppercase flex items-center justify-center gap-sm">
+<span class="material-symbols-outlined text-[18px]">escalator_warning</span>
+                        Escalate to Head Ref
+                    </button>
+</div>
+</div>
+<!-- Quick Info Panel -->
+<div class="bg-surface-container rounded-lg p-md flex flex-col gap-sm border border-outline-variant/10">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase border-b border-outline-variant/20 pb-xs">Match Context</span>
+<div class="flex justify-between items-center py-xs">
+<span class="font-body-md text-body-md text-on-surface-variant">Tournament Phase</span>
+<span class="font-body-md text-body-md text-on-surface font-bold">Playoffs - Round 2</span>
+</div>
+<div class="flex justify-between items-center py-xs">
+<span class="font-body-md text-body-md text-on-surface-variant">Current Score</span>
+<span class="font-body-md text-body-md text-on-surface font-bold">NVK 1 - 0 FNT</span>
+</div>
+<div class="flex justify-between items-center py-xs">
+<span class="font-body-md text-body-md text-on-surface-variant">Related Rules</span>
+<a class="font-label-caps text-label-caps text-primary hover:underline flex items-center gap-xs" href="rules.html">
+                        Rule 4.2.1 <span class="material-symbols-outlined text-[12px]">open_in_new</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<style>
+    /* Custom Scrollbar for the specific log area to keep it clean */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(66, 70, 86, 0.3); /* outline-variant */
+        border-radius: 10px;
+    }
+    .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+        background-color: rgba(66, 70, 86, 0.6);
+    }
+</style></main></div></body></html>

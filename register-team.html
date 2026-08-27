@@ -1,0 +1,326 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
+.cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
+.cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-grid-bg{background-image:linear-gradient(rgba(180,197,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(180,197,255,.06) 1px,transparent 1px);background-size:36px 36px;}
+.cyber-panel{position:relative;}
+.cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
+.cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
+.cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
+.cyber-scan{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.cyber-scan::before{content:'';position:absolute;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,rgba(180,197,255,.06),transparent);animation:cyber-scan-move 9s linear infinite;}
+@keyframes cyber-scan-move{0%{top:-140px;}100%{top:100%;}}
+@media (prefers-reduced-motion:reduce){.cyber-scan::before{animation:none;display:none;}}
+</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background text-on-background font-body-md"><div class="cyber-scan" aria-hidden="true"></div><main class="w-full"><div class="flex flex-col w-full relative pb-xl">
+<!-- Ambient background glow -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none cyber-grid-bg">
+<div class="absolute top-0 right-0 w-1/2 h-[500px] bg-primary/5 rounded-full blur-[120px] mix-blend-screen opacity-50"></div>
+<div class="absolute bottom-0 left-0 w-1/2 h-[500px] bg-secondary-container/5 rounded-full blur-[120px] mix-blend-screen opacity-30"></div>
+</div>
+<div class="w-full max-w-[1280px] mx-auto px-lg pt-xl md:px-xl relative z-10">
+<!-- Header Section -->
+<header class="mb-xl flex flex-col md:flex-row md:items-end justify-between gap-lg">
+<div class="max-w-2xl">
+<div class="flex items-center gap-xs mb-md">
+<span class="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_12px_rgba(180,197,255,0.8)]"></span>
+<p class="font-label-caps text-label-caps text-primary tracking-widest uppercase cyber-mono">Mobile Legends: Bang Bang Collegiate Series</p>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-background mb-xs uppercase tracking-tighter cyber-title">
+          Tournament Registration
+        </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          Complete the multi-step verification process to secure your team's slot in the upcoming seasonal qualifiers.
+        </p>
+</div>
+<!-- Quick Status -->
+<div class="bg-surface-container/80 backdrop-blur-sm rounded-lg p-md flex items-center gap-md relative overflow-hidden group hover:bg-surface-container transition-colors duration-300 shadow-lg">
+<div class="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+<div class="w-12 h-12 bg-surface-variant rounded-full flex items-center justify-center relative">
+<span class="material-symbols-outlined text-on-surface-variant">verified_user</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1 uppercase">Registration Status</p>
+<p class="font-headline-md text-headline-md text-on-background">Incomplete</p>
+</div>
+</div>
+</header>
+<!-- Progress Indicator (Desktop) -->
+<nav aria-label="Progress" class="hidden md:block mb-xl relative">
+<!-- Background Line -->
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-surface-container -translate-y-1/2 z-0"></div>
+<!-- Active Line -->
+<div class="absolute top-1/2 left-0 w-[20%] h-[2px] bg-primary -translate-y-1/2 z-0 shadow-[0_0_10px_rgba(180,197,255,0.5)] transition-all duration-500 ease-in-out"></div>
+<ol class="flex items-center justify-between relative z-10 w-full" role="list">
+<!-- Step 1: Active -->
+<li class="relative flex flex-col items-center group cursor-default">
+<div class="h-10 w-10 rounded-full bg-primary flex items-center justify-center shadow-[0_0_15px_rgba(180,197,255,0.4)] transition-transform duration-300">
+<span class="font-headline-md text-headline-md text-on-primary">1</span>
+</div>
+<span class="absolute -bottom-8 font-label-caps text-label-caps text-primary uppercase tracking-widest whitespace-nowrap">Team Info</span>
+</li>
+<!-- Step 2: Upcoming -->
+<li class="relative flex flex-col items-center group cursor-pointer">
+<div class="h-10 w-10 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-surface-variant transition-colors duration-300">
+<span class="font-headline-md text-headline-md text-on-surface-variant">2</span>
+</div>
+<span class="absolute -bottom-8 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest whitespace-nowrap opacity-60 group-hover:opacity-100 transition-opacity">Roster</span>
+</li>
+<!-- Step 3: Upcoming -->
+<li class="relative flex flex-col items-center group cursor-pointer">
+<div class="h-10 w-10 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-surface-variant transition-colors duration-300">
+<span class="font-headline-md text-headline-md text-on-surface-variant">3</span>
+</div>
+<span class="absolute -bottom-8 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest whitespace-nowrap opacity-60 group-hover:opacity-100 transition-opacity">Verification</span>
+</li>
+<!-- Step 4: Upcoming -->
+<li class="relative flex flex-col items-center group cursor-pointer">
+<div class="h-10 w-10 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-surface-variant transition-colors duration-300">
+<span class="font-headline-md text-headline-md text-on-surface-variant">4</span>
+</div>
+<span class="absolute -bottom-8 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest whitespace-nowrap opacity-60 group-hover:opacity-100 transition-opacity">Review</span>
+</li>
+<!-- Step 5: Upcoming -->
+<li class="relative flex flex-col items-center group cursor-pointer">
+<div class="h-10 w-10 rounded-full bg-surface-container flex items-center justify-center group-hover:bg-surface-variant transition-colors duration-300">
+<span class="font-headline-md text-headline-md text-on-surface-variant">5</span>
+</div>
+<span class="absolute -bottom-8 font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest whitespace-nowrap opacity-60 group-hover:opacity-100 transition-opacity">Submit</span>
+</li>
+</ol>
+</nav>
+<!-- Progress Indicator (Mobile) -->
+<div class="md:hidden mb-xl">
+<div class="flex items-center justify-between mb-sm">
+<p class="font-label-caps text-label-caps text-primary uppercase">Step 1 of 5</p>
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">Team Info</p>
+</div>
+<div class="w-full h-1 bg-surface-container rounded-full overflow-hidden">
+<div class="w-1/5 h-full bg-primary shadow-[0_0_8px_rgba(180,197,255,0.5)]"></div>
+</div>
+</div>
+<!-- Main Content Area -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl relative">
+<!-- Left Column: Form -->
+<div class="lg:col-span-8 flex flex-col gap-xl z-10">
+<!-- Section Header -->
+<div class="flex items-center gap-md">
+<div class="w-[3px] h-8 bg-inverse-primary shadow-[0_0_12px_rgba(0,82,220,0.6)]"></div>
+<h2 class="font-headline-lg text-headline-lg text-on-background uppercase tracking-tight cyber-title">Team Foundation</h2>
+</div>
+<form class="flex flex-col gap-xl">
+<!-- Team Badge (no image upload — color + auto-generated initials) -->
+<div class="bg-surface-container-low rounded-xl p-lg relative overflow-hidden group shadow-md transition-shadow duration-300 hover:shadow-lg cyber-panel">
+<div class="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br from-primary to-transparent pointer-events-none"></div>
+<label class="block font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">Team Badge</label>
+<p class="font-body-md text-body-md text-on-surface-variant mb-md">No logo to upload — pick a color and your badge is generated from your team name's initials.</p>
+<div class="flex flex-wrap items-center gap-lg">
+<div class="flex items-center justify-center w-20 h-20 rounded-full font-headline-lg text-headline-lg text-white shadow-lg shrink-0 transition-colors duration-300 cyber-mono" id="team-badge-preview" style="background:#1264ff">CT</div>
+<div class="flex flex-wrap gap-sm" id="team-color-picker" role="radiogroup" aria-label="Team badge color">
+<label class="cursor-pointer"><input checked="" class="sr-only peer" data-color="#1264ff" name="team-color" type="radio" value="#1264ff"/><span class="block w-9 h-9 rounded-full border-2 border-transparent peer-checked:border-on-background peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-colors" style="background:#1264ff"></span></label>
+<label class="cursor-pointer"><input class="sr-only peer" data-color="#00e5ff" name="team-color" type="radio" value="#00e5ff"/><span class="block w-9 h-9 rounded-full border-2 border-transparent peer-checked:border-on-background peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-colors" style="background:#00e5ff"></span></label>
+<label class="cursor-pointer"><input class="sr-only peer" data-color="#7c5cff" name="team-color" type="radio" value="#7c5cff"/><span class="block w-9 h-9 rounded-full border-2 border-transparent peer-checked:border-on-background peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-colors" style="background:#7c5cff"></span></label>
+<label class="cursor-pointer"><input class="sr-only peer" data-color="#ff2fd8" name="team-color" type="radio" value="#ff2fd8"/><span class="block w-9 h-9 rounded-full border-2 border-transparent peer-checked:border-on-background peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-colors" style="background:#ff2fd8"></span></label>
+<label class="cursor-pointer"><input class="sr-only peer" data-color="#00e676" name="team-color" type="radio" value="#00e676"/><span class="block w-9 h-9 rounded-full border-2 border-transparent peer-checked:border-on-background peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-colors" style="background:#00e676"></span></label>
+<label class="cursor-pointer"><input class="sr-only peer" data-color="#ffb020" name="team-color" type="radio" value="#ffb020"/><span class="block w-9 h-9 rounded-full border-2 border-transparent peer-checked:border-on-background peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-colors" style="background:#ffb020"></span></label>
+</div>
+</div>
+</div>
+<!-- Basic Info Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Team Name -->
+<div class="flex flex-col relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="team-name">Team Name <span class="text-error">*</span></label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all placeholder:text-outline shadow-sm border border-transparent focus:border-primary/50" id="team-name" placeholder="e.g. Neon Titans" required="" type="text"/>
+<div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
+</div>
+</div>
+<!-- Course / Program -->
+<div class="flex flex-col relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="course">Course / Program <span class="text-error">*</span></label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all placeholder:text-outline shadow-sm border border-transparent focus:border-primary/50" id="course" placeholder="e.g. BS Computer Science" required="" type="text"/>
+<div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
+</div>
+</div>
+<!-- Captain Name -->
+<div class="flex flex-col relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="captain-name">Captain IGN / Name <span class="text-error">*</span></label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all placeholder:text-outline shadow-sm border border-transparent focus:border-primary/50" id="captain-name" placeholder="e.g. xX_Slayer_Xx" required="" type="text"/>
+<div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
+</div>
+</div>
+<!-- Year Level -->
+<div class="flex flex-col relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="year-level">Year Level <span class="text-error">*</span></label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all shadow-sm border border-transparent focus:border-primary/50 appearance-none cursor-pointer" id="year-level">
+<option disabled="" selected="" value="">Select Year</option>
+<option value="1">Freshman</option>
+<option value="2">Sophomore</option>
+<option value="3">Junior</option>
+<option value="4">Senior</option>
+<option value="5">Graduate</option>
+</select>
+<div class="absolute right-md top-1/2 -translate-y-1/2 pointer-events-none">
+<span class="material-symbols-outlined text-outline">expand_more</span>
+</div>
+<div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
+</div>
+</div>
+</div>
+<!-- Contact & Description -->
+<div class="flex flex-col relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs transition-colors group-focus-within:text-primary" for="team-contact">Primary Contact Number <span class="text-error">*</span></label>
+<div class="relative">
+<div class="absolute left-md top-1/2 -translate-y-1/2 text-outline font-body-lg text-body-lg">+</div>
+<input class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg pl-10 pr-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all placeholder:text-outline shadow-sm border border-transparent focus:border-primary/50" id="team-contact" placeholder="1 234 567 8900" required="" type="tel"/>
+<div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
+</div>
+</div>
+<div class="flex flex-col relative group">
+<label class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-xs flex justify-between transition-colors group-focus-within:text-primary" for="team-desc">
+<span>Team Description / Bio</span>
+<span class="text-outline font-body-md normal-case opacity-70">Optional</span>
+</label>
+<div class="relative">
+<textarea class="w-full bg-surface-container-lowest text-on-background font-body-lg text-body-lg px-md py-sm rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:bg-surface-dim transition-all placeholder:text-outline shadow-sm resize-y border border-transparent focus:border-primary/50" id="team-desc" placeholder="Briefly describe your team's playstyle or history..." rows="4"></textarea>
+<div class="absolute inset-0 rounded-lg pointer-events-none border border-outline-variant group-focus-within:border-transparent transition-colors"></div>
+</div>
+</div>
+</form>
+</div>
+<!-- Right Column: Sidebar -->
+<div class="lg:col-span-4 z-10">
+<aside class="sticky top-xl flex flex-col gap-lg">
+<!-- Decorative Status Card -->
+<div class="bg-surface-container shadow-xl rounded-xl overflow-hidden relative cyber-panel">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-error via-primary to-secondary"></div>
+<div class="p-lg relative z-10 flex flex-col gap-sm">
+<div class="flex items-start gap-sm">
+<span class="material-symbols-outlined text-error mt-1">warning</span>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-background uppercase tracking-tight mb-xs">Critical Notice</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                    Your roster will be <strong class="text-on-background">permanently locked</strong> upon final submission in Step 5. Ensure all player igns and academic details are verified.
+                  </p>
+</div>
+</div>
+</div>
+<!-- Graphic background -->
+<div class="absolute -bottom-10 -right-10 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[120px]">gpp_maybe</span>
+</div>
+</div>
+<!-- Tournament Info Box -->
+<div class="bg-surface-container-low rounded-xl p-lg shadow-md border border-surface-container-highest flex flex-col gap-md cyber-panel">
+<h4 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest border-b border-surface-container-highest pb-xs cyber-mono">Tournament Scope</h4>
+<ul class="flex flex-col gap-sm">
+<li class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Format</span>
+<span class="font-body-lg text-body-lg text-on-background font-bold uppercase tracking-tight">5v5 Draft</span>
+</li>
+<li class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Min. Players</span>
+<span class="font-body-lg text-body-lg text-on-background font-bold">5</span>
+</li>
+<li class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Max Subs</span>
+<span class="font-body-lg text-body-lg text-on-background font-bold">2</span>
+</li>
+<li class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Region Lock</span>
+<span class="font-body-lg text-body-lg text-on-background font-bold uppercase tracking-tight">NA East</span>
+</li>
+</ul>
+<!-- Abstract Data Viz -->
+<div aria-hidden="true" class="mt-sm w-full h-16 relative bg-surface-dim rounded flex items-end gap-1 px-2 py-1 opacity-80">
+<div class="w-full bg-primary/20 h-[30%] rounded-t-sm"></div>
+<div class="w-full bg-primary/40 h-[60%] rounded-t-sm"></div>
+<div class="w-full bg-primary/60 h-[40%] rounded-t-sm"></div>
+<div class="w-full bg-primary/80 h-[80%] rounded-t-sm"></div>
+<div class="w-full bg-primary h-[50%] rounded-t-sm"></div>
+<div class="w-full bg-primary/30 h-[90%] rounded-t-sm"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-label-caps text-label-caps text-on-surface-variant mix-blend-difference tracking-widest uppercase text-[10px]">Slot Availability</span>
+</div>
+</div>
+</div>
+<!-- Abstract Graphic Placeholder -->
+<div class="hidden lg:block w-full h-48 rounded-xl bg-surface-container relative overflow-hidden shadow-lg border border-surface-container-highest group">
+<div class="bg-cover bg-center w-full h-full opacity-60 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-700 group-hover:scale-105" data-alt="A stylized, low-poly 3D render of an esports trophy or emblem floating against a dark, moody background with subtle neon blue and red rim lighting. Cinematic, high contrast, competitive gaming aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDs6aZbaQHWUpjU59WiPF0lGXo3mzmJOUimqCT7sBtVUd0NqxkL3TiWd3y9lG_nNNGh6uztbOx15HOjryo4FJghqtFmj-inC7uVuJ20o0K97sAKZs9Ycj2C-xFV1LQClGrN2T-U4RG_0Lxk3Z20Hx4ovukAwuxiES5Z-LNNGXRE1drFivnXDAbzyiSDTEkBKzZgW8fjuOZeDKLsq6ij1bctuzBpZVCFxYzxdx08NG8iW3uztv_BSvpYDA')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+<div class="absolute bottom-md left-md">
+<p class="font-label-caps text-label-caps text-primary tracking-widest uppercase [writing-mode:vertical-rl] rotate-180 opacity-80">Season 04</p>
+</div>
+</div>
+</aside>
+</div>
+</div>
+<!-- Bottom Navigation -->
+<div class="mt-xl pt-lg border-t border-surface-container flex flex-col-reverse sm:flex-row justify-between items-center gap-md z-20 relative">
+<button class="w-full sm:w-auto px-lg py-sm font-headline-md text-headline-md text-primary uppercase tracking-tight border-2 border-primary hover:bg-primary/10 transition-colors duration-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background" id="save-draft-btn" type="button">
+        <span id="save-draft-label">Save Draft</span>
+      </button>
+<a class="w-full sm:w-auto px-xl py-sm font-headline-md text-headline-md text-on-primary bg-primary uppercase tracking-tight hover:bg-primary-fixed-dim hover:shadow-[0_0_20px_rgba(180,197,255,0.4)] transition-all duration-300 rounded flex items-center justify-center gap-xs focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background group" href="register-roster.html" id="next-step-btn">
+        Next Step
+        <span class="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+<script src="assets/js/registration-api.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const fields = ['team-name', 'course', 'captain-name', 'year-level', 'team-contact', 'team-desc'];
+    const draft = RegistrationDraft.get();
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && draft[id] !== undefined) el.value = draft[id];
+    });
+    if (draft.teamColor) {
+      const swatch = document.querySelector('input[name="team-color"][value="' + draft.teamColor + '"]');
+      if (swatch) swatch.checked = true;
+    }
+
+    const badgePreview = document.getElementById('team-badge-preview');
+    const teamNameInput = document.getElementById('team-name');
+    const colorInputs = document.querySelectorAll('input[name="team-color"]');
+
+    function updateBadge() {
+      const name = (teamNameInput.value || 'CEC Team').trim();
+      const initials = name.split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || 'CT';
+      badgePreview.textContent = initials;
+      const checked = document.querySelector('input[name="team-color"]:checked');
+      if (checked) badgePreview.style.background = checked.dataset.color;
+    }
+    teamNameInput.addEventListener('input', updateBadge);
+    colorInputs.forEach(input => input.addEventListener('change', updateBadge));
+    updateBadge();
+
+    function collectFields() {
+      const data = {};
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) data[id] = el.value;
+      });
+      const checkedColor = document.querySelector('input[name="team-color"]:checked');
+      data.teamColor = checkedColor ? checkedColor.value : '#1264ff';
+      return data;
+    }
+
+    document.getElementById('next-step-btn').addEventListener('click', () => {
+      RegistrationDraft.save(collectFields());
+      // navigation proceeds via the link's own href
+    });
+
+    document.getElementById('save-draft-btn').addEventListener('click', () => {
+      RegistrationDraft.save(collectFields());
+      const label = document.getElementById('save-draft-label');
+      const original = label.textContent;
+      label.textContent = 'Saved ✓';
+      setTimeout(() => { label.textContent = original; }, 1800);
+    });
+  });
+</script></main></body></html>

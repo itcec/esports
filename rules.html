@@ -1,0 +1,121 @@
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
+.cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);}
+h1.cyber-title,h2.cyber-title{font-size:.72em;line-height:1.15;}
+.cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-grid-bg{background-image:linear-gradient(rgba(180,197,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(180,197,255,.06) 1px,transparent 1px);background-size:36px 36px;}
+.cyber-panel{position:relative;}
+.cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
+.cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
+.cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
+.cyber-scan{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden;}
+.cyber-scan::before{content:'';position:absolute;left:0;right:0;height:140px;background:linear-gradient(to bottom,transparent,rgba(180,197,255,.06),transparent);animation:cyber-scan-move 9s linear infinite;}
+@keyframes cyber-scan-move{0%{top:-140px;}100%{top:100%;}}
+@media (prefers-reduced-motion:reduce){.cyber-scan::before{animation:none;display:none;}}
+</style><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background font-body-md text-on-background"><header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-white/5"><div class="h-16 w-full max-w-container-max mx-auto px-lg flex items-center justify-between"><div class="flex items-center gap-md"><img alt="CEC Blue Dragon Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtflK-0B79t1BrLhawWaBZ7QVa1GKQP9UMJoEs7saqWekX77vzv7RmD-UdZ61f1S5uwwty466VIAfM-YDQM6DUilvpVO5I_IX5FulUdIAwk2C0RGCy50n9rQ2rRrpd902MxdcEFAi_sE9a1b_VWVOHASI6gSk2RiwUm9xj3V1bi-p3mXx3r8juduO9upir5Tmuk_LCzYkygzS8i9RtglplujcPk6Z738QKKhaqrACy85AQZrtjMNskUA"/><span class="font-headline-md text-headline-md uppercase tracking-tight text-on-surface">CEC ESPORTS</span></div><nav class="hidden xl:flex items-center gap-lg"><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="index.html">HOME</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="tournament.html">TOURNAMENT</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="standings.html">STANDINGS</a><a aria-current="page" class="transition-colors text-primary font-bold" href="rules.html">RULES</a></nav><div class="flex items-center gap-md"><button class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">search</span></button><button class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">notifications</span></button><img alt="Profile" class="w-8 h-8 rounded-full border border-outline/20 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNmEZSzK71T_eP5VNCoOzUqyJz6C6SNviMxSVGDxDSiJFcw3V6dYb-_0Ahs4SshRWdODi1tTMR6YxbZkCkLvdmLkSPPUfMCctz5gzdrlnLenbM4R9Xt3wuLu3ooR4YZbuXHgfghByAZkDlUMtZjMTwZD9sg8bQJNVcSJ4wrK8xyhRmJetog_haY_sdTTFRQiyknXEgtkmYPUsR0UcLNpFGsJ-X7geAZbrjKyBOYJgGtVMPtokUkSKbfQ"/></div></div></header><div class="cyber-scan" aria-hidden="true"></div><main class="w-full pt-16 cyber-grid-bg"><div class="flex flex-col w-full px-lg py-xl max-w-container-max mx-auto gap-xl">
+<section class="w-full flex flex-col md:flex-row justify-between items-start md:items-end gap-lg border-b border-surface-container-highest pb-lg">
+<div class="flex flex-col gap-sm">
+<span class="font-label-caps text-label-caps text-primary tracking-widest uppercase">CEC Mobile Legends Championship · Season 2026</span>
+<h1 class="font-headline-xl text-headline-xl text-on-surface text-6xl font-bold cyber-title">Official Rulebook</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mt-md">Comprehensive guidelines ensuring competitive integrity, professional conduct, and fair play across all tournament stages.</p>
+</div>
+<button class="flex items-center gap-sm bg-surface-container hover:bg-surface-container-high transition-colors px-lg py-md rounded-lg group shadow-md shadow-surface-container-lowest border border-outline/10">
+<span class="material-symbols-outlined text-primary group-hover:-translate-y-1 transition-transform">download</span>
+<span class="font-label-caps text-label-caps text-on-surface">Download PDF</span>
+</button>
+</section>
+<div class="flex flex-col lg:flex-row gap-xl w-full">
+<!-- Sticky Sidebar Navigation -->
+<aside class="w-full lg:w-1/4 lg:sticky lg:top-24 h-max">
+<div class="bg-surface-container-low rounded-xl p-lg shadow-lg shadow-surface-container-lowest border border-white/5 flex flex-col gap-md relative overflow-hidden cyber-panel">
+<div class="absolute -right-16 -top-16 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-sm border-b border-white/10 pb-sm">Contents</h3>
+<nav class="flex flex-col gap-sm relative z-10"><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:bg-surface-container-high p-sm rounded-lg transition-colors flex items-center gap-xs border-l-2 border-transparent hover:border-primary" href="#section-1"><span class="w-1 h-4 bg-transparent rounded-full transition-colors group-hover:bg-primary"></span>1.0 General Information</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:bg-surface-container-high p-sm rounded-lg transition-colors flex items-center gap-xs border-l-2 border-transparent hover:border-primary" href="#section-2"><span class="w-1 h-4 bg-transparent rounded-full transition-colors"></span>2.0 Roster Requirements</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary hover:bg-surface-container-high p-sm rounded-lg transition-colors flex items-center gap-xs border-l-2 border-transparent hover:border-primary" href="#section-4"><span class="w-1 h-4 bg-transparent rounded-full transition-colors"></span>3.0 Code of Conduct</a></nav><p class="font-label-caps text-label-caps text-on-surface-variant/60 mt-xs">Match format &amp; dispute rules — coming soon.</p>
+</div>
+</aside>
+<!-- Rulebook Content -->
+<main class="w-full lg:w-3/4 flex flex-col gap-32">
+<!-- Section 1 -->
+<section class="scroll-mt-32 flex flex-col gap-lg bg-surface-container-lowest rounded-xl p-xl shadow-md border border-white/5 relative overflow-hidden" id="section-1">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary/20"></div>
+<div class="flex items-center gap-md">
+<span class="font-stats-impact text-stats-impact text-surface-container-highest opacity-50 text-6xl -ml-4 font-bold tracking-widest">01</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">General Information</h2>
+</div>
+<div class="flex flex-col gap-md pl-4 border-l border-white/5">
+<h4 class="font-headline-md text-headline-md text-primary">1.1 Eligibility</h4>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                         All participants must be actively enrolled students at a recognized collegiate institution in North America. Proof of enrollment must be provided via a valid .edu email address or official registrar documentation prior to roster lock.
+                     </p>
+</div>
+<div class="flex flex-col gap-md pl-4 border-l border-white/5">
+<h4 class="font-headline-md text-headline-md text-primary">1.2 Equipment &amp; Accounts</h4>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                         Players must use their own personal Mobile Legends: Bang Bang accounts. Accounts must be in good standing with Moonton. Use of emulators, third-party controller mapping, or modified APKs is strictly prohibited and will result in immediate disqualification.
+                     </p>
+</div>
+</section>
+<!-- Section 2 -->
+<section class="scroll-mt-32 flex flex-col gap-lg bg-surface-container-lowest rounded-xl p-xl shadow-md border border-white/5 relative overflow-hidden" id="section-2">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary/20"></div>
+<div class="flex items-center gap-md">
+<span class="font-stats-impact text-stats-impact text-surface-container-highest opacity-50 text-6xl -ml-4 font-bold tracking-widest">02</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Roster Requirements</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="bg-surface-container-low p-md rounded-lg flex gap-md items-start border border-outline/10 p-lg">
+<span class="material-symbols-outlined text-secondary text-3xl mt-1">groups</span>
+<div>
+<h5 class="font-headline-md text-headline-md text-on-surface mb-xs">Active Roster</h5>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Teams must field exactly 5 starting players for every match.</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg flex gap-md items-start border border-outline/10 p-lg">
+<span class="material-symbols-outlined text-secondary text-3xl mt-1">person_add</span>
+<div>
+<h5 class="font-headline-md text-headline-md text-on-surface mb-xs">Substitutes</h5>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm">Teams may register up to 2 substitute players. Subs must be designated before the tournament start.</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-md pl-4 border-l border-white/5 mt-md">
+<h4 class="font-headline-md text-headline-md text-primary">2.1 Roster Lock</h4>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                         Rosters are locked 48 hours prior to the first broadcasted match. No additions or removals may be made after this deadline unless approved by administration under extreme extenuating circumstances.
+                     </p>
+</div>
+</section>
+<!-- Section 4 (Code of Conduct) -->
+<section class="scroll-mt-32 flex flex-col gap-lg bg-surface-container-lowest rounded-xl p-xl shadow-md border border-white/5 relative overflow-hidden" id="section-4">
+<div class="absolute top-0 left-0 w-1 h-full bg-error/30"></div>
+<div class="flex items-center gap-md">
+<span class="font-stats-impact text-stats-impact text-surface-container-highest opacity-50 text-6xl -ml-4 font-bold tracking-widest">03</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Code of Conduct</h2>
+</div>
+<div class="bg-error-container/20 border border-error/30 rounded-lg p-lg flex flex-col gap-md bg-error/10 border-error/50 shadow-lg">
+<h4 class="font-headline-md text-headline-md text-error flex items-center gap-xs">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+                         Zero Tolerance Policy
+                     </h4>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                         CEC Esports maintains a strict zero-tolerance policy for toxic behavior. Any violations will result in severe penalties including match forfeiture or permanent bans.
+                     </p>
+<ul class="flex flex-col gap-sm mt-sm">
+<li class="flex items-center gap-sm font-body-md text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-error text-xl">block</span> Hate speech, discrimination, or harassment.
+                         </li>
+<li class="flex items-center gap-sm font-body-md text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-error text-xl">block</span> Match fixing, collusion, or intentional feeding.
+                         </li>
+<li class="flex items-center gap-sm font-body-md text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-error text-xl">block</span> Use of unauthorized third-party software (cheats, scripts).
+                         </li>
+<li class="flex items-center gap-sm font-body-md text-body-md text-on-surface-variant">
+<span class="material-symbols-outlined text-error text-xl">block</span> Unprofessional conduct towards administrators or broadcast talent.
+                         </li>
+</ul>
+</div>
+</section>
+</main>
+</div>
+</div></main><footer class="w-full bg-surface-container-lowest py-xl border-t border-white/5"><div class="max-w-container-max mx-auto px-lg flex flex-col md:flex-row justify-between items-center gap-lg text-on-surface-variant font-label-caps text-label-caps"><div>© 2024 CEC ESPORTS TOURNAMENT PLATFORM</div><div class="flex gap-md"><a class="hover:text-primary" href="#">PRIVACY POLICY</a><a class="hover:text-primary" href="#">TERMS OF SERVICE</a><a class="hover:text-primary" href="#">CONTACT</a></div></div></footer></body></html>
