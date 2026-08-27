@@ -7,7 +7,7 @@
  * Setup: deploy google-apps-script/Code.gs as a Web App (see SETUP.md there),
  * then paste the Web App URL below.
  */
-const REGISTRATION_API_URL = 'https://script.google.com/macros/s/AKfycbzmCnFku4qJ08eF6dK0AfHYK8zrVT7Zob1FCa5HzEEHcN7CLkaP_uJ5rOKHQuRairY4/exec';
+const REGISTRATION_API_URL = 'https://script.google.com/macros/s/AKfycbxhXkVdmyMYdMvcBTSvVIrVH5LZ6T5v77Z7aKXAt_k67q2cwN3ldII2UtTVBWS63oky/exec';
 const ADMIN_KEY = ''; // only needed if you set ADMIN_KEY in Script Properties — see SETUP.md
 
 /** Carries the in-progress registration across wizard pages (plain multi-page HTML, no SPA state). */
