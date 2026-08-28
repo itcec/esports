@@ -59,6 +59,18 @@
     </h2>
     <span class="text-xs font-label-caps text-primary cyber-mono" id="officiating-count-badge">Syncing Realtime Database…</span>
   </div>
+  <!-- Leftover seeded demo matches from before the managed-data switch -->
+  <div class="hidden mb-md p-md rounded-xl bg-amber-500/15 border border-amber-500/40 flex flex-col sm:flex-row sm:items-center justify-between gap-md" id="legacy-demo-banner">
+    <div class="flex items-start gap-3">
+      <span class="material-symbols-outlined text-amber-400 text-[26px] shrink-0">warning</span>
+      <div class="flex flex-col gap-0.5">
+        <span class="font-bold text-on-surface text-sm">Sample matches are showing on the public schedule</span>
+        <span class="text-xs text-on-surface-variant" id="legacy-demo-list">&nbsp;</span>
+      </div>
+    </div>
+    <button type="button" id="purge-legacy-demo-btn" class="shrink-0 px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 text-red-200 font-label-caps text-xs font-bold transition-colors">REMOVE SAMPLE MATCHES</button>
+  </div>
+
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-md" id="officiating-matches-grid">
     <!-- Populated by JS -->
   </div>
@@ -145,8 +157,8 @@
       </div>
 
       <div>
-        <label class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Live Stream URL (YouTube Live / Twitch)</label>
-        <input type="url" id="edit-stream-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none text-xs font-mono" />
+        <label class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Official Twitch Stream URL</label>
+        <input type="url" id="edit-stream-url" placeholder="https://twitch.tv/yourchannel (Twitch links only)" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none text-xs font-mono" />
       </div>
 
       <div class="grid grid-cols-2 gap-md">
@@ -334,13 +346,83 @@
     match.team1.score = String(document.getElementById('edit-team1-score').value);
     match.team2.name = document.getElementById('edit-team2-name').value;
     match.team2.score = String(document.getElementById('edit-team2-score').value);
-    match.streamUrl = document.getElementById('edit-stream-url').value;
+    // Officials may only publish Twitch links; matches the Apps Script rule.
+    const streamCheck = window.CECLiveManager.validateStreamUrl(document.getElementById('edit-stream-url').value);
+    if (!streamCheck.ok) { alert(streamCheck.message); return; }
+    match.streamUrl = streamCheck.url;
     match.formatBadge = document.getElementById('edit-format-badge').value;
     match.status = document.getElementById('edit-status').value;
 
-    await window.CECLiveManager.saveMatch(match);
+    try {
+      await window.CECLiveManager.saveMatch(match);
+    } catch (err) {
+      alert('Could not publish this match: ' + (err && err.message ? err.message : 'request failed'));
+      return;
+    }
     closeModal();
   });
+
+  // ---- Legacy sample matches seeded into the Realtime Database before the
+  // managed Apps Script data switch. They are not created by any current code.
+  var LEGACY_DEMO = {
+    'MATCH-001': ['IT TITAN DRAGONS', 'CRIM IRON WEREWOLVES'],
+    'MATCH-002': ['HTM GOLDEN WYVERNS', 'CTE EMERALD HYDRAS'],
+    'MATCH-003': ['IT CYBER VALKYRIES', 'HTM SOLAR SIRENS'],
+    'MATCH-004': ['IT BYTE MASTERS', 'CRIM GUARDIANS']
+  };
+
+  function findLegacyDemoMatches() {
+    var all = window.CECLiveManager.matches || {};
+    return Object.keys(all).filter(function (id) {
+      var expected = LEGACY_DEMO[id];
+      if (!expected) return false;
+      var m = all[id] || {};
+      var n1 = String((m.team1 && m.team1.name) || '').toUpperCase();
+      var n2 = String((m.team2 && m.team2.name) || '').toUpperCase();
+      // Only remove rows that still carry the original sample team names.
+      return n1 === expected[0] && n2 === expected[1];
+    });
+  }
+
+  function refreshLegacyDemoBanner() {
+    var banner = document.getElementById('legacy-demo-banner');
+    if (!banner) return;
+    var ids = findLegacyDemoMatches();
+    banner.classList.toggle('hidden', ids.length === 0);
+    if (!ids.length) return;
+    var all = window.CECLiveManager.matches || {};
+    document.getElementById('legacy-demo-list').textContent =
+      ids.length + ' sample match' + (ids.length === 1 ? '' : 'es') + ' still published: ' +
+      ids.map(function (id) {
+        var m = all[id] || {};
+        return (m.team1 && m.team1.name || '?') + ' vs ' + (m.team2 && m.team2.name || '?');
+      }).join(' · ');
+  }
+
+  var purgeBtn = document.getElementById('purge-legacy-demo-btn');
+  if (purgeBtn) {
+    purgeBtn.addEventListener('click', async function () {
+      var ids = findLegacyDemoMatches();
+      if (!ids.length) return;
+      if (!confirm('Remove ' + ids.length + ' sample match' + (ids.length === 1 ? '' : 'es') + ' from the public schedule?\n\n' + ids.join(', '))) return;
+      purgeBtn.disabled = true;
+      purgeBtn.textContent = 'REMOVING…';
+      try {
+        for (var i = 0; i < ids.length; i++) {
+          await window.CECLiveManager.deleteMatch(ids[i]);
+        }
+        refreshLegacyDemoBanner();
+      } catch (err) {
+        alert('Could not remove the sample matches: ' + (err && err.message ? err.message : 'request failed') +
+              '\n\nMake sure you are signed in as an approved official.');
+      } finally {
+        purgeBtn.disabled = false;
+        purgeBtn.textContent = 'REMOVE SAMPLE MATCHES';
+      }
+    });
+  }
+
+  window.CECLiveManager.onMatchesChange(function () { refreshLegacyDemoBanner(); });
 
   window.recordOfficialResult = async function(matchId) {
     const match = window.CECLiveManager.matches[matchId];

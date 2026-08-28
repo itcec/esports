@@ -106,14 +106,56 @@ document.addEventListener('DOMContentLoaded', () => {
   const poolList = document.getElementById('seed-pool-list');
   const visualContainer = document.getElementById('visual-bracket-container');
 
-  const SAMPLE_SEEDS = {
-    mens: ['IT TITAN DRAGONS', 'CRIM IRON WEREWOLVES', 'HTM GOLDEN WYVERNS', 'CTE EMERALD HYDRAS', 'IT CYBER SHARKS', 'CRIM DIRE WOLVES', 'HTM SUN DRAGONS', 'CTE FOREST HYDRAS'],
-    womens: ['IT CYBER VALKYRIES', 'HTM SOLAR SIRENS', 'CRIM PHANTOM WEREWOLVES', 'CTE NATURE HYDRAS', 'IT BYTE SIRENS', 'HTM LUNA STARS', 'CRIM SHADOW WOLVES', 'CTE BLOOM HYDRAS'],
-    faculty: ['IT BYTE MASTERS', 'CRIM GUARDIANS', 'CTE ACADEMY', 'HTM CHEFS', 'ADMIN WARRIORS', 'ENGINEERING GUILD', 'ARTS SQUAD', 'LIBRARY SAGES']
-  };
+  // Seeds come from the approved teams in the managed tournament record.
+  // Nothing is invented here: an empty division stays empty until teams are approved.
+  const SEEDS = { mens: [], womens: [], faculty: [] };
+  let seedsLoaded = false;
+
+  function divisionOf(value) {
+    const c = String(value || '');
+    return /women/i.test(c) ? 'womens' : (/faculty|exhibition/i.test(c) ? 'faculty' : (/men/i.test(c) ? 'mens' : ''));
+  }
+
+  async function loadApprovedSeeds() {
+    const publishBtn = document.getElementById('publish-bracket-btn');
+    const drawBtn = document.getElementById('draw-bracket-btn');
+    try {
+      const teams = await PublicTournamentApi.listTeams();
+      SEEDS.mens = []; SEEDS.womens = []; SEEDS.faculty = [];
+      (teams || []).forEach((t) => {
+        const bucket = divisionOf(t.division || t.course || '');
+        if (bucket && SEEDS[bucket]) SEEDS[bucket].push(t.teamName);
+      });
+      seedsLoaded = true;
+    } catch (err) {
+      seedsLoaded = false;
+      console.warn('Could not load approved teams:', err);
+    }
+    renderSeeds(divisionSelect.value);
+    const empty = !(SEEDS[divisionSelect.value] || []).length;
+    if (publishBtn) publishBtn.disabled = empty;
+    if (drawBtn) drawBtn.disabled = empty;
+  }
+
 
   function renderSeeds(div) {
-    const list = SAMPLE_SEEDS[div] || SAMPLE_SEEDS.mens;
+    const list = SEEDS[div] || [];
+    const publishBtn = document.getElementById('publish-bracket-btn');
+    const drawBtn = document.getElementById('draw-bracket-btn');
+    if (publishBtn) publishBtn.disabled = !list.length;
+    if (drawBtn) drawBtn.disabled = !list.length;
+
+    if (!list.length) {
+      poolList.innerHTML = `
+        <div class="p-4 rounded-xl bg-surface-container-high border border-dashed border-white/15 text-xs text-on-surface-variant text-center">
+          ${seedsLoaded
+            ? 'No approved teams in this division yet. Approve registrations first — seeds are drawn from approved teams only.'
+            : 'Loading approved teams from the tournament record…'}
+        </div>`;
+      renderBracketPreview([]);
+      return;
+    }
+
     poolList.innerHTML = list.map((name, idx) => `
       <div class="flex items-center justify-between p-2 rounded bg-surface-container-high text-xs border border-white/5">
         <span class="font-bold text-on-surface"><span class="text-primary font-mono mr-1">#${idx+1}</span> ${name}</span>
@@ -181,14 +223,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('draw-bracket-btn').addEventListener('click', () => {
     const div = divisionSelect.value;
-    const list = [...(SAMPLE_SEEDS[div] || SAMPLE_SEEDS.mens)].sort(() => Math.random() - 0.5);
-    SAMPLE_SEEDS[div] = list;
+    const list = [...(SEEDS[div] || [])].sort(() => Math.random() - 0.5);
+    SEEDS[div] = list;
     renderSeeds(div);
   });
 
   document.getElementById('publish-bracket-btn').addEventListener('click', async () => {
     const div = divisionSelect.value;
-    const seeds = SAMPLE_SEEDS[div] || [];
+    const seeds = SEEDS[div] || [];
+    if (seeds.length < 8) {
+      alert('This division has ' + seeds.length + ' approved team' + (seeds.length === 1 ? '' : 's') +
+            '. A quarterfinal bracket needs 8. Approve more registrations before publishing.');
+      return;
+    }
     const matches = [
       { matchKey: `${div}_QF1`, stage: 'Quarterfinals', team1Name: seeds[0], team2Name: seeds[7] },
       { matchKey: `${div}_QF2`, stage: 'Quarterfinals', team1Name: seeds[3], team2Name: seeds[4] },
@@ -205,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   renderSeeds('mens');
+  loadApprovedSeeds();
 });
 </script>
 <script>window.CECAuth.requireApprovedStaff();</script>
