@@ -88,6 +88,37 @@ async function uploadVerificationDocument(file, docType, metadata) {
   return await callRegistrationApi('uploadVerificationFile', payload, 'POST');
 }
 
+/** Optional public-facing player image. This is separate from identity proof uploads. */
+async function uploadProfileImage(file) {
+  if (!file) throw new Error('No profile image selected.');
+  const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+  if (allowed.indexOf(file.type) === -1) throw new Error('Use a JPG, PNG, or WEBP profile image.');
+  if (file.size > 1024 * 1024) throw new Error('Profile image exceeds the 1MB limit.');
+
+  const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || '');
+      const comma = result.indexOf(',');
+      resolve(comma >= 0 ? result.substring(comma + 1) : result);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+  return await callRegistrationApi('uploadProfileImage', {
+    fileBase64: base64,
+    fileName: file.name,
+    mimeType: file.type
+  }, 'POST');
+}
+
+const PublicTournamentApi = {
+  listTeams: async function () {
+    return await callRegistrationApi('listPublicTeams', {}, 'GET');
+  }
+};
+
 /**
  * Securely retrieves private document bytes using authenticated staff ID token.
  */

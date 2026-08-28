@@ -6,6 +6,7 @@
 window.CECLiveManager = {
   activeMatchId: 'MATCH-001',
   matches: {},
+  publicTeams: {},
   listeners: [],
 
   // 12 Standard Intramurals Department Match Presets
@@ -210,6 +211,7 @@ window.CECLiveManager = {
   init: async function() {
     this.matches = this._getLocalMatches();
     await window.CECFirebase.init();
+    this._loadPublicTeams();
 
     if (window.CECFirebase.db) {
       // Listen to Realtime Database /liveMatches
@@ -217,6 +219,7 @@ window.CECLiveManager = {
         const data = snapshot.val();
         if (data && Object.keys(data).length > 0) {
           this.matches = data;
+          this._enrichMatchesWithPublicTeams();
         } else {
           // If empty, initialize RTDB with default matches
           this._seedDefaultMatchesToDB();
@@ -235,6 +238,60 @@ window.CECLiveManager = {
     } else {
       this._notify();
     }
+  },
+
+  _loadPublicTeams: async function() {
+    if (!window.PublicTournamentApi || typeof window.PublicTournamentApi.listTeams !== 'function') return;
+    try {
+      const teams = await window.PublicTournamentApi.listTeams();
+      this.publicTeams = {};
+      (teams || []).forEach((team) => {
+        const id = String(team.teamId || '').trim();
+        const name = String(team.teamName || '').trim().toLowerCase();
+        if (id) this.publicTeams[id] = team;
+        if (name) this.publicTeams['name:' + name] = team;
+      });
+      this._enrichMatchesWithPublicTeams();
+      this._notify();
+    } catch (error) {
+      console.warn('Public registered team profiles are unavailable:', error);
+    }
+  },
+
+  _enrichMatchesWithPublicTeams: function() {
+    const self = this;
+    Object.keys(this.matches || {}).forEach(function(matchId) {
+      const match = self.matches[matchId];
+      ['team1', 'team2'].forEach(function(sideKey) {
+        const side = match && match[sideKey];
+        if (!side) return;
+        const id = String(side.registrationTeamId || side.teamId || side.id || '').trim();
+        const name = String(side.name || '').trim().toLowerCase();
+        const team = (id && self.publicTeams[id]) || (name && self.publicTeams['name:' + name]);
+        if (!team) return;
+        const roster = (team.roster || []).map(function(player, index) {
+          return {
+            num: index + 1,
+            playerId: player.playerId || '',
+            ign: player.ign || '',
+            real: player.realName || '',
+            role: player.role || '',
+            rosterType: player.rosterType || 'Starter',
+            profileImageUrl: player.profileImageUrl || '',
+            isCap: index === 0
+          };
+        });
+        match[sideKey] = Object.assign({}, side, {
+          id: team.teamId || side.id,
+          registrationTeamId: team.teamId || side.registrationTeamId,
+          name: team.teamName || side.name,
+          dept: team.department || side.dept,
+          sub: team.course || side.sub,
+          captain: team.captainName || side.captain,
+          roster: roster.length ? roster : side.roster
+        });
+      });
+    });
   },
 
   _seedDefaultMatchesToDB: function() {
@@ -282,6 +339,7 @@ window.CECLiveManager = {
       matchData.id = 'MATCH-' + String(Date.now()).slice(-4);
     }
     this.matches[matchData.id] = matchData;
+    this._enrichMatchesWithPublicTeams();
     this._saveLocalMatches();
 
     if (window.CECFirebase.db) {

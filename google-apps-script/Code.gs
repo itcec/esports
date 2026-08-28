@@ -1,7 +1,8 @@
 /**
  * CEC Esports 2026 registration, officiating, bracket, and tournament operations API.
  * Bind this script to the tournament spreadsheet and deploy it as a Web App.
- * Public: createRegistration, listRegistrations, listMatches, fileDispute, uploadVerificationFile.
+ * Public: createRegistration, listRegistrations, listPublicTeams, listMatches, fileDispute,
+ * uploadVerificationFile, uploadProfileImage.
  * Staff (requires Firebase ID token): getRegistration, getPrivateVerificationFile, updateTeamStatus,
  * updatePlayerVerification, recordMatchResult, listDisputes, resolveDispute, saveBracketData, getAuditLogs.
  */
@@ -16,7 +17,7 @@ const BRACKETS_SHEET_NAME = 'BRACKETS';
 const SUPER_ADMIN_EMAIL = 'jlcabucos.cec@gmail.com';
 
 const TEAMS_HEADERS = ['TeamID', 'TeamName', 'Course', 'CaptainName', 'ContactNumber', 'Description', 'Status', 'SubmittedAt', 'UpdatedAt'];
-const PLAYERS_HEADERS = ['PlayerID', 'TeamID', 'RealName', 'IGN', 'MlbbId', 'ServerId', 'StudentId', 'Role', 'RosterType', 'VerificationStatus', 'SubmittedAt'];
+const PLAYERS_HEADERS = ['PlayerID', 'TeamID', 'RealName', 'IGN', 'MlbbId', 'ServerId', 'StudentId', 'Role', 'RosterType', 'VerificationStatus', 'SubmittedAt', 'ProfileImageFileId', 'ProfileImageUrl', 'ProfileImageVisible'];
 const DOCS_HEADERS = ['DocID', 'PlayerID', 'TeamID', 'DocType', 'DriveFileId', 'MimeType', 'FileName', 'UploadedAt', 'Status'];
 const MATCHES_HEADERS = ['MatchID', 'Court', 'Division', 'Stage', 'Team1ID', 'Team1Name', 'Team1Score', 'Team2ID', 'Team2Name', 'Team2Score', 'WinnerID', 'WinnerName', 'Status', 'StreamUrl', 'OfficiatedBy', 'SubmittedAt'];
 const DISPUTES_HEADERS = ['DisputeID', 'MatchID', 'TeamID', 'FiledBy', 'Category', 'Reason', 'EvidenceUrl', 'Status', 'Resolution', 'ResolvedBy', 'CreatedAt', 'ResolvedAt'];
@@ -27,6 +28,8 @@ const VALID_TEAM_STATUSES = ['Pending', 'UnderReview', 'Approved', 'Rejected'];
 const VALID_VERIFICATION_STATUSES = ['Pending', 'Verified', 'Rejected'];
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB limit
+const PROFILE_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const PROFILE_IMAGE_MAX_SIZE_BYTES = 1 * 1024 * 1024; // 1 MB public image limit
 
 function doGet(e) { return route(e, 'GET'); }
 function doPost(e) { return route(e, 'POST'); }
@@ -42,11 +45,17 @@ function route(e, method) {
     if (action === 'listMatches') {
       return json({ success: true, data: listMatches(), message: 'OK' });
     }
+    if (action === 'listPublicTeams') {
+      return json({ success: true, data: listPublicTeams(), message: 'OK' });
+    }
     if (action === 'getBracketData') {
       return json({ success: true, data: getBracketData(params.division), message: 'OK' });
     }
     if (method === 'POST' && action === 'uploadVerificationFile') {
       return json({ success: true, data: uploadVerificationFile(params), message: 'File uploaded securely.' });
+    }
+    if (method === 'POST' && action === 'uploadProfileImage') {
+      return json({ success: true, data: uploadProfileImage(params), message: 'Profile image uploaded.' });
     }
     if (method === 'POST' && action === 'createRegistration') {
       return json({ success: true, data: createRegistration(params), message: 'Registration submitted.' });
@@ -135,6 +144,16 @@ function requireStaff(params) {
 function getSheet(name, headers) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name) || SpreadsheetApp.getActiveSpreadsheet().insertSheet(name);
   if (sheet.getLastRow() === 0) { sheet.appendRow(headers); sheet.setFrozenRows(1); }
+  else {
+    // Add newly introduced columns without breaking an existing production sheet.
+    const existing = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(String);
+    headers.forEach(function (header) {
+      if (existing.indexOf(header) === -1) {
+        sheet.getRange(1, sheet.getLastColumn() + 1).setValue(header);
+        existing.push(header);
+      }
+    });
+  }
   return sheet;
 }
 
@@ -147,6 +166,7 @@ function setupSheets() {
   getSheet(AUDIT_SHEET_NAME, AUDIT_HEADERS);
   getSheet(BRACKETS_SHEET_NAME, BRACKET_HEADERS);
   getVerificationFolder();
+  getPublicProfileFolder();
 }
 
 function sheetObjects(sheet) {
@@ -201,6 +221,26 @@ function getVerificationFolder() {
   return currentFolder;
 }
 
+function getPublicProfileFolder() {
+  const props = PropertiesService.getScriptProperties();
+  const customFolderId = props.getProperty('DRIVE_PROFILE_IMAGES_FOLDER_ID');
+  if (customFolderId) {
+    try { return DriveApp.getFolderById(customFolderId); } catch (e) {}
+  }
+  const paths = ['CEC ESPORTS', 'TOURNAMENTS', '2026', 'MLBB', 'PUBLIC_PROFILE_IMAGES'];
+  let currentFolder = DriveApp.getRootFolder();
+  for (let i = 0; i < paths.length; i++) {
+    const name = paths[i];
+    const folders = currentFolder.getFoldersByName(name);
+    if (folders.hasNext()) {
+      currentFolder = folders.next();
+    } else {
+      currentFolder = currentFolder.createFolder(name);
+    }
+  }
+  return currentFolder;
+}
+
 function uploadVerificationFile(params) {
   if (!params.fileBase64 || !params.docType) throw new Error('fileBase64 and docType are required.');
   const mimeType = params.mimeType || 'image/jpeg';
@@ -220,6 +260,49 @@ function uploadVerificationFile(params) {
 
   docsSheet.appendRow([docId, params.playerId || '', params.teamId || '', params.docType || 'id_card', file.getId(), mimeType, params.fileName || safeName, now, 'Pending']);
   return { docId: docId, driveFileId: file.getId(), fileName: params.fileName || safeName, docType: params.docType, mimeType: mimeType, status: 'Pending' };
+}
+
+/**
+ * Profile images are intentionally public because participants opt in to
+ * displaying them in live match coverage. They are kept in a separate folder
+ * from identity verification documents and are limited to small image files.
+ */
+function uploadProfileImage(params) {
+  if (!params.fileBase64) throw new Error('fileBase64 is required.');
+  const mimeType = params.mimeType || 'image/jpeg';
+  if (PROFILE_IMAGE_MIME_TYPES.indexOf(mimeType) === -1) throw new Error('Profile images must be JPG, PNG, or WEBP.');
+  const bytes = Utilities.base64Decode(params.fileBase64);
+  if (bytes.length > PROFILE_IMAGE_MAX_SIZE_BYTES) throw new Error('Profile image exceeds the 1MB limit.');
+
+  const ext = mimeType === 'image/png' ? '.png' : (mimeType === 'image/webp' ? '.webp' : '.jpg');
+  const safeName = 'PROFILE_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + ext;
+  const file = getPublicProfileFolder().createFile(Utilities.newBlob(bytes, mimeType, safeName));
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  return {
+    profileImageFileId: file.getId(),
+    profileImageUrl: 'https://drive.google.com/uc?export=view&id=' + encodeURIComponent(file.getId()),
+    fileName: params.fileName || safeName,
+    mimeType: mimeType
+  };
+}
+
+function resolvePublicProfileImage(fileId) {
+  if (!fileId) return { fileId: '', url: '' };
+  const file = DriveApp.getFileById(fileId);
+  const parents = file.getParents();
+  const publicFolderId = getPublicProfileFolder().getId();
+  let belongsToPublicFolder = false;
+  while (parents.hasNext()) {
+    if (parents.next().getId() === publicFolderId) {
+      belongsToPublicFolder = true;
+      break;
+    }
+  }
+  if (!belongsToPublicFolder) throw new Error('Invalid profile image reference.');
+  return {
+    fileId: file.getId(),
+    url: 'https://drive.google.com/uc?export=view&id=' + encodeURIComponent(file.getId())
+  };
 }
 
 function getPrivateVerificationFile(fileId) {
@@ -257,7 +340,8 @@ function createRegistration(params) {
     players.forEach(function (p) {
       const pid = nextId(playersSheet, 'PLAYER');
       playerMap[p.slot || p.ign] = pid;
-      playersSheet.appendRow([pid, teamId, p.realName || '', p.ign || '', p.mlbbId || '', p.serverId || '', p.studentId || '', p.role || '', p.rosterType || 'Starter', 'Pending', now]);
+      const profile = resolvePublicProfileImage(p.profileImageFileId || '');
+      playersSheet.appendRow([pid, teamId, p.realName || '', p.ign || '', p.mlbbId || '', p.serverId || '', p.studentId || '', p.role || '', p.rosterType || 'Starter', 'Pending', now, profile.fileId, profile.url, profile.url ? 'Yes' : 'No']);
     });
 
     if (attachedDocIds.length > 0) {
@@ -301,6 +385,38 @@ function listRegistrations() {
       SubmittedAt: team.SubmittedAt,
       PlayerCount: roster.length,
       VerifiedCount: roster.filter(function (p) { return p.VerificationStatus === 'Verified'; }).length
+    };
+  });
+}
+
+function listPublicTeams() {
+  const teams = sheetObjects(getSheet(TEAMS_SHEET_NAME, TEAMS_HEADERS));
+  const players = sheetObjects(getSheet(PLAYERS_SHEET_NAME, PLAYERS_HEADERS));
+  return teams.filter(function (team) { return String(team.Status).toLowerCase() === 'approved'; }).map(function (team) {
+    const course = String(team.Course || '');
+    const courseParts = course.split(String.fromCharCode(0x2014));
+    const roster = players.filter(function (player) {
+      return String(player.TeamID) === String(team.TeamID);
+    }).map(function (player, index) {
+      return {
+        playerId: player.PlayerID,
+        slot: index + 1,
+        rosterType: player.RosterType || 'Starter',
+        realName: player.RealName || '',
+        ign: player.IGN || '',
+        role: player.Role || '',
+        profileImageUrl: String(player.ProfileImageVisible).toLowerCase() === 'yes' ? (player.ProfileImageUrl || '') : ''
+      };
+    });
+    return {
+      teamId: team.TeamID,
+      teamName: team.TeamName,
+      course: course,
+      division: courseParts[0] ? courseParts[0].trim() : '',
+      department: courseParts.length > 1 ? courseParts[courseParts.length - 1].trim() : '',
+      captainName: team.CaptainName || '',
+      description: team.Description || '',
+      roster: roster
     };
   });
 }

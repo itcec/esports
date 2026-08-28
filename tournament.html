@@ -671,11 +671,26 @@
 <!-- Firebase SDK & Bridge Scripts -->
 <script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/auth-guard.js"></script>
+<script src="assets/js/registration-api.js"></script>
 <script src="assets/js/live-manager.js"></script>
 
 <script>
 (function(){
   const escHtml = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  const profileImageUrl = (value) => {
+    const url = String(value || '').trim();
+    return /^https:\/\/drive\.google\.com\/uc\?export=view&id=[A-Za-z0-9_-]+$/.test(url) ? url : '';
+  };
+  const playerInitials = (player) => {
+    const name = String(player.real || player.realName || player.ign || '?').trim();
+    return name.split(/\s+/).map((part) => part.charAt(0)).join('').slice(0, 2).toUpperCase() || '?';
+  };
+  const playerAvatar = (player, accent) => {
+    const url = profileImageUrl(player.profileImageUrl);
+    return url
+      ? `<img src="${escHtml(url)}" alt="" class="w-8 h-8 rounded-full object-cover border border-white/20 shrink-0" />`
+      : `<span class="w-8 h-8 rounded-full ${accent} flex items-center justify-center text-[10px] font-bold shrink-0">${escHtml(playerInitials(player))}</span>`;
+  };
   // Mobile Nav Toggle
   var t=document.getElementById('nav-toggle'),n=document.getElementById('mobile-nav'),i=document.getElementById('nav-toggle-icon');
   if(t&&n){
@@ -778,9 +793,10 @@
     if (t1List && t1.roster) {
       t1List.innerHTML = t1.roster.map(p => Object.assign({}, p, { real: escHtml(p.real) })).map(p => `
         <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            ${playerAvatar(p, 'bg-primary/20 text-primary')}
             <span class="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center">${escHtml(p.num)}</span>
-            <span class="font-bold text-on-surface">${escHtml(p.ign)}</span>
+            <span class="font-bold text-on-surface truncate">${escHtml(p.ign || p.real || 'Player')}</span>
             <span class="text-xs text-on-surface-variant">(${p.isCap ? 'Captain · ' : ''}${p.real})</span>
           </div>
           <span class="text-xs font-label-caps text-primary bg-primary/10 px-2 py-0.5 rounded">${escHtml(p.role)}</span>
@@ -809,9 +825,10 @@
     if (t2List && t2.roster) {
       t2List.innerHTML = t2.roster.map(p => Object.assign({}, p, { real: escHtml(p.real) })).map(p => `
         <div class="flex items-center justify-between p-2 rounded bg-surface-container-lowest/80 text-sm">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 min-w-0">
+            ${playerAvatar(p, 'bg-secondary/20 text-secondary')}
             <span class="w-5 h-5 rounded-full bg-secondary/20 text-secondary text-[10px] font-bold flex items-center justify-center">${escHtml(p.num)}</span>
-            <span class="font-bold text-on-surface">${escHtml(p.ign)}</span>
+            <span class="font-bold text-on-surface truncate">${escHtml(p.ign || p.real || 'Player')}</span>
             <span class="text-xs text-on-surface-variant">(${p.isCap ? 'Captain · ' : ''}${p.real})</span>
           </div>
           <span class="text-xs font-label-caps text-secondary bg-secondary/10 px-2 py-0.5 rounded">${escHtml(p.role)}</span>

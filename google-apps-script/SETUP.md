@@ -9,9 +9,10 @@ This folder is the backend source of truth. Do not place service-account keys, G
 ## 2. Initialize Sheets and Private Folders
 1. Run `setupSheets` once from the function toolbar.
 2. Grant permissions when prompted.
-3. Confirm that `TEAMS`, `PLAYERS`, and `VERIFICATION_DOCS` tabs exist in your Google Sheet.
-4. `setupSheets` also automatically creates the private Drive folder path:
-   `CEC ESPORTS / TOURNAMENTS / 2026 / MLBB / PLAYER_VERIFICATION` in the Google Drive of the sheet owner.
+3. Confirm that `TEAMS`, `PLAYERS`, and `VERIFICATION_DOCS` tabs exist in your Google Sheet. The `PLAYERS` tab will receive the optional `ProfileImageFileId`, `ProfileImageUrl`, and `ProfileImageVisible` columns.
+4. `setupSheets` also creates these Drive folders in the Google Drive of the sheet owner:
+   - Private verification: `CEC ESPORTS / TOURNAMENTS / 2026 / MLBB / PLAYER_VERIFICATION`
+   - Public opt-in profile images: `CEC ESPORTS / TOURNAMENTS / 2026 / MLBB / PUBLIC_PROFILE_IMAGES`
 
 ## 3. Script Properties
 In Apps Script **Project Settings → Script properties**, ensure:
@@ -28,5 +29,6 @@ In Apps Script **Project Settings → Script properties**, ensure:
 
 ## Security Model:
 - **Public**: Can create registrations, list public summaries, and upload verification files during the registration wizard.
+- **Public profile images**: Optional participant photos are stored separately in `PUBLIC_PROFILE_IMAGES`, marked viewable by link, and displayed only for approved teams. Do not place identity documents in this folder.
 - **Private / Staff**: Detailed registration reads (`getRegistration`), status updates (`updateTeamStatus`, `updatePlayerVerification`), and document byte streaming (`getPrivateVerificationFile`) require a verified Firebase ID token and approved staff status.
 - Files are kept private in Drive; Apps Script streams file bytes directly to authenticated staff sessions without ever generating public links.

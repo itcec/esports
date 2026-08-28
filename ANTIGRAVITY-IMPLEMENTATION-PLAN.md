@@ -98,6 +98,17 @@ Implement this in Antigravity before enabling identity uploads:
    view action only after the staff guard and Apps Script authorization pass.
    Redact all document IDs and private links from public team pages.
 
+Optional public player profile images:
+
+- Profile images are optional for both Student and Faculty rosters.
+- Store them only in the separate `PUBLIC_PROFILE_IMAGES` Drive folder; never
+  mix them with `PLAYER_VERIFICATION` documents.
+- Show profile images only for approved teams and expose only public roster
+  fields (display name, IGN, role, roster type, and profile image URL).
+- Uploading a profile image opts the participant into its display in public
+  live-match rosters. Student IDs, contact details, and verification records
+  remain private.
+
 ## Phase 5 — Functional tournament work
 
 Implement in this order:
