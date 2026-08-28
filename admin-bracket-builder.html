@@ -1,4 +1,4 @@
-<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Bracket Builder — CEC Esports Intramurals 2026 Admin</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-fixed":"#001b3e","primary":"#b4c5ff","on-tertiary":"#2a313b","tertiary":"#c0c7d4","inverse-primary":"#0052dc","secondary-fixed":"#d6e3ff","error-container":"#93000a","primary-container":"#1264ff","on-primary-fixed-variant":"#003ea8","on-primary-container":"#f6f6ff","on-primary-fixed":"#00174b","secondary":"#aac7ff","surface-container-lowest":"#030f1c","tertiary-fixed-dim":"#c0c7d4","surface-tint":"#b4c5ff","primary-fixed":"#dbe1ff","background":"#081422","surface-bright":"#2e3a49","on-secondary-container":"#002957","primary-fixed-dim":"#b4c5ff","surface-container-low":"#101c2a","surface-container-highest":"#2a3645","error":"#ffb4ab","on-error-container":"#ffdad6","on-error":"#690005","inverse-on-surface":"#263140","on-surface-variant":"#c2c6d8","surface-container":"#15202f","on-background":"#d7e3f7","surface-variant":"#2a3645","secondary-container":"#3e90ff","on-secondary":"#003064","surface-dim":"#081422","on-primary":"#002a78","on-tertiary-fixed":"#151c26","on-surface":"#d7e3f7","on-secondary-fixed-variant":"#00468d","secondary-fixed-dim":"#aac7ff","outline-variant":"#424656","outline":"#8c90a2","tertiary-fixed":"#dce3f0","on-tertiary-fixed-variant":"#404752","inverse-surface":"#d7e3f7","on-tertiary-container":"#f4f6ff","surface":"#081422","surface-container-high":"#1f2b39","tertiary-container":"#6a717d"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{lg:"24px",gutter:"16px","container-max":"1280px",md:"16px",xs:"8px",base:"4px",sm:"12px",xl:"40px"},fontFamily:{"body-md":["Inter"],"stats-impact":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"headline-lg":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"label-caps":["Inter"]},fontSize:{"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],"stats-impact":["24px",{lineHeight:"24px",letterSpacing:"0.05em",fontWeight:"900"}],"headline-xl":["48px",{lineHeight:"56px",letterSpacing:"-0.02em",fontWeight:"800"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.01em",fontWeight:"800"}],"headline-lg-mobile":["24px",{lineHeight:"32px",fontWeight:"800"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"500"}],"headline-md":["20px",{lineHeight:"28px",fontWeight:"700"}],"label-caps":["12px",{lineHeight:"16px",letterSpacing:"0.08em",fontWeight:"700"}]}}}}</script><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Bracket Builder &amp; Match Generator — CEC Esports Intramurals 2026 Admin</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-fixed":"#001b3e","primary":"#b4c5ff","on-tertiary":"#2a313b","tertiary":"#c0c7d4","inverse-primary":"#0052dc","secondary-fixed":"#d6e3ff","error-container":"#93000a","primary-container":"#1264ff","on-primary-fixed-variant":"#003ea8","on-primary-container":"#f6f6ff","on-primary-fixed":"#00174b","secondary":"#aac7ff","surface-container-lowest":"#030f1c","tertiary-fixed-dim":"#c0c7d4","surface-tint":"#b4c5ff","primary-fixed":"#dbe1ff","background":"#081422","surface-bright":"#2e3a49","on-secondary-container":"#002957","primary-fixed-dim":"#b4c5ff","surface-container-low":"#101c2a","surface-container-highest":"#2a3645","error":"#ffb4ab","on-error-container":"#ffdad6","on-error":"#690005","inverse-on-surface":"#263140","on-surface-variant":"#c2c6d8","surface-container":"#15202f","on-background":"#d7e3f7","surface-variant":"#2a3645","secondary-container":"#3e90ff","on-secondary":"#003064","surface-dim":"#081422","on-primary":"#002a78","on-tertiary-fixed":"#151c26","on-surface":"#d7e3f7","on-secondary-fixed-variant":"#00468d","secondary-fixed-dim":"#aac7ff","outline-variant":"#424656","outline":"#8c90a2","tertiary-fixed":"#dce3f0","on-tertiary-fixed-variant":"#404752","inverse-surface":"#d7e3f7","on-tertiary-container":"#f4f6ff","surface":"#081422","surface-container-high":"#1f2b39","tertiary-container":"#6a717d"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{lg:"24px",gutter:"16px","container-max":"1280px",md:"16px",xs:"8px",base:"4px",sm:"12px",xl:"40px"},fontFamily:{"body-md":["Inter"],"stats-impact":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"headline-lg":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"label-caps":["Inter"]},fontSize:{"body-md":["16px",{lineHeight:"24px",fontWeight:"400"}],"stats-impact":["24px",{lineHeight:"24px",letterSpacing:"0.05em",fontWeight:"900"}],"headline-xl":["48px",{lineHeight:"56px",letterSpacing:"-0.02em",fontWeight:"800"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.01em",fontWeight:"800"}],"headline-lg-mobile":["24px",{lineHeight:"32px",fontWeight:"800"}],"body-lg":["18px",{lineHeight:"28px",fontWeight:"500"}],"headline-md":["20px",{lineHeight:"28px",fontWeight:"700"}],"label-caps":["12px",{lineHeight:"16px",letterSpacing:"0.08em",fontWeight:"700"}]}}}}</script><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
 .cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
 .cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
@@ -20,9 +20,7 @@
   pointer-events: none;
 }
 @media (max-width: 768px), (orientation: portrait) {
-  .site-bg {
-    background-position: left center;
-  }
+  .site-bg { background-position: left center; }
 }
 .site-overlay {
   position: fixed;
@@ -32,194 +30,182 @@
               linear-gradient(to bottom, rgba(5, 11, 20, 0.35) 0%, rgba(5, 11, 20, 0.8) 100%);
   pointer-events: none;
 }
+@media (max-width:1023px){aside{width:3.5rem!important;}aside nav a span+span,aside>div:first-child>span{display:none!important;}aside nav a{justify-content:center!important;padding-left:.25rem!important;padding-right:.25rem!important;}.pl-64{padding-left:3.5rem!important;}header{left:3.5rem!important;}}
 </style></head><body class="bg-background font-body-md text-on-background"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low/95 backdrop-blur-md z-50 flex flex-col border-r border-white/10"><div class="h-16 px-md flex items-center gap-sm border-b border-white/10"><svg aria-hidden="true" class="h-6 w-6 text-primary shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.5L12 20.9 6.1 24.1l1.2-6.5L2.5 9l6.6-.9z"></path></svg><span class="font-headline-md text-headline-md text-primary tracking-tight uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md flex flex-col gap-base overflow-y-auto"><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-registrations.html"><span class="material-symbols-outlined text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-sm rounded bg-primary-container text-on-primary-container font-bold transition-colors" href="admin-bracket-builder.html"><span class="material-symbols-outlined text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-officiating.html"><span class="material-symbols-outlined text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-disputes.html"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav><div class="p-md border-t border-white/10"><a class="flex items-center gap-sm px-md py-sm rounded text-primary hover:bg-primary/10 transition-colors" href="index.html"><span class="material-symbols-outlined text-[20px]">arrow_back</span><span class="font-label-caps text-label-caps uppercase font-bold">Public Site</span></a></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container/95 backdrop-blur-md border-b border-white/10 z-40 flex items-center justify-between px-lg gap-md"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase truncate">CEC Esports Intramurals 2026 · Bracket Builder</span><div class="cec-auth-widget flex items-center gap-sm shrink-0"></div></header><main class="relative z-10 pt-16 min-h-screen p-lg"><div class="flex flex-col w-full h-full gap-lg max-w-[1600px] mx-auto">
-<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md pb-md">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md pb-md border-b border-white/10">
 <div>
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-widest cyber-mono">Tournament Seeding &amp; Draw Engine</span>
 <h1 class="font-headline-xl text-headline-xl text-primary uppercase tracking-wide cyber-title">Bracket Builder</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant opacity-80 mt-xs">Draw and generate a department's single-elimination bracket on its match day.</p>
+<p class="font-body-lg text-body-lg text-on-surface-variant opacity-80 mt-xs">Seed registered department teams, generate knockout brackets, and publish directly to live standings.</p>
 </div>
 <div class="flex items-center gap-sm">
-<button class="px-lg py-sm rounded-lg bg-surface-variant text-on-surface font-label-caps text-label-caps uppercase hover:bg-surface-bright transition-colors">
-        Load Preset
-      </button>
-<a class="px-lg py-sm rounded-lg bg-primary-container text-on-primary-container font-label-caps text-label-caps uppercase hover:bg-primary transition-colors flex items-center gap-xs" href="bracket.html">
-<span class="material-symbols-outlined text-[18px]">play_arrow</span>
-        Generate Bracket
-      </a>
+  <button id="draw-bracket-btn" type="button" class="px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps text-xs font-bold transition-colors flex items-center gap-1.5 border border-white/10 shadow">
+    <span class="material-symbols-outlined text-[16px] text-primary">casino</span>
+    <span>RANDOMIZE DRAW</span>
+  </button>
+  <button id="publish-bracket-btn" type="button" class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg">
+    <span class="material-symbols-outlined text-[18px]">publish</span>
+    <span>SAVE &amp; PUBLISH BRACKET</span>
+  </button>
 </div>
 </div>
-<div class="flex flex-col xl:flex-row gap-lg h-[calc(100vh-200px)]">
+
+<div class="flex flex-col xl:flex-row gap-lg">
 <!-- Left Panel: Configuration Steps -->
-<div class="w-full xl:w-[480px] flex flex-col gap-md h-full overflow-y-auto pr-sm" id="config-panel">
-<!-- Step 1: Format -->
-<div class="bg-surface-container rounded-xl p-lg relative overflow-hidden group">
-<div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-<div class="flex items-center justify-between mb-md">
-<div class="flex items-center gap-sm">
-<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-headline-md text-headline-md">1</div>
-<h2 class="font-headline-md text-headline-md text-on-surface uppercase">Format</h2>
+<div class="w-full xl:w-[420px] flex flex-col gap-md">
+  <!-- Division Selector -->
+  <div class="bg-surface-container rounded-xl p-md flex flex-col gap-sm border border-white/10 cyber-panel">
+    <label class="block text-xs font-label-caps uppercase text-on-surface-variant font-bold">Select Division</label>
+    <select id="bracket-division-select" class="w-full bg-[#050B14] p-3 rounded-lg border border-white/10 text-on-surface font-bold text-sm focus:border-primary focus:outline-none">
+      <option value="mens">Student Men's Division (24 Teams)</option>
+      <option value="womens">Student Women's Division (16 Teams)</option>
+      <option value="faculty">Faculty &amp; Staff Exhibition (8 Teams)</option>
+    </select>
+  </div>
+
+  <!-- Format Selector -->
+  <div class="bg-surface-container rounded-xl p-md flex flex-col gap-sm border border-white/10 cyber-panel">
+    <label class="block text-xs font-label-caps uppercase text-on-surface-variant font-bold">Tournament Format</label>
+    <div class="flex flex-col gap-2 text-xs">
+      <label class="flex items-center gap-2 p-2 rounded bg-surface-container-high cursor-pointer"><input type="radio" name="b-format" value="single" checked class="accent-primary" /><span class="font-bold text-on-surface">Single Elimination Knockout</span></label>
+      <label class="flex items-center gap-2 p-2 rounded bg-surface-container-high cursor-pointer"><input type="radio" name="b-format" value="double" class="accent-primary" /><span class="font-bold text-on-surface">Double Elimination (Upper / Lower)</span></label>
+    </div>
+  </div>
+
+  <!-- Team Pool -->
+  <div class="bg-surface-container rounded-xl p-md flex flex-col gap-sm border border-white/10 cyber-panel">
+    <div class="flex items-center justify-between">
+      <label class="text-xs font-label-caps uppercase text-on-surface-variant font-bold">Department Seed Pool</label>
+      <span class="text-xs text-primary font-mono" id="pool-count-badge">8 Teams Seeded</span>
+    </div>
+    <div id="seed-pool-list" class="flex flex-col gap-1.5 max-h-[300px] overflow-y-auto pr-1">
+      <!-- Populated by JS -->
+    </div>
+  </div>
 </div>
-<span class="material-symbols-outlined text-outline">expand_more</span>
-</div>
-<div class="space-y-sm">
-<label class="flex items-center gap-md p-md rounded-lg bg-surface hover:bg-surface-bright cursor-pointer transition-colors border border-outline-variant/30 relative">
-<input checked="" class="accent-primary w-4 h-4" name="format" type="radio" value="single"/>
-<div class="flex flex-col">
-<span class="font-body-lg text-body-lg text-on-surface">Single Elimination</span>
-<span class="font-body-md text-body-md text-on-surface-variant opacity-70">Standard knockout format.</span>
-</div>
-</label>
-<label class="flex items-center gap-md p-md rounded-lg bg-surface hover:bg-surface-bright cursor-pointer transition-colors border border-outline-variant/30">
-<input class="accent-primary w-4 h-4" name="format" type="radio" value="double"/>
-<div class="flex flex-col">
-<span class="font-body-lg text-body-lg text-on-surface">Double Elimination</span>
-<span class="font-body-md text-body-md text-on-surface-variant opacity-70">Includes an upper and lower bracket.</span>
-</div>
-</label>
-<label class="flex items-center gap-md p-md rounded-lg bg-surface hover:bg-surface-bright cursor-pointer transition-colors border border-outline-variant/30">
-<input class="accent-primary w-4 h-4" name="format" type="radio" value="roundrobin"/>
-<div class="flex flex-col">
-<span class="font-body-lg text-body-lg text-on-surface">Round Robin</span>
-<span class="font-body-md text-body-md text-on-surface-variant opacity-70">Every team plays every other team.</span>
-</div>
-</label>
-</div>
-</div>
-<!-- Step 2: Participants -->
-<div class="bg-surface-container rounded-xl p-lg opacity-80 hover:opacity-100 transition-opacity">
-<div class="flex items-center justify-between mb-md">
-<div class="flex items-center gap-sm">
-<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-headline-md text-headline-md">2</div>
-<h2 class="font-headline-md text-headline-md text-on-surface uppercase">Participants</h2>
-</div>
-<span class="material-symbols-outlined text-outline">expand_more</span>
-</div>
-<div class="grid grid-cols-2 gap-sm mb-md">
-<button class="py-sm rounded-lg bg-surface border border-outline-variant/30 text-on-surface hover:bg-surface-bright hover:border-primary/50 transition-all font-body-lg text-body-lg">4 teams</button>
-<button class="py-sm rounded-lg bg-primary/20 border border-primary text-primary transition-all font-body-lg text-body-lg">8 teams</button>
-</div>
-<div class="flex flex-col gap-xs mt-sm">
-<span class="font-label-caps text-label-caps text-on-surface-variant uppercase">Seeding Method</span>
-<select class="w-full bg-surface border border-outline-variant/30 rounded-lg p-sm text-on-surface font-body-md text-body-md focus:border-primary focus:outline-none appearance-none cursor-pointer">
-<option>Official bracket draw</option>
-<option>Manual placement</option>
-<option>Randomize</option>
-</select>
-</div>
-</div>
-<!-- Step 3: Groups (Collapsed) -->
-<div class="bg-surface-container rounded-xl p-lg opacity-60 flex items-center justify-between">
-<div class="flex items-center gap-sm">
-<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-headline-md text-headline-md">3</div>
-<h2 class="font-headline-md text-headline-md text-on-surface uppercase">Groups</h2>
-</div>
-<span class="material-symbols-outlined text-outline">expand_more</span>
-</div>
-<!-- Step 4: Stages (Collapsed) -->
-<div class="bg-surface-container rounded-xl p-lg opacity-60 flex items-center justify-between">
-<div class="flex items-center gap-sm">
-<div class="w-8 h-8 rounded-full bg-surface-variant text-on-surface flex items-center justify-center font-headline-md text-headline-md">4</div>
-<h2 class="font-headline-md text-headline-md text-on-surface uppercase">Stages</h2>
-</div>
-<span class="material-symbols-outlined text-outline">expand_more</span>
-</div>
-</div>
-<!-- Right Panel: Visual Preview -->
-<div class="flex-1 bg-surface-container-lowest rounded-xl border border-outline-variant/20 p-lg relative overflow-hidden flex flex-col">
-<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(180,197,255,0.03)_0%,transparent_70%)] pointer-events-none"></div>
-<div class="flex items-center justify-between mb-lg z-10">
-<div class="flex items-center gap-sm">
-<span class="material-symbols-outlined text-primary">visibility</span>
-<span class="font-label-caps text-label-caps text-on-surface uppercase">Structure Preview</span>
-</div>
-<div class="flex gap-xs">
-<button class="p-xs rounded bg-surface hover:bg-surface-bright text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">zoom_in</span></button>
-<button class="p-xs rounded bg-surface hover:bg-surface-bright text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">zoom_out</span></button>
-</div>
-</div>
-<!-- Abstract Bracket Visualization -->
-<div class="flex-1 overflow-auto flex items-center justify-center relative z-10 w-full">
-<div class="flex gap-xl items-center scale-90 origin-center min-w-max">
-<!-- Quarter Finals -->
-<div class="flex flex-col gap-xl">
-<!-- Match 1 -->
-<div class="relative">
-<div class="w-48 bg-surface-container border border-outline-variant/30 rounded-lg p-sm shadow-lg z-10 relative">
-<div class="flex justify-between items-center py-xs border-b border-outline-variant/20">
-<span class="font-body-md text-body-md text-on-surface">Seed 1</span>
-<span class="font-stats-impact text-stats-impact text-on-surface-variant opacity-50">-</span>
-</div>
-<div class="flex justify-between items-center py-xs">
-<span class="font-body-md text-body-md text-on-surface">Seed 8</span>
-<span class="font-stats-impact text-stats-impact text-on-surface-variant opacity-50">-</span>
-</div>
-</div>
-<div class="absolute top-1/2 -right-xl w-xl h-px bg-outline-variant/50"></div>
-<div class="absolute top-1/2 -right-xl w-px h-[calc(50%+20px)] bg-outline-variant/50"></div>
-</div>
-<!-- Match 2 -->
-<div class="relative">
-<div class="w-48 bg-surface-container border border-outline-variant/30 rounded-lg p-sm shadow-lg z-10 relative">
-<div class="flex justify-between items-center py-xs border-b border-outline-variant/20">
-<span class="font-body-md text-body-md text-on-surface">Seed 4</span>
-<span class="font-stats-impact text-stats-impact text-on-surface-variant opacity-50">-</span>
-</div>
-<div class="flex justify-between items-center py-xs">
-<span class="font-body-md text-body-md text-on-surface">Seed 5</span>
-<span class="font-stats-impact text-stats-impact text-on-surface-variant opacity-50">-</span>
-</div>
-</div>
-<div class="absolute top-1/2 -right-xl w-xl h-px bg-outline-variant/50"></div>
-<div class="absolute bottom-1/2 -right-xl w-px h-[calc(50%+20px)] bg-outline-variant/50"></div>
-</div>
-</div>
-<!-- Semi Finals -->
-<div class="flex flex-col gap-[80px]">
-<div class="relative">
-<div class="absolute top-1/2 -left-xl w-xl h-px bg-outline-variant/50"></div>
-<div class="w-48 bg-surface-container border border-outline-variant/30 rounded-lg p-sm shadow-lg z-10 relative opacity-60">
-<div class="flex justify-between items-center py-xs border-b border-outline-variant/20">
-<span class="font-body-md text-body-md text-on-surface-variant">TBD</span>
-<span class="font-stats-impact text-stats-impact text-on-surface-variant opacity-50">-</span>
-</div>
-<div class="flex justify-between items-center py-xs">
-<span class="font-body-md text-body-md text-on-surface-variant">TBD</span>
-<span class="font-stats-impact text-stats-impact text-on-surface-variant opacity-50">-</span>
-</div>
-</div>
-<div class="absolute top-1/2 -right-xl w-xl h-px bg-outline-variant/50"></div>
-</div>
-</div>
-<!-- Finals -->
-<div class="flex flex-col">
-<div class="relative">
-<div class="absolute top-1/2 -left-xl w-xl h-px bg-outline-variant/50"></div>
-<div class="w-56 bg-surface-container border border-primary/50 rounded-lg p-md shadow-[0_0_15px_rgba(180,197,255,0.1)] z-10 relative">
-<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-surface px-sm text-[10px] font-label-caps uppercase text-primary tracking-widest">Grand Final</div>
-<div class="flex justify-between items-center py-sm border-b border-outline-variant/20">
-<span class="font-body-md text-body-md text-on-surface-variant">Winner SF 1</span>
-<span class="font-stats-impact text-stats-impact text-on-surface-variant opacity-50">-</span>
-</div>
-<div class="flex justify-between items-center py-sm">
-<span class="font-body-md text-body-md text-on-surface-variant">Winner SF 2</span>
-<span class="font-stats-impact text-stats-impact text-on-surface-variant opacity-50">-</span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="mt-auto pt-md border-t border-outline-variant/20 flex justify-between items-center z-10">
-<div class="flex gap-md text-on-surface-variant opacity-70">
-<div class="flex items-center gap-xs"><div class="w-2 h-2 rounded-full bg-outline-variant"></div><span class="font-body-md text-[12px]">Pending</span></div>
-<div class="flex items-center gap-xs"><div class="w-2 h-2 rounded-full bg-primary"></div><span class="font-body-md text-[12px]">Configured</span></div>
-</div>
-</div>
+
+<!-- Right Panel: Visual Bracket Preview -->
+<div class="flex-1 bg-surface-container-lowest rounded-2xl border border-white/10 p-lg relative overflow-x-auto min-h-[500px] flex flex-col justify-center">
+  <div class="flex items-center justify-between mb-md border-b border-white/10 pb-2">
+    <span class="text-xs font-bold font-label-caps uppercase text-primary cyber-mono" id="preview-title">Bracket Stage Preview</span>
+    <span class="text-xs text-on-surface-variant">Live Synchronized with Realtime Standings</span>
+  </div>
+  <div id="visual-bracket-container" class="flex items-center justify-center gap-lg py-md min-w-[700px]">
+    <!-- Populated by JS -->
+  </div>
 </div>
 </div>
 </div></main></div>
-<!-- Firebase SDK & Bridge Scripts -->
+
 <script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/auth-guard.js"></script>
+<script src="assets/js/registration-api.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const divisionSelect = document.getElementById('bracket-division-select');
+  const poolList = document.getElementById('seed-pool-list');
+  const visualContainer = document.getElementById('visual-bracket-container');
+
+  const SAMPLE_SEEDS = {
+    mens: ['IT TITAN DRAGONS', 'CRIM IRON WEREWOLVES', 'HTM GOLDEN WYVERNS', 'CTE EMERALD HYDRAS', 'IT CYBER SHARKS', 'CRIM DIRE WOLVES', 'HTM SUN DRAGONS', 'CTE FOREST HYDRAS'],
+    womens: ['IT CYBER VALKYRIES', 'HTM SOLAR SIRENS', 'CRIM PHANTOM WEREWOLVES', 'CTE NATURE HYDRAS', 'IT BYTE SIRENS', 'HTM LUNA STARS', 'CRIM SHADOW WOLVES', 'CTE BLOOM HYDRAS'],
+    faculty: ['IT BYTE MASTERS', 'CRIM GUARDIANS', 'CTE ACADEMY', 'HTM CHEFS', 'ADMIN WARRIORS', 'ENGINEERING GUILD', 'ARTS SQUAD', 'LIBRARY SAGES']
+  };
+
+  function renderSeeds(div) {
+    const list = SAMPLE_SEEDS[div] || SAMPLE_SEEDS.mens;
+    poolList.innerHTML = list.map((name, idx) => `
+      <div class="flex items-center justify-between p-2 rounded bg-surface-container-high text-xs border border-white/5">
+        <span class="font-bold text-on-surface"><span class="text-primary font-mono mr-1">#${idx+1}</span> ${name}</span>
+        <span class="material-symbols-outlined text-[16px] text-outline cursor-grab">drag_handle</span>
+      </div>
+    `).join('');
+
+    renderBracketPreview(list);
+  }
+
+  function renderBracketPreview(seeds) {
+    visualContainer.innerHTML = `
+      <!-- Quarterfinals -->
+      <div class="flex flex-col gap-4">
+        <span class="text-[10px] uppercase font-bold text-center text-outline">Quarterfinals</span>
+        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
+          <div class="font-bold text-primary py-0.5 border-b border-white/5">${seeds[0] || 'Seed 1'}</div>
+          <div class="font-bold text-on-surface py-0.5">${seeds[7] || 'Seed 8'}</div>
+        </div>
+        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
+          <div class="font-bold text-on-surface py-0.5 border-b border-white/5">${seeds[3] || 'Seed 4'}</div>
+          <div class="font-bold text-on-surface py-0.5">${seeds[4] || 'Seed 5'}</div>
+        </div>
+        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
+          <div class="font-bold text-on-surface py-0.5 border-b border-white/5">${seeds[1] || 'Seed 2'}</div>
+          <div class="font-bold text-on-surface py-0.5">${seeds[6] || 'Seed 7'}</div>
+        </div>
+        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
+          <div class="font-bold text-on-surface py-0.5 border-b border-white/5">${seeds[2] || 'Seed 3'}</div>
+          <div class="font-bold text-on-surface py-0.5">${seeds[5] || 'Seed 6'}</div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <span class="material-symbols-outlined text-primary text-[24px]">arrow_forward</span>
+
+      <!-- Semifinals -->
+      <div class="flex flex-col gap-12">
+        <span class="text-[10px] uppercase font-bold text-center text-outline">Semifinals</span>
+        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
+          <div class="text-on-surface-variant py-0.5 border-b border-white/5">Winner QF 1</div>
+          <div class="text-on-surface-variant py-0.5">Winner QF 2</div>
+        </div>
+        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
+          <div class="text-on-surface-variant py-0.5 border-b border-white/5">Winner QF 3</div>
+          <div class="text-on-surface-variant py-0.5">Winner QF 4</div>
+        </div>
+      </div>
+
+      <!-- Arrow -->
+      <span class="material-symbols-outlined text-primary text-[24px]">arrow_forward</span>
+
+      <!-- Grand Final -->
+      <div class="flex flex-col gap-4">
+        <span class="text-[10px] uppercase font-bold text-center text-primary cyber-mono">Grand Final</span>
+        <div class="p-3 rounded-2xl bg-surface-container border-2 border-primary text-xs w-56 shadow-2xl cyber-panel">
+          <div class="text-primary font-bold py-1 border-b border-white/10">Winner SF 1</div>
+          <div class="text-primary font-bold py-1">Winner SF 2</div>
+        </div>
+      </div>
+    `;
+  }
+
+  divisionSelect.addEventListener('change', (e) => renderSeeds(e.target.value));
+
+  document.getElementById('draw-bracket-btn').addEventListener('click', () => {
+    const div = divisionSelect.value;
+    const list = [...(SAMPLE_SEEDS[div] || SAMPLE_SEEDS.mens)].sort(() => Math.random() - 0.5);
+    SAMPLE_SEEDS[div] = list;
+    renderSeeds(div);
+  });
+
+  document.getElementById('publish-bracket-btn').addEventListener('click', async () => {
+    const div = divisionSelect.value;
+    const seeds = SAMPLE_SEEDS[div] || [];
+    const matches = [
+      { matchKey: `${div}_QF1`, stage: 'Quarterfinals', team1Name: seeds[0], team2Name: seeds[7] },
+      { matchKey: `${div}_QF2`, stage: 'Quarterfinals', team1Name: seeds[3], team2Name: seeds[4] },
+      { matchKey: `${div}_QF3`, stage: 'Quarterfinals', team1Name: seeds[1], team2Name: seeds[6] },
+      { matchKey: `${div}_QF4`, stage: 'Quarterfinals', team1Name: seeds[2], team2Name: seeds[5] }
+    ];
+
+    try {
+      await TournamentOps.saveBracketData(div, matches);
+      alert('Bracket saved and published to tournament standings!');
+    } catch (err) {
+      alert('Could not publish bracket: ' + err.message);
+    }
+  });
+
+  renderSeeds('mens');
+});
+</script>
 <script>window.CECAuth.requireApprovedStaff();</script>
 </body></html>

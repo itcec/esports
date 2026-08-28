@@ -1,17 +1,27 @@
 /**
- * CEC Esports 2026 registration API & Secure Document Storage.
+ * CEC Esports 2026 registration, officiating, bracket, and tournament operations API.
  * Bind this script to the tournament spreadsheet and deploy it as a Web App.
- * Public: createRegistration, listRegistrations, and uploadVerificationFile (during registration wizard).
- * Staff (requires Firebase ID token): getRegistration, getPrivateVerificationFile, updateTeamStatus, and updatePlayerVerification.
+ * Public: createRegistration, listRegistrations, listMatches, fileDispute, uploadVerificationFile.
+ * Staff (requires Firebase ID token): getRegistration, getPrivateVerificationFile, updateTeamStatus,
+ * updatePlayerVerification, recordMatchResult, listDisputes, resolveDispute, saveBracketData, getAuditLogs.
  */
 const TEAMS_SHEET_NAME = 'TEAMS';
 const PLAYERS_SHEET_NAME = 'PLAYERS';
 const DOCS_SHEET_NAME = 'VERIFICATION_DOCS';
+const MATCHES_SHEET_NAME = 'MATCHES';
+const DISPUTES_SHEET_NAME = 'DISPUTES';
+const AUDIT_SHEET_NAME = 'AUDIT_LOGS';
+const BRACKETS_SHEET_NAME = 'BRACKETS';
+
 const SUPER_ADMIN_EMAIL = 'jlcabucos.cec@gmail.com';
 
 const TEAMS_HEADERS = ['TeamID', 'TeamName', 'Course', 'CaptainName', 'ContactNumber', 'Description', 'Status', 'SubmittedAt', 'UpdatedAt'];
 const PLAYERS_HEADERS = ['PlayerID', 'TeamID', 'RealName', 'IGN', 'MlbbId', 'ServerId', 'StudentId', 'Role', 'RosterType', 'VerificationStatus', 'SubmittedAt'];
 const DOCS_HEADERS = ['DocID', 'PlayerID', 'TeamID', 'DocType', 'DriveFileId', 'MimeType', 'FileName', 'UploadedAt', 'Status'];
+const MATCHES_HEADERS = ['MatchID', 'Court', 'Division', 'Stage', 'Team1ID', 'Team1Name', 'Team1Score', 'Team2ID', 'Team2Name', 'Team2Score', 'WinnerID', 'WinnerName', 'Status', 'StreamUrl', 'OfficiatedBy', 'SubmittedAt'];
+const DISPUTES_HEADERS = ['DisputeID', 'MatchID', 'TeamID', 'FiledBy', 'Category', 'Reason', 'EvidenceUrl', 'Status', 'Resolution', 'ResolvedBy', 'CreatedAt', 'ResolvedAt'];
+const AUDIT_HEADERS = ['LogID', 'Actor', 'Action', 'TargetID', 'Details', 'Timestamp'];
+const BRACKET_HEADERS = ['Division', 'Stage', 'MatchKey', 'Team1ID', 'Team1Name', 'Team2ID', 'Team2Name', 'Score1', 'Score2', 'WinnerID', 'UpdatedAt'];
 
 const VALID_TEAM_STATUSES = ['Pending', 'UnderReview', 'Approved', 'Rejected'];
 const VALID_VERIFICATION_STATUSES = ['Pending', 'Verified', 'Rejected'];
@@ -25,37 +35,63 @@ function route(e, method) {
   const params = (e && e.parameter) || {};
   const action = params.action || '';
   try {
-    // 1. Public list (only public summary fields, no private verification data)
+    // Public Endpoints
     if (action === 'listRegistrations') {
       return json({ success: true, data: listRegistrations(), message: 'OK' });
     }
-
-    // 2. Public document upload during registration workflow
+    if (action === 'listMatches') {
+      return json({ success: true, data: listMatches(), message: 'OK' });
+    }
+    if (action === 'getBracketData') {
+      return json({ success: true, data: getBracketData(params.division), message: 'OK' });
+    }
     if (method === 'POST' && action === 'uploadVerificationFile') {
       return json({ success: true, data: uploadVerificationFile(params), message: 'File uploaded securely.' });
     }
-
-    // 3. Public registration creation
     if (method === 'POST' && action === 'createRegistration') {
       return json({ success: true, data: createRegistration(params), message: 'Registration submitted.' });
     }
-
-    // 4. Staff-only routes requiring Firebase ID Token verification
-    if (action === 'getRegistration' || action === 'getPrivateVerificationFile' || action === 'updateTeamStatus' || action === 'updatePlayerVerification') {
-      requireStaff(params);
+    if (method === 'POST' && action === 'fileDispute') {
+      return json({ success: true, data: fileDispute(params), message: 'Dispute filed successfully.' });
     }
 
-    if ((method === 'GET' || method === 'POST') && action === 'getRegistration') {
-      return json({ success: true, data: getRegistration(params.teamId) });
-    }
-    if ((method === 'GET' || method === 'POST') && action === 'getPrivateVerificationFile') {
-      return json({ success: true, data: getPrivateVerificationFile(params.fileId) });
-    }
-    if (method === 'POST' && action === 'updateTeamStatus') {
-      return json({ success: true, data: updateTeamStatus(params), message: 'Team status updated.' });
-    }
-    if (method === 'POST' && action === 'updatePlayerVerification') {
-      return json({ success: true, data: updatePlayerVerification(params), message: 'Player verification updated.' });
+    // Authenticated Staff Endpoints
+    const staffActions = [
+      'getRegistration', 'getPrivateVerificationFile', 'updateTeamStatus',
+      'updatePlayerVerification', 'recordMatchResult', 'listDisputes',
+      'resolveDispute', 'saveBracketData', 'getAuditLogs'
+    ];
+
+    if (staffActions.indexOf(action) !== -1) {
+      const user = requireStaff(params);
+
+      if ((method === 'GET' || method === 'POST') && action === 'getRegistration') {
+        return json({ success: true, data: getRegistration(params.teamId) });
+      }
+      if ((method === 'GET' || method === 'POST') && action === 'getPrivateVerificationFile') {
+        return json({ success: true, data: getPrivateVerificationFile(params.fileId) });
+      }
+      if ((method === 'GET' || method === 'POST') && action === 'listDisputes') {
+        return json({ success: true, data: listDisputes(params.status) });
+      }
+      if ((method === 'GET' || method === 'POST') && action === 'getAuditLogs') {
+        return json({ success: true, data: getAuditLogs() });
+      }
+      if (method === 'POST' && action === 'updateTeamStatus') {
+        return json({ success: true, data: updateTeamStatus(params, user), message: 'Team status updated.' });
+      }
+      if (method === 'POST' && action === 'updatePlayerVerification') {
+        return json({ success: true, data: updatePlayerVerification(params, user), message: 'Player verification updated.' });
+      }
+      if (method === 'POST' && action === 'recordMatchResult') {
+        return json({ success: true, data: recordMatchResult(params, user), message: 'Match result officially recorded.' });
+      }
+      if (method === 'POST' && action === 'resolveDispute') {
+        return json({ success: true, data: resolveDispute(params, user), message: 'Dispute resolved.' });
+      }
+      if (method === 'POST' && action === 'saveBracketData') {
+        return json({ success: true, data: saveBracketData(params, user), message: 'Bracket updated.' });
+      }
     }
 
     return json({ success: false, error: { code: 'UNKNOWN_ACTION', message: 'Unknown action.' } });
@@ -68,11 +104,11 @@ function json(value) {
   return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON);
 }
 
-/** Firebase ID tokens are verified server-side; the browser UI is not trusted. */
+/** Firebase ID tokens are verified server-side */
 function requireStaff(params) {
   const props = PropertiesService.getScriptProperties();
   const legacyKey = props.getProperty('ADMIN_KEY');
-  if (legacyKey && params.adminKey === legacyKey) return; // temporary migration escape hatch
+  if (legacyKey && params.adminKey === legacyKey) return { email: 'legacy-admin', localId: 'legacy' };
   const token = params.idToken;
   if (!token) throw new Error('A Firebase staff token is required.');
   const apiKey = props.getProperty('FIREBASE_WEB_API_KEY');
@@ -106,7 +142,11 @@ function setupSheets() {
   getSheet(TEAMS_SHEET_NAME, TEAMS_HEADERS);
   getSheet(PLAYERS_SHEET_NAME, PLAYERS_HEADERS);
   getSheet(DOCS_SHEET_NAME, DOCS_HEADERS);
-  getVerificationFolder(); // Pre-creates Drive folder structure
+  getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS);
+  getSheet(DISPUTES_SHEET_NAME, DISPUTES_HEADERS);
+  getSheet(AUDIT_SHEET_NAME, AUDIT_HEADERS);
+  getSheet(BRACKETS_SHEET_NAME, BRACKET_HEADERS);
+  getVerificationFolder();
 }
 
 function sheetObjects(sheet) {
@@ -131,21 +171,22 @@ function findRow(sheet, column, id) {
   return null;
 }
 
-/**
- * Gets or creates the private Google Drive folder hierarchy:
- * CEC ESPORTS / TOURNAMENTS / 2026 / MLBB / PLAYER_VERIFICATION
- */
+function logAudit(actor, action, targetId, details) {
+  try {
+    const sheet = getSheet(AUDIT_SHEET_NAME, AUDIT_HEADERS);
+    const logId = nextId(sheet, 'LOG');
+    sheet.appendRow([logId, actor, action, targetId, details, new Date()]);
+  } catch (e) {
+    console.warn('Could not record audit log:', e);
+  }
+}
+
 function getVerificationFolder() {
   const props = PropertiesService.getScriptProperties();
   const customFolderId = props.getProperty('DRIVE_VERIFICATION_FOLDER_ID');
   if (customFolderId) {
-    try {
-      return DriveApp.getFolderById(customFolderId);
-    } catch (e) {
-      console.warn('Could not access DRIVE_VERIFICATION_FOLDER_ID, falling back to auto-path:', e);
-    }
+    try { return DriveApp.getFolderById(customFolderId); } catch (e) {}
   }
-
   const paths = ['CEC ESPORTS', 'TOURNAMENTS', '2026', 'MLBB', 'PLAYER_VERIFICATION'];
   let currentFolder = DriveApp.getRootFolder();
   for (let i = 0; i < paths.length; i++) {
@@ -160,24 +201,12 @@ function getVerificationFolder() {
   return currentFolder;
 }
 
-/**
- * Uploads a verification file to the private Drive folder and indexes it in Sheets.
- * NEVER makes the file public or sets ANYONE_WITH_LINK sharing.
- */
 function uploadVerificationFile(params) {
-  if (!params.fileBase64 || !params.docType) {
-    throw new Error('fileBase64 and docType are required.');
-  }
-
+  if (!params.fileBase64 || !params.docType) throw new Error('fileBase64 and docType are required.');
   const mimeType = params.mimeType || 'image/jpeg';
-  if (ALLOWED_MIME_TYPES.indexOf(mimeType) === -1) {
-    throw new Error('Invalid file type: ' + mimeType + '. Only JPG, PNG, WEBP, and PDF are allowed.');
-  }
-
+  if (ALLOWED_MIME_TYPES.indexOf(mimeType) === -1) throw new Error('Invalid file type.');
   const bytes = Utilities.base64Decode(params.fileBase64);
-  if (bytes.length > MAX_FILE_SIZE_BYTES) {
-    throw new Error('File exceeds the 5MB size limit.');
-  }
+  if (bytes.length > MAX_FILE_SIZE_BYTES) throw new Error('File exceeds the 5MB limit.');
 
   const folder = getVerificationFolder();
   const ext = mimeType === 'application/pdf' ? '.pdf' : (mimeType === 'image/png' ? '.png' : (mimeType === 'image/webp' ? '.webp' : '.jpg'));
@@ -189,32 +218,10 @@ function uploadVerificationFile(params) {
   const docId = nextId(docsSheet, 'DOC');
   const now = new Date();
 
-  docsSheet.appendRow([
-    docId,
-    params.playerId || '',
-    params.teamId || '',
-    params.docType || 'id_card',
-    file.getId(),
-    mimeType,
-    params.fileName || safeName,
-    now,
-    'Pending'
-  ]);
-
-  return {
-    docId: docId,
-    driveFileId: file.getId(),
-    fileName: params.fileName || safeName,
-    docType: params.docType,
-    mimeType: mimeType,
-    status: 'Pending'
-  };
+  docsSheet.appendRow([docId, params.playerId || '', params.teamId || '', params.docType || 'id_card', file.getId(), mimeType, params.fileName || safeName, now, 'Pending']);
+  return { docId: docId, driveFileId: file.getId(), fileName: params.fileName || safeName, docType: params.docType, mimeType: mimeType, status: 'Pending' };
 }
 
-/**
- * Securely retrieves file bytes for approved staff viewing.
- * File remains private on Google Drive; bytes are proxied through Apps Script.
- */
 function getPrivateVerificationFile(fileId) {
   if (!fileId) throw new Error('fileId is required.');
   const file = DriveApp.getFileById(fileId);
@@ -229,9 +236,7 @@ function getPrivateVerificationFile(fileId) {
 }
 
 function createRegistration(params) {
-  if (!params.teamName || !params.captainName || !params.contactNumber) {
-    throw new Error('teamName, captainName, and contactNumber are required.');
-  }
+  if (!params.teamName || !params.captainName || !params.contactNumber) throw new Error('teamName, captainName, and contactNumber are required.');
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
@@ -245,7 +250,6 @@ function createRegistration(params) {
 
     let players = [];
     try { players = JSON.parse(params.players || '[]'); } catch (e) { throw new Error('players must be valid JSON.'); }
-
     let attachedDocIds = [];
     try { attachedDocIds = JSON.parse(params.docIds || '[]'); } catch (e) { attachedDocIds = []; }
 
@@ -253,22 +257,9 @@ function createRegistration(params) {
     players.forEach(function (p) {
       const pid = nextId(playersSheet, 'PLAYER');
       playerMap[p.slot || p.ign] = pid;
-      playersSheet.appendRow([
-        pid,
-        teamId,
-        p.realName || '',
-        p.ign || '',
-        p.mlbbId || '',
-        p.serverId || '',
-        p.studentId || '',
-        p.role || '',
-        p.rosterType || 'Starter',
-        'Pending',
-        now
-      ]);
+      playersSheet.appendRow([pid, teamId, p.realName || '', p.ign || '', p.mlbbId || '', p.serverId || '', p.studentId || '', p.role || '', p.rosterType || 'Starter', 'Pending', now]);
     });
 
-    // Link uploaded documents to this teamId and playerId
     if (attachedDocIds.length > 0) {
       const docValues = docsSheet.getDataRange().getValues();
       const docIdIndex = docValues[0].indexOf('DocID');
@@ -290,7 +281,7 @@ function createRegistration(params) {
         }
       }
     }
-
+    logAudit('PUBLIC_REGISTRATION', 'CREATE_TEAM', teamId, 'Registered: ' + params.teamName);
     return { teamId: teamId, playerCount: players.length };
   } finally {
     lock.releaseLock();
@@ -328,24 +319,21 @@ function getRegistration(teamId) {
   const roster = sheetObjects(players).filter(function (p) { return String(p.TeamID) === String(teamId); });
   const teamDocs = sheetObjects(docs).filter(function (d) { return String(d.TeamID) === String(teamId); });
 
-  return {
-    team: team,
-    players: roster,
-    documents: teamDocs
-  };
+  return { team: team, players: roster, documents: teamDocs };
 }
 
-function updateTeamStatus(params) {
+function updateTeamStatus(params, user) {
   if (!params.teamId || VALID_TEAM_STATUSES.indexOf(params.status) < 0) throw new Error('Valid teamId and status are required.');
   const sheet = getSheet(TEAMS_SHEET_NAME, TEAMS_HEADERS);
   const found = findRow(sheet, 'TeamID', params.teamId);
   if (!found) throw new Error('Team not found.');
   sheet.getRange(found.rowIndex, found.headers.indexOf('Status') + 1).setValue(params.status);
   sheet.getRange(found.rowIndex, found.headers.indexOf('UpdatedAt') + 1).setValue(new Date());
+  logAudit(user.email, 'UPDATE_TEAM_STATUS', params.teamId, 'Status set to ' + params.status);
   return { teamId: params.teamId, status: params.status };
 }
 
-function updatePlayerVerification(params) {
+function updatePlayerVerification(params, user) {
   if (!params.playerId || VALID_VERIFICATION_STATUSES.indexOf(params.verificationStatus) < 0) {
     throw new Error('Valid playerId and verificationStatus are required.');
   }
@@ -353,5 +341,157 @@ function updatePlayerVerification(params) {
   const found = findRow(sheet, 'PlayerID', params.playerId);
   if (!found) throw new Error('Player not found.');
   sheet.getRange(found.rowIndex, found.headers.indexOf('VerificationStatus') + 1).setValue(params.verificationStatus);
+  logAudit(user.email, 'UPDATE_PLAYER_VERIFICATION', params.playerId, 'Verification set to ' + params.verificationStatus);
   return { playerId: params.playerId, verificationStatus: params.verificationStatus };
+}
+
+// -------------------------------------------------------------
+// PHASE 5: TOURNAMENT OPERATIONS, OFFICIATING & MATCH DISPUTES
+// -------------------------------------------------------------
+
+function listMatches() {
+  const matches = sheetObjects(getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS));
+  return matches;
+}
+
+function recordMatchResult(params, user) {
+  if (!params.matchId || !params.winnerId) throw new Error('matchId and winnerId are required.');
+  const sheet = getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS);
+  const now = new Date();
+  
+  const existing = findRow(sheet, 'MatchID', params.matchId);
+  if (existing) {
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('Team1Score') + 1).setValue(params.score1 || 0);
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('Team2Score') + 1).setValue(params.score2 || 0);
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('WinnerID') + 1).setValue(params.winnerId);
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('WinnerName') + 1).setValue(params.winnerName || '');
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('Status') + 1).setValue(params.status || 'Completed');
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('StreamUrl') + 1).setValue(params.streamUrl || '');
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('OfficiatedBy') + 1).setValue(user.email);
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('SubmittedAt') + 1).setValue(now);
+  } else {
+    sheet.appendRow([
+      params.matchId,
+      params.court || 'Court 1',
+      params.division || "Men's",
+      params.stage || 'Round 1',
+      params.team1Id || '',
+      params.team1Name || '',
+      params.score1 || 0,
+      params.team2Id || '',
+      params.team2Name || '',
+      params.score2 || 0,
+      params.winnerId,
+      params.winnerName || '',
+      params.status || 'Completed',
+      params.streamUrl || '',
+      user.email,
+      now
+    ]);
+  }
+
+  logAudit(user.email, 'RECORD_MATCH_RESULT', params.matchId, 'Winner: ' + params.winnerName + ' (' + params.score1 + '-' + params.score2 + ')');
+  return { matchId: params.matchId, winnerId: params.winnerId, status: params.status || 'Completed' };
+}
+
+function fileDispute(params) {
+  if (!params.reason || !params.category) throw new Error('reason and category are required.');
+  const sheet = getSheet(DISPUTES_SHEET_NAME, DISPUTES_HEADERS);
+  const disputeId = nextId(sheet, 'DISPUTE');
+  const now = new Date();
+
+  sheet.appendRow([
+    disputeId,
+    params.matchId || '',
+    params.teamId || '',
+    params.filedBy || 'Anonymous',
+    params.category,
+    params.reason,
+    params.evidenceUrl || '',
+    'Open',
+    '',
+    '',
+    now,
+    ''
+  ]);
+
+  logAudit(params.filedBy || 'Public', 'FILE_DISPUTE', disputeId, 'Category: ' + params.category + ' | Reason: ' + params.reason);
+  return { disputeId: disputeId, status: 'Open' };
+}
+
+function listDisputes(statusFilter) {
+  const disputes = sheetObjects(getSheet(DISPUTES_SHEET_NAME, DISPUTES_HEADERS));
+  if (statusFilter && statusFilter !== 'All') {
+    return disputes.filter(function (d) { return String(d.Status).toLowerCase() === String(statusFilter).toLowerCase(); });
+  }
+  return disputes;
+}
+
+function resolveDispute(params, user) {
+  if (!params.disputeId || !params.status || !params.resolution) throw new Error('disputeId, status, and resolution are required.');
+  const sheet = getSheet(DISPUTES_SHEET_NAME, DISPUTES_HEADERS);
+  const found = findRow(sheet, 'DisputeID', params.disputeId);
+  if (!found) throw new Error('Dispute not found.');
+
+  const now = new Date();
+  sheet.getRange(found.rowIndex, found.headers.indexOf('Status') + 1).setValue(params.status);
+  sheet.getRange(found.rowIndex, found.headers.indexOf('Resolution') + 1).setValue(params.resolution);
+  sheet.getRange(found.rowIndex, found.headers.indexOf('ResolvedBy') + 1).setValue(user.email);
+  sheet.getRange(found.rowIndex, found.headers.indexOf('ResolvedAt') + 1).setValue(now);
+
+  logAudit(user.email, 'RESOLVE_DISPUTE', params.disputeId, 'Status: ' + params.status + ' | Rationale: ' + params.resolution);
+  return { disputeId: params.disputeId, status: params.status, resolution: params.resolution };
+}
+
+function getBracketData(division) {
+  const sheet = getSheet(BRACKETS_SHEET_NAME, BRACKET_HEADERS);
+  const all = sheetObjects(sheet);
+  if (division) {
+    return all.filter(function (b) { return String(b.Division).toLowerCase() === String(division).toLowerCase(); });
+  }
+  return all;
+}
+
+function saveBracketData(params, user) {
+  if (!params.division || !params.matches) throw new Error('division and matches are required.');
+  const sheet = getSheet(BRACKETS_SHEET_NAME, BRACKET_HEADERS);
+  let matches = [];
+  try { matches = JSON.parse(params.matches || '[]'); } catch (e) { throw new Error('matches must be valid JSON.'); }
+
+  const now = new Date();
+  matches.forEach(function (m) {
+    const found = findRow(sheet, 'MatchKey', m.matchKey);
+    if (found) {
+      sheet.getRange(found.rowIndex, found.headers.indexOf('Team1ID') + 1).setValue(m.team1Id || '');
+      sheet.getRange(found.rowIndex, found.headers.indexOf('Team1Name') + 1).setValue(m.team1Name || '');
+      sheet.getRange(found.rowIndex, found.headers.indexOf('Team2ID') + 1).setValue(m.team2Id || '');
+      sheet.getRange(found.rowIndex, found.headers.indexOf('Team2Name') + 1).setValue(m.team2Name || '');
+      sheet.getRange(found.rowIndex, found.headers.indexOf('Score1') + 1).setValue(m.score1 || 0);
+      sheet.getRange(found.rowIndex, found.headers.indexOf('Score2') + 1).setValue(m.score2 || 0);
+      sheet.getRange(found.rowIndex, found.headers.indexOf('WinnerID') + 1).setValue(m.winnerId || '');
+      sheet.getRange(found.rowIndex, found.headers.indexOf('UpdatedAt') + 1).setValue(now);
+    } else {
+      sheet.appendRow([
+        params.division,
+        m.stage || 'Round 1',
+        m.matchKey,
+        m.team1Id || '',
+        m.team1Name || '',
+        m.team2Id || '',
+        m.team2Name || '',
+        m.score1 || 0,
+        m.score2 || 0,
+        m.winnerId || '',
+        now
+      ]);
+    }
+  });
+
+  logAudit(user.email, 'SAVE_BRACKET', params.division, 'Updated ' + matches.length + ' bracket matches');
+  return { division: params.division, matchCount: matches.length };
+}
+
+function getAuditLogs() {
+  const logs = sheetObjects(getSheet(AUDIT_SHEET_NAME, AUDIT_HEADERS));
+  return logs.slice(-100).reverse(); // latest 100 entries
 }

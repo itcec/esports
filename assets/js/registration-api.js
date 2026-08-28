@@ -1,9 +1,13 @@
 /**
- * Shared client for the Google Apps Script registration backend & Secure Google Drive Storage.
+ * Shared client for the Google Apps Script registration backend & Tournament Operations.
  */
 const REGISTRATION_API_URL = 'https://script.google.com/macros/s/AKfycbxhXkVdmyMYdMvcBTSvVIrVH5LZ6T5v77Z7aKXAt_k67q2cwN3ldII2UtTVBWS63oky/exec';
 const ADMIN_KEY = ''; // Legacy stopgap only; use Firebase ID-token auth.
-const STAFF_ACTIONS = ['getRegistration', 'updateTeamStatus', 'updatePlayerVerification', 'getPrivateVerificationFile'];
+const STAFF_ACTIONS = [
+  'getRegistration', 'updateTeamStatus', 'updatePlayerVerification',
+  'getPrivateVerificationFile', 'recordMatchResult', 'listDisputes',
+  'resolveDispute', 'saveBracketData', 'getAuditLogs'
+];
 
 function waitForStaffUser() {
   return new Promise(function (resolve, reject) {
@@ -58,7 +62,6 @@ async function callRegistrationApi(action, params, method) {
 
 /**
  * Converts a File object to base64 and uploads it to private Google Drive storage via Apps Script.
- * Never stores raw base64 data in sessionStorage.
  */
 async function uploadVerificationDocument(file, docType, metadata) {
   if (!file) throw new Error('No file selected.');
@@ -86,9 +89,36 @@ async function uploadVerificationDocument(file, docType, metadata) {
 }
 
 /**
- * Securely retrieves private document bytes (base64) using authenticated staff ID token.
+ * Securely retrieves private document bytes using authenticated staff ID token.
  */
 async function getPrivateVerificationDocument(fileId) {
   if (!fileId) throw new Error('File ID is required.');
   return await callRegistrationApi('getPrivateVerificationFile', { fileId: fileId }, 'POST');
 }
+
+/**
+ * Tournament Operations & Match Officiating API Wrappers
+ */
+const TournamentOps = {
+  recordMatchResult: async function (resultData) {
+    return await callRegistrationApi('recordMatchResult', resultData, 'POST');
+  },
+  fileDispute: async function (disputeData) {
+    return await callRegistrationApi('fileDispute', disputeData, 'POST');
+  },
+  listDisputes: async function (status) {
+    return await callRegistrationApi('listDisputes', { status: status || 'All' }, 'POST');
+  },
+  resolveDispute: async function (disputeId, status, resolution) {
+    return await callRegistrationApi('resolveDispute', { disputeId: disputeId, status: status, resolution: resolution }, 'POST');
+  },
+  getBracketData: async function (division) {
+    return await callRegistrationApi('getBracketData', { division: division || '' }, 'GET');
+  },
+  saveBracketData: async function (division, matches) {
+    return await callRegistrationApi('saveBracketData', { division: division, matches: JSON.stringify(matches) }, 'POST');
+  },
+  getAuditLogs: async function () {
+    return await callRegistrationApi('getAuditLogs', {}, 'POST');
+  }
+};
