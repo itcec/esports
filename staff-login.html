@@ -19,7 +19,7 @@
       <button id="sign-in" type="button" class="mt-5 w-full rounded-lg bg-[#b4c5ff] px-4 py-3 font-bold text-[#002a78]">SIGN IN WITH GOOGLE</button>
       <button id="sign-out" type="button" class="mt-3 hidden w-full rounded-lg border border-[#8c90a2] px-4 py-3 font-bold">SIGN OUT</button>
       <div id="approved-actions" class="mt-4 hidden grid gap-3 sm:grid-cols-2">
-        <a href="admin.html" class="rounded-lg bg-[#1264ff] px-4 py-3 text-center font-bold text-white">CONTROL CENTER</a>
+        <a href="/control-center" class="rounded-lg bg-[#1264ff] px-4 py-3 text-center font-bold text-white">CONTROL CENTER</a>
         <a href="admin-officiating.html" class="rounded-lg border border-[#b4c5ff] px-4 py-3 text-center font-bold text-[#b4c5ff]">LIVE MATCHES</a>
       </div>
       <button id="recheck" type="button" class="mt-3 hidden w-full rounded-lg border border-[#b4c5ff] px-4 py-3 font-bold text-[#b4c5ff]">CHECK APPROVAL STATUS</button>
@@ -32,13 +32,17 @@
       const signOut = document.getElementById('sign-out');
       const actions = document.getElementById('approved-actions');
       const recheck = document.getElementById('recheck');
+      let redirected = false;
       function render(user, profile) {
         signIn.classList.toggle('hidden', !!user);
         signOut.classList.toggle('hidden', !user);
         recheck.classList.toggle('hidden', !user || !profile || profile.status === 'approved');
         actions.classList.toggle('hidden', !(user && window.CECAuth.isApprovedStaff()));
         if (!user) { state.textContent = 'Not signed in. Staff access is restricted to approved Google accounts.'; return; }
-        if (window.CECAuth.isApprovedStaff()) state.textContent = 'Approved: ' + (profile.roleLabel || 'Staff') + '. You can enter the control center.';
+        if (window.CECAuth.isApprovedStaff()) {
+          state.textContent = 'Approved: ' + (profile.roleLabel || 'Staff') + '. Opening the control center…';
+          if (!redirected) { redirected = true; window.location.replace('/control-center'); }
+        }
         else if (profile && profile.status === 'rejected') state.textContent = 'Access revoked. Contact the tournament coordinator.';
         else state.textContent = 'Signed in as ' + (user.email || 'staff member') + '. Awaiting coordinator approval.';
       }

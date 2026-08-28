@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/schedule", "destination": "/tournament" },
+    { "source": "/staff", "destination": "/staff-login" },
+    { "source": "/control-center", "destination": "/admin" }
+  ]
+}

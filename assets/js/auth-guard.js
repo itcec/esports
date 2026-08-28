@@ -155,8 +155,16 @@ window.CECAuth = {
     const self = this;
     const deny = function (user, profile) {
       if (user && self.isApprovedStaff()) return;
+      if (!user) {
+        // Keep protected pages out of the public navigation and send signed-out
+        // visitors through the dedicated staff entry point.
+        if (window.location.pathname !== '/staff' && !window.location.pathname.endsWith('/staff-login.html')) {
+          window.location.replace('/staff');
+        }
+        return;
+      }
       const heading = user && profile && profile.status === 'rejected' ? 'Access revoked' : (user ? 'Approval required' : 'Staff sign-in required');
-      document.body.innerHTML = '<main style="min-height:100vh;background:#081422;color:#d7e3f7;display:grid;place-items:center;padding:24px;font-family:Arial,sans-serif"><section style="max-width:560px;text-align:center;border:1px solid #424656;background:#15202f;border-radius:12px;padding:32px"><p style="color:#b4c5ff;font-weight:700;letter-spacing:.12em;font-size:12px">CEC ESPORTS STAFF PORTAL</p><h1 style="font-size:28px;margin:12px 0">' + heading + '</h1><p style="color:#c2c6d8;line-height:1.6">This page is limited to approved staff accounts.</p><a href="staff-login.html" style="display:inline-block;margin-top:16px;background:#b4c5ff;color:#002a78;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">OPEN STAFF LOGIN</a></section></main>';
+      document.body.innerHTML = '<main style="min-height:100vh;background:#081422;color:#d7e3f7;display:grid;place-items:center;padding:24px;font-family:Arial,sans-serif"><section style="max-width:560px;text-align:center;border:1px solid #424656;background:#15202f;border-radius:12px;padding:32px"><p style="color:#b4c5ff;font-weight:700;letter-spacing:.12em;font-size:12px">CEC ESPORTS STAFF PORTAL</p><h1 style="font-size:28px;margin:12px 0">' + heading + '</h1><p style="color:#c2c6d8;line-height:1.6">This account is signed in but is not approved for the Control Center yet.</p><a href="/staff" style="display:inline-block;margin-top:16px;background:#b4c5ff;color:#002a78;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">BACK TO STAFF PORTAL</a></section></main>';
     };
     this.onAuthChange(deny);
     if (this.isResolved) deny(this.currentUser, this.currentStaffProfile);

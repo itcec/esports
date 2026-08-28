@@ -5,7 +5,7 @@ const REGISTRATION_API_URL = 'https://script.google.com/macros/s/AKfycbxhXkVdmyM
 const ADMIN_KEY = ''; // Legacy stopgap only; use Firebase ID-token auth.
 const STAFF_ACTIONS = [
   'getRegistration', 'updateTeamStatus', 'updatePlayerVerification',
-  'getPrivateVerificationFile', 'recordMatchResult', 'listDisputes',
+  'getPrivateVerificationFile', 'recordMatchResult', 'publishMatch', 'listDisputes',
   'resolveDispute', 'saveBracketData', 'getAuditLogs'
 ];
 
@@ -116,6 +116,25 @@ async function uploadProfileImage(file) {
 const PublicTournamentApi = {
   listTeams: async function () {
     return await callRegistrationApi('listPublicTeams', {}, 'GET');
+  },
+  listMatches: async function () {
+    const rows = await callRegistrationApi('listMatches', {}, 'GET');
+    return (rows || []).map(function (row) {
+      return {
+        matchId: row.matchId || row.MatchID || '', court: row.court || row.Court || '',
+        division: row.division || row.Division || '', stage: row.stage || row.Stage || '',
+        team1Id: row.team1Id || row.Team1ID || '', team1Name: row.team1Name || row.Team1Name || 'TBD', team1Score: row.team1Score != null ? row.team1Score : (row.Team1Score || 0),
+        team2Id: row.team2Id || row.Team2ID || '', team2Name: row.team2Name || row.Team2Name || 'TBD', team2Score: row.team2Score != null ? row.team2Score : (row.Team2Score || 0),
+        status: row.status || row.Status || 'Scheduled', streamUrl: row.streamUrl || row.StreamUrl || '',
+        streamPublished: row.streamPublished || row.StreamPublished || '', scheduledAt: row.scheduledAt || row.ScheduledAt || '', submittedAt: row.submittedAt || row.SubmittedAt || ''
+      };
+    });
+  },
+  listStandings: async function () {
+    return await callRegistrationApi('listStandings', {}, 'GET');
+  },
+  listBracket: async function (division) {
+    return await callRegistrationApi('getBracketData', { division: division || '' }, 'GET');
   }
 };
 
@@ -133,6 +152,9 @@ async function getPrivateVerificationDocument(fileId) {
 const TournamentOps = {
   recordMatchResult: async function (resultData) {
     return await callRegistrationApi('recordMatchResult', resultData, 'POST');
+  },
+  publishMatch: async function (matchData) {
+    return await callRegistrationApi('publishMatch', matchData, 'POST');
   },
   fileDispute: async function (disputeData) {
     return await callRegistrationApi('fileDispute', disputeData, 'POST');
@@ -153,3 +175,7 @@ const TournamentOps = {
     return await callRegistrationApi('getAuditLogs', {}, 'POST');
   }
 };
+
+// Expose the shared clients for pages that load this file as a classic script.
+window.PublicTournamentApi = PublicTournamentApi;
+window.TournamentOps = TournamentOps;

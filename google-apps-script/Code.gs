@@ -1,7 +1,7 @@
 /**
  * CEC Esports 2026 registration, officiating, bracket, and tournament operations API.
  * Bind this script to the tournament spreadsheet and deploy it as a Web App.
- * Public: createRegistration, listRegistrations, listPublicTeams, listMatches, fileDispute,
+ * Public: createRegistration, listRegistrations, listPublicTeams, listMatches, listStandings, fileDispute,
  * uploadVerificationFile, uploadProfileImage.
  * Staff (requires Firebase ID token): getRegistration, getPrivateVerificationFile, updateTeamStatus,
  * updatePlayerVerification, recordMatchResult, listDisputes, resolveDispute, saveBracketData, getAuditLogs.
@@ -16,10 +16,10 @@ const BRACKETS_SHEET_NAME = 'BRACKETS';
 
 const SUPER_ADMIN_EMAIL = 'jlcabucos.cec@gmail.com';
 
-const TEAMS_HEADERS = ['TeamID', 'TeamName', 'Course', 'CaptainName', 'ContactNumber', 'Description', 'Status', 'SubmittedAt', 'UpdatedAt'];
+const TEAMS_HEADERS = ['TeamID', 'TeamName', 'Course', 'CaptainName', 'ContactNumber', 'Description', 'LogoUrl', 'TeamPhotoUrl', 'Status', 'SubmittedAt', 'UpdatedAt'];
 const PLAYERS_HEADERS = ['PlayerID', 'TeamID', 'RealName', 'IGN', 'MlbbId', 'ServerId', 'StudentId', 'Role', 'RosterType', 'VerificationStatus', 'SubmittedAt', 'ProfileImageFileId', 'ProfileImageUrl', 'ProfileImageVisible'];
 const DOCS_HEADERS = ['DocID', 'PlayerID', 'TeamID', 'DocType', 'DriveFileId', 'MimeType', 'FileName', 'UploadedAt', 'Status'];
-const MATCHES_HEADERS = ['MatchID', 'Court', 'Division', 'Stage', 'Team1ID', 'Team1Name', 'Team1Score', 'Team2ID', 'Team2Name', 'Team2Score', 'WinnerID', 'WinnerName', 'Status', 'StreamUrl', 'OfficiatedBy', 'SubmittedAt'];
+const MATCHES_HEADERS = ['MatchID', 'Court', 'Division', 'Stage', 'Team1ID', 'Team1Name', 'Team1Score', 'Team2ID', 'Team2Name', 'Team2Score', 'WinnerID', 'WinnerName', 'Status', 'StreamUrl', 'OfficiatedBy', 'SubmittedAt', 'ScheduledAt', 'StreamPublished'];
 const DISPUTES_HEADERS = ['DisputeID', 'MatchID', 'TeamID', 'FiledBy', 'Category', 'Reason', 'EvidenceUrl', 'Status', 'Resolution', 'ResolvedBy', 'CreatedAt', 'ResolvedAt'];
 const AUDIT_HEADERS = ['LogID', 'Actor', 'Action', 'TargetID', 'Details', 'Timestamp'];
 const BRACKET_HEADERS = ['Division', 'Stage', 'MatchKey', 'Team1ID', 'Team1Name', 'Team2ID', 'Team2Name', 'Score1', 'Score2', 'WinnerID', 'UpdatedAt'];
@@ -45,6 +45,9 @@ function route(e, method) {
     if (action === 'listMatches') {
       return json({ success: true, data: listMatches(), message: 'OK' });
     }
+    if (action === 'listStandings') {
+      return json({ success: true, data: listStandings(), message: 'OK' });
+    }
     if (action === 'listPublicTeams') {
       return json({ success: true, data: listPublicTeams(), message: 'OK' });
     }
@@ -67,7 +70,7 @@ function route(e, method) {
     // Authenticated Staff Endpoints
     const staffActions = [
       'getRegistration', 'getPrivateVerificationFile', 'updateTeamStatus',
-      'updatePlayerVerification', 'recordMatchResult', 'listDisputes',
+      'updatePlayerVerification', 'recordMatchResult', 'publishMatch', 'listDisputes',
       'resolveDispute', 'saveBracketData', 'getAuditLogs'
     ];
 
@@ -94,6 +97,9 @@ function route(e, method) {
       }
       if (method === 'POST' && action === 'recordMatchResult') {
         return json({ success: true, data: recordMatchResult(params, user), message: 'Match result officially recorded.' });
+      }
+      if (method === 'POST' && action === 'publishMatch') {
+        return json({ success: true, data: publishMatch(params, user), message: 'Match publication updated.' });
       }
       if (method === 'POST' && action === 'resolveDispute') {
         return json({ success: true, data: resolveDispute(params, user), message: 'Dispute resolved.' });
@@ -329,7 +335,7 @@ function createRegistration(params) {
     
     const teamId = nextId(teams, 'TEAM');
     const now = new Date();
-    teams.appendRow([teamId, params.teamName, params.course || '', params.captainName, params.contactNumber, params.description || '', 'Pending', now, now]);
+    teams.appendRow([teamId, params.teamName, params.course || '', params.captainName, params.contactNumber, params.description || '', params.logoUrl || '', params.teamPhotoUrl || '', 'Pending', now, now]);
 
     let players = [];
     try { players = JSON.parse(params.players || '[]'); } catch (e) { throw new Error('players must be valid JSON.'); }
@@ -394,7 +400,7 @@ function listPublicTeams() {
   const players = sheetObjects(getSheet(PLAYERS_SHEET_NAME, PLAYERS_HEADERS));
   return teams.filter(function (team) { return String(team.Status).toLowerCase() === 'approved'; }).map(function (team) {
     const course = String(team.Course || '');
-    const courseParts = course.split(String.fromCharCode(0x2014));
+    const courseParts = course.split(/\s*[—–-]\s*/);
     const roster = players.filter(function (player) {
       return String(player.TeamID) === String(team.TeamID);
     }).map(function (player, index) {
@@ -416,6 +422,9 @@ function listPublicTeams() {
       department: courseParts.length > 1 ? courseParts[courseParts.length - 1].trim() : '',
       captainName: team.CaptainName || '',
       description: team.Description || '',
+      logoUrl: team.LogoUrl || '',
+      teamPhotoUrl: team.TeamPhotoUrl || '',
+      approvalStatus: team.Status || 'Approved',
       roster: roster
     };
   });
@@ -467,11 +476,72 @@ function updatePlayerVerification(params, user) {
 
 function listMatches() {
   const matches = sheetObjects(getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS));
-  return matches;
+  return matches.map(function (match) {
+    return {
+      matchId: match.MatchID || '',
+      court: match.Court || '',
+      division: match.Division || '',
+      stage: match.Stage || '',
+      team1Id: match.Team1ID || '',
+      team1Name: match.Team1Name || 'TBD',
+      team1Score: Number(match.Team1Score || 0),
+      team2Id: match.Team2ID || '',
+      team2Name: match.Team2Name || 'TBD',
+      team2Score: Number(match.Team2Score || 0),
+      winnerId: match.WinnerID || '',
+      winnerName: match.WinnerName || '',
+      status: match.Status || 'Scheduled',
+      streamUrl: match.StreamUrl || '',
+      streamPublished: String(match.StreamPublished || '').toLowerCase() === 'yes' || (String(match.Status || '').toLowerCase() === 'live' && !!match.StreamUrl),
+      scheduledAt: match.ScheduledAt || '',
+      submittedAt: match.SubmittedAt || ''
+    };
+  });
+}
+
+function publishMatch(params, user) {
+  if (!params.matchId) throw new Error('matchId is required.');
+  const validStatuses = ['Scheduled', 'LIVE', 'Completed', 'Cancelled'];
+  const status = validStatuses.indexOf(String(params.status || 'Scheduled')) >= 0 ? String(params.status || 'Scheduled') : 'Scheduled';
+  const streamUrl = String(params.streamUrl || '').trim();
+  if (streamUrl && !/twitch\.tv\//i.test(streamUrl)) throw new Error('Only Twitch stream links can be published.');
+  const sheet = getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS);
+  const existing = findRow(sheet, 'MatchID', params.matchId);
+  const values = [params.matchId, params.court || 'Court 1', params.division || '', params.stage || '', params.team1Id || '', params.team1Name || '', Number(params.score1 || 0), params.team2Id || '', params.team2Name || '', Number(params.score2 || 0), params.winnerId || '', params.winnerName || '', status, streamUrl, user.email, new Date(), params.scheduledAt || '', params.streamPublished === 'true' || params.streamPublished === 'yes' ? 'Yes' : (streamUrl && status === 'LIVE' ? 'Yes' : 'No')];
+  if (existing) sheet.getRange(existing.rowIndex, 1, 1, MATCHES_HEADERS.length).setValues([values]);
+  else sheet.appendRow(values);
+  logAudit(user.email, 'PUBLISH_MATCH', params.matchId, 'Status: ' + status + (streamUrl ? ' | Twitch stream published' : ''));
+  return { matchId: params.matchId, status: status, streamUrl: streamUrl };
+}
+
+function listStandings() {
+  const teams = listPublicTeams();
+  const matches = sheetObjects(getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS));
+  const table = {};
+  teams.forEach(function (team) {
+    table[team.teamId] = {
+      teamId: team.teamId, teamName: team.teamName, department: team.department,
+      division: team.division, played: 0, wins: 0, losses: 0, points: 0
+    };
+  });
+  matches.forEach(function (match) {
+    if (String(match.Status || '').toLowerCase() !== 'completed') return;
+    const one = table[match.Team1ID];
+    const two = table[match.Team2ID];
+    if (!one || !two) return;
+    one.played += 1; two.played += 1;
+    if (String(match.WinnerID) === String(one.teamId)) { one.wins += 1; one.points += 3; two.losses += 1; }
+    else if (String(match.WinnerID) === String(two.teamId)) { two.wins += 1; two.points += 3; one.losses += 1; }
+  });
+  return Object.keys(table).map(function (key) { return table[key]; }).sort(function (a, b) {
+    return b.points - a.points || b.wins - a.wins || a.teamName.localeCompare(b.teamName);
+  });
 }
 
 function recordMatchResult(params, user) {
   if (!params.matchId || !params.winnerId) throw new Error('matchId and winnerId are required.');
+  const streamUrl = String(params.streamUrl || '').trim();
+  if (streamUrl && !/twitch\.tv\//i.test(streamUrl)) throw new Error('Only Twitch stream links can be published.');
   const sheet = getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS);
   const now = new Date();
   
@@ -482,7 +552,7 @@ function recordMatchResult(params, user) {
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('WinnerID') + 1).setValue(params.winnerId);
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('WinnerName') + 1).setValue(params.winnerName || '');
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('Status') + 1).setValue(params.status || 'Completed');
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('StreamUrl') + 1).setValue(params.streamUrl || '');
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('StreamUrl') + 1).setValue(streamUrl);
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('OfficiatedBy') + 1).setValue(user.email);
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('SubmittedAt') + 1).setValue(now);
   } else {
@@ -500,7 +570,7 @@ function recordMatchResult(params, user) {
       params.winnerId,
       params.winnerName || '',
       params.status || 'Completed',
-      params.streamUrl || '',
+      streamUrl,
       user.email,
       now
     ]);

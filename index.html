@@ -1,366 +1,101 @@
-<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>CEC Esports Intramurals 2026</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
-.cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
-.cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
-.cyber-panel{position:relative;}
-.cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
-.cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
-.cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
-
-.site-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  background-color: #050B14;
-  background-image: url('assets/bg.gif');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-attachment: fixed;
-  pointer-events: none;
-}
-@media (max-width: 768px), (orientation: portrait) {
-  .site-bg {
-    background-position: left center;
-  }
-}
-.site-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  /* Left ~30% is highlighted from the background art while center/right provides dark night contrast */
-  background: linear-gradient(90deg, rgba(5, 11, 20, 0.25) 0%, rgba(5, 11, 20, 0.58) 32%, rgba(5, 11, 20, 0.86) 65%, rgba(5, 11, 20, 0.94) 100%),
-              linear-gradient(to bottom, rgba(5, 11, 20, 0.35) 0%, rgba(5, 11, 20, 0.8) 100%);
-  pointer-events: none;
-}
-
-/* Subtle Glassmorphism Card System with High Readability */
-.glass-card, .bg-surface-container {
-  background-color: rgba(16, 26, 40, 0.78) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
-}
-.bg-surface-container-high {
-  background-color: rgba(26, 40, 60, 0.82) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-}
-.bg-surface-container-low {
-  background-color: rgba(10, 18, 30, 0.82) !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-}
-.glass-hover {
-  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.glass-hover:hover {
-  background-color: rgba(22, 36, 56, 0.88) !important;
-  border-color: rgba(180, 197, 255, 0.26) !important;
-  box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.5), 0 0 16px rgba(18, 100, 255, 0.15);
-  transform: translateY(-2px);
-}
-</style><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-background":"#d7e3f7","on-secondary":"#003064","on-primary":"#002a78","surface-container-low":"#101c2a","tertiary":"#c0c7d4","primary-container":"#1264ff","on-error":"#690005","secondary-container":"#3e90ff","primary":"#b4c5ff","background":"#081422","outline-variant":"#424656","surface-dim":"#081422","inverse-primary":"#0052dc","on-secondary-fixed":"#001b3e","on-primary-fixed":"#00174b","on-primary-fixed-variant":"#003ea8","on-tertiary-container":"#f4f6ff","primary-fixed":"#dbe1ff","tertiary-fixed":"#dce3f0","on-surface-variant":"#c2c6d8","surface-container-highest":"#2a3645","outline":"#8c90a2","surface-container-high":"#1f2b39","surface-container-lowest":"#030f1c","inverse-on-surface":"#263140","on-surface":"#d7e3f7","error":"#ffb4ab","on-error-container":"#ffdad6","on-tertiary":"#2a313b","on-secondary-container":"#002957","tertiary-container":"#6a717d","tertiary-fixed-dim":"#c0c7d4","secondary":"#aac7ff","secondary-fixed":"#d6e3ff","on-tertiary-fixed-variant":"#404752","surface-container":"#15202f","on-secondary-fixed-variant":"#00468d","surface-variant":"#2a3645","surface":"#081422","primary-fixed-dim":"#b4c5ff","inverse-surface":"#d7e3f7","on-tertiary-fixed":"#151c26","surface-bright":"#2e3a49","surface-tint":"#b4c5ff","error-container":"#93000a","secondary-fixed-dim":"#aac7ff","on-primary-container":"#f6f6ff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","gutter":"16px","base":"4px","sm":"12px","xs":"8px","lg":"24px","md":"16px","container-max":"1280px"},"fontFamily":{"stats-impact":["Hanken Grotesk"],"headline-lg-mobile":["Hanken Grotesk"],"headline-xl":["Hanken Grotesk"],"body-lg":["Inter"],"headline-md":["Hanken Grotesk"],"body-md":["Inter"],"label-caps":["Inter"],"headline-lg":["Hanken Grotesk"]},"fontSize":{"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}]}}}}</script></head><body class="bg-background font-body-md text-on-background"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><header class="fixed top-0 w-full z-50 bg-[#081422]/85 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"><div class="h-16 w-full max-w-container-max mx-auto px-lg flex items-center justify-between gap-md"><a class="flex items-center gap-2.5 sm:gap-3 shrink-0 group" href="index.html"><div class="flex items-center gap-1.5 p-1 rounded-lg bg-surface-container-high/60 border border-white/10 shadow-sm backdrop-blur-sm"><img src="assets/school_logo.jpg" alt="CEC Seal" class="h-7 w-7 rounded object-cover shadow-sm border border-white/10" /><img src="assets/e-sportslogo.png" alt="CEC Esports Logo" class="h-7 w-7 object-contain drop-shadow-[0_0_8px_rgba(180,197,255,0.4)]" /><img src="assets/intrams_logo.png" alt="Intramurals 2026 Logo" class="h-7 w-7 object-contain" /></div><div class="flex flex-col"><span class="font-headline-md text-[18px] sm:text-headline-md uppercase tracking-tight text-on-surface leading-none group-hover:text-primary transition-colors">CEC <span class="text-primary">Esports</span></span><span class="text-[10px] font-label-caps text-on-surface-variant/80 tracking-widest hidden sm:block">INTRAMURALS 2026</span></div></a><nav class="hidden lg:flex items-center gap-md"><a aria-current="page" class="font-label-caps text-label-caps text-primary font-bold" href="./">HOME</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1.5" href="tournament.html"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>LIVE / SCHEDULE</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="standings.html">STANDINGS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="rules.html">RULES</a></nav><div class="flex items-center gap-sm"><div class="cec-auth-widget"></div><a class="hidden sm:inline-flex items-center gap-xs bg-primary hover:bg-primary-fixed-dim transition-colors text-on-primary font-label-caps text-label-caps px-md py-sm rounded shadow-lg font-bold" href="register-team.html">REGISTER</a><button aria-controls="mobile-nav" aria-expanded="false" aria-label="Toggle menu" class="lg:hidden text-on-surface-variant hover:text-on-surface transition-colors" id="nav-toggle" type="button"><span class="material-symbols-outlined" id="nav-toggle-icon">menu</span></button></div></div><nav aria-label="Mobile" class="hidden lg:hidden flex-col gap-base bg-surface-container/95 backdrop-blur-xl border-t border-white/10 px-lg py-sm" id="mobile-nav"><a aria-current="page" class="font-label-caps text-label-caps text-primary font-bold py-sm" href="./">HOME</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm flex items-center gap-2" href="tournament.html"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>LIVE / SCHEDULE</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="standings.html">STANDINGS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="rules.html">RULES</a><a class="font-label-caps text-label-caps text-on-primary bg-primary rounded px-md py-sm mt-xs text-center font-bold" href="register-team.html">REGISTER YOUR TEAM</a></nav></header><main class="w-full pt-16 relative z-10"><div class="flex flex-col w-full">
-<!-- Full Width Video Intro Hero Section -->
-<section class="relative w-full overflow-hidden bg-surface-container-lowest border-b border-primary/20 shadow-2xl">
-  <div class="relative w-full h-[60vh] sm:h-[70vh] lg:h-[82vh] min-h-[460px] max-h-[860px] overflow-hidden flex items-center">
-    <!-- Video element covering the entire width & height -->
-    <video
-      id="intro-video"
-      class="absolute inset-0 w-full h-full object-cover object-center pointer-events-auto"
-      autoplay
-      muted
-      loop
-      playsinline
-      preload="auto"
-    >
-      <source src="assets/VideoIntro.mp4" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
-
-    <!-- Cinematic Vignette & Deep Night Gradients for Ultra-Clear Contrast -->
-    <div class="absolute inset-0 z-10 pointer-events-none bg-gradient-to-r from-[#050B14]/95 via-[#050B14]/70 sm:via-[#050B14]/50 to-transparent"></div>
-    <div class="absolute inset-0 z-10 pointer-events-none bg-gradient-to-t from-[#050B14] via-[#050B14]/20 to-transparent"></div>
-    <div class="absolute inset-x-0 top-0 h-24 z-10 pointer-events-none bg-gradient-to-b from-[#050B14]/80 to-transparent"></div>
-
-    <!-- Top Cyber HUD Tech Details -->
-    <div class="absolute top-4 left-4 right-4 sm:left-8 sm:right-8 z-20 hidden sm:flex items-center justify-between pointer-events-none">
-      <div class="flex items-center gap-2 px-3 py-1 rounded bg-surface-container-high/80 backdrop-blur-md border border-primary/30 text-[11px] font-label-caps text-primary tracking-widest shadow-lg">
-        <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-        <span>OFFICIAL INTRO // MLBB INTRAMURALS 2026</span>
-      </div>
-      <div class="flex items-center gap-3 text-[11px] font-label-caps text-on-surface-variant/90 cyber-mono bg-surface-container-high/60 backdrop-blur-md px-3 py-1 rounded border border-white/5">
-        <span class="text-primary font-bold">1080P HD</span>
-        <span class="w-1 h-1 rounded-full bg-primary/40"></span>
-        <span>CEBU EASTERN COLLEGE</span>
-      </div>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CEC Esports Intramurals 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&family=Inter:wght@400;500;700;800&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/public.css">
+  <style>
+    .home-hero { min-height: 560px; display: grid; align-items: center; position: relative; overflow: hidden; }
+    .home-hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(8,20,34,.98), rgba(8,20,34,.8) 45%, rgba(8,20,34,.25)), url('assets/bg.gif') center/cover; opacity: .9; z-index: -1; }
+    .hero-copy { max-width: 710px; padding: 70px 0; }
+    .hero-copy h1 { margin: 12px 0 18px; font-family: Orbitron, sans-serif; font-size: clamp(36px, 7vw, 72px); line-height: 1.05; text-transform: uppercase; }
+    .hero-copy h1 span { color: var(--cec-blue); }
+    .hero-copy p { max-width: 620px; color: var(--cec-muted); font-size: clamp(16px, 2vw, 20px); }
+    .home-section { padding: 56px 0 0; }
+    .section-heading { display: flex; justify-content: space-between; gap: 16px; align-items: end; margin-bottom: 20px; }
+    .section-heading h2 { font-family: Orbitron, sans-serif; font-size: clamp(22px, 4vw, 32px); text-transform: uppercase; }
+    .section-heading p { margin: 0; color: var(--cec-muted); font-size: 14px; }
+    .eligibility-card { border-top: 3px solid var(--cec-blue-strong); }
+    .step { display: flex; gap: 14px; align-items: flex-start; }
+    .step-number { display: grid; place-items: center; width: 32px; height: 32px; flex: 0 0 32px; border-radius: 50%; color: var(--cec-ink); background: var(--cec-blue); font-weight: 900; }
+    .department-card { display: flex; gap: 16px; align-items: center; }
+    .department-card h3 { font-size: 17px; }
+    .department-card p { margin: 4px 0 0; font-size: 13px; }
+    .home-live { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .home-live-teams { font-size: clamp(18px, 3vw, 28px); font-weight: 800; }
+    .home-live-score { color: var(--cec-blue); font-family: Orbitron, sans-serif; font-size: 22px; }
+    @media (max-width: 760px) { .home-hero { min-height: 520px; } .home-live { align-items: flex-start; flex-direction: column; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="public-wrap" style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 0;">
+      <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+        <img src="assets/e-sportslogo.png" alt="CEC Esports" style="width:38px;height:38px;object-fit:contain">
+        <span style="font-family:Orbitron,sans-serif;font-weight:800;letter-spacing:.03em;">CEC <span style="color:var(--cec-blue)">ESPORTS</span></span>
+      </a>
+      <nav aria-label="Primary"></nav>
+      <button id="nav-toggle" type="button" aria-controls="mobile-nav" aria-expanded="false" aria-label="Open menu" style="display:none;background:none;border:0;color:white;font-size:24px;">☰</button>
     </div>
-
-    <!-- Hero Content Overlay (Left / Center) -->
-    <div class="relative z-20 w-full max-w-container-max mx-auto px-lg flex items-center">
-      <div class="flex flex-col items-start gap-md sm:gap-lg max-w-2xl py-8">
-        <div class="flex flex-wrap items-center gap-xs sm:gap-sm">
-          <span class="inline-flex items-center gap-xs px-sm py-xs bg-surface-container-high/90 backdrop-blur-md rounded-full border border-primary/30 shadow-lg">
-            <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            <span class="font-label-caps text-label-caps text-on-surface">REGISTRATION OPEN · CLOSES SEP 1</span>
-          </span>
-          <span class="font-label-caps text-label-caps text-primary flex items-center gap-xs bg-surface-container/70 backdrop-blur-md px-sm py-xs rounded-full border border-white/10">
-            <span class="material-symbols-outlined text-[16px]">sports_esports</span>
-            MOBILE LEGENDS: BANG BANG
-          </span>
-        </div>
-
-        <h1 class="font-headline-xl text-headline-xl text-on-surface uppercase tracking-tight flex flex-col gap-1 cyber-title drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
-          <span class="text-primary drop-shadow-[0_0_18px_rgba(180,197,255,0.5)]">CEC Esports</span>
-          <span class="text-on-surface">Intramurals 2026</span>
-        </h1>
-
-        <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]">
-          Cebu Eastern College's collegiate Mobile Legends intramurals, run by CEC Blue Dragon Esports. Student Men's, Student Women's, and Faculty Exhibition — every match played online and streamed from the Computer Laboratory Annex Building.
-        </p>
-
-        <div class="flex flex-wrap items-center gap-md mt-xs">
-          <a class="bg-primary hover:bg-primary-fixed-dim transition-all duration-200 text-on-primary font-label-caps text-label-caps px-xl py-sm rounded flex items-center gap-xs group shadow-[0_0_20px_rgba(18,100,255,0.45)] hover:shadow-[0_0_25px_rgba(180,197,255,0.65)] font-bold" href="register-team.html">
-            REGISTER YOUR TEAM
-            <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-          </a>
-          <a class="bg-surface-container/80 backdrop-blur-md border border-primary/50 hover:bg-primary/20 hover:border-primary transition-colors text-primary font-label-caps text-label-caps px-xl py-sm rounded flex items-center gap-xs shadow-lg" href="tournament.html">
-            VIEW SCHEDULE
-          </a>
+    <nav id="mobile-nav" aria-label="Mobile"></nav>
+  </header>
+  <main class="public-main">
+    <section class="home-hero">
+      <div class="public-wrap hero-copy">
+        <div class="eyebrow">Cebu Eastern College · Official tournament portal</div>
+        <h1>CEC Esports<br><span>Intramurals 2026</span></h1>
+        <p>Mobile Legends competition for CEC students, departments, and faculty. Find the information your team needs, register once, and follow every official result here.</p>
+        <div class="button-row" style="margin-top:26px;">
+          <a class="public-button" href="/register-team.html">REGISTER A TEAM →</a>
+          <a class="public-button secondary" href="/schedule">VIEW SCHEDULE</a>
         </div>
       </div>
-    </div>
-
-    <!-- Video Interactive Controls Overlay (Bottom Right) -->
-    <div class="absolute bottom-4 right-4 sm:bottom-6 sm:right-8 z-30 flex items-center gap-2 bg-surface-container-lowest/85 backdrop-blur-md border border-white/15 px-3 py-1.5 rounded-full shadow-2xl">
-      <button id="video-sound-toggle" class="flex items-center gap-1.5 text-xs font-label-caps text-on-surface hover:text-primary transition-colors px-2 py-1 rounded-full bg-white/5 hover:bg-white/10" type="button" title="Toggle Audio">
-        <span class="material-symbols-outlined text-[18px]" id="video-sound-icon">volume_off</span>
-        <span id="video-sound-text" class="text-[11px] font-bold">UNMUTE</span>
-      </button>
-      <div class="w-px h-4 bg-white/20"></div>
-      <button id="video-play-toggle" class="p-1 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-white/10 flex items-center justify-center" type="button" title="Pause / Play Video">
-        <span class="material-symbols-outlined text-[18px]" id="video-play-icon">pause</span>
-      </button>
-    </div>
-  </div>
-</section>
-<!-- Content -->
-<div class="w-full max-w-container-max mx-auto px-lg py-xl flex flex-col gap-xl">
-<!-- Key dates (Color Separated for Rapid Student Comprehension) -->
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
-  <!-- Registration Card: Electric Blue -->
-  <div class="bg-surface-container glass-hover rounded-xl p-lg border border-white/10 border-l-4 border-l-[#1264ff] bg-gradient-to-br from-[#1264ff]/10 via-transparent to-transparent flex flex-col gap-xs relative overflow-hidden shadow-lg">
-    <div class="flex items-center justify-between">
-      <span class="font-label-caps text-label-caps text-[#8ab4f8] tracking-wider font-bold">STEP 1 · REGISTRATION</span>
-      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#1264ff]/20 text-[#8ab4f8] text-[10px] font-bold">CLOSES SEP 1</span>
-    </div>
-    <span class="font-headline-md text-headline-md text-on-surface mt-1">September 1, 2026</span>
-    <span class="font-body-md text-body-md text-on-surface-variant">Confirm and register your team roster with CEC Blue Dragon Esports.</span>
-  </div>
-
-  <!-- First Match Day: Neon Green -->
-  <div class="bg-surface-container glass-hover rounded-xl p-lg border border-white/10 border-l-4 border-l-[#00e676] bg-gradient-to-br from-[#00e676]/10 via-transparent to-transparent flex flex-col gap-xs relative overflow-hidden shadow-lg">
-    <div class="flex items-center justify-between">
-      <span class="font-label-caps text-label-caps text-[#00e676] tracking-wider font-bold">STEP 2 · TOURNAMENT KICKOFF</span>
-      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#00e676]/20 text-[#00e676] text-[10px] font-bold">SATURDAYS</span>
-    </div>
-    <span class="font-headline-md text-headline-md text-on-surface mt-1">September 5, 2026</span>
-    <span class="font-body-md text-body-md text-on-surface-variant">Student divisions play Saturdays, 2:00–5:00 PM online.</span>
-  </div>
-
-  <!-- Grand Finals: Trophy Gold -->
-  <div class="bg-surface-container glass-hover rounded-xl p-lg border border-white/10 border-l-4 border-l-[#ffb020] bg-gradient-to-br from-[#ffb020]/15 via-transparent to-transparent flex flex-col gap-xs relative overflow-hidden shadow-lg">
-    <div class="flex items-center justify-between">
-      <span class="font-label-caps text-label-caps text-[#ffb020] tracking-wider font-bold">STEP 3 · CHAMPIONSHIP</span>
-      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#ffb020]/20 text-[#ffb020] text-[10px] font-bold">FINALS DAY</span>
-    </div>
-    <span class="font-headline-md text-headline-md text-on-surface mt-1">October 2, 2026</span>
-    <span class="font-body-md text-body-md text-on-surface-variant">Department champions clash for the ultimate Intramurals crown.</span>
-  </div>
-</div>
-
-<!-- Divisions (Color Separated by Category with Official Department Seals) -->
-<section class="flex flex-col gap-lg">
-  <div class="flex items-center justify-between">
-    <div class="flex items-center gap-md">
-      <h2 class="font-headline-lg text-headline-lg text-on-surface uppercase cyber-title">Three Divisions</h2>
-      <div class="h-px bg-white/10 flex-1 hidden md:block"></div>
-    </div>
-    <!-- Department Quick Logo Strip -->
-    <div class="flex items-center gap-2 bg-surface-container-high/60 px-3 py-1 rounded-xl border border-white/10">
-      <img src="assets/IT.png" alt="IT Dept" class="w-6 h-6 object-contain" title="Information Technology" />
-      <img src="assets/HTM.png" alt="HTM Dept" class="w-6 h-6 object-contain" title="Hospitality & Tourism" />
-      <img src="assets/CTE.png" alt="CTE Dept" class="w-6 h-6 object-contain" title="Teacher Education" />
-      <img src="assets/CRIM.png" alt="CRIM Dept" class="w-6 h-6 object-contain" title="Criminology" />
-    </div>
-  </div>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
-    <!-- Student Men's -->
-    <div class="bg-surface-container glass-hover rounded-xl p-lg border border-white/10 border-t-2 border-t-[#3e90ff] bg-gradient-to-b from-[#3e90ff]/10 to-transparent flex flex-col gap-sm cyber-panel shadow-lg">
-      <div class="flex items-center justify-between">
-        <span class="font-label-caps text-label-caps text-[#8ab4f8] tracking-widest font-bold">STUDENT · MEN'S</span>
-        <span class="px-2 py-0.5 rounded bg-[#3e90ff]/20 text-[#8ab4f8] text-[11px] font-bold">24 TEAMS</span>
+    </section>
+    <section class="home-section public-wrap">
+      <div class="public-card home-live" id="home-live-summary">
+        <div><span class="status-pill">Official schedule</span><div class="home-live-teams" style="margin-top:10px;">Loading the next match…</div><div class="data-note">Match status, scores, and streams are published by tournament officials.</div></div>
+        <a class="public-button secondary" href="/schedule">FULL SCHEDULE</a>
       </div>
-      <h3 class="font-headline-md text-headline-md text-on-surface font-bold">College Division</h3>
-      <p class="font-body-md text-body-md text-on-surface-variant">The flagship Intramurals showdown. IT (8), HTM (8), CTE (4), and CRIM (4) run their brackets for a department champion.</p>
-      <div class="flex flex-wrap gap-1.5 mt-auto pt-2">
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold"><img src="assets/IT.png" class="w-3.5 h-3.5 object-contain" /> IT (8)</span>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold"><img src="assets/HTM.png" class="w-3.5 h-3.5 object-contain" /> HTM (8)</span>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-bold"><img src="assets/CTE.png" class="w-3.5 h-3.5 object-contain" /> CTE (4)</span>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-500/20 text-red-300 text-[10px] font-bold"><img src="assets/CRIM.png" class="w-3.5 h-3.5 object-contain" /> CRIM (4)</span>
+    </section>
+    <section class="home-section public-wrap">
+      <div class="section-heading"><div><div class="eyebrow">Who can join</div><h2>Choose your division</h2></div><p>Open to the CEC community.</p></div>
+      <div class="public-grid three">
+        <article class="public-card eligibility-card"><h3>Student Men’s</h3><p>CEC student teams representing their department.</p></article>
+        <article class="public-card eligibility-card"><h3>Student Women’s</h3><p>CEC student teams representing their department.</p></article>
+        <article class="public-card eligibility-card" style="border-top-color:var(--cec-gold)"><h3>Faculty &amp; Staff</h3><p>A friendly exhibition for CEC faculty and staff.</p></article>
       </div>
-    </div>
-
-    <!-- Student Women's -->
-    <div class="bg-surface-container glass-hover rounded-xl p-lg border border-white/10 border-t-2 border-t-[#ff2fd8] bg-gradient-to-b from-[#ff2fd8]/10 to-transparent flex flex-col gap-sm cyber-panel shadow-lg">
-      <div class="flex items-center justify-between">
-        <span class="font-label-caps text-label-caps text-[#ff80ea] tracking-widest font-bold">STUDENT · WOMEN'S</span>
-        <span class="px-2 py-0.5 rounded bg-[#ff2fd8]/20 text-[#ff80ea] text-[11px] font-bold">16 TEAMS</span>
+    </section>
+    <section class="home-section public-wrap">
+      <div class="section-heading"><div><div class="eyebrow">Start here</div><h2>How to register</h2></div></div>
+      <div class="public-grid three">
+        <article class="public-card step"><span class="step-number">1</span><div><h3>Confirm your team</h3><p>Choose a captain, division, department, and roster.</p></div></article>
+        <article class="public-card step"><span class="step-number">2</span><div><h3>Submit the form</h3><p>Complete team details and required player verification.</p></div></article>
+        <article class="public-card step"><span class="step-number">3</span><div><h3>Wait for approval</h3><p>Officials review the registration before it appears publicly.</p></div></article>
       </div>
-      <h3 class="font-headline-md text-headline-md text-on-surface font-bold">College Division</h3>
-      <p class="font-body-md text-body-md text-on-surface-variant">Played alongside the Men's Division — four elite teams per department from IT, HTM, CTE, and CRIM.</p>
-      <div class="flex flex-wrap gap-1.5 mt-auto pt-2">
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 text-[10px] font-bold"><img src="assets/IT.png" class="w-3.5 h-3.5 object-contain" /> IT (4)</span>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 text-[10px] font-bold"><img src="assets/HTM.png" class="w-3.5 h-3.5 object-contain" /> HTM (4)</span>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 text-[10px] font-bold"><img src="assets/CTE.png" class="w-3.5 h-3.5 object-contain" /> CTE (4)</span>
-        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-pink-500/20 text-pink-300 text-[10px] font-bold"><img src="assets/CRIM.png" class="w-3.5 h-3.5 object-contain" /> CRIM (4)</span>
+    </section>
+    <section class="home-section public-wrap">
+      <div class="section-heading"><div><div class="eyebrow">Participating departments</div><h2>Represent your department</h2></div><a class="data-note" href="/teams">View approved teams →</a></div>
+      <div class="public-grid two">
+        <article class="public-card department-card"><div class="logo-surface"><img src="assets/IT.png" alt="IT department logo"></div><div><h3>Information Technology</h3><p>Build your roster and play for IT.</p></div></article>
+        <article class="public-card department-card"><div class="logo-surface"><img src="assets/HTM.png" alt="HTM department logo"></div><div><h3>Hospitality &amp; Tourism</h3><p>Represent HTM on the bracket.</p></div></article>
+        <article class="public-card department-card"><div class="logo-surface"><img src="assets/CTE.png" alt="CTE department logo"></div><div><h3>Teacher Education</h3><p>Bring CTE into the competition.</p></div></article>
+        <article class="public-card department-card"><div class="logo-surface"><img src="assets/CRIM.png" alt="CRIM department logo"></div><div><h3>Criminology</h3><p>Compete for CRIM.</p></div></article>
       </div>
-    </div>
-
-    <!-- Faculty Exhibition (VIP Golden Showcase) -->
-    <div class="bg-surface-container glass-hover rounded-xl p-lg border border-amber-400/30 border-t-2 border-t-amber-400 bg-gradient-to-b from-amber-500/15 to-transparent flex flex-col gap-sm cyber-panel shadow-lg">
-      <div class="flex items-center justify-between">
-        <span class="font-label-caps text-label-caps text-amber-300 tracking-widest font-bold flex items-center gap-1">
-          <span class="material-symbols-outlined text-[14px]">star</span>
-          FACULTY &amp; STAFF
-        </span>
-        <span class="px-2 py-0.5 rounded bg-amber-400/25 text-amber-200 text-[11px] font-bold border border-amber-400/30">8 TEAMS</span>
+    </section>
+    <section class="home-section public-wrap">
+      <div class="public-card" style="display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+        <div><div class="eyebrow">Need the details?</div><h2 style="margin-top:7px;">Read the rules before you register.</h2><p style="margin-bottom:0;">Review eligibility, roster requirements, match format, and official procedures.</p></div>
+        <a class="public-button secondary" href="/rules">READ THE RULES</a>
       </div>
-      <h3 class="font-headline-md text-headline-md text-on-surface font-bold">Friendly Exhibition</h3>
-      <p class="font-body-md text-body-md text-on-surface-variant">A friendly showcase for faculty &amp; staff: IT, CTE-A, CTE-B, HM, TM, CRIM, SHS, and JHS. Played Fridays, Sep 11 &amp; 18.</p>
-      <div class="flex flex-wrap gap-1.5 mt-auto pt-2">
-        <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-bold">EXEMPT FROM ID</span>
-        <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-bold">FRI SHOWCASE</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Format + path -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-lg">
-  <!-- Format Card -->
-  <section class="bg-surface-container glass-hover rounded-xl p-lg border border-white/10 border-l-4 border-l-[#1264ff] bg-gradient-to-br from-[#1264ff]/10 to-transparent flex flex-col gap-md shadow-lg">
-    <div class="flex items-center justify-between border-b border-white/10 pb-2">
-      <h2 class="font-headline-md text-headline-md text-on-surface uppercase cyber-title flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary">sports_score</span>
-        Tournament Format
-      </h2>
-      <span class="text-xs font-label-caps text-primary bg-primary/10 px-2 py-0.5 rounded">CUSTOM LOBBY</span>
-    </div>
-    <ul class="flex flex-col gap-sm">
-      <li class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">account_tree</span><span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Department Brackets:</strong> Single-elimination, Best-of-1 matches.</span></li>
-      <li class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">swords</span><span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Playoff Stages:</strong> Semifinals are Best-of-3; Grand Finals are Best-of-5.</span></li>
-      <li class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">wifi</span><span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Match Setup:</strong> Online Tournament Draft Pick, streamed live from Annex Lab.</span></li>
-      <li class="flex items-start gap-sm"><span class="material-symbols-outlined text-primary text-[20px] shrink-0">group</span><span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Roster Structure:</strong> 5 starters + up to 2 substitute players.</span></li>
-    </ul>
-    <a class="font-label-caps text-label-caps text-primary hover:text-primary-container flex items-center gap-xs mt-auto font-bold pt-sm group" href="rules.html">READ THE FULL RULES <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span></a>
-  </section>
-
-  <!-- Path to Title Card -->
-  <section class="bg-surface-container glass-hover rounded-xl p-lg border border-white/10 border-l-4 border-l-[#ffb020] bg-gradient-to-br from-[#ffb020]/10 to-transparent flex flex-col gap-md shadow-lg">
-    <div class="flex items-center justify-between border-b border-white/10 pb-2">
-      <h2 class="font-headline-md text-headline-md text-on-surface uppercase cyber-title flex items-center gap-2">
-        <span class="material-symbols-outlined text-[#ffb020]">emoji_events</span>
-        Path to the Title
-      </h2>
-      <span class="text-xs font-label-caps text-[#ffb020] bg-[#ffb020]/10 px-2 py-0.5 rounded">ROADMAP</span>
-    </div>
-    <ol class="flex flex-col gap-sm">
-      <li class="flex gap-sm items-start"><span class="font-stats-impact text-stats-impact text-[#ffb020] shrink-0 w-6">1</span><span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Register:</strong> Confirm and register your team by September 1, 2026.</span></li>
-      <li class="flex gap-sm items-start"><span class="font-stats-impact text-stats-impact text-[#ffb020] shrink-0 w-6">2</span><span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Department Battles:</strong> Play department brackets in one single Saturday session.</span></li>
-      <li class="flex gap-sm items-start"><span class="font-stats-impact text-stats-impact text-[#ffb020] shrink-0 w-6">3</span><span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Department Champion:</strong> Win your bracket to advance to Grand Finals.</span></li>
-      <li class="flex gap-sm items-start"><span class="font-stats-impact text-stats-impact text-[#ffb020] shrink-0 w-6">4</span><span class="font-body-md text-body-md text-on-surface-variant"><strong class="text-on-surface">Grand Finals Day:</strong> Meet the other champions on October 2, 2026.</span></li>
-    </ol>
-    <a class="font-label-caps text-label-caps text-[#ffb020] hover:text-amber-200 flex items-center gap-xs mt-auto font-bold pt-sm group" href="tournament.html">SEE THE FULL SCHEDULE <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span></a>
-  </section>
-</div>
-
-<!-- CTA band -->
-<div class="bg-surface-container glass-hover rounded-xl p-lg border border-white/10 border-l-4 border-l-primary flex flex-col md:flex-row md:items-center justify-between gap-md shadow-xl bg-gradient-to-r from-primary/10 via-surface-container to-transparent">
-  <div class="flex flex-col gap-xs">
-    <div class="flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-      <span class="text-xs font-label-caps text-primary font-bold tracking-widest uppercase">REGISTRATION CLOSES SEPTEMBER 1</span>
-    </div>
-    <h2 class="font-headline-md text-headline-md text-on-surface uppercase cyber-title">Ready to represent your department?</h2>
-    <p class="font-body-md text-body-md text-on-surface-variant">Questions? Contact CEC Blue Dragon Esports — Mr. Jade Louis S. Cabucos, Esports Coordinator.</p>
-  </div>
-  <a class="bg-primary hover:bg-primary-fixed-dim transition-colors text-on-primary font-label-caps text-label-caps px-xl py-sm rounded flex items-center gap-xs shrink-0 shadow-[0_0_20px_rgba(18,100,255,0.5)] font-bold" href="register-team.html">REGISTER YOUR TEAM <span class="material-symbols-outlined text-[18px]">arrow_forward</span></a>
-</div>
-</div>
-</div></main><footer class="w-full bg-surface-container-lowest py-xl border-t border-white/10 relative z-10"><div class="max-w-container-max mx-auto px-lg flex flex-col md:flex-row justify-between items-center gap-md text-center md:text-left"><div class="flex flex-col gap-base"><span class="font-label-caps text-label-caps text-on-surface">CEC ESPORTS INTRAMURALS 2026</span><span class="font-body-md text-body-md text-on-surface-variant">© 2026 CEC Blue Dragon Esports · Cebu Eastern College, Incorporated</span></div><div class="flex flex-wrap justify-center gap-md font-label-caps text-label-caps text-on-surface-variant"><a class="hover:text-primary" href="tournament.html">SCHEDULE</a><a class="hover:text-primary" href="rules.html">RULES</a><a class="hover:text-primary" href="register-team.html">REGISTER</a><a class="hover:text-primary text-xs opacity-70" href="admin.html">STAFF PORTAL</a></div></div></footer><script>
-(function(){
-var layers=document.querySelectorAll('.feral-parallax');
-if(!layers.length)return;
-if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-var MAX=1200,ticking=false;
-function update(){
-var y=Math.min(window.scrollY,MAX);
-layers.forEach(function(el){
-var speed=parseFloat(el.getAttribute('data-speed'))||0;
-el.style.setProperty('--py',(-y*speed).toFixed(1)+'px');
-});
-ticking=false;
-}
-window.addEventListener('scroll',function(){
-if(!ticking){requestAnimationFrame(update);ticking=true;}
-},{passive:true});
-update();
-})();
-</script><script>(function(){var t=document.getElementById('nav-toggle'),n=document.getElementById('mobile-nav'),i=document.getElementById('nav-toggle-icon');if(!t||!n)return;t.addEventListener('click',function(){var open=n.classList.contains('hidden');n.classList.toggle('hidden',!open);n.classList.toggle('flex',open);t.setAttribute('aria-expanded',String(open));if(i)i.textContent=open?'close':'menu';});})();</script>
-<script>
-(function() {
-  var video = document.getElementById('intro-video');
-  var soundBtn = document.getElementById('video-sound-toggle');
-  var soundIcon = document.getElementById('video-sound-icon');
-  var soundText = document.getElementById('video-sound-text');
-  var playBtn = document.getElementById('video-play-toggle');
-  var playIcon = document.getElementById('video-play-icon');
-
-  if (video && soundBtn) {
-    soundBtn.addEventListener('click', function() {
-      if (video.muted) {
-        video.muted = false;
-        if (soundIcon) soundIcon.textContent = 'volume_up';
-        if (soundText) soundText.textContent = 'MUTE';
-        soundBtn.classList.add('bg-primary/20', 'text-primary');
-      } else {
-        video.muted = true;
-        if (soundIcon) soundIcon.textContent = 'volume_off';
-        if (soundText) soundText.textContent = 'UNMUTE';
-        soundBtn.classList.remove('bg-primary/20', 'text-primary');
-      }
-    });
-  }
-
-  if (video && playBtn) {
-    playBtn.addEventListener('click', function() {
-      if (video.paused) {
-        video.play();
-        if (playIcon) playIcon.textContent = 'pause';
-      } else {
-        video.pause();
-        if (playIcon) playIcon.textContent = 'play_arrow';
-      }
-    });
-  }
-})();
-</script>
-
-<!-- Firebase SDK & Bridge Scripts -->
-<script src="assets/js/firebase-config.js"></script>
-<script src="assets/js/auth-guard.js"></script>
-<script src="assets/js/registration-api.js"></script>
-<script src="assets/js/live-manager.js"></script>
-</body></html>
+    </section>
+  </main>
+  <footer></footer>
+  <script src="assets/js/public-shell.js"></script>
+  <script src="assets/js/registration-api.js"></script>
+  <script src="assets/js/public-data.js"></script>
+  <script src="assets/js/home-live.js"></script>
+</body>
+</html>
