@@ -1,7 +1,9 @@
-/** Shared client for the Google Apps Script registration backend. */
+/**
+ * Shared client for the Google Apps Script registration backend & Secure Google Drive Storage.
+ */
 const REGISTRATION_API_URL = 'https://script.google.com/macros/s/AKfycbxhXkVdmyMYdMvcBTSvVIrVH5LZ6T5v77Z7aKXAt_k67q2cwN3ldII2UtTVBWS63oky/exec';
 const ADMIN_KEY = ''; // Legacy stopgap only; use Firebase ID-token auth.
-const STAFF_ACTIONS = ['getRegistration', 'updateTeamStatus', 'updatePlayerVerification'];
+const STAFF_ACTIONS = ['getRegistration', 'updateTeamStatus', 'updatePlayerVerification', 'getPrivateVerificationFile'];
 
 function waitForStaffUser() {
   return new Promise(function (resolve, reject) {
@@ -52,4 +54,41 @@ async function callRegistrationApi(action, params, method) {
   const json = await response.json();
   if (!json.success) throw new Error((json.error && json.error.message) || 'Request failed.');
   return json.data;
+}
+
+/**
+ * Converts a File object to base64 and uploads it to private Google Drive storage via Apps Script.
+ * Never stores raw base64 data in sessionStorage.
+ */
+async function uploadVerificationDocument(file, docType, metadata) {
+  if (!file) throw new Error('No file selected.');
+  if (file.size > 5 * 1024 * 1024) throw new Error('File exceeds maximum size limit of 5MB.');
+  
+  const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const res = String(reader.result || '');
+      const comma = res.indexOf(',');
+      resolve(comma >= 0 ? res.substring(comma + 1) : res);
+    };
+    reader.onerror = (e) => reject(e);
+    reader.readAsDataURL(file);
+  });
+
+  const payload = Object.assign({
+    fileBase64: base64,
+    fileName: file.name,
+    mimeType: file.type || 'image/jpeg',
+    docType: docType || 'student_id_card'
+  }, metadata || {});
+
+  return await callRegistrationApi('uploadVerificationFile', payload, 'POST');
+}
+
+/**
+ * Securely retrieves private document bytes (base64) using authenticated staff ID token.
+ */
+async function getPrivateVerificationDocument(fileId) {
+  if (!fileId) throw new Error('File ID is required.');
+  return await callRegistrationApi('getPrivateVerificationFile', { fileId: fileId }, 'POST');
 }

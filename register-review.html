@@ -400,7 +400,8 @@
           captainName: draft['captain-name'] || '',
           contactNumber: draft['team-contact'] || '',
           description: draft['team-desc'] || '',
-          players: JSON.stringify(players)
+          players: JSON.stringify(players),
+          docIds: JSON.stringify(draft.docIds || [])
         });
         RegistrationDraft.save({ submittedTeamId: result.teamId });
         location.href = 'register-success.html';

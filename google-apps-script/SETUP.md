@@ -1,29 +1,32 @@
-# CEC Esports Apps Script setup
+# CEC Esports Apps Script & Private Google Drive Setup
 
-This folder is the backend source of truth. Do not place service-account keys or
-private Drive links in the frontend.
+This folder is the backend source of truth. Do not place service-account keys, Google Drive credentials, or private file links in the frontend.
 
-1. Create/open the tournament Google Sheet and open **Extensions → Apps Script**.
-2. Replace `Code.gs` with the file in this folder and save.
-3. Run `setupSheets` once. Approve the script permissions. Confirm the `TEAMS`
-   and `PLAYERS` tabs exist.
-4. In **Project Settings → Script properties**, add:
+## 1. Paste Backend Code
+1. Open the tournament Google Sheet and go to **Extensions → Apps Script**.
+2. Replace `Code.gs` with [`Code.gs`](Code.gs) in this directory and click **Save**.
 
-   - `FIREBASE_WEB_API_KEY`: the Firebase web API key from the project config.
-   - `FIREBASE_DATABASE_URL`: the exact Realtime Database URL used by the site.
-   - Do not add `ADMIN_KEY` for production. It is only a temporary migration escape hatch.
+## 2. Initialize Sheets and Private Folders
+1. Run `setupSheets` once from the function toolbar.
+2. Grant permissions when prompted.
+3. Confirm that `TEAMS`, `PLAYERS`, and `VERIFICATION_DOCS` tabs exist in your Google Sheet.
+4. `setupSheets` also automatically creates the private Drive folder path:
+   `CEC ESPORTS / TOURNAMENTS / 2026 / MLBB / PLAYER_VERIFICATION` in the Google Drive of the sheet owner.
 
-5. Deploy → New deployment → Web app:
-   - Execute as: **Me**
-   - Who has access: **Anyone**
-6. Copy the `/exec` URL into `assets/js/registration-api.js`.
-7. After every code change, deploy a **new version** at the same Web App URL.
+## 3. Script Properties
+In Apps Script **Project Settings → Script properties**, ensure:
+- `FIREBASE_WEB_API_KEY`: `AIzaSyB73WKKAEc-YmVgWxsMvNWZyJBgHSGqYP8`
+- `FIREBASE_DATABASE_URL`: `https://esports-7ec77-default-rtdb.firebaseio.com`
+- *(Optional)* `DRIVE_VERIFICATION_FOLDER_ID`: (Only if you want to override the auto-created folder ID).
 
-Public API calls are limited to registration creation and public team summaries.
-Detailed registration reads and all status writes require a Firebase ID token;
-the script verifies the token and approved staff record server-side.
+## 4. Deploy New Version
+1. Click **Deploy → Manage deployments**.
+2. Edit active deployment → select **Version: New version**.
+3. Execute as: **Me** (`jlcabucos.cec@gmail.com`).
+4. Who has access: **Anyone**.
+5. Click **Deploy**.
 
-The current UI is text-only verification. Google Drive upload support must be
-added as a separate reviewed feature before collecting identity images: create
-private folders, validate MIME type/size, write only file IDs to Sheets, and
-never return public Drive URLs.
+## Security Model:
+- **Public**: Can create registrations, list public summaries, and upload verification files during the registration wizard.
+- **Private / Staff**: Detailed registration reads (`getRegistration`), status updates (`updateTeamStatus`, `updatePlayerVerification`), and document byte streaming (`getPrivateVerificationFile`) require a verified Firebase ID token and approved staff status.
+- Files are kept private in Drive; Apps Script streams file bytes directly to authenticated staff sessions without ever generating public links.
