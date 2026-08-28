@@ -92,11 +92,11 @@
     </div>
     <form id="file-dispute-form" class="flex flex-col gap-sm text-xs">
       <div>
-        <label class="block font-bold text-on-surface mb-1">Match ID / Court</label>
+        <label for="disp-match-id" class="block font-bold text-on-surface mb-1">Match ID / Court</label>
         <input type="text" id="disp-match-id" placeholder="MATCH-001" class="w-full bg-[#050B14] p-2 rounded border border-white/10 text-on-surface" />
       </div>
       <div>
-        <label class="block font-bold text-on-surface mb-1">Category</label>
+        <label for="disp-category" class="block font-bold text-on-surface mb-1">Category</label>
         <select id="disp-category" class="w-full bg-[#050B14] p-2 rounded border border-white/10 text-on-surface">
           <option value="Ineligible Player">Ineligible Player / IGN Mismatch</option>
           <option value="Technical Disconnect">Technical Disconnect / Grace Period</option>
@@ -106,7 +106,7 @@
         </select>
       </div>
       <div>
-        <label class="block font-bold text-on-surface mb-1">Reason / Written Statement</label>
+        <label for="disp-reason" class="block font-bold text-on-surface mb-1">Reason / Written Statement</label>
         <textarea id="disp-reason" rows="3" class="w-full bg-[#050B14] p-2 rounded border border-white/10 text-on-surface" placeholder="Detail the exact incident..." required></textarea>
       </div>
       <button type="submit" class="py-2.5 bg-primary text-on-primary font-bold rounded-lg shadow mt-2">SUBMIT PROTEST</button>
