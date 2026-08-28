@@ -1,4 +1,199 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Standings · CEC Esports</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Orbitron:wght@700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/css/public.css"></head>
-<body><header><div class="public-wrap" style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 0"><a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none"><img src="assets/e-sportslogo.png" alt="CEC Esports" style="width:38px;height:38px;object-fit:contain"><span style="font-family:Orbitron,sans-serif;font-weight:800">CEC <span style="color:var(--cec-blue)">ESPORTS</span></span></a><nav aria-label="Primary"></nav><button id="nav-toggle" type="button" aria-controls="mobile-nav" aria-expanded="false" style="background:none;border:0;color:white;font-size:24px">☰</button></div><nav id="mobile-nav" aria-label="Mobile"></nav></header>
-<main class="public-main"><div class="public-wrap"><div class="page-intro"><div class="eyebrow">Official results</div><h1>Standings</h1><p>Standings are calculated from completed matches recorded by tournament officials.</p></div><div id="standings-list"><div class="empty-state">Loading official standings…</div></div></div></main><footer></footer><script src="assets/js/public-shell.js"></script><script src="assets/js/registration-api.js"></script><script src="assets/js/public-data.js"></script><script src="assets/js/public-standings.js"></script></body></html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Standings — CEC Esports Intramurals 2026</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
+.cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
+h1.cyber-title{font-size:36px;line-height:1.15;}
+h2.cyber-title{font-size:28px;line-height:1.2;}
+.cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-panel{position:relative;}
+.cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
+.cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
+.cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
+
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: #050B14;
+  background-image: url('assets/bg.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  pointer-events: none;
+}
+@media (max-width: 768px), (orientation: portrait) {
+  .site-bg {
+    background-position: left center;
+  }
+}
+.site-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(90deg, rgba(5, 11, 20, 0.25) 0%, rgba(5, 11, 20, 0.58) 32%, rgba(5, 11, 20, 0.86) 65%, rgba(5, 11, 20, 0.94) 100%),
+              linear-gradient(to bottom, rgba(5, 11, 20, 0.35) 0%, rgba(5, 11, 20, 0.8) 100%);
+  pointer-events: none;
+}
+
+/* Subtle Glassmorphism Card System with High Readability */
+.glass-card, .bg-surface-container {
+  background-color: rgba(16, 26, 40, 0.78) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+}
+.bg-surface-container-high {
+  background-color: rgba(26, 40, 60, 0.82) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+.bg-surface-container-low {
+  background-color: rgba(10, 18, 30, 0.82) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+.glass-hover {
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-hover:hover {
+  background-color: rgba(22, 36, 56, 0.88) !important;
+  border-color: rgba(180, 197, 255, 0.26) !important;
+  box-shadow: 0 10px 28px -4px rgba(0, 0, 0, 0.5), 0 0 16px rgba(18, 100, 255, 0.15);
+  transform: translateY(-2px);
+}
+</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-secondary-fixed":"#001b3e","surface-bright":"#2e3a49","on-secondary-fixed-variant":"#00468d","surface":"#081422","surface-container-low":"#101c2a","on-surface-variant":"#c2c6d8","tertiary-fixed":"#dce3f0","on-tertiary":"#2a313b","surface-container-lowest":"#030f1c","on-background":"#d7e3f7","primary-fixed":"#dbe1ff","surface-container-high":"#1f2b39","surface-variant":"#2a3645","on-primary-fixed-variant":"#003ea8","on-primary":"#002a78","primary-container":"#1264ff","secondary-fixed":"#d6e3ff","primary":"#b4c5ff","surface-tint":"#b4c5ff","secondary-fixed-dim":"#aac7ff","surface-dim":"#081422","on-primary-container":"#f6f6ff","background":"#081422","inverse-on-surface":"#263140","surface-container-highest":"#2a3645","on-tertiary-fixed-variant":"#404752","inverse-surface":"#d7e3f7","inverse-primary":"#0052dc","tertiary-container":"#6a717d","surface-container":"#15202f","on-primary-fixed":"#00174b","on-tertiary-fixed":"#151c26","secondary-container":"#3e90ff","on-tertiary-container":"#f4f6ff","outline-variant":"#424656","on-error":"#690005","primary-fixed-dim":"#b4c5ff","secondary":"#aac7ff","on-error-container":"#ffdad6","tertiary":"#c0c7d4","on-secondary":"#003064","tertiary-fixed-dim":"#c0c7d4","error":"#ffb4ab","on-surface":"#d7e3f7","on-secondary-container":"#002957","error-container":"#93000a","outline":"#8c90a2"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"base":"4px","gutter":"16px","container-max":"1280px","xl":"40px","md":"16px","lg":"24px","sm":"12px","xs":"8px"},"fontFamily":{"headline-xl":["Hanken Grotesk"],"label-caps":["Inter"],"headline-lg-mobile":["Hanken Grotesk"],"body-lg":["Inter"],"headline-lg":["Hanken Grotesk"],"body-md":["Inter"],"stats-impact":["Hanken Grotesk"],"headline-md":["Hanken Grotesk"]},"fontSize":{"headline-xl":["48px",{"lineHeight":"56px","letterSpacing":"-0.02em","fontWeight":"800"}],"label-caps":["12px",{"lineHeight":"16px","letterSpacing":"0.08em","fontWeight":"700"}],"headline-lg-mobile":["24px",{"lineHeight":"32px","fontWeight":"800"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"500"}],"headline-lg":["32px",{"lineHeight":"40px","letterSpacing":"-0.01em","fontWeight":"800"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"stats-impact":["24px",{"lineHeight":"24px","letterSpacing":"0.05em","fontWeight":"900"}],"headline-md":["20px",{"lineHeight":"28px","fontWeight":"700"}]}}}}</script><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/></head><body class="bg-background font-body-md text-on-background dark"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><header class="fixed top-0 w-full z-50 bg-[#081422]/85 backdrop-blur-xl border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"><div class="h-16 w-full max-w-container-max mx-auto px-lg flex items-center justify-between gap-md"><a class="flex items-center gap-2.5 sm:gap-3 shrink-0 group" href="index.html"><div class="flex items-center gap-1.5 p-1 rounded-lg bg-surface-container-high/60 border border-white/10 shadow-sm backdrop-blur-sm"><img src="assets/school_logo.jpg" alt="CEC Seal" class="h-7 w-7 rounded object-cover shadow-sm border border-white/10" /><img src="assets/e-sportslogo.png" alt="CEC Esports Logo" class="h-7 w-7 object-contain drop-shadow-[0_0_8px_rgba(180,197,255,0.4)]" /><img src="assets/intrams_logo.png" alt="Intramurals 2026 Logo" class="h-7 w-7 object-contain" /></div><div class="flex flex-col"><span class="font-headline-md text-[18px] sm:text-headline-md uppercase tracking-tight text-on-surface leading-none group-hover:text-primary transition-colors">CEC <span class="text-primary">Esports</span></span><span class="text-[10px] font-label-caps text-on-surface-variant/80 tracking-widest hidden sm:block">INTRAMURALS 2026</span></div></a><nav class="hidden lg:flex items-center gap-md"><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="index.html">HOME</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1.5" href="tournament.html"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>SCHEDULE</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-colors" href="rules.html">RULES</a></nav><div class="flex items-center gap-sm"><a class="hidden sm:inline-flex items-center gap-xs bg-primary hover:bg-primary-fixed-dim transition-colors text-on-primary font-label-caps text-label-caps px-md py-sm rounded shadow-lg font-bold" href="register-team.html">REGISTER</a><button aria-controls="mobile-nav" aria-expanded="false" aria-label="Toggle menu" class="lg:hidden text-on-surface-variant hover:text-on-surface transition-colors" id="nav-toggle" type="button"><span class="material-symbols-outlined" id="nav-toggle-icon">menu</span></button></div></div><nav aria-label="Mobile" class="hidden lg:hidden flex-col gap-base bg-surface-container/95 backdrop-blur-xl border-t border-white/10 px-lg py-sm" id="mobile-nav"><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="index.html">HOME</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm flex items-center gap-2" href="tournament.html"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>SCHEDULE</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="bracket.html">BRACKET</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="teams.html">TEAMS</a><a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary py-sm" href="rules.html">RULES</a><a class="font-label-caps text-label-caps text-on-primary bg-primary rounded px-md py-sm mt-xs text-center font-bold" href="register-team.html">REGISTER YOUR TEAM</a></nav></header><main class="w-full pt-16 min-h-screen relative z-10"><div class="flex flex-col w-full px-lg md:px-xl py-xl">
+<div class="flex flex-col gap-lg w-full max-w-container-max mx-auto">
+<div class="flex flex-col gap-sm">
+<h1 class="font-headline-xl text-headline-xl text-on-background tracking-tight uppercase cyber-title">Standings</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Results post here as each department bracket finishes. The first results land on Week 1 — Saturday, September 5, 2026.</p>
+</div>
+<div class="flex gap-xs bg-surface-container border border-white/10 rounded-lg p-[3px] w-full sm:w-auto sm:self-start" id="division-tabs" role="tablist">
+<button class="flex-1 sm:flex-none px-md py-sm rounded font-label-caps text-label-caps transition-colors text-on-surface-variant" data-division="mens" type="button">MEN'S</button>
+<button class="flex-1 sm:flex-none px-md py-sm rounded font-label-caps text-label-caps transition-colors text-on-surface-variant" data-division="womens" type="button">WOMEN'S</button>
+<button class="flex-1 sm:flex-none px-md py-sm rounded font-label-caps text-label-caps transition-colors text-on-surface-variant" data-division="faculty" type="button">FACULTY</button>
+</div>
+<div class="bg-surface-container border border-white/10 border-l-2 border-l-primary rounded-xl p-lg flex items-start gap-sm" id="preseason-note">
+<span class="material-symbols-outlined text-primary shrink-0">schedule</span>
+<div class="flex flex-col gap-xs">
+<span class="font-headline-md text-headline-md text-on-surface">No matches played yet</span>
+<span class="font-body-md text-body-md text-on-surface-variant">Registration closes September 1. Department brackets run September 5 – 19, and Grand Finals Day is October 2.</span>
+</div>
+</div>
+<div class="flex flex-col gap-xl" id="tracker"></div>
+</div>
+</div></main><script src="assets/js/registration-api.js"></script><footer class="w-full bg-surface-container-lowest py-xl border-t border-white/10 relative z-10"><div class="max-w-container-max mx-auto px-lg flex flex-col md:flex-row justify-between items-center gap-md text-center md:text-left"><div class="flex flex-col gap-base"><span class="font-label-caps text-label-caps text-on-surface">CEC ESPORTS INTRAMURALS 2026</span><span class="font-body-md text-body-md text-on-surface-variant">© 2026 CEC Blue Dragon Esports · Cebu Eastern College, Incorporated</span></div><div class="flex flex-wrap justify-center gap-md font-label-caps text-label-caps text-on-surface-variant"><a class="hover:text-primary" href="tournament.html">SCHEDULE</a><a class="hover:text-primary" href="bracket.html">BRACKET</a><a class="hover:text-primary" href="teams.html">TEAMS</a><a class="hover:text-primary" href="standings.html">STANDINGS</a><a class="hover:text-primary" href="rules.html">RULES</a><a class="hover:text-primary" href="register-team.html">REGISTER</a><a class="hover:text-primary text-xs opacity-70" href="/staff">STAFF LOGIN</a></div></div></footer><script>
+(function(){
+  var DIVS = {
+    mens:    { depts:[["IT","September 5"],["HTM","September 12"],["CTE","September 19"],["CRIM","September 19"]], exhibition:false },
+    womens:  { depts:[["IT","September 5"],["HTM","September 12"],["CTE","September 19"],["CRIM","September 19"]], exhibition:false },
+    faculty: { exhibition:true }
+  };
+  var active = 'mens';
+  var tabs = document.getElementById('division-tabs');
+  var tracker = document.getElementById('tracker');
+  var note = document.getElementById('preseason-note');
+  // Standings are computed by tournament officials from completed matches.
+  var standings = [];
+  var standingsLoaded = false;
+
+  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function divisionOf(value){
+    var c = String(value || '');
+    return /women/i.test(c) ? 'womens' : (/faculty|exhibition/i.test(c) ? 'faculty' : (/men/i.test(c) ? 'mens' : ''));
+  }
+
+  var DEPT_LOGOS = {
+    'IT': 'assets/IT.png',
+    'HTM': 'assets/HTM.png',
+    'CTE': 'assets/CTE.png',
+    'CRIM': 'assets/CRIM.png'
+  };
+
+  function row(left, right, deptKey){
+    var logoHtml = deptKey && DEPT_LOGOS[deptKey] 
+      ? '<img src="' + DEPT_LOGOS[deptKey] + '" alt="' + deptKey + ' Logo" class="w-6 h-6 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/10 shrink-0" />'
+      : '';
+
+    return '<div class="px-md py-sm flex justify-between items-center gap-sm border-t border-white/10 first:border-t-0">' +
+      '<div class="flex items-center gap-2">' +
+        logoHtml +
+        '<span class="font-body-md text-body-md text-on-surface font-semibold">' + left + '</span>' +
+      '</div>' +
+      '<span class="font-label-caps text-label-caps text-on-surface-variant">' + right + '</span>' +
+    '</div>';
+  }
+  function panel(title, note, rowsHtml){
+    return '<section class="bg-surface-container border border-white/10 rounded-xl overflow-hidden shadow-lg cyber-panel">' +
+      '<div class="px-md py-sm bg-surface-container-high/90 flex flex-wrap justify-between items-center gap-xs border-b border-white/10">' +
+        '<h2 class="font-headline-md text-headline-md text-on-surface cyber-title text-base">' + title + '</h2>' +
+        (note ? '<span class="font-label-caps text-xs text-primary font-bold">' + note + '</span>' : '') +
+      '</div>' + rowsHtml + '</section>';
+  }
+
+  function standingsTable(rows){
+    var head = '<div class="px-md py-xs grid grid-cols-[28px_1fr_repeat(4,40px)] sm:grid-cols-[32px_1fr_repeat(4,56px)] gap-sm items-center bg-surface-container-lowest/60 border-b border-white/10 font-label-caps text-[10px] text-on-surface-variant">' +
+      '<span>#</span><span>TEAM</span><span class="text-center">P</span><span class="text-center">W</span><span class="text-center">L</span><span class="text-center text-primary">PTS</span></div>';
+    var body = rows.map(function(t, i){
+      var dept = String(t.department || '').toUpperCase();
+      var logo = DEPT_LOGOS[dept] ? '<img src="' + DEPT_LOGOS[dept] + '" alt="' + esc(dept) + ' Logo" class="w-6 h-6 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/10 shrink-0" />' : '';
+      return '<div class="px-md py-sm grid grid-cols-[28px_1fr_repeat(4,40px)] sm:grid-cols-[32px_1fr_repeat(4,56px)] gap-sm items-center border-t border-white/10">' +
+        '<span class="font-headline-md text-[15px] ' + (i < 2 ? 'text-primary' : 'text-on-surface-variant') + ' cyber-mono">' + (i + 1) + '</span>' +
+        '<div class="flex items-center gap-2 min-w-0">' + logo +
+          '<div class="flex flex-col min-w-0"><span class="font-body-md text-body-md text-on-surface font-semibold truncate">' + esc(t.teamName) + '</span>' +
+          (dept ? '<span class="font-label-caps text-[10px] text-on-surface-variant">' + esc(dept) + '</span>' : '') + '</div>' +
+        '</div>' +
+        '<span class="text-center font-body-md text-on-surface-variant">' + (t.played || 0) + '</span>' +
+        '<span class="text-center font-body-md text-on-surface">' + (t.wins || 0) + '</span>' +
+        '<span class="text-center font-body-md text-on-surface-variant">' + (t.losses || 0) + '</span>' +
+        '<span class="text-center font-headline-md text-[16px] text-primary cyber-mono">' + (t.points || 0) + '</span>' +
+      '</div>';
+    }).join('');
+    return panel('Official Standings', 'Updated from recorded results', head + body);
+  }
+
+  function render(){
+    Array.prototype.forEach.call(tabs.children, function(btn){
+      var on = btn.dataset.division === active;
+      btn.classList.toggle('bg-primary', on);
+      btn.classList.toggle('text-on-primary', on);
+      btn.classList.toggle('text-on-surface-variant', !on);
+    });
+    var d = DIVS[active];
+    var live = standings.filter(function(t){ return divisionOf(t.division || t.department) === active; });
+    if (note) note.classList.toggle('hidden', live.length > 0);
+    var html = '';
+    if (live.length) html += standingsTable(live);
+    else if (standingsLoaded) html += '<p class="font-body-md text-body-md text-on-surface-variant">No completed matches have been recorded for this division yet.</p>';
+    if (d.exhibition){
+      html += '<p class="font-body-md text-body-md text-on-surface-variant">The Faculty Exhibition Game is a friendly showcase and does not count toward the official Intramurals standings.</p>';
+      html += panel('Exhibition Result', 'Decided September 18',
+        row('Champion','To be decided') + row('Runner-up','To be decided') + row('3rd place','To be decided') + row('4th place','To be decided'));
+    } else {
+      html += panel('Department Champions', 'Sessions September 5 – 19',
+        d.depts.map(function(x){ return row(x[0] + ' Department', 'To be decided · ' + x[1], x[0]); }).join(''));
+      html += panel('Final Placement', 'Grand Finals Day · October 2',
+        row('1st — Champion','To be decided') + row('2nd — Runner-up','To be decided') + row('3rd place','To be decided') + row('4th place','To be decided'));
+    }
+    tracker.innerHTML = html;
+  }
+  tabs.addEventListener('click', function(e){
+    var btn = e.target.closest('button[data-division]');
+    if (!btn) return;
+    active = btn.dataset.division; render();
+  });
+  render();
+
+  if (window.PublicTournamentApi && typeof PublicTournamentApi.listStandings === 'function') {
+    PublicTournamentApi.listStandings().then(function(rows){
+      standings = rows || [];
+      standingsLoaded = true;
+      render();
+    }).catch(function(){ standingsLoaded = false; });
+  }
+})();
+</script><script>(function(){var t=document.getElementById('nav-toggle'),n=document.getElementById('mobile-nav'),i=document.getElementById('nav-toggle-icon');if(!t||!n)return;t.addEventListener('click',function(){var open=n.classList.contains('hidden');n.classList.toggle('hidden',!open);n.classList.toggle('flex',open);t.setAttribute('aria-expanded',String(open));if(i)i.textContent=open?'close':'menu';});})();</script>
+<!-- Firebase SDK & Bridge Scripts -->
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/auth-guard.js"></script>
+</body></html>

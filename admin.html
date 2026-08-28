@@ -1,36 +1,313 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Control Center · CEC Esports</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Orbitron:wght@700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/css/public.css"><style>
-body.admin-site{background:#081422;color:#eef4ff;font-family:Inter,system-ui,sans-serif;margin:0}.admin-top{border-bottom:1px solid var(--cec-line);background:#0b192a;position:sticky;top:0;z-index:5}.admin-nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 0}.admin-brand{font:800 15px Orbitron,sans-serif;letter-spacing:.04em}.admin-brand span{color:var(--cec-blue)}.admin-links{display:flex;gap:14px;flex-wrap:wrap}.admin-links a{color:var(--cec-muted);font-size:11px;font-weight:800;letter-spacing:.06em;text-decoration:none}.admin-links a:hover{color:var(--cec-blue)}.admin-main{padding:42px 0}.admin-title{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:28px}.admin-title h1{font:800 clamp(28px,5vw,45px) Orbitron,sans-serif;text-transform:uppercase}.admin-title p{color:var(--cec-muted);margin:8px 0 0}.admin-section{margin-top:28px}.admin-section h2{font:800 18px Orbitron,sans-serif;text-transform:uppercase;margin-bottom:12px}.admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.admin-stat{background:#101c2a;border:1px solid var(--cec-line);border-radius:14px;padding:18px}.admin-stat b{display:block;font:800 30px Orbitron,sans-serif;color:var(--cec-blue);margin-top:5px}.admin-stat span{color:var(--cec-muted);font-size:12px}.admin-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.admin-action{display:block;background:#101c2a;border:1px solid var(--cec-line);border-radius:14px;padding:18px;text-decoration:none}.admin-action strong{display:block}.admin-action small{display:block;color:var(--cec-muted);margin-top:7px;line-height:1.4}.admin-list{display:grid;gap:10px}.admin-row{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#101c2a;border:1px solid var(--cec-line);border-radius:12px;padding:14px 16px}.admin-row small{display:block;color:var(--cec-muted);margin-top:3px}.admin-message{padding:16px;border-radius:12px;border:1px dashed var(--cec-line);color:var(--cec-muted)}.admin-warning{border-color:rgba(255,202,107,.45);color:#ffda8c}.admin-button{border:0;border-radius:8px;padding:9px 12px;background:var(--cec-blue-strong);color:#fff;font-weight:800;font-size:11px;cursor:pointer}.admin-button.danger{background:#7c2631}.admin-auth{margin-bottom:22px}.hidden{display:none!important}@media(max-width:800px){.admin-grid,.admin-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.admin-grid,.admin-actions{grid-template-columns:1fr}.admin-row{align-items:flex-start;flex-direction:column}}
-</style></head><body data-requires-staff="true" class="admin-site"><header class="admin-top"><div class="public-wrap admin-nav"><a href="/control-center" class="admin-brand" style="text-decoration:none">CEC <span>CONTROL CENTER</span></a><nav class="admin-links" aria-label="Staff tools"><a href="/admin-officiating.html">MATCHES</a><a href="/admin-registrations.html">REGISTRATIONS</a><a href="/admin-disputes.html">DISPUTES</a><a href="/" target="_blank" rel="noopener">PUBLIC SITE ↗</a><a href="/staff" id="sign-out-link">SIGN OUT</a></nav></div></header><main class="public-wrap admin-main"><div id="admin-auth-guard-banner" class="admin-message admin-warning admin-auth hidden">Checking staff approval…</div><div class="admin-title"><div><div class="eyebrow">Approved staff workspace</div><h1>Control Center</h1><p>Use the section that matches the task in front of you. Public pages only show what officials publish.</p></div><span id="role-label" class="status-pill">Checking access</span></div>
-<section class="admin-section"><h2>Today</h2><div class="admin-grid"><div class="admin-stat"><span>All registrations</span><b id="stat-total">—</b></div><div class="admin-stat"><span>Pending review</span><b id="stat-pending">—</b></div><div class="admin-stat"><span>Approved teams</span><b id="stat-approved">—</b></div><div class="admin-stat"><span>Open disputes</span><b id="stat-disputes">—</b></div></div></section>
-<section class="admin-section"><h2>Needs Attention</h2><div id="attention-list" class="admin-list"><div class="admin-message">Loading registration and dispute queues…</div></div></section>
-<section class="admin-section"><h2>Matches</h2><div class="admin-actions"><a class="admin-action" href="/admin-officiating.html"><strong>Manage matches</strong><small>Publish status, scores, and valid Twitch links for spectators.</small></a><a class="admin-action" href="/admin-bracket-builder.html"><strong>Build bracket</strong><small>Assign teams and advance official bracket rounds.</small></a><a class="admin-action" href="/admin-match-report.html"><strong>Record result</strong><small>Submit the final score and winner to the managed record.</small></a><a class="admin-action" href="/admin-checkin.html"><strong>Check-in</strong><small>Review match-day readiness and attendance.</small></a></div></section>
-<section class="admin-section"><h2>Registrations</h2><div class="admin-actions"><a class="admin-action" href="/admin-registrations.html"><strong>Review registrations</strong><small>Approve or reject team submissions and see roster counts.</small></a><a class="admin-action" href="/admin-verification.html"><strong>Verify players</strong><small>Review private identity documents and verification status.</small></a></div></section>
-<section class="admin-section"><h2>Disputes</h2><div class="admin-actions"><a class="admin-action" href="/admin-disputes.html"><strong>Dispute queue</strong><small>Open, review, and track competition disputes.</small></a><a class="admin-action" href="/admin-dispute-review.html"><strong>Review case</strong><small>Resolve a selected dispute with an audit note.</small></a></div></section>
-<section id="super-admin-staff-panel" class="admin-section hidden"><h2>Staff approvals</h2><div id="staff-requests-list" class="admin-list"></div></section>
-</main><script src="assets/js/registration-api.js"></script><script src="assets/js/firebase-config.js"></script><script src="assets/js/auth-guard.js"></script><script>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><title>Admin Overview — CEC Esports Intramurals 2026</title><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "surface-container-highest": "#2a3645", "on-secondary": "#003064", "surface-tint": "#b4c5ff", "error-container": "#93000a", "on-secondary-fixed-variant": "#00468d", "on-tertiary-container": "#f4f6ff", "primary-fixed-dim": "#b4c5ff", "secondary-fixed-dim": "#aac7ff", "on-tertiary": "#2a313b", "tertiary-fixed": "#dce3f0", "primary": "#b4c5ff", "on-secondary-container": "#002957", "background": "#081422", "tertiary-container": "#6a717d", "outline": "#8c90a2", "primary-container": "#1264ff", "on-primary-fixed": "#00174b", "on-error": "#690005", "secondary": "#aac7ff", "secondary-fixed": "#d6e3ff", "surface-variant": "#2a3645", "on-primary-container": "#f6f6ff", "surface": "#081422", "on-surface": "#d7e3f7", "inverse-on-surface": "#263140", "tertiary-fixed-dim": "#c0c7d4", "outline-variant": "#424656", "on-tertiary-fixed-variant": "#404752", "inverse-primary": "#0052dc", "surface-container-high": "#1f2b39", "surface-container-lowest": "#030f1c", "error": "#ffb4ab", "inverse-surface": "#d7e3f7", "surface-dim": "#081422", "on-error-container": "#ffdad6", "on-primary": "#002a78", "primary-fixed": "#dbe1ff", "on-surface-variant": "#c2c6d8", "on-secondary-fixed": "#001b3e", "on-tertiary-fixed": "#151c26", "tertiary": "#c0c7d4", "on-background": "#d7e3f7", "secondary-container": "#3e90ff", "on-primary-fixed-variant": "#003ea8", "surface-bright": "#2e3a49", "surface-container": "#15202f", "surface-container-low": "#101c2a" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "base": "4px", "lg": "24px", "container-max": "1280px", "gutter": "16px", "sm": "12px", "xl": "40px", "md": "16px", "xs": "8px" }, "fontFamily": { "headline-lg": ["Hanken Grotesk"], "headline-md": ["Hanken Grotesk"], "headline-xl": ["Hanken Grotesk"], "body-md": ["Inter"], "headline-lg-mobile": ["Hanken Grotesk"], "stats-impact": ["Hanken Grotesk"], "label-caps": ["Inter"], "body-lg": ["Inter"] }, "fontSize": { "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "800" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "700" }], "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "800" }], "stats-impact": ["24px", { "lineHeight": "24px", "letterSpacing": "0.05em", "fontWeight": "900" }], "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "700" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }] } } } }</script><link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;700;800;900&amp;family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap" rel="stylesheet"/><style>
+.cyber-title{font-family:'Orbitron',sans-serif!important;letter-spacing:normal!important;text-shadow:0 0 14px rgba(180,197,255,.45);overflow-wrap:break-word;word-break:break-word;}
+.cyber-mono{font-family:'Share Tech Mono',monospace!important;letter-spacing:.02em;}
+.cyber-panel{position:relative;}
+.cyber-panel::before,.cyber-panel::after{content:'';position:absolute;width:16px;height:16px;pointer-events:none;z-index:1;}
+.cyber-panel::before{top:0;left:0;border-top:2px solid #6ea3ff;border-left:2px solid #6ea3ff;}
+.cyber-panel::after{bottom:0;right:0;border-bottom:2px solid #6ea3ff;border-right:2px solid #6ea3ff;}
+
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-color: #050B14;
+  background-image: url('assets/bg.gif');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  pointer-events: none;
+}
+@media (max-width: 768px), (orientation: portrait) {
+  .site-bg {
+    background-position: left center;
+  }
+}
+.site-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(90deg, rgba(5, 11, 20, 0.25) 0%, rgba(5, 11, 20, 0.58) 32%, rgba(5, 11, 20, 0.86) 65%, rgba(5, 11, 20, 0.94) 100%),
+              linear-gradient(to bottom, rgba(5, 11, 20, 0.35) 0%, rgba(5, 11, 20, 0.8) 100%);
+  pointer-events: none;
+}
+</style></head><body data-requires-staff="true" class="bg-background font-body-md text-on-surface"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><aside class="fixed left-0 top-0 h-full w-16 lg:w-64 bg-surface-container-low/95 backdrop-blur-md z-50 flex flex-col border-r border-white/10"><div class="h-16 flex items-center justify-center lg:justify-start lg:px-md gap-sm border-b border-white/10 shrink-0"><span class="inline-flex h-8 w-8 items-center justify-center rounded bg-primary/15 border border-primary/30 shrink-0"><svg aria-hidden="true" class="h-5 w-5 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.5L12 20.9 6.1 24.1l1.2-6.5L2.5 9l6.6-.9z"></path></svg></span><span class="hidden lg:inline font-headline-md text-headline-md text-primary tracking-tight uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md flex flex-col gap-base overflow-y-auto"><a aria-current="page" class="flex items-center justify-center lg:justify-start gap-sm px-xs lg:px-md py-sm rounded transition-colors bg-primary-container text-on-primary-container font-bold" href="/control-center" title="Dashboard"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="hidden lg:inline font-label-caps text-label-caps uppercase">Dashboard</span></a><a class="flex items-center justify-center lg:justify-start gap-sm px-xs lg:px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-registrations.html" title="Registrations"><span class="material-symbols-outlined text-[20px]">app_registration</span><span class="hidden lg:inline font-label-caps text-label-caps uppercase">Registrations</span></a><a class="flex items-center justify-center lg:justify-start gap-sm px-xs lg:px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-bracket-builder.html" title="Bracket"><span class="material-symbols-outlined text-[20px]">account_tree</span><span class="hidden lg:inline font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center justify-center lg:justify-start gap-sm px-xs lg:px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-officiating.html" title="Live Matches"><span class="material-symbols-outlined text-[20px]">sports_esports</span><span class="hidden lg:inline font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center justify-center lg:justify-start gap-sm px-xs lg:px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-disputes.html" title="Disputes"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="hidden lg:inline font-label-caps text-label-caps uppercase">Disputes</span></a></nav><div class="p-xs lg:p-md border-t border-white/10"><a class="flex items-center justify-center lg:justify-start gap-sm px-xs lg:px-md py-sm rounded text-primary hover:bg-primary/10 transition-colors" href="index.html" title="Main Site"><span class="material-symbols-outlined text-[20px]">arrow_back</span><span class="hidden lg:inline font-label-caps text-label-caps uppercase font-bold">Public Site</span></a><button type="button" id="staff-sign-out" class="w-full mt-xs flex items-center justify-center lg:justify-start gap-sm px-xs lg:px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-error transition-colors" title="Sign out"><span class="material-symbols-outlined text-[20px]">logout</span><span class="hidden lg:inline font-label-caps text-label-caps uppercase font-bold">Sign Out</span></button></div></aside><div class="pl-16 lg:pl-64"><header class="fixed top-0 left-16 lg:left-64 right-0 h-16 bg-surface-container/95 backdrop-blur-md border-b border-white/10 z-40 flex items-center justify-between px-lg gap-md"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase truncate">CEC Esports Intramurals 2026 · Staff Portal</span><div class="cec-auth-widget flex items-center gap-sm shrink-0"></div></header><main class="relative z-10 pt-16 min-h-screen"><div class="flex flex-col w-full p-lg gap-lg">
+
+<!-- Auth Guard Status Banner -->
+<div id="admin-auth-guard-banner" class="hidden p-md rounded-xl bg-amber-500/15 border border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-md">
+  <div class="flex items-center gap-3">
+    <span class="material-symbols-outlined text-amber-400 text-[28px]">lock</span>
+    <div class="flex flex-col">
+      <span class="font-bold text-on-surface text-sm" id="auth-guard-title">Staff Authentication Required</span>
+      <span class="text-xs text-on-surface-variant" id="auth-guard-desc">Sign in with your Google account to access tournament officiating and management controls.</span>
+    </div>
+  </div>
+  <button type="button" onclick="window.CECAuth.signInWithGoogle()" class="px-4 py-2 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-colors shrink-0 shadow-md flex items-center gap-1.5">
+    <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+    <span>SIGN IN WITH GOOGLE</span>
+  </button>
+</div>
+
+<!-- Super Admin: Staff Approval & Role Delegation Center (Only for jlcabucos.cec@gmail.com) -->
+<div id="super-admin-staff-panel" class="hidden bg-surface-container border border-primary/40 rounded-xl p-lg flex flex-col gap-md cyber-panel shadow-2xl bg-gradient-to-r from-primary/10 via-surface-container to-transparent">
+  <div class="flex flex-wrap items-center justify-between gap-sm border-b border-white/10 pb-sm">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-[24px]">verified_user</span>
+      <h2 class="font-headline-md text-headline-md text-on-surface cyber-title text-lg">Staff Authorization Console (Coordinator: Jade Louis S. Cabucos)</h2>
+    </div>
+    <span class="px-2.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30 text-xs font-bold font-label-caps">SUPER ADMIN ONLY</span>
+  </div>
+  <p class="text-xs text-on-surface-variant">Review staff Google Sign-in requests. Staff members cannot officiate or submit live stream scores until approved by you.</p>
+  
+  <div class="flex flex-col gap-sm" id="staff-requests-list">
+    <div class="p-md text-xs text-on-surface-variant bg-surface-container-lowest rounded-lg border border-white/10 text-center">Loading staff requests…</div>
+  </div>
+</div>
+
+<div class="flex flex-wrap justify-between items-end gap-sm">
+<div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface cyber-title">Overview</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">CEC Esports Intramurals 2026 · Mobile Legends: Bang Bang</p>
+</div>
+<button class="bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps text-label-caps px-md py-sm rounded transition-colors flex items-center gap-xs" id="refresh-btn" type="button">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+        REFRESH
+      </button>
+</div>
+<section class="flex flex-col gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface cyber-title flex items-center gap-2"><span class="material-symbols-outlined text-primary">today</span>Today</h2>
+<div class="grid grid-cols-2 md:grid-cols-5 gap-xs bg-surface-container border border-white/10 rounded-lg p-xs">
+<div class="bg-surface border border-white/10 p-md rounded flex flex-col gap-xs"><span class="font-label-caps text-label-caps text-on-surface-variant">TEAMS REGISTERED</span><div class="font-stats-impact text-stats-impact text-on-surface" id="stat-total">&mdash;</div></div>
+<div class="bg-surface border border-white/10 p-md rounded flex flex-col gap-xs"><span class="font-label-caps text-label-caps text-on-surface-variant">PENDING</span><div class="font-stats-impact text-stats-impact text-tertiary" id="stat-pending">&mdash;</div></div>
+<div class="bg-surface border border-white/10 p-md rounded flex flex-col gap-xs"><span class="font-label-caps text-label-caps text-on-surface-variant">UNDER REVIEW</span><div class="font-stats-impact text-stats-impact text-on-surface" id="stat-review">&mdash;</div></div>
+<div class="bg-surface border border-white/10 p-md rounded flex flex-col gap-xs"><span class="font-label-caps text-label-caps text-on-surface-variant">APPROVED</span><div class="font-stats-impact text-stats-impact text-primary" id="stat-approved">&mdash;</div></div>
+<div class="bg-surface border border-white/10 p-md rounded flex flex-col gap-xs"><span class="font-label-caps text-label-caps text-on-surface-variant">OPEN DISPUTES</span><div class="font-stats-impact text-stats-impact text-[#ffb020]" id="stat-disputes">&mdash;</div></div>
+</div>
+</section>
+<p class="font-body-md text-body-md text-on-surface-variant -mt-xs" id="stat-note">Loading registration data…</p>
+<section class="flex flex-col gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface cyber-title flex items-center gap-2"><span class="material-symbols-outlined text-primary">priority_high</span>Needs Attention</h2>
+<div class="flex flex-col gap-xs" id="attention-list">
+<div class="p-md rounded-xl bg-surface-container border border-dashed border-white/15 text-xs text-on-surface-variant text-center">Loading registration and dispute queues&hellip;</div>
+</div>
+</section>
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-lg">
+<div class="xl:col-span-2 flex flex-col gap-lg">
+<div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">Phase</h2>
+<div class="flex flex-col sm:flex-row sm:items-start gap-md sm:gap-0">
+<div class="flex sm:flex-col items-center gap-sm sm:flex-1 sm:text-center"><div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center animate-pulse shrink-0"><div class="w-2 h-2 rounded-full bg-on-secondary-container"></div></div><div class="flex flex-col sm:items-center"><span class="font-label-caps text-label-caps text-primary">Registration</span><span class="font-body-md text-body-md text-on-surface-variant">Closes Sep 1</span></div></div>
+<div class="hidden sm:block flex-1 h-px bg-white/10 mt-4"></div>
+<div class="flex sm:flex-col items-center gap-sm sm:flex-1 sm:text-center opacity-60"><div class="w-8 h-8 rounded-full bg-surface-container-highest border-2 border-outline-variant shrink-0"></div><div class="flex flex-col sm:items-center"><span class="font-label-caps text-label-caps text-on-surface-variant">Verification</span><span class="font-body-md text-body-md text-on-surface-variant">Before match day</span></div></div>
+<div class="hidden sm:block flex-1 h-px bg-white/10 mt-4"></div>
+<div class="flex sm:flex-col items-center gap-sm sm:flex-1 sm:text-center opacity-60"><div class="w-8 h-8 rounded-full bg-surface-container-highest border-2 border-outline-variant shrink-0"></div><div class="flex flex-col sm:items-center"><span class="font-label-caps text-label-caps text-on-surface-variant">Department brackets</span><span class="font-body-md text-body-md text-on-surface-variant">Sep 5 – 19</span></div></div>
+<div class="hidden sm:block flex-1 h-px bg-white/10 mt-4"></div>
+<div class="flex sm:flex-col items-center gap-sm sm:flex-1 sm:text-center opacity-60"><div class="w-8 h-8 rounded-full bg-surface-container-highest border-2 border-outline-variant shrink-0"></div><div class="flex flex-col sm:items-center"><span class="font-label-caps text-label-caps text-on-surface-variant">Grand Finals Day</span><span class="font-body-md text-body-md text-on-surface-variant">Oct 2</span></div></div>
+</div>
+</div>
+<section class="flex flex-col gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface cyber-title flex items-center gap-2"><span class="material-symbols-outlined text-primary">sports_esports</span>Matches</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<a class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs hover:border-primary/40 transition-colors glass-hover" href="admin-officiating.html"><span class="material-symbols-outlined text-primary">sports_esports</span><span class="font-headline-md text-headline-md text-on-surface">Live Matches</span><span class="font-body-md text-body-md text-on-surface-variant">Officiate matches, publish scores, and attach the official Twitch link.</span></a>
+<a class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs hover:border-primary/40 transition-colors glass-hover" href="admin-bracket-builder.html"><span class="material-symbols-outlined text-primary">account_tree</span><span class="font-headline-md text-headline-md text-on-surface">Bracket Builder</span><span class="font-body-md text-body-md text-on-surface-variant">Seed teams and publish each department's bracket rounds.</span></a>
+<a class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs hover:border-primary/40 transition-colors glass-hover" href="admin-match-report.html"><span class="material-symbols-outlined text-primary">assignment_turned_in</span><span class="font-headline-md text-headline-md text-on-surface">Record Result</span><span class="font-body-md text-body-md text-on-surface-variant">Submit the final score and winner to the managed tournament record.</span></a>
+<a class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs hover:border-primary/40 transition-colors glass-hover" href="admin-checkin.html"><span class="material-symbols-outlined text-primary">how_to_reg</span><span class="font-headline-md text-headline-md text-on-surface">Match Check-in</span><span class="font-body-md text-body-md text-on-surface-variant">Confirm match-day attendance and roster readiness.</span></a>
+<a class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs hover:border-primary/40 transition-colors glass-hover" href="tournament.html"><span class="material-symbols-outlined text-primary">live_tv</span><span class="font-headline-md text-headline-md text-on-surface">Live Arena Hub</span><span class="font-body-md text-body-md text-on-surface-variant">The public broadcast page with the concurrent stream switcher.</span></a>
+</div>
+</section>
+<section class="flex flex-col gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface cyber-title flex items-center gap-2"><span class="material-symbols-outlined text-primary">app_registration</span>Registrations</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<a class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs hover:border-primary/40 transition-colors glass-hover" href="admin-registrations.html"><span class="material-symbols-outlined text-primary">app_registration</span><span class="font-headline-md text-headline-md text-on-surface">Review Registrations</span><span class="font-body-md text-body-md text-on-surface-variant">Approve or reject team submissions and inspect roster counts.</span></a>
+<a class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs hover:border-primary/40 transition-colors glass-hover" href="admin-verification.html"><span class="material-symbols-outlined text-primary">verified_user</span><span class="font-headline-md text-headline-md text-on-surface">Verify Players</span><span class="font-body-md text-body-md text-on-surface-variant">Review private identity documents and player verification status.</span></a>
+</div>
+</section>
+<section class="flex flex-col gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface cyber-title flex items-center gap-2"><span class="material-symbols-outlined text-primary">gavel</span>Disputes</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<a class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs hover:border-primary/40 transition-colors glass-hover" href="admin-disputes.html"><span class="material-symbols-outlined text-primary">gavel</span><span class="font-headline-md text-headline-md text-on-surface">Dispute Queue</span><span class="font-body-md text-body-md text-on-surface-variant">Open, track, and triage competition protests.</span></a>
+<a class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs hover:border-primary/40 transition-colors glass-hover" href="admin-dispute-review.html"><span class="material-symbols-outlined text-primary">balance</span><span class="font-headline-md text-headline-md text-on-surface">Review a Case</span><span class="font-body-md text-body-md text-on-surface-variant">Resolve a selected dispute and record the audit note.</span></a>
+</div>
+</section>
+</div>
+<div class="flex flex-col gap-lg">
+<div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-sm cyber-panel">
+<h2 class="font-headline-md text-headline-md text-on-surface">Key dates</h2>
+<div class="flex justify-between gap-sm border-t border-white/10 pt-sm"><span class="font-body-md text-body-md text-on-surface-variant">Registration closes</span><span class="font-body-md text-body-md text-on-surface">Sep 1</span></div>
+<div class="flex justify-between gap-sm border-t border-white/10 pt-sm"><span class="font-body-md text-body-md text-on-surface-variant">IT brackets</span><span class="font-body-md text-body-md text-on-surface">Sep 5</span></div>
+<div class="flex justify-between gap-sm border-t border-white/10 pt-sm"><span class="font-body-md text-body-md text-on-surface-variant">Faculty quarterfinals</span><span class="font-body-md text-body-md text-on-surface">Sep 11</span></div>
+<div class="flex justify-between gap-sm border-t border-white/10 pt-sm"><span class="font-body-md text-body-md text-on-surface-variant">HTM brackets</span><span class="font-body-md text-body-md text-on-surface">Sep 12</span></div>
+<div class="flex justify-between gap-sm border-t border-white/10 pt-sm"><span class="font-body-md text-body-md text-on-surface-variant">Faculty semis &amp; final</span><span class="font-body-md text-body-md text-on-surface">Sep 18</span></div>
+<div class="flex justify-between gap-sm border-t border-white/10 pt-sm"><span class="font-body-md text-body-md text-on-surface-variant">CTE &amp; CRIM brackets</span><span class="font-body-md text-body-md text-on-surface">Sep 19</span></div>
+<div class="flex justify-between gap-sm border-t border-white/10 pt-sm"><span class="font-body-md text-body-md text-primary font-bold">Grand Finals Day</span><span class="font-body-md text-body-md text-primary font-bold">Oct 2</span></div>
+</div>
+<div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs">
+<h2 class="font-headline-md text-headline-md text-on-surface">Backend &amp; Realtime Hub</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Registrations and player verification are powered by Google Apps Script (<span class="cyber-mono text-primary text-xs font-bold">AKfycbxh...</span>) and Google Drive. Real-time scores, multi-court live streams, and staff auth are powered by Firebase Realtime Database.</p>
+</div>
+</div>
+</div>
+</div></main></div>
+
+<!-- Firebase & Staff Scripts -->
+<script src="assets/js/registration-api.js"></script>
+<script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/auth-guard.js"></script>
+<script src="assets/js/live-manager.js"></script>
+
+<script>
 (function(){
-  var get=function(id){return document.getElementById(id);};
-  function row(label,value,note){return '<div class="admin-row"><div><strong>'+label+'</strong><small>'+note+'</small></div><span class="status-pill">'+value+'</span></div>';}
+  var el = function(id){ return document.getElementById(id); };
+
+  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  function attentionRow(title, note, badge, tone, href){
+    return '<a href="' + href + '" class="flex items-center justify-between gap-md p-md rounded-xl bg-surface-container border border-white/10 hover:border-primary/40 transition-colors glass-hover">' +
+      '<div class="flex flex-col min-w-0">' +
+        '<span class="font-bold text-on-surface text-sm truncate">' + esc(title) + '</span>' +
+        '<span class="text-xs text-on-surface-variant truncate">' + esc(note) + '</span>' +
+      '</div>' +
+      '<span class="shrink-0 px-2.5 py-1 rounded text-[10px] font-bold font-label-caps border ' + tone + '">' + esc(badge) + '</span>' +
+    '</a>';
+  }
+
   function load(){
-    Promise.all([callRegistrationApi('listRegistrations',{},'GET'),callRegistrationApi('listDisputes',{status:'Open'},'POST')]).then(function(data){
-      var teams=data[0]||[], disputes=data[1]||[];
-      get('stat-total').textContent=teams.length; get('stat-pending').textContent=teams.filter(function(t){return t.Status==='Pending'||t.Status==='UnderReview';}).length; get('stat-approved').textContent=teams.filter(function(t){return t.Status==='Approved';}).length; get('stat-disputes').textContent=disputes.length;
-      var attention=[]; teams.filter(function(t){return t.Status==='Pending'||t.Status==='UnderReview';}).slice(0,4).forEach(function(t){attention.push(row(t.TeamName,t.Status,'Registration '+t.TeamID));}); disputes.slice(0,4).forEach(function(d){attention.push(row('Dispute '+d.DisputeID,'OPEN',d.Category||'Needs review'));});
-      get('attention-list').innerHTML=attention.length?attention.join(''):'<div class="admin-message">Nothing needs attention right now.</div>';
-    }).catch(function(error){get('attention-list').innerHTML='<div class="admin-message admin-warning">Could not load staff queues: '+(error.message||'request failed')+'</div>';});
+    el('stat-note').textContent = 'Loading registration data…';
+    if (typeof callRegistrationApi !== 'function'){ el('stat-note').textContent = 'Registration API not connected.'; return; }
+
+    var teamsReq = callRegistrationApi('listRegistrations', {}, 'GET');
+    // Disputes need staff auth; a failure here must not blank the whole dashboard.
+    var disputesReq = callRegistrationApi('listDisputes', { status: 'Open' }, 'POST').catch(function(){ return null; });
+
+    teamsReq.then(function(list){
+      list = list || [];
+      var by = function(s){ return list.filter(function(t){ return t.Status === s; }).length; };
+      el('stat-total').textContent = list.length;
+      el('stat-pending').textContent = by('Pending');
+      el('stat-review').textContent = by('UnderReview');
+      el('stat-approved').textContent = by('Approved');
+      el('stat-note').textContent = list.length + ' team' + (list.length === 1 ? '' : 's') + ' in the sheet · updated just now.';
+
+      return disputesReq.then(function(disputes){
+        var open = disputes === null ? null : (disputes || []);
+        el('stat-disputes').textContent = open === null ? '—' : open.length;
+
+        var rows = [];
+        list.filter(function(t){ return t.Status === 'Pending' || t.Status === 'UnderReview'; }).slice(0, 5).forEach(function(t){
+          rows.push(attentionRow(t.TeamName || 'Team', (t.Course || 'Registration') + ' · ' + (t.TeamID || ''),
+            t.Status === 'Pending' ? 'PENDING' : 'IN REVIEW',
+            'bg-amber-500/20 text-amber-300 border-amber-500/30', 'admin-registrations.html'));
+        });
+        (open || []).slice(0, 5).forEach(function(d){
+          rows.push(attentionRow('Dispute ' + (d.DisputeID || ''), (d.Category || 'Protest') + ' · Match ' + (d.MatchID || '—'),
+            'OPEN', 'bg-red-500/20 text-red-300 border-red-500/30', 'admin-disputes.html'));
+        });
+
+        el('attention-list').innerHTML = rows.length ? rows.join('') :
+          '<div class="p-md rounded-xl bg-surface-container border border-dashed border-white/15 text-xs text-on-surface-variant text-center">Nothing needs attention right now.</div>';
+      });
+    }).catch(function(err){
+      el('stat-note').textContent = 'Could not reach the registration API: ' + err.message;
+      el('attention-list').innerHTML = '<div class="p-md rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-200 text-center">Could not load staff queues: ' + esc(err.message || 'request failed') + '</div>';
+    });
   }
-  function renderStaff(user,profile){
-    get('role-label').textContent=user?(profile&&profile.roleLabel||'Staff'):'Sign in required';
-    if(!user)return;
-    if(window.CECAuth.isSuperAdmin()){
-      get('super-admin-staff-panel').classList.remove('hidden');
-      window.CECAuth.onStaffListChange(function(list){get('staff-requests-list').innerHTML=(list||[]).filter(function(s){return s.email.toLowerCase()!==window.CECFirebase.superAdminEmail.toLowerCase();}).map(function(s){var approved=s.status==='approved';return '<div class="admin-row"><div><strong>'+window.CECAuth.esc(s.displayName||'Staff')+'</strong><small>'+window.CECAuth.esc(s.email)+' · '+(s.status||'pending')+'</small></div><button class="admin-button '+(approved?'danger':'')+'" onclick="window.staffAction(\''+s.uid+'\','+(!approved)+')">'+(approved?'REVOKE':'APPROVE')+'</button></div>';}).join('')||'<div class="admin-message">No staff requests.</div>';});
+
+  // Staff Authorization and Role Management
+  function renderStaffManagementUI(currentUser, profile) {
+    const banner = el('admin-auth-guard-banner');
+    const superAdminPanel = el('super-admin-staff-panel');
+
+    if (!currentUser) {
+      banner.classList.remove('hidden');
+      el('auth-guard-title').textContent = 'Staff Authentication Required';
+      el('auth-guard-desc').textContent = 'Sign in with your Google account to officiate matches and manage tournament feeds.';
+      superAdminPanel.classList.add('hidden');
+      return;
     }
-    load();
+
+    banner.classList.add('hidden');
+
+    // Super Admin View for jlcabucos.cec@gmail.com
+    if (window.CECAuth.isSuperAdmin()) {
+      superAdminPanel.classList.remove('hidden');
+      window.CECAuth.onStaffListChange((staffList) => {
+        const container = el('staff-requests-list');
+        if (!staffList || !staffList.length) {
+          container.innerHTML = '<div class="p-md text-xs text-on-surface-variant bg-surface-container-lowest rounded-lg border border-white/10 text-center">No staff requests at the moment.</div>';
+          return;
+        }
+
+        container.innerHTML = staffList.map(s => {
+          const isSuper = s.email.toLowerCase() === window.CECFirebase.superAdminEmail.toLowerCase();
+          if (isSuper) return '';
+
+          const isApproved = s.status === 'approved';
+          const statusBadge = isApproved 
+            ? '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">APPROVED (' + (s.role || 'OFFICIAL').toUpperCase() + ')</span>'
+            : '<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold animate-pulse">PENDING APPROVAL</span>';
+
+          return `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-surface-container-lowest border border-white/10">
+              <div class="flex items-center gap-3">
+                <img src="${s.photoURL || 'assets/school_logo.jpg'}" alt="Staff Avatar" class="w-9 h-9 rounded-full object-cover border border-white/20" />
+                <div class="flex flex-col">
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-on-surface text-sm">${s.displayName || 'Staff'}</span>
+                    ${statusBadge}
+                  </div>
+                  <span class="text-xs text-on-surface-variant">${s.email}</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                ${!isApproved ? `
+                  <button type="button" onclick="approveStaffUser('${s.uid}', 'official')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-label-caps text-xs font-bold transition-colors shadow">
+                    APPROVE (OFFICIAL)
+                  </button>
+                  <button type="button" onclick="approveStaffUser('${s.uid}', 'admin')" class="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-colors shadow">
+                    APPROVE (ADMIN)
+                  </button>
+                ` : `
+                  <button type="button" onclick="rejectStaffUser('${s.uid}')" class="px-2.5 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 font-label-caps text-xs font-bold transition-colors">
+                    REVOKE ACCESS
+                  </button>
+                `}
+              </div>
+            </div>
+          `;
+        }).join('');
+      });
+    } else {
+      superAdminPanel.classList.add('hidden');
+      if (!window.CECAuth.isApprovedStaff()) {
+        banner.classList.remove('hidden');
+        el('auth-guard-title').textContent = 'Account Pending Approval';
+        el('auth-guard-desc').textContent = 'Your Google account (' + currentUser.email + ') has been registered and is pending approval by Tournament Coordinator (jlcabucos.cec@gmail.com).';
+      }
+    }
   }
-  window.staffAction=function(uid,approve){(approve?window.CECAuth.approveStaff(uid,'official'):window.CECAuth.rejectStaff(uid)).catch(function(e){alert(e.message);});};
-  get('sign-out-link').addEventListener('click',function(e){e.preventDefault();window.CECAuth.signOut().then(function(){window.location.replace('/staff');});});
-  window.CECAuth.onAuthChange(renderStaff);
+
+  window.approveStaffUser = async function(uid, role) {
+    await window.CECAuth.approveStaff(uid, role);
+  };
+
+  window.rejectStaffUser = async function(uid) {
+    if (confirm('Revoke access for this staff member?')) {
+      await window.CECAuth.rejectStaff(uid);
+    }
+  };
+
+  window.CECAuth.onAuthChange((user, profile) => {
+    renderStaffManagementUI(user, profile);
+  });
+
+  el('refresh-btn').addEventListener('click', load);
+
+  var signOut = el('staff-sign-out');
+  if (signOut) signOut.addEventListener('click', function(){
+    window.CECAuth.signOut().then(function(){ window.location.replace('/staff'); });
+  });
+
+  load();
 })();
 </script></body></html>

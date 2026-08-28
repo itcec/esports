@@ -5,205 +5,27 @@
 
 window.CECLiveManager = {
   activeMatchId: null,
+
+  // Hosts allowed to embed the Twitch player, alongside the current hostname.
+  STREAM_PARENT_HOSTS: ['cec-esports.vercel.app'],
+
+  /**
+   * Officials may only publish Twitch links; this mirrors the Apps Script
+   * `publishMatch` rule so the UI fails early instead of at save time.
+   */
+  validateStreamUrl: function (url) {
+    const raw = String(url || '').trim();
+    if (!raw) return { ok: true, url: '' };
+    if (!/^https?:\/\/(www\.)?twitch\.tv\/[A-Za-z0-9_]/i.test(raw)) {
+      return { ok: false, url: raw, message: 'Only Twitch links can be published — e.g. https://twitch.tv/yourchannel or a twitch.tv/videos/... VOD.' };
+    }
+    return { ok: true, url: raw };
+  },
+
   matches: {},
   publicTeams: {},
   listeners: [],
 
-  // 12 Standard Intramurals Department Match Presets
-  DEFAULT_MATCHES: {
-    'MATCH-001': {
-      id: 'MATCH-001',
-      title: 'Court 1 · Men\'s Semifinal 1',
-      court: 'Court 1 (Annex Lab 1)',
-      division: 'Student Men\'s',
-      stageTitle: 'MEN\'S DIVISION · SEMIFINALS (BO3)',
-      formatBadge: 'BO3 · GAME 3',
-      statusNote: 'MATCH POINT · MAP: SANCTUM',
-      status: 'LIVE',
-      streamUrl: '',
-      startedAt: '2:00 PM',
-      team1: {
-        name: 'IT TITAN DRAGONS',
-        dept: 'IT',
-        score: '2',
-        icon: 'assets/icons/lorc/dragon-head.svg',
-        color: '#1264ff',
-        seed: '3-0 · SEED #1',
-        sub: 'College of Computer Studies',
-        captain: 'SlayerX (Juan Dela Cruz)',
-        roster: [
-          { num: 1, ign: 'SlayerX', real: 'Juan Dela Cruz', role: 'JUNGLER / LING', isCap: true },
-          { num: 2, ign: 'Viper_CEC', real: 'Mark Rivera', role: 'MID LANE / VALENTINA' },
-          { num: 3, ign: 'KuroBlade', real: 'John Santos', role: 'GOLD LANE / BEATRIX' },
-          { num: 4, ign: 'ShieldMaster', real: 'Carl Reyes', role: 'ROAMER / TIGREAL' },
-          { num: 5, ign: 'DragonLord', real: 'Dave Garcia', role: 'EXP LANE / YU ZHONG' }
-        ],
-        subs: 'Shadow (Christian Lim), Ace (Kenneth Tan)'
-      },
-      team2: {
-        name: 'CRIM IRON WEREWOLVES',
-        dept: 'CRIM',
-        score: '1',
-        icon: 'assets/icons/lorc/werewolf.svg',
-        color: '#ff4b4b',
-        seed: '3-0 · SEED #2',
-        sub: 'College of Criminology',
-        captain: 'WolfAlpha (Ricardo Gomez)',
-        roster: [
-          { num: 1, ign: 'WolfAlpha', real: 'Ricardo Gomez', role: 'JUNGLER / LANCELOT', isCap: true },
-          { num: 2, ign: 'CrimsonFury', real: 'Marco Silva', role: 'MID LANE / PHARSA' },
-          { num: 3, ign: 'GhostMarksman', real: 'Eduardo Ramos', role: 'GOLD LANE / CLAUDE' },
-          { num: 4, ign: 'IronTitan', real: 'Gabriel Perez', role: 'ROAMER / KHUFRA' },
-          { num: 5, ign: 'BrawlerJax', real: 'Jerome Alvarez', role: 'EXP LANE / CHOU' }
-        ],
-        subs: 'NightHawk (Joshua Mendoza), Reaper (Alvin Castro)'
-      }
-    },
-    'MATCH-002': {
-      id: 'MATCH-002',
-      title: 'Court 2 · Men\'s Semifinal 2',
-      court: 'Court 2 (Annex Lab 2)',
-      division: 'Student Men\'s',
-      stageTitle: 'MEN\'S DIVISION · SEMIFINALS (BO3)',
-      formatBadge: 'BO3 · GAME 2',
-      statusNote: 'TIED 1-1 · MAP: SANCTUM',
-      status: 'LIVE',
-      streamUrl: '',
-      startedAt: '2:15 PM',
-      team1: {
-        name: 'HTM GOLDEN WYVERNS',
-        dept: 'HTM',
-        score: '1',
-        icon: 'assets/icons/lorc/wyvern.svg',
-        color: '#ffb020',
-        seed: '2-1 · SEED #3',
-        sub: 'College of Hospitality & Tourism',
-        captain: 'SolarFlare (Paul Lim)',
-        roster: [
-          { num: 1, ign: 'SolarFlare', real: 'Paul Lim', role: 'JUNGLER / HAYABUSA', isCap: true },
-          { num: 2, ign: 'SunGoddess', real: 'Ana Cruz', role: 'MID LANE / KAGURA' },
-          { num: 3, ign: 'GoldenShot', real: 'Leo Tan', role: 'GOLD LANE / BRODY' },
-          { num: 4, ign: 'AegisShield', real: 'Sam Sy', role: 'ROAMER / ATLAS' },
-          { num: 5, ign: 'WildBlade', real: 'Ron Uy', role: 'EXP LANE / LAPU-LAPU' }
-        ],
-        subs: 'Ray (Kevin Ong), Nova (Kyle Go)'
-      },
-      team2: {
-        name: 'CTE EMERALD HYDRAS',
-        dept: 'CTE',
-        score: '1',
-        icon: 'assets/icons/lorc/hydra.svg',
-        color: '#00e676',
-        seed: '2-1 · SEED #4',
-        sub: 'College of Teacher Education',
-        captain: 'HydraVenom (Eric Yap)',
-        roster: [
-          { num: 1, ign: 'HydraVenom', real: 'Eric Yap', role: 'JUNGLER / FANNY', isCap: true },
-          { num: 2, ign: 'MysticChant', real: 'Joy Santos', role: 'MID LANE / YVE' },
-          { num: 3, ign: 'EagleEye', real: 'Neil Torres', role: 'GOLD LANE / WANWAN' },
-          { num: 4, ign: 'GreenGolem', real: 'Mark Co', role: 'ROAMER / MINOTAUR' },
-          { num: 5, ign: 'TimberLord', real: 'Ben Chua', role: 'EXP LANE / PAQUITO' }
-        ],
-        subs: 'Fern (Derrick Yu), Ivy (Jason Tan)'
-      }
-    },
-    'MATCH-003': {
-      id: 'MATCH-003',
-      title: 'Court 3 · Women\'s Semifinal 1',
-      court: 'Court 3 (Annex Lab 3)',
-      division: 'Student Women\'s',
-      stageTitle: 'WOMEN\'S DIVISION · SEMIFINALS (BO3)',
-      formatBadge: 'BO3 · GAME 1',
-      statusNote: 'FIRST GAME UNDERWAY',
-      status: 'LIVE',
-      streamUrl: '',
-      startedAt: '2:30 PM',
-      team1: {
-        name: 'IT CYBER VALKYRIES',
-        dept: 'IT',
-        score: '1',
-        icon: 'assets/icons/delapouite/horus.svg',
-        color: '#00e5ff',
-        seed: '3-0 · SEED #1',
-        sub: 'College of Computer Studies',
-        captain: 'ValkyriePrime (Sarah Tan)',
-        roster: [
-          { num: 1, ign: 'ValkyriePrime', real: 'Sarah Tan', role: 'JUNGLER / BENEDETTA', isCap: true },
-          { num: 2, ign: 'NeonStar', real: 'Mia Gomez', role: 'MID LANE / LYLIA' },
-          { num: 3, ign: 'CyberArrow', real: 'Chloe Rivera', role: 'GOLD LANE / IXYA' },
-          { num: 4, ign: 'LotusGuard', real: 'Jenna Sy', role: 'ROAMER / MATHILDA' },
-          { num: 5, ign: 'FrostQueen', real: 'Ashley Lim', role: 'EXP LANE / RUBY' }
-        ],
-        subs: 'Pixie (Bea Uy), Luna (Camille Go)'
-      },
-      team2: {
-        name: 'HTM SOLAR SIRENS',
-        dept: 'HTM',
-        score: '0',
-        icon: 'assets/icons/delapouite/griffin-symbol.svg',
-        color: '#ffb020',
-        seed: '2-1 · SEED #3',
-        sub: 'College of Hospitality & Tourism',
-        captain: 'SirenSong (Princess Co)',
-        roster: [
-          { num: 1, ign: 'SirenSong', real: 'Princess Co', role: 'JUNGLER / KARINA', isCap: true },
-          { num: 2, ign: 'OceanBloom', real: 'Ella Reyes', role: 'MID LANE / ODETTE' },
-          { num: 3, ign: 'GlimmerSniper', real: 'Danica Tan', role: 'GOLD LANE / LESLEY' },
-          { num: 4, ign: 'CoralAnchor', real: 'Faye Yap', role: 'ROAMER / LOLITA' },
-          { num: 5, ign: 'SunGlaive', real: 'Gia Santos', role: 'EXP LANE / BENEDETTA' }
-        ],
-        subs: 'Amber (Nicole Go), Ruby (Pat Lim)'
-      }
-    },
-    'MATCH-004': {
-      id: 'MATCH-004',
-      title: 'Court 4 · Faculty Exhibition Quarterfinal 1',
-      court: 'Court 4 (Main Auditorium Arena)',
-      division: 'Faculty Exhibition',
-      stageTitle: 'FACULTY EXHIBITION · VIP SHOWCASE',
-      formatBadge: 'BO1 · EXHIBITION',
-      statusNote: 'FRIENDLY SHOWCASE MATCH',
-      status: 'LIVE',
-      streamUrl: '',
-      startedAt: '3:00 PM',
-      team1: {
-        name: 'IT BYTE MASTERS',
-        dept: 'Faculty',
-        score: '1',
-        icon: 'assets/icons/lorc/dragon-head.svg',
-        color: '#1264ff',
-        seed: 'FACULTY SEED #1',
-        sub: 'Faculty of Computer Studies',
-        captain: 'Prof. R. Tan',
-        roster: [
-          { num: 1, ign: 'CodeMaster', real: 'Prof. R. Tan', role: 'JUNGLER / AAMON', isCap: true },
-          { num: 2, ign: 'SysAdmin', real: 'Engr. J. Lim', role: 'MID LANE / EUDORA' },
-          { num: 3, ign: 'BitHunter', real: 'Prof. M. Sy', role: 'GOLD LANE / MIYA' },
-          { num: 4, ign: 'Firewall', real: 'Prof. D. Co', role: 'ROAMER / FRANCO' },
-          { num: 5, ign: 'RootUser', real: 'Prof. K. Ong', role: 'EXP LANE / BALMOND' }
-        ],
-        subs: 'Kernel (Prof. A. Go), Cyber (Prof. T. Yap)'
-      },
-      team2: {
-        name: 'CRIM GUARDIANS',
-        dept: 'Faculty',
-        score: '0',
-        icon: 'assets/icons/lorc/werewolf.svg',
-        color: '#ff4b4b',
-        seed: 'FACULTY SEED #2',
-        sub: 'Faculty of Criminology',
-        captain: 'Prof. K. Dela Cruz',
-        roster: [
-          { num: 1, ign: 'ChiefMarshal', real: 'Prof. K. Dela Cruz', role: 'JUNGLER / ROGER', isCap: true },
-          { num: 2, ign: 'TacticalEye', real: 'Prof. L. Santos', role: 'MID LANE / CECILION' },
-          { num: 3, ign: 'Sharpshooter', real: 'Prof. J. Gomez', role: 'GOLD LANE / CLINT' },
-          { num: 4, ign: 'RiotShield', real: 'Prof. V. Reyes', role: 'ROAMER / JOHNSON' },
-          { num: 5, ign: 'Brawler', real: 'Prof. G. Ramos', role: 'EXP LANE / TIGREAL' }
-        ],
-        subs: 'Patrol (Prof. C. Tan), Agent (Prof. N. Lim)'
-      }
-    }
-  },
 
   /**
    * Initialize live match syncing with Firebase Realtime Database
@@ -424,10 +246,22 @@ window.CECLiveManager = {
       }
     }
 
-    // Twitch Stream
+    // Twitch stream. Twitch requires every embedding host to be listed as a
+    // `parent`, so the current host and the production Vercel domain are both sent.
     if (url.includes('twitch.tv/')) {
+      const parents = [];
+      if (window.location.hostname) parents.push(window.location.hostname);
+      this.STREAM_PARENT_HOSTS.forEach(function (host) {
+        if (parents.indexOf(host) < 0) parents.push(host);
+      });
+      const parentQuery = parents.map(function (host) { return 'parent=' + encodeURIComponent(host); }).join('&');
+
+      const vod = url.match(/twitch\.tv\/videos\/(\d+)/i);
+      if (vod) return `https://player.twitch.tv/?video=${vod[1]}&${parentQuery}&autoplay=true`;
+
       const channel = url.split('twitch.tv/')[1].split(/[?&/]/)[0];
-      return `https://player.twitch.tv/?channel=${channel}&parent=${window.location.hostname || 'localhost'}&autoplay=true`;
+      if (channel) return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${parentQuery}&autoplay=true`;
+      return '';
     }
 
     // Facebook / Discord / Direct Web Frame
