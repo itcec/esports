@@ -24,14 +24,16 @@ window.CECFirebase = {
   auth: null,
   db: null,
   isInitialized: false,
+  _initPromise: null,
 
   /**
    * Initializes Firebase App, Auth, and Realtime Database
    */
   init: function() {
     if (this.isInitialized) return Promise.resolve(this);
+    if (this._initPromise) return this._initPromise;
 
-    return new Promise((resolve) => {
+    this._initPromise = new Promise((resolve) => {
       // Check if Firebase SDK is already loaded on the page
       if (window.firebase) {
         this._setupFirebase();
@@ -53,6 +55,7 @@ window.CECFirebase = {
           });
       }
     });
+    return this._initPromise;
   },
 
   _setupFirebase: function() {

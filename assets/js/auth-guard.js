@@ -1,264 +1,182 @@
 /**
- * CEC Esports Intramurals 2026 — Auth Guard & Staff Approval Gatekeeper
- * Manages Google Sign-In, Role Detection, and Super Admin (jlcabucos.cec@gmail.com) Approval Workflow.
+ * CEC Esports staff authentication and page access guard.
+ * Firebase rules are the security boundary; this file controls UI access and
+ * keeps the staff approval workflow consistent across the static pages.
  */
-
 window.CECAuth = {
   currentUser: null,
   currentStaffProfile: null,
   listeners: [],
+  isResolved: false,
+  _staffListListener: null,
 
-  /**
-   * Initialize Auth listener
-   */
-  init: async function() {
+  esc: function (value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  },
+
+  init: async function () {
     await window.CECFirebase.init();
     if (!window.CECFirebase.auth) {
-      console.warn('Firebase Auth unavailable, checking offline session.');
-      this._checkLocalSession();
+      console.warn('Firebase Auth unavailable; rendering signed-out state.');
+      this.isResolved = true;
+      this._notifyListeners();
+      this.renderAuthUI();
       return;
     }
-
     window.CECFirebase.auth.onAuthStateChanged(async (user) => {
       this.currentUser = user;
-      if (user) {
-        await this._handleUserRole(user);
-      } else {
-        this.currentStaffProfile = null;
-      }
+      this.currentStaffProfile = user ? await this._handleUserRole(user) : null;
+      this.isResolved = true;
       this._notifyListeners();
       this.renderAuthUI();
     });
   },
 
-  /**
-   * Google Sign-In Method
-   */
-  signInWithGoogle: async function() {
+  signInWithGoogle: async function () {
     await window.CECFirebase.init();
-    if (!window.CECFirebase.auth) {
-      alert('Authentication service is currently initializing or offline. Please try again.');
-      return;
-    }
-
+    if (!window.CECFirebase.auth) throw new Error('Authentication service is offline.');
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
     try {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
       const result = await window.CECFirebase.auth.signInWithPopup(provider);
       return result.user;
     } catch (err) {
-      console.error('Google Sign-In Error:', err);
-      // If popup was blocked or failed, try redirect
       if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
-        const provider = new firebase.auth.GoogleAuthProvider();
         await window.CECFirebase.auth.signInWithRedirect(provider);
-      } else {
-        alert('Sign-in failed: ' + (err.message || 'Please try again.'));
+        return null;
       }
+      if (err.code === 'auth/popup-closed-by-user') return null;
+      console.error('Google Sign-In Error:', err);
+      throw err;
     }
   },
 
-  /**
-   * Sign Out
-   */
-  signOut: async function() {
-    if (window.CECFirebase.auth) {
-      await window.CECFirebase.auth.signOut();
-    }
+  signOut: async function () {
+    if (window.CECFirebase.auth) await window.CECFirebase.auth.signOut();
     this.currentUser = null;
     this.currentStaffProfile = null;
-    localStorage.removeItem('CEC_LOCAL_STAFF_SESSION');
     this._notifyListeners();
     this.renderAuthUI();
   },
 
-  /**
-   * Resolve and enforce user role from Super Admin or Realtime DB
-   */
-  _handleUserRole: async function(user) {
+  refreshProfile: async function () {
+    if (!this.currentUser) return null;
+    this.currentStaffProfile = await this._handleUserRole(this.currentUser);
+    this._notifyListeners();
+    this.renderAuthUI();
+    return this.currentStaffProfile;
+  },
+
+  _handleUserRole: async function (user) {
     const email = (user.email || '').toLowerCase().trim();
-    const isSuperAdmin = email === window.CECFirebase.superAdminEmail.toLowerCase().trim();
-
-    if (isSuperAdmin) {
-      this.currentStaffProfile = {
-        uid: user.uid,
-        email: user.email,
+    const coordinator = window.CECFirebase.superAdminEmail.toLowerCase().trim();
+    if (email === coordinator) {
+      const profile = {
+        uid: user.uid, email: user.email,
         displayName: user.displayName || 'Tournament Coordinator',
-        photoURL: user.photoURL || '',
-        role: 'super_admin',
-        roleLabel: 'Super Admin / Coordinator',
-        isApproved: true,
-        status: 'approved'
+        photoURL: user.photoURL || '', role: 'super_admin',
+        roleLabel: 'Super Admin / Coordinator', isApproved: true, status: 'approved'
       };
-      // Keep admin record synced in DB
       if (window.CECFirebase.db) {
-        try {
-          window.CECFirebase.db.ref('staff/' + user.uid).set(this.currentStaffProfile);
-        } catch (e) {}
+        try { await window.CECFirebase.db.ref('staff/' + user.uid).set(profile); } catch (e) { console.warn(e); }
       }
-      return;
+      return profile;
     }
-
-    // Regular Staff Check
-    if (window.CECFirebase.db) {
-      try {
-        const snap = await window.CECFirebase.db.ref('staff/' + user.uid).once('value');
-        const data = snap.val();
-
-        if (data) {
-          this.currentStaffProfile = {
-            ...data,
-            isApproved: data.status === 'approved',
-            roleLabel: data.role === 'admin' ? 'Administrator' : (data.role === 'official' ? 'Match Official' : 'Tournament Staff')
-          };
-        } else {
-          // Create pending approval request in RTDB
-          const newRequest = {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName || 'Staff Member',
-            photoURL: user.photoURL || '',
-            role: 'official',
-            roleLabel: 'Pending Official',
-            status: 'pending',
-            isApproved: false,
-            requestedAt: Date.now()
-          };
-          await window.CECFirebase.db.ref('staff/' + user.uid).set(newRequest);
-          this.currentStaffProfile = newRequest;
-        }
-      } catch (e) {
-        console.warn('Could not reach staff database:', e);
-        this.currentStaffProfile = {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName || 'Staff Member',
-          photoURL: user.photoURL || '',
-          role: 'pending',
-          roleLabel: 'Pending Approval',
-          status: 'pending',
-          isApproved: false
-        };
+    const pending = {
+      uid: user.uid, email: user.email, displayName: user.displayName || 'Staff Member',
+      photoURL: user.photoURL || '', role: 'official', roleLabel: 'Pending Official',
+      status: 'pending', isApproved: false, requestedAt: Date.now()
+    };
+    if (!window.CECFirebase.db) return pending;
+    try {
+      const snap = await window.CECFirebase.db.ref('staff/' + user.uid).once('value');
+      const data = snap.val();
+      if (!data) {
+        await window.CECFirebase.db.ref('staff/' + user.uid).set(pending);
+        return pending;
       }
-    } else {
-      this.currentStaffProfile = {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName,
-        role: 'pending',
-        isApproved: false,
-        status: 'pending'
-      };
+      return Object.assign({}, data, {
+        isApproved: data.status === 'approved',
+        roleLabel: data.role === 'admin' ? 'Administrator' : (data.role === 'official' ? 'Match Official' : 'Tournament Staff')
+      });
+    } catch (e) {
+      console.warn('Could not reach staff database:', e);
+      return pending;
     }
   },
 
-  /**
-   * Super Admin Approves a Staff Request
-   */
-  approveStaff: async function(uid, role) {
-    if (!this.isSuperAdmin()) {
-      alert('Only the Tournament Coordinator (jlcabucos.cec@gmail.com) can approve staff.');
-      return false;
-    }
-    if (!window.CECFirebase.db) return false;
-
-    role = role || 'official';
+  approveStaff: async function (uid, role) {
+    if (!this.isSuperAdmin() || !window.CECFirebase.db) return false;
+    role = role === 'admin' ? 'admin' : 'official';
     await window.CECFirebase.db.ref('staff/' + uid).update({
-      status: 'approved',
-      role: role,
-      approvedAt: Date.now(),
-      approvedBy: this.currentUser.email
+      status: 'approved', isApproved: true, role: role,
+      roleLabel: role === 'admin' ? 'Administrator' : 'Match Official',
+      approvedAt: Date.now(), approvedBy: this.currentUser.email
     });
     return true;
   },
 
-  /**
-   * Super Admin Rejects/Removes a Staff Request
-   */
-  rejectStaff: async function(uid) {
-    if (!this.isSuperAdmin()) return false;
-    if (!window.CECFirebase.db) return false;
-
+  rejectStaff: async function (uid) {
+    if (!this.isSuperAdmin() || !window.CECFirebase.db) return false;
     await window.CECFirebase.db.ref('staff/' + uid).update({
-      status: 'rejected',
-      rejectedAt: Date.now()
+      status: 'rejected', isApproved: false, rejectedAt: Date.now(), rejectedBy: this.currentUser.email
     });
     return true;
   },
 
-  /**
-   * Listen to all staff requests (Super Admin view)
-   */
-  onStaffListChange: function(callback) {
+  onStaffListChange: function (callback) {
     if (!window.CECFirebase.db) return;
-    window.CECFirebase.db.ref('staff').on('value', (snap) => {
+    const ref = window.CECFirebase.db.ref('staff');
+    if (this._staffListListener) ref.off('value', this._staffListListener);
+    this._staffListListener = (snap) => {
       const data = snap.val() || {};
-      const list = Object.keys(data).map(k => data[k]);
-      callback(list);
-    });
+      callback(Object.keys(data).map((key) => data[key]));
+    };
+    ref.on('value', this._staffListListener);
   },
 
-  isSuperAdmin: function() {
-    return this.currentStaffProfile && this.currentStaffProfile.role === 'super_admin';
-  },
+  isSuperAdmin: function () { return !!(this.currentStaffProfile && this.currentStaffProfile.role === 'super_admin'); },
+  isApprovedStaff: function () { return !!(this.currentStaffProfile && this.currentStaffProfile.isApproved === true); },
 
-  isApprovedStaff: function() {
-    return this.currentStaffProfile && this.currentStaffProfile.isApproved === true;
-  },
-
-  onAuthChange: function(fn) {
+  onAuthChange: function (fn) {
     this.listeners.push(fn);
+    if (this.isResolved) {
+      try { fn(this.currentUser, this.currentStaffProfile); } catch (e) { console.warn(e); }
+    }
+  },
+  _notifyListeners: function () {
+    this.listeners.forEach((fn) => { try { fn(this.currentUser, this.currentStaffProfile); } catch (e) { console.warn(e); } });
   },
 
-  _notifyListeners: function() {
-    this.listeners.forEach(fn => {
-      try { fn(this.currentUser, this.currentStaffProfile); } catch (e) {}
-    });
+  /** Protects pages marked <body data-requires-staff="true">. */
+  requireApprovedStaff: function () {
+    const self = this;
+    const deny = function (user, profile) {
+      if (user && self.isApprovedStaff()) return;
+      const heading = user && profile && profile.status === 'rejected' ? 'Access revoked' : (user ? 'Approval required' : 'Staff sign-in required');
+      document.body.innerHTML = '<main style="min-height:100vh;background:#081422;color:#d7e3f7;display:grid;place-items:center;padding:24px;font-family:Arial,sans-serif"><section style="max-width:560px;text-align:center;border:1px solid #424656;background:#15202f;border-radius:12px;padding:32px"><p style="color:#b4c5ff;font-weight:700;letter-spacing:.12em;font-size:12px">CEC ESPORTS STAFF PORTAL</p><h1 style="font-size:28px;margin:12px 0">' + heading + '</h1><p style="color:#c2c6d8;line-height:1.6">This page is limited to approved staff accounts.</p><a href="staff-login.html" style="display:inline-block;margin-top:16px;background:#b4c5ff;color:#002a78;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:700">OPEN STAFF LOGIN</a></section></main>';
+    };
+    this.onAuthChange(deny);
+    if (this.isResolved) deny(this.currentUser, this.currentStaffProfile);
   },
 
-  /**
-   * Render dynamic auth widgets across top headers
-   */
-  renderAuthUI: function() {
-    const authWidgets = document.querySelectorAll('.cec-auth-widget');
-    authWidgets.forEach(widget => {
+  renderAuthUI: function () {
+    const widgets = document.querySelectorAll('.cec-auth-widget');
+    widgets.forEach((widget) => {
       if (this.currentUser) {
-        const isApproved = this.isApprovedStaff();
-        const roleBadge = this.isSuperAdmin() 
-          ? '<span class="px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/40 text-[10px] font-bold">SUPER ADMIN</span>'
-          : (isApproved 
-              ? '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold">OFFICIAL</span>'
-              : '<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-bold animate-pulse">PENDING APPROVAL</span>');
-
-        widget.innerHTML = `
-          <div class="flex items-center gap-2 bg-surface-container-high/90 border border-white/10 px-2.5 py-1.5 rounded-xl shadow-md">
-            <img src="${this.currentUser.photoURL || 'assets/school_logo.jpg'}" alt="Avatar" class="w-7 h-7 rounded-full object-cover border border-white/20" />
-            <div class="flex flex-col text-left hidden sm:flex">
-              <span class="text-xs font-bold text-on-surface truncate max-w-[120px]">${this.currentUser.displayName || 'Staff'}</span>
-              ${roleBadge}
-            </div>
-            <button type="button" onclick="window.CECAuth.signOut()" class="p-1 text-on-surface-variant hover:text-error transition-colors rounded-lg hover:bg-white/5" title="Sign Out">
-              <span class="material-symbols-outlined text-[18px]">logout</span>
-            </button>
-          </div>
-        `;
+        const badge = this.isSuperAdmin() ? 'SUPER ADMIN' : (this.isApprovedStaff() ? 'OFFICIAL' : 'PENDING');
+        widget.innerHTML = '<div class="flex items-center gap-2 bg-surface-container-high/90 border border-white/10 px-2.5 py-1.5 rounded-xl shadow-md"><img src="' + this.esc(this.currentUser.photoURL || 'assets/school_logo.jpg') + '" alt="" class="w-7 h-7 rounded-full object-cover border border-white/20" /><div class="hidden sm:flex flex-col text-left"><span class="text-xs font-bold text-on-surface truncate max-w-[120px]">' + this.esc(this.currentUser.displayName || 'Staff') + '</span><span class="text-[10px] font-bold text-primary">' + badge + '</span></div><button type="button" onclick="window.CECAuth.signOut()" class="p-1 text-on-surface-variant hover:text-error" title="Sign out" aria-label="Sign out"><span class="material-symbols-outlined text-[18px]">logout</span></button></div>';
       } else {
-        widget.innerHTML = `
-          <button type="button" onclick="window.CECAuth.signInWithGoogle()" class="flex items-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest border border-primary/30 text-primary font-label-caps text-xs px-3 py-1.5 rounded-lg shadow-sm transition-colors font-bold">
-            <svg class="w-4 h-4" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" /><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" /><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" /><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" /></svg>
-            <span>STAFF LOGIN</span>
-          </button>
-        `;
+        widget.innerHTML = '<a href="staff-login.html" class="flex items-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest border border-primary/30 text-primary font-label-caps text-xs px-2 sm:px-3 py-1.5 rounded-lg shadow-sm font-bold" title="Staff and admin login"><span class="material-symbols-outlined text-[18px]">shield_person</span><span class="hidden md:inline">STAFF LOGIN</span></a>';
       }
     });
-  },
-
-  _checkLocalSession: function() {
-    // fallback if offline
   }
 };
 
-// Initialize Auth on script load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
+  window.CECAuth.renderAuthUI();
+  if (document.body && document.body.dataset.requiresStaff === 'true') window.CECAuth.requireApprovedStaff();
   window.CECAuth.init();
 });

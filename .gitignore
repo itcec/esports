@@ -1,0 +1,13 @@
+# Local IDE/worktree state; never deploy or commit it.
+.claude/
+.codex/
+.vscode/
+
+# Generated archives and local dependencies.
+*.zip
+node_modules/
+
+# OS/editor noise.
+.DS_Store
+Thumbs.db
+desktop.ini

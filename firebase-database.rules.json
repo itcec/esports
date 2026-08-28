@@ -1,0 +1,22 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "staff": {
+      ".read": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('role').val() === 'super_admin')",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.token.email_verified === true && (auth.token.email === 'jlcabucos.cec@gmail.com' || (auth.uid === $uid && !data.exists() && newData.child('status').val() === 'pending'))",
+        ".validate": "newData.hasChildren(['uid','email','status']) && (auth.token.email === 'jlcabucos.cec@gmail.com' || (newData.child('status').val() === 'pending' && newData.child('role').val() !== 'admin' && newData.child('role').val() !== 'super_admin'))"
+      }
+    },
+    "liveMatches": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('status').val() === 'approved')"
+    },
+    "activeMatchId": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('status').val() === 'approved')"
+    }
+  }
+}

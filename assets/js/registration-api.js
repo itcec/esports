@@ -1,58 +1,54 @@
-/**
- * CEC Esports registration wizard — shared client for the Apps Script backend.
- * Loaded by every step of the registration wizard (register-team through
- * register-success) and the admin pages (admin-registrations, admin-verification)
- * so the API URL only needs to be set in one place.
- *
- * Setup: deploy google-apps-script/Code.gs as a Web App (see SETUP.md there),
- * then paste the Web App URL below.
- */
+/** Shared client for the Google Apps Script registration backend. */
 const REGISTRATION_API_URL = 'https://script.google.com/macros/s/AKfycbxhXkVdmyMYdMvcBTSvVIrVH5LZ6T5v77Z7aKXAt_k67q2cwN3ldII2UtTVBWS63oky/exec';
-const ADMIN_KEY = ''; // only needed if you set ADMIN_KEY in Script Properties — see SETUP.md
+const ADMIN_KEY = ''; // Legacy stopgap only; use Firebase ID-token auth.
+const STAFF_ACTIONS = ['getRegistration', 'updateTeamStatus', 'updatePlayerVerification'];
 
-/** Carries the in-progress registration across wizard pages (plain multi-page HTML, no SPA state). */
+function waitForStaffUser() {
+  return new Promise(function (resolve, reject) {
+    const auth = window.CECAuth;
+    if (!auth) return reject(new Error('Staff authentication is not loaded.'));
+    if (auth.isResolved) return auth.currentUser ? resolve(auth.currentUser) : reject(new Error('Approved staff sign-in is required.'));
+    let done = false;
+    const timer = setTimeout(function () { if (!done) { done = true; reject(new Error('Authentication timed out.')); } }, 15000);
+    auth.onAuthChange(function (user) {
+      if (done) return;
+      if (!auth.isResolved) return;
+      done = true; clearTimeout(timer);
+      user ? resolve(user) : reject(new Error('Approved staff sign-in is required.'));
+    });
+  });
+}
+
 const RegistrationDraft = {
   KEY: 'cecRegistrationDraft',
-  get() {
-    try { return JSON.parse(sessionStorage.getItem(this.KEY)) || {}; }
-    catch (e) { return {}; }
-  },
-  save(partial) {
-    const draft = Object.assign(this.get(), partial);
-    sessionStorage.setItem(this.KEY, JSON.stringify(draft));
-    return draft;
-  },
-  clear() {
-    sessionStorage.removeItem(this.KEY);
-  }
+  get() { try { return JSON.parse(sessionStorage.getItem(this.KEY)) || {}; } catch (e) { return {}; } },
+  save(partial) { const draft = Object.assign(this.get(), partial); sessionStorage.setItem(this.KEY, JSON.stringify(draft)); return draft; },
+  clear() { sessionStorage.removeItem(this.KEY); }
 };
 
-/**
- * Calls one action on the registration API.
- * GET actions (reads) take params as a query string; everything else POSTs the
- * params as application/x-www-form-urlencoded, which Apps Script Web Apps accept
- * without triggering a CORS preflight (a JSON body would trigger one and fail).
- */
+/** GET is used for reads; POST uses form encoding to avoid a CORS preflight. */
 async function callRegistrationApi(action, params, method) {
   method = method || 'POST';
   if (!REGISTRATION_API_URL || REGISTRATION_API_URL.indexOf('PASTE_YOUR') === 0) {
-    throw new Error('Registration API is not configured yet — set REGISTRATION_API_URL in assets/js/registration-api.js.');
+    throw new Error('Registration API is not configured.');
   }
   const url = new URL(REGISTRATION_API_URL);
   url.searchParams.set('action', action);
-  const withKey = ADMIN_KEY ? Object.assign({}, params, { adminKey: ADMIN_KEY }) : (params || {});
-
+  const withKey = ADMIN_KEY ? Object.assign({}, params || {}, { adminKey: ADMIN_KEY }) : (params || {});
+  if (STAFF_ACTIONS.indexOf(action) !== -1) {
+    const user = await waitForStaffUser();
+    withKey.idToken = await user.getIdToken();
+    // Keep Firebase tokens out of URLs, browser history, and proxy logs.
+    if (method === 'GET') method = 'POST';
+  }
   let response;
   if (method === 'GET') {
-    Object.keys(withKey).forEach(function (k) { url.searchParams.set(k, withKey[k]); });
+    Object.keys(withKey).forEach((key) => url.searchParams.set(key, withKey[key]));
     response = await fetch(url.toString());
   } else {
-    response = await fetch(url.toString(), {
-      method: 'POST',
-      body: new URLSearchParams(withKey)
-    });
+    response = await fetch(url.toString(), { method: 'POST', body: new URLSearchParams(withKey) });
   }
-
+  if (!response.ok) throw new Error('Registration API returned HTTP ' + response.status + '.');
   const json = await response.json();
   if (!json.success) throw new Error((json.error && json.error.message) || 'Request failed.');
   return json.data;
