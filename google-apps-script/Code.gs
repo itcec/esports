@@ -400,7 +400,7 @@ function listPublicTeams() {
   const players = sheetObjects(getSheet(PLAYERS_SHEET_NAME, PLAYERS_HEADERS));
   return teams.filter(function (team) { return String(team.Status).toLowerCase() === 'approved'; }).map(function (team) {
     const course = String(team.Course || '');
-    const courseParts = course.split(/\s*[—–-]\s*/);
+    const courseParts = course.split(String.fromCharCode(0x2014));
     const roster = players.filter(function (player) {
       return String(player.TeamID) === String(team.TeamID);
     }).map(function (player, index) {
@@ -540,8 +540,6 @@ function listStandings() {
 
 function recordMatchResult(params, user) {
   if (!params.matchId || !params.winnerId) throw new Error('matchId and winnerId are required.');
-  const streamUrl = String(params.streamUrl || '').trim();
-  if (streamUrl && !/twitch\.tv\//i.test(streamUrl)) throw new Error('Only Twitch stream links can be published.');
   const sheet = getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS);
   const now = new Date();
   
@@ -552,7 +550,7 @@ function recordMatchResult(params, user) {
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('WinnerID') + 1).setValue(params.winnerId);
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('WinnerName') + 1).setValue(params.winnerName || '');
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('Status') + 1).setValue(params.status || 'Completed');
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('StreamUrl') + 1).setValue(streamUrl);
+    sheet.getRange(existing.rowIndex, existing.headers.indexOf('StreamUrl') + 1).setValue(params.streamUrl || '');
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('OfficiatedBy') + 1).setValue(user.email);
     sheet.getRange(existing.rowIndex, existing.headers.indexOf('SubmittedAt') + 1).setValue(now);
   } else {
@@ -570,7 +568,7 @@ function recordMatchResult(params, user) {
       params.winnerId,
       params.winnerName || '',
       params.status || 'Completed',
-      streamUrl,
+      params.streamUrl || '',
       user.email,
       now
     ]);

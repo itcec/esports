@@ -1,4 +1,148 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Rules · CEC Esports</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Orbitron:wght@700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/css/public.css"><style>.rule-list{display:grid;gap:12px;counter-reset:rules}.rule{display:grid;grid-template-columns:36px 1fr;gap:14px;align-items:start}.rule:before{counter-increment:rules;content:counter(rules);display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:rgba(18,100,255,.2);color:var(--cec-blue);font-weight:800}.rule h2{font-size:17px}.rule p{margin:5px 0 0;font-size:14px}</style></head>
-<body><header><div class="public-wrap" style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 0"><a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none"><img src="assets/e-sportslogo.png" alt="CEC Esports" style="width:38px;height:38px;object-fit:contain"><span style="font-family:Orbitron,sans-serif;font-weight:800">CEC <span style="color:var(--cec-blue)">ESPORTS</span></span></a><nav aria-label="Primary"></nav><button id="nav-toggle" type="button" aria-controls="mobile-nav" aria-expanded="false" style="background:none;border:0;color:white;font-size:24px">☰</button></div><nav id="mobile-nav" aria-label="Mobile"></nav></header>
-<main class="public-main"><div class="public-wrap"><div class="page-intro"><div class="eyebrow">Before you register</div><h1>Rules</h1><p>These are the public essentials. Officials may publish the complete competition handbook in the staff-managed records.</p></div><div class="rule-list"><article class="public-card rule"><div><h2>Eligibility</h2><p>Student divisions are for eligible CEC students representing their department. Faculty &amp; staff matches are a friendly exhibition.</p></div></article><article class="public-card rule"><div><h2>Roster</h2><p>Each team submits five starters and may include up to two substitutes. A captain is responsible for the accuracy of the roster.</p></div></article><article class="public-card rule"><div><h2>Verification</h2><p>Required identity documents are reviewed privately by staff. Only approved teams and opted-in public profile images appear on the public site.</p></div></article><article class="public-card rule"><div><h2>Match format</h2><p>Department rounds use the format published in the official bracket. Officials record scores, winners, status, and any published stream.</p></div></article><article class="public-card rule"><div><h2>Fair play</h2><p>Players must follow the official lobby instructions, respect opponents and officials, and report disputes through the tournament process.</p></div></article></div><div class="public-card" style="margin-top:20px"><h2>Questions?</h2><p>Ask the CEC Blue Dragon Esports tournament coordinator before submitting a registration.</p><a class="public-button secondary" href="/register-team.html">START REGISTRATION</a></div></div></main><footer></footer><script src="assets/js/public-shell.js"></script></body></html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Official Tournament Rules · CEC Esports Intramurals 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800;900&family=Inter:wght@400;500;700;800&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/public.css">
+  <style>
+    .rules-grid { display: grid; grid-template-columns: 260px 1fr; gap: 28px; align-items: start; }
+    .rules-nav { position: sticky; top: 84px; display: grid; gap: 8px; }
+    .rules-nav a { display: block; padding: 8px 12px; border-radius: var(--radius-sm); color: var(--cec-muted); text-decoration: none; font-size: 13px; font-weight: 700; transition: all .2s; }
+    .rules-nav a:hover { color: var(--cec-blue); background: var(--cec-card-hover); }
+    .rule-section { margin-bottom: 36px; padding: 28px; background: var(--cec-card); border: 1px solid var(--cec-border); border-radius: var(--radius-md); }
+    .rule-section h2 { font-family: Orbitron, sans-serif; font-size: 22px; color: var(--cec-blue); text-transform: uppercase; margin: 0 0 16px; }
+    .rule-section h3 { font-size: 16px; margin: 18px 0 8px; color: var(--cec-ink); }
+    .rule-section ul { padding-left: 20px; color: var(--cec-muted); font-size: 14px; line-height: 1.6; }
+    .rule-section li { margin-bottom: 6px; }
+    @media (max-width: 860px) {
+      .rules-grid { grid-template-columns: 1fr; }
+      .rules-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="public-wrap" style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 0;">
+      <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+        <img src="assets/e-sportslogo.png" alt="CEC Esports" style="width:38px;height:38px;object-fit:contain">
+        <span style="font-family:Orbitron,sans-serif;font-weight:800;letter-spacing:.03em;">CEC <span style="color:var(--cec-blue)">ESPORTS</span></span>
+      </a>
+      <nav aria-label="Primary"></nav>
+      <button id="nav-toggle" type="button" aria-controls="mobile-nav" aria-expanded="false" aria-label="Open menu" style="display:none;background:none;border:0;color:white;font-size:24px;">☰</button>
+    </div>
+    <nav id="mobile-nav" aria-label="Mobile"></nav>
+  </header>
+
+  <main class="public-main">
+    <div class="public-wrap">
+      <div class="page-intro">
+        <div class="eyebrow">CEC Blue Dragon Esports · Official Competition Handbook</div>
+        <h1>Rules &amp; Guidelines</h1>
+        <p>This handbook covers the Student Division (the official Intramurals competition) and the Faculty Exhibition Game. All participants are required to read and comply with these tournament rules.</p>
+      </div>
+
+      <div class="rules-grid">
+        <aside class="rules-nav">
+          <a href="#divisions">I · Overview of Divisions</a>
+          <a href="#guidelines">II · General Guidelines</a>
+          <a href="#format">III · Bracket &amp; Match Format</a>
+          <a href="#mlbb">IV · Mobile Legends Rules</a>
+          <a href="#officiating">V · Officiating &amp; Protests</a>
+        </aside>
+
+        <div>
+          <!-- I -->
+          <section class="rule-section" id="divisions">
+            <h2>I · Overview of Divisions</h2>
+            <h3>A. Student Division — Men's (College Only)</h3>
+            <p style="color:var(--cec-muted);font-size:14px;">The official Intramurals competition, open exclusively to college student teams representing their academic department.</p>
+            <ul>
+              <li>Participating departments: IT (8 teams), HTM (8 teams), CTE (4 teams) and CRIM (4 teams) — 24 teams total.</li>
+              <li>Held every Saturday, 2:00 – 5:00 PM, starting September 5, 2026.</li>
+              <li>Each department runs its own single-elimination bracket to determine one department champion.</li>
+              <li>The four department champions advance to Grand Finals Day on October 2, 2026.</li>
+            </ul>
+
+            <h3>B. Student Division — Women's (College Only)</h3>
+            <p style="color:var(--cec-muted);font-size:14px;">The official Intramurals competition, played alongside the Men's Division.</p>
+            <ul>
+              <li>Participating departments: IT, HTM, CTE and CRIM — four teams per department (16 teams total).</li>
+              <li>Same schedule and format as the Men's Division; each department produces one champion.</li>
+              <li>The four department champions advance to Grand Finals Day on October 2, 2026.</li>
+            </ul>
+
+            <h3>C. Faculty &amp; Staff Exhibition</h3>
+            <p style="color:var(--cec-muted);font-size:14px;">A friendly showcase for faculty and staff held on Friday, September 11 &amp; 18, 2026 (2:00 – 5:00 PM).</p>
+          </section>
+
+          <!-- II -->
+          <section class="rule-section" id="guidelines">
+            <h2>II · General Guidelines</h2>
+            <h3>A. Eligibility</h3>
+            <ul>
+              <li>The Student Division is open exclusively to bona fide college students of the department they represent.</li>
+              <li>The Faculty Exhibition is open exclusively to bona fide faculty and staff of CEC.</li>
+              <li>Each player may represent only one team for the entire duration of the Intramurals.</li>
+              <li>Player identity and enrollment are verified privately by tournament officials prior to match approval.</li>
+            </ul>
+
+            <h3>B. Roster Composition</h3>
+            <ul>
+              <li>Each team fields five (5) starting players and may register up to two (2) substitute players.</li>
+              <li>Substitutions may only occur between games in a series or during an authorized technical pause.</li>
+              <li>A team failing to field 5 eligible players by the grace period is subject to default forfeit.</li>
+            </ul>
+          </section>
+
+          <!-- III -->
+          <section class="rule-section" id="format">
+            <h2>III · Bracket &amp; Match Format</h2>
+            <ul>
+              <li><strong>Preliminary Department Rounds:</strong> Single-elimination (Best-of-1).</li>
+              <li><strong>Semifinals &amp; 3rd/4th Placement:</strong> Best-of-3 series.</li>
+              <li><strong>Grand Finals:</strong> Best-of-5 series.</li>
+              <li>All preliminary matches are played in assigned custom tournament lobbies.</li>
+            </ul>
+          </section>
+
+          <!-- IV -->
+          <section class="rule-section" id="mlbb">
+            <h2>IV · Mobile Legends Rules</h2>
+            <h3>A. Game Lobby &amp; Draft</h3>
+            <ul>
+              <li>Matches are played using Tournament Draft Pick mode on the active official server patch.</li>
+              <li>Emblems and battle spells must conform to standard fair-play regulations.</li>
+              <li>Using unauthorized third-party software, scripts, or glitch exploits results in immediate disqualification.</li>
+            </ul>
+
+            <h3>B. Disconnections &amp; Pauses</h3>
+            <ul>
+              <li>Teams may request a technical pause immediately through their assigned match official.</li>
+              <li>A 5-minute reconnection grace period is enforced before the match must resume.</li>
+            </ul>
+          </section>
+
+          <!-- V -->
+          <section class="rule-section" id="officiating">
+            <h2>V · Officiating &amp; Protests</h2>
+            <ul>
+              <li>All matches are monitored and recorded by certified tournament officials.</li>
+              <li>Protests must be submitted to the match official during the match or within 15 minutes of completion.</li>
+              <li>Final binding rulings are rendered by Mr. Jade Louis S. Cabucos, Esports Coordinator.</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer></footer>
+
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/auth-guard.js"></script>
+  <script src="assets/js/public-shell.js"></script>
+</body>
+</html>
