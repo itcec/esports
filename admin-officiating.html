@@ -268,87 +268,131 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         <div class="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center gap-3">
           <span class="material-symbols-outlined text-cyan-400 text-[26px]">groups</span>
           <div>
-            <div class="font-bold text-on-surface text-xs uppercase font-label-caps">Team Rosters &amp; Score Setup</div>
-            <div class="text-[11px] text-on-surface-variant">Seed competing teams, departments, and initialize scoreboard series scores.</div>
+            <div class="font-bold text-on-surface text-xs uppercase font-label-caps">Approved Team Selection &amp; Series Score</div>
+            <div class="text-[11px] text-on-surface-variant">Select verified approved teams from the directory. Rosters, emblems, and departments populate automatically.</div>
           </div>
         </div>
 
-        <!-- Team 1 Setup -->
-        <div class="p-md rounded-xl bg-surface-container-lowest/90 border border-primary/20 flex flex-col gap-sm">
-          <div class="flex items-center justify-between">
-            <span class="font-label-caps text-xs text-primary font-bold uppercase">Team 1 (Blue Side)</span>
-            <span class="text-[10px] font-label-caps text-on-surface-variant">HOST / SEED 1</span>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-sm">
-            <div class="sm:col-span-2">
-              <label for="edit-team1-name" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Team 1 Name</label>
-              <input type="text" id="edit-team1-name" placeholder="e.g. IT Titan Dragons" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none" required />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+          <!-- Team 1 Setup -->
+          <div class="p-md rounded-xl bg-surface-container-lowest/90 border border-primary/30 flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="font-label-caps text-xs text-primary font-bold uppercase flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
+                Team 1 (Blue Side / Host)
+              </span>
+              <span class="text-[10px] font-label-caps text-on-surface-variant">SEED 1</span>
             </div>
-            <div>
-              <label for="edit-team1-score" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Series Score</label>
-              <input type="number" min="0" max="10" id="edit-team1-score" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none font-mono font-bold" required />
-            </div>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
-            <div>
-              <label for="edit-team1-dept" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Department</label>
-              <select id="edit-team1-dept" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
-                <option value="IT">IT Department</option>
-                <option value="HTM">HTM Department</option>
-                <option value="CTE">CTE Department</option>
-                <option value="CRIM">CRIM Department</option>
-                <option value="Faculty">Faculty Exhibition</option>
-              </select>
-            </div>
-            <div>
-              <label for="edit-team1-icon" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Emblem</label>
-              <select id="edit-team1-icon" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
-                <option value="assets/icons/dragon-head.svg">Dragon Head</option>
-                <option value="assets/icons/double-dragon.svg">Twin Dragons</option>
-                <option value="assets/icons/wyvern.svg">Wyvern</option>
-                <option value="assets/icons/oni.svg">Oni Demon</option>
-                <option value="assets/icons/werewolf.svg">Werewolf</option>
-              </select>
-            </div>
-          </div>
-        </div>
 
-        <!-- Team 2 Setup -->
-        <div class="p-md rounded-xl bg-surface-container-lowest/90 border border-secondary/20 flex flex-col gap-sm">
-          <div class="flex items-center justify-between">
-            <span class="font-label-caps text-xs text-secondary font-bold uppercase">Team 2 (Red Side)</span>
-            <span class="text-[10px] font-label-caps text-on-surface-variant">CHALLENGER / SEED 2</span>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-sm">
-            <div class="sm:col-span-2">
-              <label for="edit-team2-name" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Team 2 Name</label>
-              <input type="text" id="edit-team2-name" placeholder="e.g. CRIM Iron Werewolves" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none" required />
-            </div>
+            <!-- Approved Team Dropdown -->
             <div>
-              <label for="edit-team2-score" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Series Score</label>
-              <input type="number" min="0" max="10" id="edit-team2-score" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none font-mono font-bold" required />
-            </div>
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
-            <div>
-              <label for="edit-team2-dept" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Department</label>
-              <select id="edit-team2-dept" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
-                <option value="CRIM">CRIM Department</option>
-                <option value="IT">IT Department</option>
-                <option value="HTM">HTM Department</option>
-                <option value="CTE">CTE Department</option>
-                <option value="Faculty">Faculty Exhibition</option>
+              <label for="select-team1-approved" class="block text-[10px] font-label-caps uppercase text-primary mb-1 font-bold">Select Approved Team</label>
+              <select id="select-team1-approved" class="w-full bg-[#050B14] text-on-surface px-3 py-2.5 rounded-lg border border-primary/40 focus:border-primary focus:outline-none text-sm font-bold shadow-inner cursor-pointer">
+                <option value="">-- Choose Approved Team --</option>
               </select>
             </div>
+
+            <!-- Auto-populated Selected Team Badge Preview -->
+            <div id="team1-selected-card" class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-high/60 border border-white/10 mt-1">
+              <div id="team1-preview-badge" class="w-14 h-14 rounded-xl flex items-center justify-center border-2 shrink-0 shadow-lg relative overflow-hidden" style="background:#1264ff">
+                <img id="team1-preview-img" src="assets/icons/dragon-head.svg" alt="Team 1 Emblem" class="w-10 h-10 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" />
+              </div>
+              <div class="min-w-0 flex-1 flex flex-col">
+                <span id="team1-preview-name" class="font-headline-md text-base text-on-surface truncate font-black cyber-title">Team Alpha</span>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                  <img id="team1-preview-dept-img" src="assets/IT.png" class="w-4 h-4 object-contain rounded-full bg-surface-container-lowest border border-white/10 shrink-0" alt="Dept" />
+                  <span id="team1-preview-dept-text" class="text-xs text-on-surface-variant font-bold truncate">IT Department</span>
+                </div>
+              </div>
+              <div class="flex flex-col items-end shrink-0">
+                <label for="edit-team1-score" class="text-[9px] font-label-caps text-primary font-bold mb-0.5">SERIES SCORE</label>
+                <input type="number" min="0" max="10" id="edit-team1-score" value="0" class="w-14 bg-[#050B14] text-primary text-center px-2 py-1.5 rounded-lg border border-primary/50 focus:border-primary focus:outline-none font-mono font-black text-lg shadow-inner" required />
+              </div>
+            </div>
+
+            <!-- Custom Manual Fallback Inputs (Hidden by default) -->
+            <div id="team1-custom-inputs" class="hidden flex flex-col gap-2 pt-2 border-t border-white/10 mt-1">
+              <div>
+                <label for="edit-team1-name" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Custom Team 1 Name</label>
+                <input type="text" id="edit-team1-name" placeholder="e.g. IT Titan Dragons" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none text-xs" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label for="edit-team1-dept" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Department</label>
+                  <select id="edit-team1-dept" class="w-full bg-[#050B14] text-on-surface px-2 py-1.5 rounded border border-white/10 text-xs">
+                    <option value="IT">IT</option>
+                    <option value="HTM">HTM</option>
+                    <option value="CTE">CTE</option>
+                    <option value="CRIM">CRIM</option>
+                    <option value="Faculty">Faculty</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="edit-team1-icon" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Emblem Path</label>
+                  <input type="text" id="edit-team1-icon" value="assets/icons/dragon-head.svg" class="w-full bg-[#050B14] text-on-surface px-2 py-1.5 rounded border border-white/10 text-xs font-mono" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Team 2 Setup -->
+          <div class="p-md rounded-xl bg-surface-container-lowest/90 border border-secondary/30 flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+              <span class="font-label-caps text-xs text-secondary font-bold uppercase flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-secondary animate-pulse"></span>
+                Team 2 (Red Side / Challenger)
+              </span>
+              <span class="text-[10px] font-label-caps text-on-surface-variant">SEED 2</span>
+            </div>
+
+            <!-- Approved Team Dropdown -->
             <div>
-              <label for="edit-team2-icon" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Emblem</label>
-              <select id="edit-team2-icon" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
-                <option value="assets/icons/werewolf.svg">Werewolf</option>
-                <option value="assets/icons/dragon-head.svg">Dragon Head</option>
-                <option value="assets/icons/oni.svg">Oni Demon</option>
-                <option value="assets/icons/ice-golem.svg">Ice Golem</option>
-                <option value="assets/icons/hydra.svg">Hydra</option>
+              <label for="select-team2-approved" class="block text-[10px] font-label-caps uppercase text-secondary mb-1 font-bold">Select Approved Team</label>
+              <select id="select-team2-approved" class="w-full bg-[#050B14] text-on-surface px-3 py-2.5 rounded-lg border border-secondary/40 focus:border-secondary focus:outline-none text-sm font-bold shadow-inner cursor-pointer">
+                <option value="">-- Choose Approved Team --</option>
               </select>
+            </div>
+
+            <!-- Auto-populated Selected Team Badge Preview -->
+            <div id="team2-selected-card" class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-high/60 border border-white/10 mt-1">
+              <div id="team2-preview-badge" class="w-14 h-14 rounded-xl flex items-center justify-center border-2 shrink-0 shadow-lg relative overflow-hidden" style="background:#ff4b4b">
+                <img id="team2-preview-img" src="assets/icons/werewolf.svg" alt="Team 2 Emblem" class="w-10 h-10 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" />
+              </div>
+              <div class="min-w-0 flex-1 flex flex-col">
+                <span id="team2-preview-name" class="font-headline-md text-base text-on-surface truncate font-black cyber-title">Team Bravo</span>
+                <div class="flex items-center gap-1.5 mt-0.5">
+                  <img id="team2-preview-dept-img" src="assets/CRIM.png" class="w-4 h-4 object-contain rounded-full bg-surface-container-lowest border border-white/10 shrink-0" alt="Dept" />
+                  <span id="team2-preview-dept-text" class="text-xs text-on-surface-variant font-bold truncate">CRIM Department</span>
+                </div>
+              </div>
+              <div class="flex flex-col items-end shrink-0">
+                <label for="edit-team2-score" class="text-[9px] font-label-caps text-secondary font-bold mb-0.5">SERIES SCORE</label>
+                <input type="number" min="0" max="10" id="edit-team2-score" value="0" class="w-14 bg-[#050B14] text-secondary text-center px-2 py-1.5 rounded-lg border border-secondary/50 focus:border-secondary focus:outline-none font-mono font-black text-lg shadow-inner" required />
+              </div>
+            </div>
+
+            <!-- Custom Manual Fallback Inputs (Hidden by default) -->
+            <div id="team2-custom-inputs" class="hidden flex flex-col gap-2 pt-2 border-t border-white/10 mt-1">
+              <div>
+                <label for="edit-team2-name" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Custom Team 2 Name</label>
+                <input type="text" id="edit-team2-name" placeholder="e.g. CRIM Iron Werewolves" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none text-xs" />
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label for="edit-team2-dept" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Department</label>
+                  <select id="edit-team2-dept" class="w-full bg-[#050B14] text-on-surface px-2 py-1.5 rounded border border-white/10 text-xs">
+                    <option value="CRIM">CRIM</option>
+                    <option value="IT">IT</option>
+                    <option value="HTM">HTM</option>
+                    <option value="CTE">CTE</option>
+                    <option value="Faculty">Faculty</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="edit-team2-icon" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Emblem Path</label>
+                  <input type="text" id="edit-team2-icon" value="assets/icons/werewolf.svg" class="w-full bg-[#050B14] text-on-surface px-2 py-1.5 rounded border border-white/10 text-xs font-mono" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -570,6 +614,185 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     await window.CECLiveManager.saveMatch(match);
   };
 
+  let approvedTeamsList = [];
+
+  const PALETTE = ['#1264ff', '#00e5ff', '#7c5cff', '#ff2fd8', '#00e676', '#ffb020', '#ff4b4b'];
+  function colorFor(id) {
+    let hash = 0;
+    const s = String(id || '');
+    for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
+    return PALETTE[hash % PALETTE.length];
+  }
+
+  function parseDept(course) {
+    if (!course) return 'IT';
+    const s = String(course).toUpperCase();
+    if (s.indexOf('CRIM') !== -1) return 'CRIM';
+    if (s.indexOf('HTM') !== -1 || s.indexOf('HM') !== -1 || s.indexOf('TM') !== -1) return 'HTM';
+    if (s.indexOf('CTE') !== -1 || s.indexOf('EDUC') !== -1) return 'CTE';
+    if (s.indexOf('FACULTY') !== -1) return 'Faculty';
+    return 'IT';
+  }
+
+  function normalizeLogoUrl(url) {
+    if (!url) return '';
+    let s = String(url).trim();
+    if (s.toLowerCase().startsWith('assets/')) return s.toLowerCase();
+    return s;
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  async function loadApprovedTeams() {
+    try {
+      let list = await callRegistrationApi('listRegistrations', {}, 'GET');
+      if (!list || !list.length) {
+        list = await callRegistrationApi('listPublicTeams', {}, 'GET');
+      }
+      if (Array.isArray(list)) {
+        approvedTeamsList = list.map(t => {
+          const rawDept = parseDept(t.Course || t.course || t.department);
+          const rawIcon = t.LogoUrl || t.logoUrl || t.badgeIcon || 'assets/icons/dragon-head.svg';
+          const teamId = t.TeamID || t.teamId || '';
+          return {
+            id: teamId,
+            name: t.TeamName || t.teamName || 'Team',
+            dept: rawDept,
+            course: t.Course || t.course || '',
+            captain: t.CaptainName || t.captainName || '',
+            icon: normalizeLogoUrl(rawIcon),
+            color: t.teamColor || colorFor(teamId || t.TeamName)
+          };
+        });
+        populateTeamDropdowns();
+      }
+    } catch (err) {
+      console.warn('Could not load approved teams from registry:', err);
+    }
+  }
+
+  function populateTeamDropdowns() {
+    const sel1 = document.getElementById('select-team1-approved');
+    const sel2 = document.getElementById('select-team2-approved');
+    if (!sel1 || !sel2) return;
+
+    const buildOptions = () => {
+      let html = '<option value="">-- Choose Approved Team --</option>';
+      if (approvedTeamsList.length === 0) {
+        html += '<option value="" disabled>No approved teams found</option>';
+      } else {
+        approvedTeamsList.forEach(t => {
+          html += `<option value="${escHtml(t.id)}">[${escHtml(t.dept)}] ${escHtml(t.name)} (${escHtml(t.id)})</option>`;
+        });
+      }
+      html += '<option value="__custom__">⚙️ Custom / Manual Entry...</option>';
+      return html;
+    };
+
+    sel1.innerHTML = buildOptions();
+    sel2.innerHTML = buildOptions();
+  }
+
+  function updateTeamCardPreview(teamNum, team) {
+    const nameEl = document.getElementById('team' + teamNum + '-preview-name');
+    const deptImg = document.getElementById('team' + teamNum + '-preview-dept-img');
+    const deptText = document.getElementById('team' + teamNum + '-preview-dept-text');
+    const badgeEl = document.getElementById('team' + teamNum + '-preview-badge');
+    const imgEl = document.getElementById('team' + teamNum + '-preview-img');
+
+    if (nameEl) nameEl.textContent = team.name || 'Team ' + teamNum;
+    if (deptText) deptText.textContent = (team.dept || 'CEC') + ' Department';
+    if (deptImg) deptImg.src = DEPT_LOGOS[team.dept] || 'assets/school_logo.jpg';
+
+    if (badgeEl && imgEl) {
+      const brandColor = team.color || (teamNum === 1 ? '#1264ff' : '#ff4b4b');
+      badgeEl.style.background = 'radial-gradient(circle at center, ' + brandColor + '20 0%, rgba(10, 16, 30, 0.95) 75%)';
+      badgeEl.style.borderColor = brandColor;
+      badgeEl.style.boxShadow = '0 0 12px ' + brandColor + '40';
+      
+      const iconUrl = normalizeLogoUrl(team.icon);
+      imgEl.src = iconUrl || (teamNum === 1 ? 'assets/icons/dragon-head.svg' : 'assets/icons/werewolf.svg');
+    }
+  }
+
+  function onTeamSelected(teamNum) {
+    const sel = document.getElementById('select-team' + teamNum + '-approved');
+    const customArea = document.getElementById('team' + teamNum + '-custom-inputs');
+    if (!sel) return;
+
+    if (sel.value === '__custom__') {
+      if (customArea) customArea.classList.remove('hidden');
+      return;
+    }
+    if (customArea) customArea.classList.add('hidden');
+
+    if (!sel.value) return;
+
+    const team = approvedTeamsList.find(t => t.id === sel.value || t.name === sel.value);
+    if (!team) return;
+
+    // Auto-populate hidden fields
+    document.getElementById('edit-team' + teamNum + '-name').value = team.name;
+    document.getElementById('edit-team' + teamNum + '-dept').value = team.dept;
+    document.getElementById('edit-team' + teamNum + '-icon').value = team.icon;
+
+    // Update live preview card
+    updateTeamCardPreview(teamNum, team);
+  }
+
+  document.getElementById('select-team1-approved')?.addEventListener('change', () => onTeamSelected(1));
+  document.getElementById('select-team2-approved')?.addEventListener('change', () => onTeamSelected(2));
+
+  // Custom input sync
+  ['name', 'dept', 'icon'].forEach(field => {
+    document.getElementById('edit-team1-' + field)?.addEventListener('input', () => {
+      updateTeamCardPreview(1, {
+        name: document.getElementById('edit-team1-name').value,
+        dept: document.getElementById('edit-team1-dept').value,
+        icon: document.getElementById('edit-team1-icon').value,
+        color: '#1264ff'
+      });
+    });
+    document.getElementById('edit-team2-' + field)?.addEventListener('input', () => {
+      updateTeamCardPreview(2, {
+        name: document.getElementById('edit-team2-name').value,
+        dept: document.getElementById('edit-team2-dept').value,
+        icon: document.getElementById('edit-team2-icon').value,
+        color: '#ff4b4b'
+      });
+    });
+  });
+
+  function syncDropdownToMatchTeam(teamNum, teamObj) {
+    const sel = document.getElementById('select-team' + teamNum + '-approved');
+    const customArea = document.getElementById('team' + teamNum + '-custom-inputs');
+    if (!sel) return;
+
+    const matched = approvedTeamsList.find(t => (teamObj.id && t.id === teamObj.id) || (teamObj.name && t.name.toLowerCase() === teamObj.name.toLowerCase()));
+
+    if (matched) {
+      sel.value = matched.id;
+      if (customArea) customArea.classList.add('hidden');
+      updateTeamCardPreview(teamNum, matched);
+    } else if (teamObj.name) {
+      sel.value = '__custom__';
+      if (customArea) customArea.classList.remove('hidden');
+      updateTeamCardPreview(teamNum, {
+        name: teamObj.name,
+        dept: teamObj.dept || 'IT',
+        icon: teamObj.icon || 'assets/icons/dragon-head.svg',
+        color: teamNum === 1 ? '#1264ff' : '#ff4b4b'
+      });
+    } else {
+      sel.selectedIndex = 0;
+      if (customArea) customArea.classList.add('hidden');
+    }
+  }
+
+  loadApprovedTeams();
+
   window.openMatchEdit = function(matchId) {
     const match = window.CECLiveManager.matches[matchId];
     if (!match) return;
@@ -592,6 +815,9 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     document.getElementById('edit-stream-url').value = match.streamUrl || '';
     document.getElementById('edit-format-badge').value = match.formatBadge || 'BO3 · GAME 1';
     document.getElementById('edit-status').value = match.status || 'LIVE';
+
+    syncDropdownToMatchTeam(1, t1);
+    syncDropdownToMatchTeam(2, t2);
 
     updateWizardStep(1);
     modal.classList.remove('hidden');
