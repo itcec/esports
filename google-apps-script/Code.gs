@@ -70,7 +70,7 @@ function route(e, method) {
     // Authenticated Staff Endpoints
     const staffActions = [
       'getRegistration', 'getPrivateVerificationFile', 'getPrivateVerificationBatch', 'updateTeamStatus',
-      'updatePlayerVerification', 'recordMatchResult', 'publishMatch', 'listDisputes',
+      'updatePlayerVerification', 'recordMatchResult', 'publishMatch', 'deleteMatch', 'listDisputes',
       'resolveDispute', 'saveBracketData', 'getAuditLogs'
     ];
 
@@ -103,6 +103,9 @@ function route(e, method) {
       }
       if (method === 'POST' && action === 'publishMatch') {
         return json({ success: true, data: publishMatch(params, user), message: 'Match publication updated.' });
+      }
+      if (method === 'POST' && action === 'deleteMatch') {
+        return json({ success: true, data: deleteMatch(params, user), message: 'Match deleted.' });
       }
       if (method === 'POST' && action === 'resolveDispute') {
         return json({ success: true, data: resolveDispute(params, user), message: 'Dispute resolved.' });
@@ -673,6 +676,17 @@ function publishMatch(params, user) {
   else sheet.appendRow(values);
   logAudit(user.email, 'PUBLISH_MATCH', params.matchId, 'Status: ' + status + (streamUrl ? ' | Twitch stream published' : ''));
   return { matchId: params.matchId, status: status, streamUrl: streamUrl };
+}
+
+function deleteMatch(params, user) {
+  if (!params.matchId) throw new Error('matchId is required.');
+  const sheet = getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS);
+  const found = findRow(sheet, 'MatchID', params.matchId);
+  if (found) {
+    sheet.deleteRow(found.rowIndex);
+    logAudit(user.email, 'DELETE_MATCH', params.matchId, 'Deleted match from sheet');
+  }
+  return { matchId: params.matchId, deleted: true };
 }
 
 function listStandings() {

@@ -5,7 +5,7 @@ const REGISTRATION_API_URL = 'https://script.google.com/macros/s/AKfycbxhXkVdmyM
 const ADMIN_KEY = ''; // Legacy stopgap only; use Firebase ID-token auth.
 const STAFF_ACTIONS = [
   'getRegistration', 'updateTeamStatus', 'updatePlayerVerification',
-  'getPrivateVerificationFile', 'getPrivateVerificationBatch', 'recordMatchResult', 'publishMatch', 'listDisputes',
+  'getPrivateVerificationFile', 'getPrivateVerificationBatch', 'recordMatchResult', 'publishMatch', 'deleteMatch', 'listDisputes',
   'resolveDispute', 'saveBracketData', 'getAuditLogs'
 ];
 
@@ -214,6 +214,9 @@ const TournamentOps = {
   },
   publishMatch: async function (matchData) {
     return await callRegistrationApi('publishMatch', matchData, 'POST');
+  },
+  deleteMatch: async function (matchId) {
+    return await callRegistrationApi('deleteMatch', { matchId: matchId }, 'POST');
   },
   fileDispute: async function (disputeData) {
     return await callRegistrationApi('fileDispute', disputeData, 'POST');

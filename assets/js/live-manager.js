@@ -40,9 +40,11 @@ window.CECLiveManager = {
       // Listen to Realtime Database /liveMatches
       window.CECFirebase.db.ref('liveMatches').on('value', (snapshot) => {
         const data = snapshot.val();
-        if (data && Object.keys(data).length > 0) {
-          this.matches = data;
-          this._enrichMatchesWithPublicTeams();
+        this.matches = data || {};
+        this._enrichMatchesWithPublicTeams();
+        this._saveLocalMatches();
+        if (!this.matches[this.activeMatchId]) {
+          this.activeMatchId = Object.keys(this.matches)[0] || null;
         }
         this._notify();
       });
@@ -199,13 +201,29 @@ window.CECLiveManager = {
   },
 
   deleteMatch: async function(matchId) {
+    if (!matchId) return;
     delete this.matches[matchId];
     this._saveLocalMatches();
 
-    if (window.CECFirebase.db) {
-      await window.CECFirebase.db.ref('liveMatches/' + matchId).remove();
+    if (window.CECFirebase && window.CECFirebase.db) {
+      try {
+        await window.CECFirebase.db.ref('liveMatches/' + matchId).remove();
+      } catch (e) {
+        console.warn('Firebase liveMatches removal notice:', e);
+      }
     }
-    this.activeMatchId = Object.keys(this.matches)[0] || null;
+
+    if (window.TournamentOps && window.CECAuth && window.CECAuth.isApprovedStaff()) {
+      try {
+        await window.TournamentOps.deleteMatch(matchId);
+      } catch (e) {
+        console.warn('Google Sheets match deletion notice:', e);
+      }
+    }
+
+    if (!this.matches[this.activeMatchId]) {
+      this.activeMatchId = Object.keys(this.matches)[0] || null;
+    }
     this._notify();
   },
 

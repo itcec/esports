@@ -587,14 +587,17 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
           <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-on-surface-variant pt-2 border-t border-white/5">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[16px] ${m.streamUrl ? 'text-emerald-400' : 'text-on-surface-variant'}">videocam</span>
-              <span class="truncate max-w-[180px]">${m.streamUrl ? 'Stream Active' : 'Default Stream'}</span>
+              <span class="truncate max-w-[150px]">${m.streamUrl ? 'Stream Active' : 'Default Stream'}</span>
             </div>
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="openMatchEdit('${m.id}')" class="px-3 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-primary font-bold text-xs flex items-center gap-1 border border-primary/30">
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="openMatchEdit('${m.id}')" class="px-2.5 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-primary font-bold text-xs flex items-center gap-1 border border-primary/30">
                 <span class="material-symbols-outlined text-[14px]">tune</span> Configure
               </button>
-              <button type="button" onclick="recordOfficialResult('${m.id}')" class="px-3 py-1 rounded bg-primary hover:bg-primary-fixed-dim text-on-primary font-bold text-xs flex items-center gap-1 shadow">
-                <span class="material-symbols-outlined text-[14px]">verified</span> Submit Result
+              <button type="button" onclick="recordOfficialResult('${m.id}')" class="px-2.5 py-1 rounded bg-primary hover:bg-primary-fixed-dim text-on-primary font-bold text-xs flex items-center gap-1 shadow">
+                <span class="material-symbols-outlined text-[14px]">verified</span> Result
+              </button>
+              <button type="button" onclick="deleteMatch('${m.id}')" title="Delete Match Lobby" class="p-1 rounded bg-red-500/10 hover:bg-red-500/25 text-red-400 hover:text-red-300 font-bold text-xs flex items-center border border-red-500/20 transition-colors">
+                <span class="material-symbols-outlined text-[16px]">delete</span>
               </button>
             </div>
           </div>
@@ -839,11 +842,36 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     window.CECLiveManager.saveMatch(newMatch);
   });
 
+  window.deleteMatch = async function(matchId) {
+    const match = window.CECLiveManager.matches[matchId];
+    const name = match ? (match.court || match.title || matchId) : matchId;
+    if (confirm('Delete match "' + name + '"?\n\nThis will remove it from the live scoreboard and public broadcast schedule.')) {
+      try {
+        await window.CECLiveManager.deleteMatch(matchId);
+      } catch (err) {
+        alert('Failed to delete match: ' + (err && err.message ? err.message : err));
+      }
+    }
+  };
+
   document.getElementById('delete-match-btn').addEventListener('click', async () => {
     const matchId = document.getElementById('edit-match-id').value;
-    if (confirm('Delete this lobby court?')) {
-      await window.CECLiveManager.deleteMatch(matchId);
-      closeModal();
+    if (!matchId) return;
+    const match = window.CECLiveManager.matches[matchId];
+    const name = match ? (match.court || match.title || matchId) : matchId;
+    if (confirm('Delete match lobby "' + name + '"?')) {
+      const btn = document.getElementById('delete-match-btn');
+      btn.disabled = true;
+      btn.textContent = 'Deleting...';
+      try {
+        await window.CECLiveManager.deleteMatch(matchId);
+      } catch (err) {
+        alert('Failed to delete match: ' + (err && err.message ? err.message : err));
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">delete</span> Delete';
+        closeModal();
+      }
     }
   });
 
