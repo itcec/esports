@@ -10,6 +10,14 @@
         ".validate": "newData.hasChildren(['uid','email','status']) && (auth.token.email === 'jlcabucos.cec@gmail.com' || (newData.child('status').val() === 'pending' && newData.child('role').val() !== 'admin' && newData.child('role').val() !== 'super_admin'))"
       }
     },
+    "cms": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('role').val() === 'super_admin' || root.child('staff').child(auth.uid).child('status').val() === 'approved')"
+    },
+    "registrations": {
+      ".read": true,
+      ".write": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('status').val() === 'approved')"
+    },
     "liveMatches": {
       ".read": true,
       ".write": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('status').val() === 'approved')"
