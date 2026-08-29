@@ -32,8 +32,31 @@
               linear-gradient(to bottom, rgba(5, 11, 20, 0.35) 0%, rgba(5, 11, 20, 0.8) 100%);
   pointer-events: none;
 }
-</style></head><body class="bg-background font-body-md text-on-surface"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low/95 backdrop-blur-md z-50 flex flex-col border-r border-white/10"><div class="h-16 px-md flex items-center gap-sm border-b border-white/10"><svg aria-hidden="true" class="h-6 w-6 text-primary shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.5L12 20.9 6.1 24.1l1.2-6.5L2.5 9l6.6-.9z"></path></svg><span class="font-headline-md text-headline-md text-primary tracking-tight uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md flex flex-col gap-base overflow-y-auto"><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-sm rounded bg-primary-container text-on-primary-container font-bold transition-colors" href="admin-registrations.html"><span class="material-symbols-outlined text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-bracket-builder.html"><span class="material-symbols-outlined text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-officiating.html"><span class="material-symbols-outlined text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-disputes.html"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav><div class="p-md border-t border-white/10"><a class="flex items-center gap-sm px-md py-sm rounded text-primary hover:bg-primary/10 transition-colors" href="index.html"><span class="material-symbols-outlined text-[20px]">arrow_back</span><span class="font-label-caps text-label-caps uppercase font-bold">Public Site</span></a></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container/95 backdrop-blur-md border-b border-white/10 z-40 flex items-center justify-between px-lg gap-md"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase truncate">CEC Esports Intramurals 2026 · Registrations</span><div class="cec-auth-widget flex items-center gap-sm shrink-0"></div></header><main class="relative z-10 pt-16 min-h-screen"><div class="flex flex-col w-full h-full p-lg">
-<div class="flex items-center justify-between mb-xl">
+
+/* Staff shell: full-width top bar on mobile, offset beside the sidebar on desktop. */
+.admin-topbar { left: 0 !important; right: 0 !important; }
+.admin-shell { padding-left: 0 !important; }
+@media (min-width: 1024px) {
+  .admin-topbar { left: 16rem !important; }
+  .admin-shell { padding-left: 16rem !important; }
+}
+
+/* Registrations table on phones: keep select / team / status / actions,
+   hide the secondary columns so the primary approve workflow fits. */
+@media (max-width: 767px) {
+  #registrations-table th:nth-child(2), #registrations-table td:nth-child(2),
+  #registrations-table th:nth-child(4), #registrations-table td:nth-child(4),
+  #registrations-table th:nth-child(5), #registrations-table td:nth-child(5),
+  #registrations-table th:nth-child(6), #registrations-table td:nth-child(6),
+  #registrations-table th:nth-child(7), #registrations-table td:nth-child(7),
+  #registrations-table th:nth-child(9), #registrations-table td:nth-child(9) { display: none; }
+  #registrations-table th, #registrations-table td { padding-left: .5rem; padding-right: .5rem; }
+}
+
+/* Page titles wrap on word boundaries; only break mid-word as a last resort. */
+main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
+</style></head><body class="bg-background font-body-md text-on-surface"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low/95 backdrop-blur-md z-50 hidden lg:flex flex-col border-r border-white/10"><div class="h-16 px-md flex items-center gap-sm border-b border-white/10"><svg aria-hidden="true" class="h-6 w-6 text-primary shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.5L12 20.9 6.1 24.1l1.2-6.5L2.5 9l6.6-.9z"></path></svg><span class="font-headline-md text-headline-md text-primary tracking-tight uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md flex flex-col gap-base overflow-y-auto"><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-sm rounded bg-primary-container text-on-primary-container font-bold transition-colors" href="admin-registrations.html"><span class="material-symbols-outlined text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-bracket-builder.html"><span class="material-symbols-outlined text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-officiating.html"><span class="material-symbols-outlined text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-disputes.html"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav><div class="p-md border-t border-white/10"><a class="flex items-center gap-sm px-md py-sm rounded text-primary hover:bg-primary/10 transition-colors" href="index.html"><span class="material-symbols-outlined text-[20px]">arrow_back</span><span class="font-label-caps text-label-caps uppercase font-bold">Public Site</span></a></div></aside><div class="admin-shell lg:pl-64"><header class="admin-topbar fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface-container/95 backdrop-blur-md border-b border-white/10 z-40 flex items-center justify-between px-lg gap-md"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase truncate">CEC Esports Intramurals 2026 · Registrations</span><div class="cec-auth-widget flex items-center gap-sm shrink-0"></div></header><main class="relative z-10 pt-16 min-h-screen pb-24 lg:pb-0"><div class="flex flex-col w-full h-full p-lg">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md mb-xl">
 <div>
 <h1 class="font-headline-xl text-headline-xl text-on-background mb-xs cyber-title">Registrations</h1>
 <p class="font-body-md text-body-md text-on-surface-variant">Review, verify and approve team submissions for the CEC Esports Intramurals 2026.</p>
@@ -50,7 +73,7 @@
 </div>
 </div>
 <div class="bg-surface rounded-xl shadow-lg border border-outline-variant/10 flex-1 flex flex-col min-h-0">
-<div class="p-md flex items-center justify-between border-b border-outline-variant/10">
+<div class="p-md flex flex-wrap items-center justify-between gap-sm border-b border-outline-variant/10">
 <div class="flex items-center gap-sm bg-surface-container-lowest rounded-lg px-sm py-xs w-96 border border-outline-variant/20 focus-within:border-primary transition-colors">
 <span class="material-symbols-outlined text-outline">search</span>
 <input class="bg-transparent border-none outline-none text-on-surface font-body-md text-body-md w-full placeholder-outline" id="reg-search" placeholder="Search registrations..." type="text"/>
@@ -64,7 +87,7 @@
 </div>
 </div>
 <div class="flex-1 overflow-auto">
-<table class="w-full text-left border-collapse">
+<table id="registrations-table" class="w-full text-left border-collapse">
 <thead class="sticky top-0 bg-surface-container-lowest z-10 shadow-sm">
 <tr>
 <th class="px-sm py-md w-12 text-center"><input class="w-4 h-4 rounded bg-surface-container border-outline-variant focus:ring-primary" id="select-all-checkbox" type="checkbox"/></th>
@@ -101,13 +124,14 @@
 <span class="row-status-badge inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border"></span>
 </td>
 <td class="px-sm py-sm text-right text-on-surface-variant text-sm row-submitted"></td>
-<td class="px-sm py-sm text-center">
+<td class="px-sm py-sm text-center whitespace-nowrap">
+<button type="button" class="row-view-btn md:hidden px-2.5 py-2 min-h-9 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-white/10 text-primary font-label-caps text-[10px] font-bold transition-colors">VIEW</button>
 <a class="row-detail-link p-1 rounded hover:bg-surface-container text-on-surface-variant transition-colors inline-flex" href="admin-verification.html"><span class="material-symbols-outlined text-[18px]">more_vert</span></a>
 </td>
 </tr>
 </template>
 </div>
-<div class="p-sm border-t border-outline-variant/10 flex items-center justify-between bg-surface-container-lowest">
+<div class="p-sm border-t border-outline-variant/10 flex flex-wrap items-center justify-between gap-sm bg-surface-container-lowest">
 <span class="text-sm text-on-surface-variant" id="registrations-count-label">Loading…</span>
 <span class="text-sm text-on-surface-variant cyber-mono" id="registrations-api-status"></span>
 </div>
@@ -150,6 +174,50 @@ document.addEventListener('DOMContentLoaded', () => {
     return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
   }
 
+  function openDetail(team) {
+    const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+    const status = team.Status || 'Pending';
+    const verified = team.VerifiedCount || 0, total = team.PlayerCount || 0;
+    set('detail-team-name', team.TeamName || '(unnamed)');
+    set('detail-id', team.TeamID || '—');
+    set('detail-course', team.Course || '—');
+    set('detail-captain', team.CaptainName || '—');
+    set('detail-contact', team.ContactNumber || '—');
+    set('detail-players', total + '/7');
+    set('detail-verified', verified + '/' + total);
+    set('detail-submitted', formatDate(team.SubmittedAt));
+
+    const sBadge = document.getElementById('detail-status');
+    sBadge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border';
+    sBadge.textContent = STATUS_LABELS[status] || status;
+    (STATUS_STYLES[status] || STATUS_STYLES.Pending).forEach(c => sBadge.classList.add(c));
+
+    const badge = document.getElementById('detail-badge');
+    badge.textContent = initialsOf(team.TeamName);
+    badge.style.background = colorFor(team.TeamID);
+
+    document.getElementById('detail-open-full').href =
+      'admin-verification.html?teamId=' + encodeURIComponent(team.TeamID);
+
+    const modal = document.getElementById('registration-detail-modal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDetail() {
+    const modal = document.getElementById('registration-detail-modal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('detail-close').addEventListener('click', closeDetail);
+  document.getElementById('registration-detail-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'registration-detail-modal') closeDetail();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDetail(); });
+
   function render() {
     const q = (searchInput.value || '').toLowerCase().trim();
     const rows = allRegistrations.filter(t => {
@@ -190,6 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
         (STATUS_STYLES[status] || STATUS_STYLES.Pending).forEach(c => sBadge.classList.add(c));
         node.querySelector('.row-submitted').textContent = formatDate(team.SubmittedAt);
         node.querySelector('.row-detail-link').href = 'admin-verification.html?teamId=' + encodeURIComponent(team.TeamID);
+        // On phones the secondary columns are hidden, so surface them in a sheet.
+        node.querySelector('.row-view-btn').addEventListener('click', () => openDetail(team));
         tbody.appendChild(node);
       });
     }
@@ -263,4 +333,62 @@ document.addEventListener('DOMContentLoaded', () => {
 <script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/auth-guard.js"></script>
 <script>window.CECAuth.requireApprovedStaff();</script>
+
+<!-- Registration detail sheet (phones: the columns hidden from the table) -->
+<div id="registration-detail-modal" class="hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-md items-end sm:items-center justify-center p-0 sm:p-4">
+  <div class="bg-surface-container w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl border border-white/15 shadow-2xl max-h-[85vh] flex flex-col cyber-panel">
+    <div class="flex items-center justify-between gap-md p-lg border-b border-white/10">
+      <div class="flex items-center gap-sm min-w-0">
+        <div id="detail-badge" class="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"></div>
+        <h3 id="detail-team-name" class="font-headline-md text-headline-md text-on-surface cyber-title truncate">Team</h3>
+      </div>
+      <button type="button" id="detail-close" aria-label="Close details" class="shrink-0 w-11 h-11 flex items-center justify-center rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="p-lg overflow-y-auto flex-1">
+      <div class="flex items-center justify-between gap-md pb-3 mb-1 border-b border-white/5">
+        <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider">Status</span>
+        <span id="detail-status" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border">—</span>
+      </div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Registration ID</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-id">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Division / Dept</span><span class="text-sm text-on-surface text-right " id="detail-course">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Captain</span><span class="text-sm text-on-surface text-right " id="detail-captain">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Contact</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-contact">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Players</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-players">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Verified</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-verified">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Submitted</span><span class="text-sm text-on-surface text-right " id="detail-submitted">—</span></div>
+    </div>
+    <div class="p-lg border-t border-white/10 flex gap-sm">
+      <button type="button" onclick="document.getElementById('detail-close').click()" class="flex-1 px-md py-3 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps text-xs font-bold transition-colors">CLOSE</button>
+      <a id="detail-open-full" href="admin-verification.html" class="flex-1 px-md py-3 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold text-center transition-colors">REVIEW TEAM</a>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile bottom app bar: primary staff destinations -->
+<nav aria-label="Staff sections" class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-container-low/95 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.45)] pb-[env(safe-area-inset-bottom)]">
+  <div class="flex items-stretch gap-1 px-2 py-1.5">
+    <a href="/control-center" class="flex flex-1 flex-col items-center justify-center gap-0.5 min-h-14 rounded-xl transition-colors text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined text-[22px]">dashboard</span>
+      <span class="text-[10px] font-label-caps font-bold tracking-wide">Home</span>
+    </a>
+    <a href="admin-officiating.html" class="flex flex-1 flex-col items-center justify-center gap-0.5 min-h-14 rounded-xl transition-colors text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined text-[22px]">sports_esports</span>
+      <span class="text-[10px] font-label-caps font-bold tracking-wide">Live</span>
+    </a>
+    <a href="admin-registrations.html" aria-current="page" class="flex flex-1 flex-col items-center justify-center gap-0.5 min-h-14 rounded-xl transition-colors text-primary bg-primary/10">
+      <span class="material-symbols-outlined text-[22px]">app_registration</span>
+      <span class="text-[10px] font-label-caps font-bold tracking-wide">Teams</span>
+    </a>
+    <a href="admin-bracket-builder.html" class="flex flex-1 flex-col items-center justify-center gap-0.5 min-h-14 rounded-xl transition-colors text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined text-[22px]">account_tree</span>
+      <span class="text-[10px] font-label-caps font-bold tracking-wide">Bracket</span>
+    </a>
+    <a href="admin-disputes.html" class="flex flex-1 flex-col items-center justify-center gap-0.5 min-h-14 rounded-xl transition-colors text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined text-[22px]">gavel</span>
+      <span class="text-[10px] font-label-caps font-bold tracking-wide">Disputes</span>
+    </a>
+  </div>
+</nav>
 </body></html>

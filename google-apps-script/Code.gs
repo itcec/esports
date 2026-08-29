@@ -387,6 +387,8 @@ function listRegistrations() {
       TeamID: team.TeamID,
       TeamName: team.TeamName,
       Course: team.Course,
+      CaptainName: team.CaptainName,
+      ContactNumber: team.ContactNumber,
       Status: team.Status,
       SubmittedAt: team.SubmittedAt,
       PlayerCount: roster.length,
