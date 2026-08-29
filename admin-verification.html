@@ -133,7 +133,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <div class="flex flex-col gap-sm" id="roster-list"></div>
 
 <template id="player-verify-card-template">
-<div class="bg-surface-container rounded-xl p-sm shadow-sm flex flex-col gap-sm relative group hover:bg-surface-container-high transition-colors duration-300 cyber-panel border border-white/5">
+<div class="bg-surface-container rounded-xl p-md shadow-sm flex flex-col gap-md relative group hover:bg-surface-container-high transition-colors duration-300 cyber-panel border border-white/5">
 <div class="status-bar absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"></div>
 <div class="flex flex-col md:flex-row gap-md items-start md:items-center justify-between">
   <div class="flex items-center gap-sm flex-1 min-w-0 w-full">
@@ -150,20 +150,27 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
         <span class="flex items-center gap-xs text-secondary"><span class="material-symbols-outlined text-[14px]">sports_martial_arts</span> <span class="row-role"></span></span>
         <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-        <span class="flex items-center gap-xs"><span class="text-outline uppercase text-[10px]">STUDENT ID:</span> <span class="row-student-id"></span></span>
+        <span class="flex items-center gap-xs"><span class="text-outline uppercase text-[10px]">STUDENT ID:</span> <span class="row-student-id font-bold text-primary"></span></span>
       </div>
     </div>
   </div>
   <div class="flex gap-xs w-full md:w-auto shrink-0 pt-sm md:pt-0 border-t md:border-t-0 border-outline-variant/10">
-    <button class="row-verify-btn flex-1 md:flex-none px-3 py-1.5 bg-primary text-on-primary hover:bg-primary-fixed transition-colors text-[10px] font-bold uppercase rounded flex items-center justify-center gap-1 shadow-sm" type="button"><span class="material-symbols-outlined text-[14px]">check</span> Verify</button>
-    <button class="row-reject-btn flex-1 md:flex-none px-3 py-1.5 bg-surface text-on-surface hover:text-error hover:bg-error-container/10 transition-colors text-[10px] font-bold uppercase rounded flex items-center justify-center gap-1 border border-outline-variant/30" type="button"><span class="material-symbols-outlined text-[14px]">close</span> Reject</button>
+    <button class="row-verify-btn flex-1 md:flex-none px-3.5 py-2 bg-primary text-on-primary hover:bg-primary-fixed transition-colors text-xs font-bold uppercase rounded flex items-center justify-center gap-1 shadow-sm" type="button"><span class="material-symbols-outlined text-[16px]">check</span> Verify</button>
+    <button class="row-reject-btn flex-1 md:flex-none px-3.5 py-2 bg-surface text-on-surface hover:text-error hover:bg-error-container/10 transition-colors text-xs font-bold uppercase rounded flex items-center justify-center gap-1 border border-outline-variant/30" type="button"><span class="material-symbols-outlined text-[16px]">close</span> Reject</button>
   </div>
 </div>
 
-<!-- Uploaded Proofs Container -->
-<div class="row-documents-wrap hidden pt-xs border-t border-white/5 flex flex-wrap items-center gap-2">
-  <span class="text-[10px] uppercase font-bold text-outline">Attached ID Proofs:</span>
-  <div class="row-documents-list flex flex-wrap gap-1.5"></div>
+<!-- Uploaded Proofs Container (Inline Document Photos) -->
+<div class="row-documents-wrap pt-xs border-t border-white/10 flex flex-col gap-2">
+  <div class="flex items-center justify-between">
+    <span class="text-[11px] uppercase font-bold text-on-surface-variant flex items-center gap-1.5 tracking-wider">
+      <span class="material-symbols-outlined text-[16px] text-primary">badge</span>
+      Uploaded Verification Documents
+    </span>
+    <span class="row-doc-count text-[11px] text-outline cyber-mono"></span>
+  </div>
+  <!-- Inline Photo Gallery Grid -->
+  <div class="row-documents-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-1"></div>
 </div>
 </div>
 </template>
@@ -217,26 +224,46 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div></main></div>
 
 <!-- Secure Document Lightbox Viewer Modal -->
-<div id="doc-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-  <div class="relative w-full max-w-3xl bg-surface-container border border-primary/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+<div id="doc-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md">
+  <div class="relative w-full max-w-4xl bg-surface-container border border-primary/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] cyber-panel">
+    <!-- Header -->
     <div class="flex items-center justify-between px-md py-sm border-b border-white/10 bg-surface-container-high">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-[20px]">verified_user</span>
-        <span class="font-bold text-sm text-on-surface truncate" id="modal-doc-title">Private Document Proof</span>
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="material-symbols-outlined text-primary text-[22px]">badge</span>
+        <div class="min-w-0">
+          <h3 class="font-bold text-sm text-on-surface truncate" id="modal-doc-title">Private Document Proof</h3>
+          <p class="text-[11px] text-on-surface-variant truncate" id="modal-player-info">—</p>
+        </div>
       </div>
-      <button type="button" id="close-doc-modal" class="p-1 rounded-lg hover:bg-white/10 text-on-surface-variant hover:text-on-surface">
-        <span class="material-symbols-outlined">close</span>
-      </button>
+      <div class="flex items-center gap-2">
+        <button type="button" id="modal-prev-btn" class="p-1.5 rounded-lg bg-surface hover:bg-surface-container-highest border border-white/10 text-on-surface text-xs font-bold flex items-center gap-1 transition-colors" title="Previous document (Left Arrow)">
+          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        </button>
+        <span id="modal-doc-index" class="text-xs font-mono text-outline px-1">1 / 1</span>
+        <button type="button" id="modal-next-btn" class="p-1.5 rounded-lg bg-surface hover:bg-surface-container-highest border border-white/10 text-on-surface text-xs font-bold flex items-center gap-1 transition-colors" title="Next document (Right Arrow)">
+          <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        </button>
+        <button type="button" id="close-doc-modal" aria-label="Close" class="p-1.5 rounded-lg hover:bg-white/10 text-on-surface-variant hover:text-on-surface transition-colors ml-2">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
     </div>
-    <div class="flex-1 p-md overflow-auto flex items-center justify-center min-h-[300px] bg-[#030914]" id="modal-doc-content">
+    <!-- Image Content / Zoom Area -->
+    <div class="flex-1 p-md overflow-auto flex items-center justify-center min-h-[350px] bg-[#030914] relative select-none" id="modal-doc-content">
       <div class="flex flex-col items-center gap-2 text-primary">
         <span class="material-symbols-outlined text-[36px] animate-spin">progress_activity</span>
         <span class="text-xs font-mono">Fetching private document from Google Drive...</span>
       </div>
     </div>
-    <div class="px-md py-sm border-t border-white/10 bg-surface-container-high flex justify-between items-center text-xs text-on-surface-variant">
-      <span id="modal-doc-info" class="font-mono">Secure proxy transmission via Firebase Auth</span>
-      <button type="button" id="modal-close-btn" class="px-3 py-1.5 rounded bg-surface border border-white/10 hover:bg-surface-container text-on-surface font-bold text-xs">Close</button>
+    <!-- Footer -->
+    <div class="px-md py-sm border-t border-white/10 bg-surface-container-high flex flex-wrap justify-between items-center gap-2 text-xs text-on-surface-variant">
+      <span id="modal-doc-info" class="font-mono text-[11px]">Secure transmission via Firebase Auth</span>
+      <div class="flex items-center gap-2">
+        <button type="button" id="modal-verify-player-btn" class="hidden px-3 py-1.5 rounded bg-primary text-on-primary font-bold text-xs hover:bg-primary-fixed flex items-center gap-1">
+          <span class="material-symbols-outlined text-[16px]">check</span> Verify Player
+        </button>
+        <button type="button" id="modal-close-btn" class="px-3 py-1.5 rounded bg-surface border border-white/10 hover:bg-surface-container text-on-surface font-bold text-xs">Close (Esc)</button>
+      </div>
     </div>
   </div>
 </div>
@@ -315,34 +342,163 @@ document.addEventListener('DOMContentLoaded', () => {
     Rejected: { bar: 'bg-error', badge: 'bg-error/20 text-error', dot: 'bg-error' }
   };
 
-  // Document Viewer Lightbox Handlers
+  // Document Cache & Lightbox State
+  const docCache = new Map();
+  let currentDocList = [];
+  let currentDocIndex = 0;
+  let currentTeamPlayers = [];
+
   const modal = document.getElementById('doc-modal');
   const modalTitle = document.getElementById('modal-doc-title');
   const modalContent = document.getElementById('modal-doc-content');
   const modalInfo = document.getElementById('modal-doc-info');
+  const modalPlayerInfo = document.getElementById('modal-player-info');
+  const modalDocIndex = document.getElementById('modal-doc-index');
+  const modalVerifyBtn = document.getElementById('modal-verify-player-btn');
   const closeModal = () => modal.classList.add('hidden');
+
   document.getElementById('close-doc-modal').addEventListener('click', closeModal);
   document.getElementById('modal-close-btn').addEventListener('click', closeModal);
 
-  async function openDocumentViewer(doc) {
-    modal.classList.remove('hidden');
-    modalTitle.textContent = doc.FileName || 'Identity Verification Document';
-    modalInfo.textContent = 'Drive File ID: ' + (doc.DriveFileId || '—') + ' · Type: ' + (doc.DocType || 'ID Proof');
-    modalContent.innerHTML = '<div class="flex flex-col items-center gap-2 text-primary"><span class="material-symbols-outlined text-[36px] animate-spin">progress_activity</span><span class="text-xs font-mono">Fetching private document from Google Drive...</span></div>';
+  document.getElementById('modal-prev-btn').addEventListener('click', () => {
+    if (currentDocList.length <= 1) return;
+    currentDocIndex = (currentDocIndex - 1 + currentDocList.length) % currentDocList.length;
+    renderModalCurrentDoc();
+  });
 
-    try {
-      const fileData = await getPrivateVerificationDocument(doc.DriveFileId);
-      if (fileData.mimeType === 'application/pdf') {
-        modalContent.innerHTML = '<iframe src="data:application/pdf;base64,' + fileData.base64 + '" class="w-full h-[60vh] rounded border border-white/10"></iframe>';
-      } else {
-        modalContent.innerHTML = '<img src="data:' + fileData.mimeType + ';base64,' + fileData.base64 + '" alt="Verification Document" class="max-h-[60vh] max-w-full object-contain rounded shadow-lg" />';
-      }
-    } catch (err) {
-      modalContent.innerHTML = '<div class="p-4 text-center text-error flex flex-col items-center gap-2"><span class="material-symbols-outlined text-[32px]">error</span><span class="text-sm font-bold">Could not load private file: ' + err.message + '</span></div>';
+  document.getElementById('modal-next-btn').addEventListener('click', () => {
+    if (currentDocList.length <= 1) return;
+    currentDocIndex = (currentDocIndex + 1) % currentDocList.length;
+    renderModalCurrentDoc();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (modal.classList.contains('hidden')) return;
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'ArrowLeft') document.getElementById('modal-prev-btn').click();
+    if (e.key === 'ArrowRight') document.getElementById('modal-next-btn').click();
+  });
+
+  function openDocumentViewer(doc, player, allDocsForTeam) {
+    if (allDocsForTeam && allDocsForTeam.length) {
+      currentDocList = allDocsForTeam;
+      currentDocIndex = currentDocList.findIndex(d => d.DriveFileId === doc.DriveFileId);
+      if (currentDocIndex < 0) currentDocIndex = 0;
+    } else {
+      currentDocList = [doc];
+      currentDocIndex = 0;
+    }
+    renderModalCurrentDoc();
+    modal.classList.remove('hidden');
+  }
+
+  function renderModalCurrentDoc() {
+    const doc = currentDocList[currentDocIndex];
+    if (!doc) return;
+
+    modalTitle.textContent = doc.FileName || 'Identity Verification Document';
+    const player = (currentTeamPlayers || []).find(p => String(p.PlayerID) === String(doc.PlayerID));
+    const playerInfo = player
+      ? `${player.RealName} (${player.IGN || 'No IGN'}) · Student ID: ${player.StudentId || 'N/A'} · ${player.Role || ''}`
+      : 'Team Document';
+    if (modalPlayerInfo) modalPlayerInfo.textContent = playerInfo;
+    if (modalDocIndex) modalDocIndex.textContent = `${currentDocIndex + 1} / ${currentDocList.length}`;
+    if (modalInfo) modalInfo.textContent = `Drive File ID: ${doc.DriveFileId || '—'} · Type: ${(doc.DocType || 'ID Proof').replace(/_/g, ' ')}`;
+
+    if (modalVerifyBtn && player) {
+      modalVerifyBtn.classList.remove('hidden');
+      modalVerifyBtn.disabled = player.VerificationStatus === 'Verified';
+      modalVerifyBtn.onclick = async () => {
+        await setPlayerStatus(player.PlayerID, 'Verified');
+        modalVerifyBtn.disabled = true;
+      };
+    } else if (modalVerifyBtn) {
+      modalVerifyBtn.classList.add('hidden');
+    }
+
+    const cached = docCache.get(doc.DriveFileId);
+    if (cached) {
+      renderModalContent(cached);
+    } else {
+      modalContent.innerHTML = '<div class="flex flex-col items-center gap-2 text-primary"><span class="material-symbols-outlined text-[36px] animate-spin">progress_activity</span><span class="text-xs font-mono">Fetching document from Google Drive...</span></div>';
+      getPrivateVerificationDocument(doc.DriveFileId).then(data => {
+        docCache.set(doc.DriveFileId, data);
+        renderModalContent(data);
+        updateAllDocCards();
+      }).catch(err => {
+        modalContent.innerHTML = '<div class="p-4 text-center text-error flex flex-col items-center gap-2"><span class="material-symbols-outlined text-[32px]">error</span><span class="text-sm font-bold">Could not load private file: ' + err.message + '</span></div>';
+      });
     }
   }
 
+  function renderModalContent(fileData) {
+    if (fileData.mimeType === 'application/pdf') {
+      modalContent.innerHTML = '<iframe src="data:application/pdf;base64,' + fileData.base64 + '" class="w-full h-[70vh] rounded border border-white/10"></iframe>';
+    } else {
+      modalContent.innerHTML = '<img src="data:' + fileData.mimeType + ';base64,' + fileData.base64 + '" alt="Verification Document" class="max-h-[75vh] max-w-full object-contain rounded-lg shadow-2xl transition-all duration-300" title="High-resolution document proof" />';
+    }
+  }
+
+  async function loadAllDocumentsBatch(documents) {
+    if (!documents || !documents.length) return;
+    const missingIds = documents.map(d => d.DriveFileId).filter(id => id && !docCache.has(id));
+    if (!missingIds.length) {
+      updateAllDocCards();
+      return;
+    }
+
+    try {
+      const batchData = await getPrivateVerificationBatch(missingIds);
+      if (batchData && typeof batchData === 'object') {
+        Object.keys(batchData).forEach(fid => {
+          if (batchData[fid] && !batchData[fid].error) {
+            docCache.set(fid, batchData[fid]);
+          }
+        });
+      }
+    } catch (err) {
+      console.warn('Batch fetch failed, attempting parallel fetches:', err);
+      await Promise.all(missingIds.map(async (fid) => {
+        try {
+          const single = await getPrivateVerificationDocument(fid);
+          if (single) docCache.set(fid, single);
+        } catch (e) {
+          console.error('Could not fetch doc ' + fid, e);
+        }
+      }));
+    }
+
+    updateAllDocCards();
+  }
+
+  function updateAllDocCards() {
+    document.querySelectorAll('.doc-card').forEach(card => {
+      const fileId = card.dataset.fileId;
+      if (!fileId) return;
+      const data = docCache.get(fileId);
+      if (!data) return;
+
+      const skeleton = card.querySelector('.doc-skeleton');
+      const img = card.querySelector('.doc-image');
+      const pdf = card.querySelector('.doc-pdf');
+
+      if (skeleton) skeleton.classList.add('hidden');
+
+      if (data.mimeType === 'application/pdf') {
+        if (pdf) pdf.classList.remove('hidden');
+        if (img) img.classList.add('hidden');
+      } else {
+        if (img) {
+          img.src = 'data:' + data.mimeType + ';base64,' + data.base64;
+          img.classList.remove('hidden');
+        }
+        if (pdf) pdf.classList.add('hidden');
+      }
+    });
+  }
+
   function renderPlayers(players, documents) {
+    currentTeamPlayers = players || [];
     rosterList.innerHTML = '';
     document.getElementById('roster-count-label').textContent = players.length + (players.length === 1 ? ' Player' : ' Players');
     const template = document.getElementById('player-verify-card-template');
@@ -375,17 +531,52 @@ document.addEventListener('DOMContentLoaded', () => {
       // Documents matching this player
       const pDocs = (documents || []).filter(d => String(d.PlayerID) === String(p.PlayerID));
       const docWrap = node.querySelector('.row-documents-wrap');
-      const docList = node.querySelector('.row-documents-list');
+      const docGrid = node.querySelector('.row-documents-grid');
+      const docCountLabel = node.querySelector('.row-doc-count');
+
+      if (docCountLabel) {
+        docCountLabel.textContent = pDocs.length + (pDocs.length === 1 ? ' proof uploaded' : ' proofs uploaded');
+      }
+
       if (pDocs.length > 0) {
-        docWrap.classList.remove('hidden');
         pDocs.forEach(d => {
-          const chip = document.createElement('button');
-          chip.type = 'button';
-          chip.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded bg-primary/15 hover:bg-primary/25 border border-primary/30 text-primary text-xs font-bold transition-all shadow-sm';
-          chip.innerHTML = '<span class="material-symbols-outlined text-[14px]">preview</span> <span class="truncate max-w-[120px]">' + (d.FileName || 'ID Proof') + '</span>';
-          chip.addEventListener('click', () => openDocumentViewer(d));
-          docList.appendChild(chip);
+          const docCard = document.createElement('div');
+          docCard.className = 'doc-card relative group/doc flex flex-col rounded-xl overflow-hidden bg-surface-container-lowest border border-white/10 hover:border-primary/50 transition-all shadow-sm cursor-pointer';
+          docCard.dataset.docId = d.DocID || '';
+          docCard.dataset.fileId = d.DriveFileId || '';
+
+          const docTypeLabel = (d.DocType || 'id_proof').replace(/_/g, ' ');
+          docCard.innerHTML = `
+            <div class="doc-thumbnail-wrap relative w-full h-36 bg-[#030914] flex items-center justify-center overflow-hidden">
+              <div class="doc-skeleton absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-primary/70 bg-surface-container-low animate-pulse">
+                <span class="material-symbols-outlined text-[24px] animate-spin">progress_activity</span>
+                <span class="text-[10px] font-mono text-outline">Loading photo...</span>
+              </div>
+              <img class="doc-image hidden w-full h-full object-cover group-hover/doc:scale-105 transition-transform duration-300" alt="Verification proof" />
+              <div class="doc-pdf hidden w-full h-full flex flex-col items-center justify-center gap-1 p-2 text-center bg-red-950/20 border border-red-500/20">
+                <span class="material-symbols-outlined text-[32px] text-red-400">picture_as_pdf</span>
+                <span class="text-[10px] text-red-200 font-bold uppercase">PDF Document</span>
+                <span class="text-[9px] text-outline">Click to preview</span>
+              </div>
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/doc:opacity-100 transition-opacity flex items-center justify-center gap-1 text-white text-xs font-bold pointer-events-none">
+                <span class="material-symbols-outlined text-[18px]">zoom_in</span>
+                <span>Zoom</span>
+              </div>
+            </div>
+            <div class="p-2 bg-surface-container-high flex items-center justify-between gap-1 border-t border-white/5">
+              <span class="text-[11px] font-mono text-on-surface truncate flex-1" title="${escHtml(d.FileName || 'Document')}">${escHtml(d.FileName || 'Document')}</span>
+              <span class="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold uppercase shrink-0">${escHtml(docTypeLabel)}</span>
+            </div>
+          `;
+
+          docCard.addEventListener('click', () => openDocumentViewer(d, p, documents));
+          docGrid.appendChild(docCard);
         });
+      } else {
+        const emptyDoc = document.createElement('div');
+        emptyDoc.className = 'col-span-full py-2.5 px-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-center gap-2';
+        emptyDoc.innerHTML = '<span class="material-symbols-outlined text-[16px] text-amber-400">warning</span> <span>No document proof uploaded for this player.</span>';
+        docGrid.appendChild(emptyDoc);
       }
 
       const verifyBtn = node.querySelector('.row-verify-btn');
@@ -411,6 +602,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const circumference = 339.29;
     const ratio = players.length ? verified / players.length : 0;
     document.getElementById('progress-ring-circle').setAttribute('stroke-dashoffset', String(circumference * (1 - ratio)));
+
+    // Automatically trigger batch fetch of all uploaded documents
+    loadAllDocumentsBatch(documents);
   }
 
   async function setPlayerStatus(playerId, status) {

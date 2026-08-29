@@ -5,7 +5,7 @@ const REGISTRATION_API_URL = 'https://script.google.com/macros/s/AKfycbxhXkVdmyM
 const ADMIN_KEY = ''; // Legacy stopgap only; use Firebase ID-token auth.
 const STAFF_ACTIONS = [
   'getRegistration', 'updateTeamStatus', 'updatePlayerVerification',
-  'getPrivateVerificationFile', 'recordMatchResult', 'publishMatch', 'listDisputes',
+  'getPrivateVerificationFile', 'getPrivateVerificationBatch', 'recordMatchResult', 'publishMatch', 'listDisputes',
   'resolveDispute', 'saveBracketData', 'getAuditLogs'
 ];
 
@@ -182,6 +182,27 @@ const PublicTournamentApi = {
 async function getPrivateVerificationDocument(fileId) {
   if (!fileId) throw new Error('File ID is required.');
   return await callRegistrationApi('getPrivateVerificationFile', { fileId: fileId }, 'POST');
+}
+
+/**
+ * Securely retrieves multiple private document bytes in batch with parallel fallback.
+ */
+async function getPrivateVerificationBatch(fileIds) {
+  if (!Array.isArray(fileIds) || !fileIds.length) return {};
+  try {
+    return await callRegistrationApi('getPrivateVerificationBatch', { fileIds: JSON.stringify(fileIds) }, 'POST');
+  } catch (err) {
+    console.warn('Batch document fetch failed, falling back to parallel requests:', err);
+    const results = {};
+    await Promise.all(fileIds.map(async (fid) => {
+      try {
+        results[fid] = await getPrivateVerificationDocument(fid);
+      } catch (e) {
+        results[fid] = { error: e.message };
+      }
+    }));
+    return results;
+  }
 }
 
 /**

@@ -69,7 +69,7 @@ function route(e, method) {
 
     // Authenticated Staff Endpoints
     const staffActions = [
-      'getRegistration', 'getPrivateVerificationFile', 'updateTeamStatus',
+      'getRegistration', 'getPrivateVerificationFile', 'getPrivateVerificationBatch', 'updateTeamStatus',
       'updatePlayerVerification', 'recordMatchResult', 'publishMatch', 'listDisputes',
       'resolveDispute', 'saveBracketData', 'getAuditLogs'
     ];
@@ -82,6 +82,9 @@ function route(e, method) {
       }
       if ((method === 'GET' || method === 'POST') && action === 'getPrivateVerificationFile') {
         return json({ success: true, data: getPrivateVerificationFile(params.fileId) });
+      }
+      if ((method === 'GET' || method === 'POST') && action === 'getPrivateVerificationBatch') {
+        return json({ success: true, data: getPrivateVerificationBatch(params) });
       }
       if ((method === 'GET' || method === 'POST') && action === 'listDisputes') {
         return json({ success: true, data: listDisputes(params.status) });
@@ -322,6 +325,37 @@ function getPrivateVerificationFile(fileId) {
     size: blob.getBytes().length,
     base64: Utilities.base64Encode(blob.getBytes())
   };
+}
+
+function getPrivateVerificationBatch(params) {
+  let fileIds = [];
+  if (params.fileIds) {
+    try {
+      fileIds = typeof params.fileIds === 'string' ? JSON.parse(params.fileIds) : params.fileIds;
+    } catch (e) {
+      fileIds = String(params.fileIds).split(',').map(function (s) { return s.trim(); });
+    }
+  }
+  if (!Array.isArray(fileIds) || !fileIds.length) return {};
+
+  const results = {};
+  fileIds.forEach(function (fileId) {
+    if (!fileId) return;
+    try {
+      const file = DriveApp.getFileById(fileId);
+      const blob = file.getBlob();
+      results[fileId] = {
+        fileId: file.getId(),
+        fileName: file.getName(),
+        mimeType: file.getMimeType(),
+        size: blob.getBytes().length,
+        base64: Utilities.base64Encode(blob.getBytes())
+      };
+    } catch (err) {
+      results[fileId] = { error: err.message };
+    }
+  });
+  return results;
 }
 
 function createRegistration(params) {
