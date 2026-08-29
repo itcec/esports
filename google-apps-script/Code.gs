@@ -187,29 +187,74 @@ function appendRowObject(sheet, expectedHeaders, dataObj) {
   sheet.appendRow(row);
 }
 
+function isEmblemOrImageUrl(val) {
+  if (!val || typeof val !== 'string') return false;
+  const s = val.trim().toLowerCase();
+  if (s.indexOf('assets/') === 0 || s.indexOf('http://') === 0 || s.indexOf('https://') === 0 || s.indexOf('data:image/') === 0) {
+    return true;
+  }
+  if (s.indexOf('.svg') !== -1 || s.indexOf('.png') !== -1 || s.indexOf('.jpg') !== -1 || s.indexOf('.jpeg') !== -1 || s.indexOf('.webp') !== -1) {
+    return true;
+  }
+  return false;
+}
+
+function normalizeLogoUrl(url) {
+  if (!url) return '';
+  let s = String(url).trim();
+  if (s.toLowerCase().indexOf('assets/') === 0) {
+    return s.toLowerCase();
+  }
+  return s;
+}
+
 function normalizeTeamRow(team) {
   if (!team) return team;
   const t = {};
   Object.keys(team).forEach(function (k) { t[k] = team[k]; });
 
   const statusVal = String(t.Status || '').trim();
-  // Detect if Status contains a file path, URL or emblem string
-  if (statusVal.indexOf('assets/') === 0 || statusVal.indexOf('http://') === 0 || statusVal.indexOf('https://') === 0 || statusVal.indexOf('.svg') !== -1 || statusVal.indexOf('.png') !== -1 || statusVal.indexOf('.jpg') !== -1 || statusVal.indexOf('.webp') !== -1) {
-    if (!t.LogoUrl || String(t.LogoUrl).length < 5) {
-      t.LogoUrl = statusVal;
-    }
-    t.Status = 'Pending';
-  }
-
+  const logoVal = String(t.LogoUrl || '').trim();
   const submittedVal = String(t.SubmittedAt || '').trim();
-  if (submittedVal.indexOf('http://') === 0 || submittedVal.indexOf('https://') === 0 || submittedVal.indexOf('assets/') === 0) {
-    if (!t.TeamPhotoUrl) t.TeamPhotoUrl = submittedVal;
-    t.SubmittedAt = t.UpdatedAt || '';
+  const photoVal = String(t.TeamPhotoUrl || '').trim();
+
+  // Find the real logo:
+  let realLogo = '';
+  if (isEmblemOrImageUrl(logoVal)) {
+    realLogo = logoVal;
+  } else if (isEmblemOrImageUrl(statusVal)) {
+    realLogo = statusVal;
   }
 
-  if (VALID_TEAM_STATUSES.indexOf(t.Status) === -1) {
-    t.Status = 'Pending';
+  // Find the real status:
+  let realStatus = 'Pending';
+  if (VALID_TEAM_STATUSES.indexOf(statusVal) !== -1) {
+    realStatus = statusVal;
+  } else if (VALID_TEAM_STATUSES.indexOf(String(t.UpdatedAt).trim()) !== -1) {
+    realStatus = String(t.UpdatedAt).trim();
+  } else if (VALID_TEAM_STATUSES.indexOf(photoVal) !== -1) {
+    realStatus = photoVal;
   }
+
+  // Find the real photo:
+  let realPhoto = '';
+  if (isEmblemOrImageUrl(photoVal) && photoVal.toLowerCase().indexOf('assets/icons/') === -1) {
+    realPhoto = photoVal;
+  } else if (isEmblemOrImageUrl(submittedVal) && submittedVal.toLowerCase().indexOf('assets/icons/') === -1) {
+    realPhoto = submittedVal;
+  }
+
+  // Find the real submitted date:
+  let realSubmitted = t.SubmittedAt;
+  if (isEmblemOrImageUrl(String(realSubmitted))) {
+    realSubmitted = isEmblemOrImageUrl(logoVal) ? t.UpdatedAt : (t.LogoUrl || t.UpdatedAt || '');
+  }
+
+  t.LogoUrl = realLogo ? normalizeLogoUrl(realLogo) : '';
+  t.Status = realStatus;
+  t.TeamPhotoUrl = realPhoto ? normalizeLogoUrl(realPhoto) : '';
+  t.SubmittedAt = realSubmitted;
+
   return t;
 }
 
