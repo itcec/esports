@@ -114,83 +114,264 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div>
 </div></main></div>
 
-<!-- Official Match Result / Edit Modal -->
-<div id="edit-match-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-  <div class="relative w-full max-w-xl bg-surface-container border border-primary/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-    <div class="flex items-center justify-between px-md py-sm border-b border-white/10 bg-surface-container-high">
+<!-- Stepped Streaming Setup & Broadcast Wizard Modal -->
+<div id="edit-match-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
+  <div class="relative w-full max-w-2xl bg-surface-container border border-primary/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    
+    <!-- Wizard Header -->
+    <div class="flex items-center justify-between px-md py-sm border-b border-white/10 bg-surface-container-high shrink-0">
       <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-primary text-[20px]">sports_esports</span>
-        <span class="font-bold text-sm text-on-surface" id="modal-match-header">Configure Match Court</span>
+        <span class="material-symbols-outlined text-primary text-[22px]">cell_tower</span>
+        <div>
+          <h3 class="font-bold text-sm text-on-surface cyber-title" id="modal-match-header">Broadcast &amp; Streaming Wizard</h3>
+          <p class="text-[11px] text-on-surface-variant">Step-by-step arena setup, feed validation, and realtime scoreboard publishing</p>
+        </div>
       </div>
       <button type="button" id="close-match-modal" class="p-1 rounded-lg hover:bg-white/10 text-on-surface-variant hover:text-on-surface">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
 
-    <form id="match-edit-form" class="p-lg flex flex-col gap-md text-sm">
+    <!-- Stepper Navigation Bar -->
+    <div class="flex items-center justify-between border-b border-white/10 bg-surface-container-low px-md py-2 shrink-0">
+      <button type="button" class="wizard-step-tab active flex items-center gap-1.5 text-xs font-label-caps font-bold text-primary py-1 px-2.5 rounded-lg bg-primary/10 border border-primary/30" data-step="1">
+        <span class="w-4 h-4 rounded-full bg-primary text-on-primary text-[10px] flex items-center justify-center font-bold">1</span>
+        <span>Court &amp; Stage</span>
+      </button>
+      <div class="w-6 h-[1px] bg-white/10"></div>
+      <button type="button" class="wizard-step-tab flex items-center gap-1.5 text-xs font-label-caps text-on-surface-variant hover:text-on-surface py-1 px-2.5 rounded-lg" data-step="2">
+        <span class="w-4 h-4 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] flex items-center justify-center font-bold">2</span>
+        <span>Stream Feed</span>
+      </button>
+      <div class="w-6 h-[1px] bg-white/10"></div>
+      <button type="button" class="wizard-step-tab flex items-center gap-1.5 text-xs font-label-caps text-on-surface-variant hover:text-on-surface py-1 px-2.5 rounded-lg" data-step="3">
+        <span class="w-4 h-4 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] flex items-center justify-center font-bold">3</span>
+        <span>Live Preview</span>
+      </button>
+      <div class="w-6 h-[1px] bg-white/10"></div>
+      <button type="button" class="wizard-step-tab flex items-center gap-1.5 text-xs font-label-caps text-on-surface-variant hover:text-on-surface py-1 px-2.5 rounded-lg" data-step="4">
+        <span class="w-4 h-4 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px] flex items-center justify-center font-bold">4</span>
+        <span>Teams &amp; Scores</span>
+      </button>
+    </div>
+
+    <!-- Wizard Form Body -->
+    <form id="match-edit-form" class="p-lg overflow-y-auto flex-1 flex flex-col gap-md text-sm">
       <input type="hidden" id="edit-match-id" />
 
-      <div class="grid grid-cols-2 gap-md">
-        <div>
-          <label for="edit-court-title" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Court / Title</label>
-          <input type="text" id="edit-court-title" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none" required />
+      <!-- Step 1: Court & Stage Details -->
+      <div id="wizard-step-1" class="wizard-step-content flex flex-col gap-md">
+        <div class="p-3 rounded-xl bg-primary/10 border border-primary/20 flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary text-[26px]">stadium</span>
+          <div>
+            <div class="font-bold text-on-surface text-xs uppercase font-label-caps">Arena &amp; Match Identification</div>
+            <div class="text-[11px] text-on-surface-variant">Set the court location, tournament stage, and official match rules.</div>
+          </div>
         </div>
-        <div>
-          <label for="edit-division" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Division</label>
-          <select id="edit-division" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
-            <option value="Student Men's">Student Men's Division</option>
-            <option value="Student Women's">Student Women's Division</option>
-            <option value="Faculty Exhibition">Faculty Exhibition</option>
-          </select>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+          <div>
+            <label for="edit-court-title" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Court / Arena Lobby <span class="text-error">*</span></label>
+            <input type="text" id="edit-court-title" placeholder="e.g. Court 1 (Annex Main Arena)" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none" required />
+          </div>
+          <div>
+            <label for="edit-division" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Division <span class="text-error">*</span></label>
+            <select id="edit-division" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none">
+              <option value="Student Men's">Student Men's Division</option>
+              <option value="Student Women's">Student Women's Division</option>
+              <option value="Faculty Exhibition">Faculty Exhibition (Friendly)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+          <div>
+            <label for="edit-format-badge" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Series Format &amp; Game Badge</label>
+            <input type="text" id="edit-format-badge" placeholder="BO3 · GAME 2" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none" />
+          </div>
+          <div>
+            <label for="edit-status" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Broadcast Status</label>
+            <select id="edit-status" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none">
+              <option value="LIVE">🔴 LIVE ON AIR</option>
+              <option value="CHECKIN">⏳ CHECK-IN / WARMUP</option>
+              <option value="PAUSED">⏸️ TECHNICAL PAUSE</option>
+              <option value="COMPLETED">✅ MATCH COMPLETED</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-md">
-        <div>
-          <label for="edit-team1-name" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Team 1 Name</label>
-          <input type="text" id="edit-team1-name" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none" required />
+      <!-- Step 2: Stream Feed Configuration -->
+      <div id="wizard-step-2" class="wizard-step-content hidden flex flex-col gap-md">
+        <div class="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center gap-3">
+          <span class="material-symbols-outlined text-purple-400 text-[26px]">videocam</span>
+          <div>
+            <div class="font-bold text-on-surface text-xs uppercase font-label-caps">Live Video Broadcast Source</div>
+            <div class="text-[11px] text-on-surface-variant">Connect official Twitch channel or observer feed for synchronized spectator broadcast.</div>
+          </div>
         </div>
+
         <div>
-          <label for="edit-team2-name" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Team 2 Name</label>
-          <input type="text" id="edit-team2-name" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none" required />
+          <label for="edit-stream-url" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Twitch Live Stream Channel / URL</label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary text-[18px]">link</span>
+            <input type="url" id="edit-stream-url" placeholder="https://twitch.tv/cecesports (or leave blank for CEC Observer loop)" class="w-full bg-[#050B14] text-on-surface pl-9 pr-3 py-2.5 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs font-mono" />
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-on-surface-variant mt-1.5">
+            <span>Supports direct channel URLs like <code class="text-primary font-mono">twitch.tv/channel</code>.</span>
+            <span class="text-amber-300 font-mono">Embedded with parent domains</span>
+          </div>
+        </div>
+
+        <div class="p-md rounded-xl bg-surface-container-lowest border border-white/5 flex flex-col gap-2">
+          <span class="font-label-caps text-xs text-on-surface font-bold uppercase flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-secondary text-[16px]">smart_display</span> Standby Observer Video Loop
+          </span>
+          <p class="text-xs text-on-surface-variant">When no external stream is active, the Live Arena displays the high-octane <strong>CEC Video Intro</strong> looping smoothly with viewer un-mute controls.</p>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-md">
-        <div>
-          <label for="edit-team1-score" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Team 1 Score</label>
-          <input type="number" min="0" max="10" id="edit-team1-score" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none font-mono" required />
+      <!-- Step 3: Interactive Live Preview & Signal Tester -->
+      <div id="wizard-step-3" class="wizard-step-content hidden flex flex-col gap-md">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" id="wizard-signal-dot"></span>
+            <span class="text-xs font-bold font-label-caps uppercase" id="wizard-signal-label">LIVE PREVIEW MONITOR</span>
+          </div>
+          <span class="text-[10px] font-mono text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20" id="wizard-preview-mode">STANDBY FEED</span>
         </div>
-        <div>
-          <label for="edit-team2-score" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Team 2 Score</label>
-          <input type="number" min="0" max="10" id="edit-team2-score" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none font-mono" required />
+
+        <!-- Interactive Preview Box -->
+        <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-primary/30 shadow-lg flex items-center justify-center">
+          <iframe id="wizard-live-preview-frame" class="w-full h-full border-0 hidden" src="" allowfullscreen></iframe>
+          <div id="wizard-fallback-preview" class="w-full h-full flex flex-col items-center justify-center bg-black relative">
+            <video class="w-full h-full object-cover" src="assets/VideoIntro.mp4" autoplay loop muted playsinline></video>
+            <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2">
+              <span class="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-white/20 text-white text-xs font-bold font-label-caps flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                OFFICIAL CEC OBSERVER FEED (ACTIVE)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-2.5 rounded-lg bg-surface-container-lowest border border-white/5 flex items-center justify-between text-xs">
+          <span class="text-on-surface-variant font-mono truncate" id="wizard-preview-url-text">Feed: assets/VideoIntro.mp4</span>
+          <button type="button" id="wizard-refresh-preview-btn" class="text-primary hover:underline font-bold text-xs flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">refresh</span> Refresh Monitor
+          </button>
         </div>
       </div>
 
-      <div>
-        <label for="edit-stream-url" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Official Twitch Stream URL</label>
-        <input type="url" id="edit-stream-url" placeholder="https://twitch.tv/yourchannel (Twitch links only)" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none text-xs font-mono" />
+      <!-- Step 4: Teams, Scores & Rosters -->
+      <div id="wizard-step-4" class="wizard-step-content hidden flex flex-col gap-md">
+        <div class="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center gap-3">
+          <span class="material-symbols-outlined text-cyan-400 text-[26px]">groups</span>
+          <div>
+            <div class="font-bold text-on-surface text-xs uppercase font-label-caps">Team Rosters &amp; Score Setup</div>
+            <div class="text-[11px] text-on-surface-variant">Seed competing teams, departments, and initialize scoreboard series scores.</div>
+          </div>
+        </div>
+
+        <!-- Team 1 Setup -->
+        <div class="p-md rounded-xl bg-surface-container-lowest/90 border border-primary/20 flex flex-col gap-sm">
+          <div class="flex items-center justify-between">
+            <span class="font-label-caps text-xs text-primary font-bold uppercase">Team 1 (Blue Side)</span>
+            <span class="text-[10px] font-label-caps text-on-surface-variant">HOST / SEED 1</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-sm">
+            <div class="sm:col-span-2">
+              <label for="edit-team1-name" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Team 1 Name</label>
+              <input type="text" id="edit-team1-name" placeholder="e.g. IT Titan Dragons" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none" required />
+            </div>
+            <div>
+              <label for="edit-team1-score" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Series Score</label>
+              <input type="number" min="0" max="10" id="edit-team1-score" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none font-mono font-bold" required />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+            <div>
+              <label for="edit-team1-dept" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Department</label>
+              <select id="edit-team1-dept" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
+                <option value="IT">IT Department</option>
+                <option value="HTM">HTM Department</option>
+                <option value="CTE">CTE Department</option>
+                <option value="CRIM">CRIM Department</option>
+                <option value="Faculty">Faculty Exhibition</option>
+              </select>
+            </div>
+            <div>
+              <label for="edit-team1-icon" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Emblem</label>
+              <select id="edit-team1-icon" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
+                <option value="assets/icons/dragon-head.svg">Dragon Head</option>
+                <option value="assets/icons/double-dragon.svg">Twin Dragons</option>
+                <option value="assets/icons/wyvern.svg">Wyvern</option>
+                <option value="assets/icons/oni.svg">Oni Demon</option>
+                <option value="assets/icons/werewolf.svg">Werewolf</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Team 2 Setup -->
+        <div class="p-md rounded-xl bg-surface-container-lowest/90 border border-secondary/20 flex flex-col gap-sm">
+          <div class="flex items-center justify-between">
+            <span class="font-label-caps text-xs text-secondary font-bold uppercase">Team 2 (Red Side)</span>
+            <span class="text-[10px] font-label-caps text-on-surface-variant">CHALLENGER / SEED 2</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-sm">
+            <div class="sm:col-span-2">
+              <label for="edit-team2-name" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Team 2 Name</label>
+              <input type="text" id="edit-team2-name" placeholder="e.g. CRIM Iron Werewolves" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none" required />
+            </div>
+            <div>
+              <label for="edit-team2-score" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Series Score</label>
+              <input type="number" min="0" max="10" id="edit-team2-score" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none font-mono font-bold" required />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+            <div>
+              <label for="edit-team2-dept" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Department</label>
+              <select id="edit-team2-dept" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
+                <option value="CRIM">CRIM Department</option>
+                <option value="IT">IT Department</option>
+                <option value="HTM">HTM Department</option>
+                <option value="CTE">CTE Department</option>
+                <option value="Faculty">Faculty Exhibition</option>
+              </select>
+            </div>
+            <div>
+              <label for="edit-team2-icon" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Emblem</label>
+              <select id="edit-team2-icon" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
+                <option value="assets/icons/werewolf.svg">Werewolf</option>
+                <option value="assets/icons/dragon-head.svg">Dragon Head</option>
+                <option value="assets/icons/oni.svg">Oni Demon</option>
+                <option value="assets/icons/ice-golem.svg">Ice Golem</option>
+                <option value="assets/icons/hydra.svg">Hydra</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-md">
-        <div>
-          <label for="edit-format-badge" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Format Badge</label>
-          <input type="text" id="edit-format-badge" placeholder="BO3 · GAME 2" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none" />
-        </div>
-        <div>
-          <label for="edit-status" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Match Status</label>
-          <select id="edit-status" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded border border-white/10 focus:border-primary focus:outline-none">
-            <option value="LIVE">🔴 LIVE</option>
-            <option value="CHECKIN">⏳ CHECK-IN OPEN</option>
-            <option value="PAUSED">⏸️ PAUSED</option>
-            <option value="COMPLETED">✅ COMPLETED</option>
-          </select>
-        </div>
-      </div>
+      <!-- Wizard Footer Controls -->
+      <div class="flex items-center justify-between gap-sm pt-md border-t border-white/10 shrink-0">
+        <button type="button" id="delete-match-btn" class="px-3 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 font-bold text-xs flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">delete</span> Delete
+        </button>
 
-      <div class="flex justify-end gap-sm pt-sm border-t border-white/10">
-        <button type="button" id="delete-match-btn" class="px-3 py-2 rounded bg-red-500/20 hover:bg-red-500/30 text-red-300 font-bold text-xs">Delete Lobby</button>
-        <button type="submit" class="px-5 py-2 rounded bg-primary hover:bg-primary-fixed-dim text-on-primary font-bold text-xs shadow-md">SAVE &amp; BROADCAST</button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="wizard-prev-btn" class="hidden px-4 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-bold text-xs flex items-center gap-1 border border-white/10">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span> Back
+          </button>
+          <button type="button" id="wizard-next-btn" class="px-4 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary font-bold text-xs flex items-center gap-1 border border-primary/30 shadow">
+            <span>Next Step</span> <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </button>
+          <button type="submit" id="wizard-submit-btn" class="px-5 py-2 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-bold text-xs shadow-lg flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">rocket_launch</span>
+            <span>PUBLISH BROADCAST</span>
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -216,6 +397,91 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   const form = document.getElementById('match-edit-form');
   const closeModal = () => modal.classList.add('hidden');
   document.getElementById('close-match-modal').addEventListener('click', closeModal);
+
+  // Stepped Streaming Wizard Logic
+  let currentStep = 1;
+  const stepTabs = document.querySelectorAll('.wizard-step-tab');
+  const stepContents = document.querySelectorAll('.wizard-step-content');
+  const prevBtn = document.getElementById('wizard-prev-btn');
+  const nextBtn = document.getElementById('wizard-next-btn');
+  const submitBtn = document.getElementById('wizard-submit-btn');
+
+  function updateWizardStep(step) {
+    currentStep = step;
+    stepContents.forEach(el => el.classList.add('hidden'));
+    const activeContent = document.getElementById('wizard-step-' + step);
+    if (activeContent) activeContent.classList.remove('hidden');
+
+    stepTabs.forEach(tab => {
+      const tStep = parseInt(tab.dataset.step, 10);
+      const isCur = tStep === step;
+      tab.classList.toggle('text-primary', isCur);
+      tab.classList.toggle('bg-primary/10', isCur);
+      tab.classList.toggle('border', isCur);
+      tab.classList.toggle('border-primary/30', isCur);
+      tab.classList.toggle('text-on-surface-variant', !isCur);
+    });
+
+    prevBtn.classList.toggle('hidden', step === 1);
+    nextBtn.classList.toggle('hidden', step === 4);
+
+    if (step === 3) {
+      updateLiveStreamPreview();
+    }
+  }
+
+  stepTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const step = parseInt(tab.dataset.step, 10);
+      updateWizardStep(step);
+    });
+  });
+
+  if (prevBtn) prevBtn.addEventListener('click', () => {
+    if (currentStep > 1) updateWizardStep(currentStep - 1);
+  });
+  if (nextBtn) nextBtn.addEventListener('click', () => {
+    if (currentStep < 4) updateWizardStep(currentStep + 1);
+  });
+
+  // Step 3 Live Preview Monitor
+  function updateLiveStreamPreview() {
+    const rawUrl = (document.getElementById('edit-stream-url').value || '').trim();
+    const frame = document.getElementById('wizard-live-preview-frame');
+    const fallback = document.getElementById('wizard-fallback-preview');
+    const signalDot = document.getElementById('wizard-signal-dot');
+    const signalLabel = document.getElementById('wizard-signal-label');
+    const modeBadge = document.getElementById('wizard-preview-mode');
+    const urlText = document.getElementById('wizard-preview-url-text');
+
+    const embedUrl = window.CECLiveManager.formatStreamEmbedUrl(rawUrl);
+
+    if (embedUrl) {
+      frame.src = embedUrl;
+      frame.classList.remove('hidden');
+      fallback.classList.add('hidden');
+      signalDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
+      signalLabel.textContent = 'TWITCH LIVE STREAM FEED (SYNCHRONIZED)';
+      modeBadge.textContent = 'ON-AIR STREAM';
+      modeBadge.className = 'text-[10px] font-mono text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30 font-bold';
+      urlText.textContent = 'Channel Feed: ' + rawUrl;
+    } else {
+      frame.src = '';
+      frame.classList.add('hidden');
+      fallback.classList.remove('hidden');
+      signalDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
+      signalLabel.textContent = 'CEC OBSERVER FEED (STANDBY LOOP)';
+      modeBadge.textContent = 'STANDBY LOOP';
+      modeBadge.className = 'text-[10px] font-mono text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 font-bold';
+      urlText.textContent = 'Standby Video: assets/VideoIntro.mp4';
+    }
+  }
+
+  const refreshPreviewBtn = document.getElementById('wizard-refresh-preview-btn');
+  if (refreshPreviewBtn) refreshPreviewBtn.addEventListener('click', updateLiveStreamPreview);
+  document.getElementById('edit-stream-url').addEventListener('input', () => {
+    if (currentStep === 3) updateLiveStreamPreview();
+  });
 
   function renderOfficiatingGrid(matches) {
     const container = document.getElementById('officiating-matches-grid');
@@ -310,13 +576,24 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     document.getElementById('edit-match-id').value = match.id;
     document.getElementById('edit-court-title').value = match.court || match.title || '';
     document.getElementById('edit-division').value = match.division || "Student Men's";
-    document.getElementById('edit-team1-name').value = match.team1 ? match.team1.name : '';
-    document.getElementById('edit-team2-name').value = match.team2 ? match.team2.name : '';
-    document.getElementById('edit-team1-score').value = match.team1 ? match.team1.score : 0;
-    document.getElementById('edit-team2-score').value = match.team2 ? match.team2.score : 0;
+    
+    const t1 = match.team1 || {};
+    document.getElementById('edit-team1-name').value = t1.name || '';
+    document.getElementById('edit-team1-score').value = t1.score || 0;
+    document.getElementById('edit-team1-dept').value = t1.dept || 'IT';
+    document.getElementById('edit-team1-icon').value = t1.icon || 'assets/icons/dragon-head.svg';
+
+    const t2 = match.team2 || {};
+    document.getElementById('edit-team2-name').value = t2.name || '';
+    document.getElementById('edit-team2-score').value = t2.score || 0;
+    document.getElementById('edit-team2-dept').value = t2.dept || 'CRIM';
+    document.getElementById('edit-team2-icon').value = t2.icon || 'assets/icons/werewolf.svg';
+
     document.getElementById('edit-stream-url').value = match.streamUrl || '';
     document.getElementById('edit-format-badge').value = match.formatBadge || 'BO3 · GAME 1';
     document.getElementById('edit-status').value = match.status || 'LIVE';
+
+    updateWizardStep(1);
     modal.classList.remove('hidden');
   };
 
@@ -330,8 +607,8 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       formatBadge: 'BO3 · GAME 1',
       status: 'LIVE',
       streamUrl: '',
-      team1: { name: 'Team Alpha', dept: 'IT', score: '0' },
-      team2: { name: 'Team Bravo', dept: 'HTM', score: '0' }
+      team1: { name: 'Team Alpha', dept: 'IT', score: '0', icon: 'assets/icons/dragon-head.svg' },
+      team2: { name: 'Team Bravo', dept: 'HTM', score: '0', icon: 'assets/icons/werewolf.svg' }
     };
     window.CECLiveManager.saveMatch(newMatch);
   });
@@ -355,12 +632,23 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     if (!match.team2) match.team2 = { dept: 'CRIM' };
     match.team1.name = document.getElementById('edit-team1-name').value;
     match.team1.score = String(document.getElementById('edit-team1-score').value);
+    match.team1.dept = document.getElementById('edit-team1-dept').value;
+    match.team1.icon = document.getElementById('edit-team1-icon').value;
+
     match.team2.name = document.getElementById('edit-team2-name').value;
     match.team2.score = String(document.getElementById('edit-team2-score').value);
-    // Officials may only publish Twitch links; matches the Apps Script rule.
-    const streamCheck = window.CECLiveManager.validateStreamUrl(document.getElementById('edit-stream-url').value);
-    if (!streamCheck.ok) { alert(streamCheck.message); return; }
-    match.streamUrl = streamCheck.url;
+    match.team2.dept = document.getElementById('edit-team2-dept').value;
+    match.team2.icon = document.getElementById('edit-team2-icon').value;
+
+    // Officials may publish Twitch links or leave blank for observer loop
+    const rawStream = document.getElementById('edit-stream-url').value;
+    if (rawStream && rawStream.trim()) {
+      const streamCheck = window.CECLiveManager.validateStreamUrl(rawStream);
+      if (!streamCheck.ok) { alert(streamCheck.message); return; }
+      match.streamUrl = streamCheck.url;
+    } else {
+      match.streamUrl = '';
+    }
     match.formatBadge = document.getElementById('edit-format-badge').value;
     match.status = document.getElementById('edit-status').value;
 

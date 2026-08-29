@@ -32,6 +32,19 @@
   pointer-events: none;
 }
 
+.broadcast-vignette {
+  background: radial-gradient(circle at 50% 30%, rgba(18, 100, 255, 0.14) 0%, rgba(8, 20, 34, 0.78) 55%, #050B14 100%);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.9);
+}
+.player-spotlight-glow {
+  filter: drop-shadow(0 0 20px rgba(18, 100, 255, 0.4));
+}
+.role-badge-jungler { background: rgba(168, 85, 247, 0.15); border-color: rgba(168, 85, 247, 0.4); color: #c084fc; }
+.role-badge-mid { background: rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.4); color: #22d3ee; }
+.role-badge-gold { background: rgba(234, 179, 8, 0.15); border-color: rgba(234, 179, 8, 0.4); color: #facc15; }
+.role-badge-exp { background: rgba(249, 115, 22, 0.15); border-color: rgba(249, 115, 22, 0.4); color: #fb923c; }
+.role-badge-roamer { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #34d399; }
+
 /* Subtle Glassmorphism Card System with High Readability */
 .glass-card, .bg-surface-container {
   background-color: rgba(16, 26, 40, 0.78) !important;
@@ -227,47 +240,169 @@
         </div>
       </div>
 
-      <!-- TEAM ROSTERS, STATS & DETAILS (BELOW VIDEO) -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg mt-2" id="team-rosters-grid">
+      <!-- BROADCAST ROSTER SPOTLIGHT CAROUSEL & FULL LINEUP CONTROLS -->
+      <div class="flex flex-col gap-3 mt-4" id="roster-section-wrap">
         
-        <!-- Team 1 Roster & Standing Breakdown -->
-        <div class="bg-surface-container/90 border border-white/10 rounded-xl p-lg flex flex-col gap-md cyber-panel">
-          <div class="flex items-center justify-between border-b border-white/10 pb-sm">
-            <div class="flex items-center gap-2">
-              <img id="team1-roster-dept-logo" src="assets/IT.png" class="w-6 h-6 object-contain" alt="Dept Logo" />
-              <h3 class="font-headline-md text-headline-md text-primary" id="team1-roster-title">Team 1 — Lineup</h3>
-            </div>
-            <span class="text-xs font-label-caps text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded">DEPARTMENT STANDING: —</span>
+        <!-- Header & View Switcher -->
+        <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
+            <h3 class="font-headline-md text-base sm:text-lg text-on-surface uppercase cyber-title">Rosters &amp; Player Spotlight</h3>
           </div>
-
-          <!-- Starting 5 Table -->
-          <div class="flex flex-col gap-1.5" id="team1-roster-list"><div class="flex items-center justify-center p-3 rounded bg-surface-container-lowest/80 text-xs font-label-caps text-on-surface-variant">LINEUP PUBLISHED AT MATCH TIME</div></div>
-
-          <!-- Substitutes -->
-          <div class="flex items-center gap-2 pt-2 border-t border-white/5 text-xs text-on-surface-variant">
-            <span class="font-label-caps text-primary font-bold">RESERVES / SUBS:</span>
-            <span id="team1-subs-display">—</span>
+          <div class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-lg border border-white/10 text-xs">
+            <button type="button" id="tab-spotlight-btn" class="px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">movie</span> Broadcast Spotlight
+            </button>
+            <button type="button" id="tab-lineup-btn" class="px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">table_rows</span> Full Lineups
+            </button>
           </div>
         </div>
 
-        <!-- Team 2 Roster & Standing Breakdown -->
-        <div class="bg-surface-container/90 border border-white/10 rounded-xl p-lg flex flex-col gap-md cyber-panel">
-          <div class="flex items-center justify-between border-b border-white/10 pb-sm">
+        <!-- 1. Broadcast-Style Roster Carousel with Vignette -->
+        <div id="broadcast-spotlight-view" class="relative rounded-2xl overflow-hidden border border-white/10 broadcast-vignette p-4 sm:p-6 shadow-2xl">
+          
+          <!-- Atmospheric Top Tag -->
+          <div class="flex items-center justify-between text-xs font-label-caps text-on-surface-variant mb-4 border-b border-white/10 pb-2">
             <div class="flex items-center gap-2">
-              <img id="team2-roster-dept-logo" src="assets/CRIM.png" class="w-6 h-6 object-contain" alt="Dept Logo" />
-              <h3 class="font-headline-md text-headline-md text-secondary" id="team2-roster-title">Team 2 — Lineup</h3>
+              <span class="material-symbols-outlined text-primary text-[16px]">stars</span>
+              <span class="tracking-widest cyber-mono text-primary">OFFICIAL TOURNAMENT MATCHUP SPOTLIGHT</span>
             </div>
-            <span class="text-xs font-label-caps text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded">DEPARTMENT STANDING: —</span>
+            <div class="flex items-center gap-1.5">
+              <button type="button" id="carousel-prev-btn" class="w-7 h-7 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors" title="Previous Player">
+                <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+              </button>
+              <span class="text-[11px] font-mono px-2" id="carousel-player-index">1 / 5</span>
+              <button type="button" id="carousel-next-btn" class="w-7 h-7 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors" title="Next Player">
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+              </button>
+            </div>
           </div>
 
-          <!-- Starting 5 Table -->
-          <div class="flex flex-col gap-1.5" id="team2-roster-list"><div class="flex items-center justify-center p-3 rounded bg-surface-container-lowest/80 text-xs font-label-caps text-on-surface-variant">LINEUP PUBLISHED AT MATCH TIME</div></div>
+          <!-- Dual Player Spotlight Deck (Team 1 vs Team 2 Head-to-Head by Role) -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            
+            <!-- Team 1 Player Spotlight Card -->
+            <div class="relative rounded-xl p-4 sm:p-5 bg-surface-container-lowest/80 border border-primary/30 shadow-lg flex flex-col justify-between cyber-panel overflow-hidden group">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+              
+              <div class="flex items-center justify-between mb-3 z-10">
+                <div class="flex items-center gap-2">
+                  <img id="spotlight-t1-dept-logo" src="assets/IT.png" class="w-5 h-5 object-contain" alt="Dept" />
+                  <span class="font-label-caps text-[11px] font-bold text-primary tracking-wider" id="spotlight-t1-team-name">TEAM 1</span>
+                </div>
+                <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded border" id="spotlight-t1-role-badge">GOLD LANE</span>
+              </div>
 
-          <!-- Substitutes -->
-          <div class="flex items-center gap-2 pt-2 border-t border-white/5 text-xs text-on-surface-variant">
-            <span class="font-label-caps text-secondary font-bold">RESERVES / SUBS:</span>
-            <span id="team2-subs-display">—</span>
+              <!-- Player Hero Feature -->
+              <div class="flex items-center gap-4 py-2 z-10">
+                <div class="relative shrink-0 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary/20 border-2 border-primary/40 player-spotlight-glow shadow-md">
+                  <span class="material-symbols-outlined text-[36px] sm:text-[44px] text-primary" id="spotlight-t1-avatar">person</span>
+                  <span class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-amber-400 text-black text-[11px] font-black flex items-center justify-center shadow hidden" id="spotlight-t1-cap-star" title="Team Captain">⭐</span>
+                </div>
+                <div class="flex flex-col min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[11px] font-mono text-primary font-bold px-1.5 py-0.2 bg-primary/15 rounded" id="spotlight-t1-slot">#1</span>
+                    <span class="text-[10px] font-label-caps text-on-surface-variant uppercase" id="spotlight-t1-type">STARTER</span>
+                  </div>
+                  <h4 class="font-headline-lg text-lg sm:text-2xl font-black text-on-surface cyber-title truncate" id="spotlight-t1-ign">TBD</h4>
+                  <span class="text-xs text-on-surface-variant font-body-md truncate" id="spotlight-t1-real">Player Real Name</span>
+                </div>
+              </div>
+
+              <!-- Player IDs & Meta -->
+              <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-on-surface-variant font-mono z-10">
+                <span id="spotlight-t1-mlbb">MLBB ID: —</span>
+                <span class="text-primary" id="spotlight-t1-student-id">VERIFIED</span>
+              </div>
+            </div>
+
+            <!-- Team 2 Player Spotlight Card -->
+            <div class="relative rounded-xl p-4 sm:p-5 bg-surface-container-lowest/80 border border-secondary/30 shadow-lg flex flex-col justify-between cyber-panel overflow-hidden group">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-2xl pointer-events-none"></div>
+              
+              <div class="flex items-center justify-between mb-3 z-10">
+                <div class="flex items-center gap-2">
+                  <img id="spotlight-t2-dept-logo" src="assets/CRIM.png" class="w-5 h-5 object-contain" alt="Dept" />
+                  <span class="font-label-caps text-[11px] font-bold text-secondary tracking-wider" id="spotlight-t2-team-name">TEAM 2</span>
+                </div>
+                <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded border" id="spotlight-t2-role-badge">GOLD LANE</span>
+              </div>
+
+              <!-- Player Hero Feature -->
+              <div class="flex items-center gap-4 py-2 z-10">
+                <div class="relative shrink-0 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-secondary/20 border-2 border-secondary/40 player-spotlight-glow shadow-md">
+                  <span class="material-symbols-outlined text-[36px] sm:text-[44px] text-secondary" id="spotlight-t2-avatar">person</span>
+                  <span class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-amber-400 text-black text-[11px] font-black flex items-center justify-center shadow hidden" id="spotlight-t2-cap-star" title="Team Captain">⭐</span>
+                </div>
+                <div class="flex flex-col min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[11px] font-mono text-secondary font-bold px-1.5 py-0.2 bg-secondary/15 rounded" id="spotlight-t2-slot">#1</span>
+                    <span class="text-[10px] font-label-caps text-on-surface-variant uppercase" id="spotlight-t2-type">STARTER</span>
+                  </div>
+                  <h4 class="font-headline-lg text-lg sm:text-2xl font-black text-on-surface cyber-title truncate" id="spotlight-t2-ign">TBD</h4>
+                  <span class="text-xs text-on-surface-variant font-body-md truncate" id="spotlight-t2-real">Player Real Name</span>
+                </div>
+              </div>
+
+              <!-- Player IDs & Meta -->
+              <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-on-surface-variant font-mono z-10">
+                <span id="spotlight-t2-mlbb">MLBB ID: —</span>
+                <span class="text-secondary" id="spotlight-t2-student-id">VERIFIED</span>
+              </div>
+            </div>
+
           </div>
+
+          <!-- Position Selector Pills (P1..P5) -->
+          <div class="flex items-center justify-center gap-2 mt-4 pt-3 border-t border-white/10" id="carousel-position-pills">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- 2. Full Lineups Table View (Toggleable) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-lg hidden" id="team-rosters-grid">
+          
+          <!-- Team 1 Roster & Standing Breakdown -->
+          <div class="bg-surface-container/90 border border-white/10 rounded-xl p-lg flex flex-col gap-md cyber-panel">
+            <div class="flex items-center justify-between border-b border-white/10 pb-sm">
+              <div class="flex items-center gap-2">
+                <img id="team1-roster-dept-logo" src="assets/IT.png" class="w-6 h-6 object-contain" alt="Dept Logo" />
+                <h3 class="font-headline-md text-headline-md text-primary" id="team1-roster-title">Team 1 — Lineup</h3>
+              </div>
+              <span class="text-xs font-label-caps text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded">DEPARTMENT ENTRY</span>
+            </div>
+
+            <!-- Starting 5 Table -->
+            <div class="flex flex-col gap-1.5" id="team1-roster-list"><div class="flex items-center justify-center p-3 rounded bg-surface-container-lowest/80 text-xs font-label-caps text-on-surface-variant">LINEUP PUBLISHED AT MATCH TIME</div></div>
+
+            <!-- Substitutes -->
+            <div class="flex items-center gap-2 pt-2 border-t border-white/5 text-xs text-on-surface-variant">
+              <span class="font-label-caps text-primary font-bold">RESERVES / SUBS:</span>
+              <span id="team1-subs-display">—</span>
+            </div>
+          </div>
+
+          <!-- Team 2 Roster & Standing Breakdown -->
+          <div class="bg-surface-container/90 border border-white/10 rounded-xl p-lg flex flex-col gap-md cyber-panel">
+            <div class="flex items-center justify-between border-b border-white/10 pb-sm">
+              <div class="flex items-center gap-2">
+                <img id="team2-roster-dept-logo" src="assets/CRIM.png" class="w-6 h-6 object-contain" alt="Dept Logo" />
+                <h3 class="font-headline-md text-headline-md text-secondary" id="team2-roster-title">Team 2 — Lineup</h3>
+              </div>
+              <span class="text-xs font-label-caps text-on-surface-variant bg-surface-container-high px-2 py-0.5 rounded">DEPARTMENT ENTRY</span>
+            </div>
+
+            <!-- Starting 5 Table -->
+            <div class="flex flex-col gap-1.5" id="team2-roster-list"><div class="flex items-center justify-center p-3 rounded bg-surface-container-lowest/80 text-xs font-label-caps text-on-surface-variant">LINEUP PUBLISHED AT MATCH TIME</div></div>
+
+            <!-- Substitutes -->
+            <div class="flex items-center gap-2 pt-2 border-t border-white/5 text-xs text-on-surface-variant">
+              <span class="font-label-caps text-secondary font-bold">RESERVES / SUBS:</span>
+              <span id="team2-subs-display">—</span>
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -829,6 +964,151 @@
       fallback.classList.remove('hidden');
       sourceLabel.textContent = (active.court || 'Computer Laboratory Annex Building') + ' · Official Local Loop';
     }
+
+    // Render Broadcast Spotlight Carousel
+    currentActiveMatch = active;
+    renderRosterSpotlight();
+  }
+
+  // Broadcast Spotlight Carousel State & Controller
+  let currentSpotlightIdx = 0;
+  let spotlightTimer = null;
+  let currentActiveMatch = null;
+
+  const tabSpotlightBtn = document.getElementById('tab-spotlight-btn');
+  const tabLineupBtn = document.getElementById('tab-lineup-btn');
+  const spotlightView = document.getElementById('broadcast-spotlight-view');
+  const lineupsView = document.getElementById('team-rosters-grid');
+
+  if (tabSpotlightBtn && tabLineupBtn) {
+    tabSpotlightBtn.addEventListener('click', () => {
+      tabSpotlightBtn.className = 'px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1';
+      tabLineupBtn.className = 'px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1';
+      spotlightView.classList.remove('hidden');
+      lineupsView.classList.add('hidden');
+    });
+
+    tabLineupBtn.addEventListener('click', () => {
+      tabLineupBtn.className = 'px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1';
+      tabSpotlightBtn.className = 'px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1';
+      lineupsView.classList.remove('hidden');
+      spotlightView.classList.add('hidden');
+    });
+  }
+
+  function getRoleBadgeClass(role) {
+    const r = (role || '').toLowerCase();
+    if (r.includes('jungle')) return 'role-badge-jungler';
+    if (r.includes('mid')) return 'role-badge-mid';
+    if (r.includes('gold')) return 'role-badge-gold';
+    if (r.includes('exp')) return 'role-badge-exp';
+    if (r.includes('roam')) return 'role-badge-roamer';
+    return 'bg-surface-container border-white/10 text-on-surface-variant';
+  }
+
+  function renderRosterSpotlight() {
+    if (!currentActiveMatch) return;
+    const t1 = currentActiveMatch.team1 || {};
+    const t2 = currentActiveMatch.team2 || {};
+    const r1 = t1.roster || [];
+    const r2 = t2.roster || [];
+    const maxLen = Math.max(r1.length, r2.length, 1);
+
+    if (currentSpotlightIdx >= maxLen) currentSpotlightIdx = 0;
+    if (currentSpotlightIdx < 0) currentSpotlightIdx = maxLen - 1;
+
+    const idxText = document.getElementById('carousel-player-index');
+    if (idxText) idxText.textContent = `${currentSpotlightIdx + 1} / ${maxLen}`;
+
+    // Team 1 Player
+    const p1 = r1[currentSpotlightIdx] || { ign: t1.name || 'Team 1', real: 'Lineup Pending', role: 'STARTER', num: '1' };
+    setText('spotlight-t1-team-name', (t1.name || 'TEAM 1').toUpperCase());
+    setSrc('spotlight-t1-dept-logo', DEPT_LOGOS[t1.dept] || 'assets/IT.png');
+    setText('spotlight-t1-ign', p1.ign || p1.real || 'Player 1');
+    setText('spotlight-t1-real', p1.real ? `(${p1.real})` : '');
+    setText('spotlight-t1-slot', `#${p1.num || (currentSpotlightIdx + 1)}`);
+    setText('spotlight-t1-type', p1.type || (currentSpotlightIdx < 5 ? 'STARTER' : 'RESERVE'));
+    setText('spotlight-t1-mlbb', p1.mlbb ? `MLBB ID: ${p1.mlbb}` : `ROLE SLOT #${currentSpotlightIdx + 1}`);
+    setText('spotlight-t1-student-id', p1.verified !== false ? 'VERIFIED ✓' : 'PENDING');
+    const role1Badge = document.getElementById('spotlight-t1-role-badge');
+    if (role1Badge) {
+      role1Badge.textContent = (p1.role || 'STARTER').toUpperCase();
+      role1Badge.className = 'text-[10px] font-label-caps font-bold px-2 py-0.5 rounded border ' + getRoleBadgeClass(p1.role);
+    }
+    const cap1Star = document.getElementById('spotlight-t1-cap-star');
+    if (cap1Star) cap1Star.classList.toggle('hidden', !p1.isCap);
+
+    // Team 2 Player
+    const p2 = r2[currentSpotlightIdx] || { ign: t2.name || 'Team 2', real: 'Lineup Pending', role: 'STARTER', num: '1' };
+    setText('spotlight-t2-team-name', (t2.name || 'TEAM 2').toUpperCase());
+    setSrc('spotlight-t2-dept-logo', DEPT_LOGOS[t2.dept] || 'assets/CRIM.png');
+    setText('spotlight-t2-ign', p2.ign || p2.real || 'Player 2');
+    setText('spotlight-t2-real', p2.real ? `(${p2.real})` : '');
+    setText('spotlight-t2-slot', `#${p2.num || (currentSpotlightIdx + 1)}`);
+    setText('spotlight-t2-type', p2.type || (currentSpotlightIdx < 5 ? 'STARTER' : 'RESERVE'));
+    setText('spotlight-t2-mlbb', p2.mlbb ? `MLBB ID: ${p2.mlbb}` : `ROLE SLOT #${currentSpotlightIdx + 1}`);
+    setText('spotlight-t2-student-id', p2.verified !== false ? 'VERIFIED ✓' : 'PENDING');
+    const role2Badge = document.getElementById('spotlight-t2-role-badge');
+    if (role2Badge) {
+      role2Badge.textContent = (p2.role || 'STARTER').toUpperCase();
+      role2Badge.className = 'text-[10px] font-label-caps font-bold px-2 py-0.5 rounded border ' + getRoleBadgeClass(p2.role);
+    }
+    const cap2Star = document.getElementById('spotlight-t2-cap-star');
+    if (cap2Star) cap2Star.classList.toggle('hidden', !p2.isCap);
+
+    // Position pills
+    const pillsWrap = document.getElementById('carousel-position-pills');
+    if (pillsWrap) {
+      pillsWrap.innerHTML = '';
+      for (let i = 0; i < maxLen; i++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        const isCur = i === currentSpotlightIdx;
+        btn.className = `px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
+          isCur ? 'bg-primary text-on-primary shadow-[0_0_10px_rgba(18,100,255,0.5)] scale-105' : 'bg-surface-container/60 hover:bg-surface-container-high text-on-surface-variant'
+        }`;
+        btn.textContent = i < 5 ? `P${i + 1}` : `SUB`;
+        btn.addEventListener('click', () => {
+          currentSpotlightIdx = i;
+          renderRosterSpotlight();
+        });
+        pillsWrap.appendChild(btn);
+      }
+    }
+  }
+
+  const prevSpotlightBtn = document.getElementById('carousel-prev-btn');
+  const nextSpotlightBtn = document.getElementById('carousel-next-btn');
+  if (prevSpotlightBtn) prevSpotlightBtn.addEventListener('click', () => {
+    currentSpotlightIdx--;
+    renderRosterSpotlight();
+  });
+  if (nextSpotlightBtn) nextSpotlightBtn.addEventListener('click', () => {
+    currentSpotlightIdx++;
+    renderRosterSpotlight();
+  });
+
+  // Auto-cycle carousel spotlight every 4.5 seconds
+  if (spotlightTimer) clearInterval(spotlightTimer);
+  spotlightTimer = setInterval(() => {
+    if (document.hidden) return;
+    currentSpotlightIdx++;
+    renderRosterSpotlight();
+  }, 4500);
+
+  const spotlightContainer = document.getElementById('broadcast-spotlight-view');
+  if (spotlightContainer) {
+    spotlightContainer.addEventListener('mouseenter', () => {
+      if (spotlightTimer) clearInterval(spotlightTimer);
+    });
+    spotlightContainer.addEventListener('mouseleave', () => {
+      if (spotlightTimer) clearInterval(spotlightTimer);
+      spotlightTimer = setInterval(() => {
+        if (document.hidden) return;
+        currentSpotlightIdx++;
+        renderRosterSpotlight();
+      }, 4500);
+    });
   }
 
   // Hook into CECLiveManager Listeners
