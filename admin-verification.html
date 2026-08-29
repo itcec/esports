@@ -103,7 +103,10 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div>
 <div class="flex flex-col">
 <span class="text-[10px] text-outline font-label-caps uppercase tracking-wider">Course / Major</span>
-<span class="text-on-surface-variant" id="detail-course">—</span>
+<div class="flex items-center gap-2 mt-1">
+  <img id="detail-dept-logo" class="w-5 h-5 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/10 shrink-0 hidden" alt="Department Crest" />
+  <span class="text-on-surface-variant font-bold text-sm" id="detail-course">—</span>
+</div>
 </div>
 </div>
 </div>
@@ -313,6 +316,44 @@ document.addEventListener('DOMContentLoaded', () => {
     return PALETTE[hash % PALETTE.length];
   }
 
+  function sanitizeTeamData(team) {
+    if (!team) return team;
+    const t = Object.assign({}, team);
+    const statusVal = String(t.Status || '').trim();
+
+    if (statusVal.startsWith('assets/') || statusVal.startsWith('http://') || statusVal.startsWith('https://') || statusVal.endsWith('.svg') || statusVal.endsWith('.png') || statusVal.endsWith('.jpg') || statusVal.endsWith('.webp')) {
+      if (!t.LogoUrl || String(t.LogoUrl).length < 5) {
+        t.LogoUrl = statusVal;
+      }
+      t.Status = 'Pending';
+    }
+
+    const submittedVal = String(t.SubmittedAt || '').trim();
+    if (submittedVal.startsWith('http://') || submittedVal.startsWith('https://') || submittedVal.startsWith('assets/')) {
+      if (!t.TeamPhotoUrl) t.TeamPhotoUrl = submittedVal;
+      t.SubmittedAt = t.UpdatedAt || '';
+    }
+
+    const valid = ['Pending', 'UnderReview', 'Approved', 'Rejected'];
+    if (!valid.includes(t.Status)) {
+      t.Status = 'Pending';
+    }
+    return t;
+  }
+
+  function renderDeptLogo(imgEl, course) {
+    if (!imgEl) return;
+    const dept = parseDept(course);
+    const deptLogo = DEPT_LOGOS[dept];
+    if (deptLogo) {
+      imgEl.src = deptLogo;
+      imgEl.alt = dept;
+      imgEl.classList.remove('hidden');
+    } else {
+      imgEl.classList.add('hidden');
+    }
+  }
+
   function renderTeamBadge(team) {
     const badgeContainer = document.getElementById('team-badge');
     const badgeContent = document.getElementById('team-badge-content');
@@ -324,7 +365,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dept = parseDept(team.Course || team.course);
     const deptLogo = DEPT_LOGOS[dept];
 
-    if (logoUrl) {
+    if (logoUrl && logoUrl.length > 3) {
       const isSvg = logoUrl.endsWith('.svg') || logoUrl.includes('assets/icons/');
       badgeContent.innerHTML = '<img src="' + escHtml(logoUrl) + '" alt="' + escHtml(team.TeamName) + ' Logo" class="' +
         (isSvg ? 'w-14 h-14 object-contain filter invert drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]' : 'w-full h-full object-cover rounded-xl') +
@@ -641,7 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     try {
       const data = await callRegistrationApi('getRegistration', { teamId: teamId }, 'POST');
-      currentTeam = data.team;
+      currentTeam = sanitizeTeamData(data.team);
       currentDocs = data.documents || [];
       document.getElementById('breadcrumb-team-name').textContent = currentTeam.TeamName;
       document.getElementById('detail-team-name').textContent = currentTeam.TeamName;
@@ -649,6 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('detail-captain-name').textContent = currentTeam.CaptainName || '—';
       document.getElementById('detail-contact').textContent = currentTeam.ContactNumber || '—';
       document.getElementById('detail-course').textContent = currentTeam.Course || '—';
+      renderDeptLogo(document.getElementById('detail-dept-logo'), currentTeam.Course);
       renderTeamBadge(currentTeam);
       renderPlayers(data.players || [], currentDocs);
     } catch (err) {

@@ -166,6 +166,53 @@ function getSheet(name, headers) {
   return sheet;
 }
 
+function appendRowObject(sheet, expectedHeaders, dataObj) {
+  const values = sheet.getDataRange().getValues();
+  let headers = values.length > 0 ? values[0].map(String) : [];
+  if (!headers.length) {
+    headers = expectedHeaders;
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+  } else {
+    expectedHeaders.forEach(function (h) {
+      if (headers.indexOf(h) === -1) {
+        sheet.getRange(1, sheet.getLastColumn() + 1).setValue(h);
+        headers.push(h);
+      }
+    });
+  }
+  const row = headers.map(function (h) {
+    return dataObj[h] !== undefined && dataObj[h] !== null ? dataObj[h] : '';
+  });
+  sheet.appendRow(row);
+}
+
+function normalizeTeamRow(team) {
+  if (!team) return team;
+  const t = {};
+  Object.keys(team).forEach(function (k) { t[k] = team[k]; });
+
+  const statusVal = String(t.Status || '').trim();
+  // Detect if Status contains a file path, URL or emblem string
+  if (statusVal.indexOf('assets/') === 0 || statusVal.indexOf('http://') === 0 || statusVal.indexOf('https://') === 0 || statusVal.indexOf('.svg') !== -1 || statusVal.indexOf('.png') !== -1 || statusVal.indexOf('.jpg') !== -1 || statusVal.indexOf('.webp') !== -1) {
+    if (!t.LogoUrl || String(t.LogoUrl).length < 5) {
+      t.LogoUrl = statusVal;
+    }
+    t.Status = 'Pending';
+  }
+
+  const submittedVal = String(t.SubmittedAt || '').trim();
+  if (submittedVal.indexOf('http://') === 0 || submittedVal.indexOf('https://') === 0 || submittedVal.indexOf('assets/') === 0) {
+    if (!t.TeamPhotoUrl) t.TeamPhotoUrl = submittedVal;
+    t.SubmittedAt = t.UpdatedAt || '';
+  }
+
+  if (VALID_TEAM_STATUSES.indexOf(t.Status) === -1) {
+    t.Status = 'Pending';
+  }
+  return t;
+}
+
 function setupSheets() {
   getSheet(TEAMS_SHEET_NAME, TEAMS_HEADERS);
   getSheet(PLAYERS_SHEET_NAME, PLAYERS_HEADERS);
@@ -369,7 +416,19 @@ function createRegistration(params) {
     
     const teamId = nextId(teams, 'TEAM');
     const now = new Date();
-    teams.appendRow([teamId, params.teamName, params.course || '', params.captainName, params.contactNumber, params.description || '', params.logoUrl || '', params.teamPhotoUrl || '', 'Pending', now, now]);
+    appendRowObject(teams, TEAMS_HEADERS, {
+      TeamID: teamId,
+      TeamName: params.teamName,
+      Course: params.course || '',
+      CaptainName: params.captainName,
+      ContactNumber: params.contactNumber,
+      Description: params.description || '',
+      LogoUrl: params.logoUrl || '',
+      TeamPhotoUrl: params.teamPhotoUrl || '',
+      Status: 'Pending',
+      SubmittedAt: now,
+      UpdatedAt: now
+    });
 
     let players = [];
     try { players = JSON.parse(params.players || '[]'); } catch (e) { throw new Error('players must be valid JSON.'); }
@@ -381,7 +440,22 @@ function createRegistration(params) {
       const pid = nextId(playersSheet, 'PLAYER');
       playerMap[p.slot || p.ign] = pid;
       const profile = resolvePublicProfileImage(p.profileImageFileId || '');
-      playersSheet.appendRow([pid, teamId, p.realName || '', p.ign || '', p.mlbbId || '', p.serverId || '', p.studentId || '', p.role || '', p.rosterType || 'Starter', 'Pending', now, profile.fileId, profile.url, profile.url ? 'Yes' : 'No']);
+      appendRowObject(playersSheet, PLAYERS_HEADERS, {
+        PlayerID: pid,
+        TeamID: teamId,
+        RealName: p.realName || '',
+        IGN: p.ign || '',
+        MlbbId: p.mlbbId || '',
+        ServerId: p.serverId || '',
+        StudentId: p.studentId || '',
+        Role: p.role || '',
+        RosterType: p.rosterType || 'Starter',
+        VerificationStatus: 'Pending',
+        SubmittedAt: now,
+        ProfileImageFileId: profile.fileId || '',
+        ProfileImageUrl: profile.url || '',
+        ProfileImageVisible: profile.url ? 'Yes' : 'No'
+      });
     });
 
     if (attachedDocIds.length > 0) {
@@ -415,7 +489,8 @@ function createRegistration(params) {
 function listRegistrations() {
   const teams = sheetObjects(getSheet(TEAMS_SHEET_NAME, TEAMS_HEADERS));
   const players = sheetObjects(getSheet(PLAYERS_SHEET_NAME, PLAYERS_HEADERS));
-  return teams.map(function (team) {
+  return teams.map(function (rawTeam) {
+    const team = normalizeTeamRow(rawTeam);
     const roster = players.filter(function (p) { return String(p.TeamID) === String(team.TeamID); });
     return {
       TeamID: team.TeamID,
@@ -427,7 +502,7 @@ function listRegistrations() {
       LogoUrl: team.LogoUrl || '',
       TeamPhotoUrl: team.TeamPhotoUrl || '',
       RejectionReason: team.RejectionReason || '',
-      Status: team.Status,
+      Status: team.Status || 'Pending',
       SubmittedAt: team.SubmittedAt,
       PlayerCount: roster.length,
       VerifiedCount: roster.filter(function (p) { return p.VerificationStatus === 'Verified'; }).length
@@ -438,7 +513,7 @@ function listRegistrations() {
 function listPublicTeams() {
   const teams = sheetObjects(getSheet(TEAMS_SHEET_NAME, TEAMS_HEADERS));
   const players = sheetObjects(getSheet(PLAYERS_SHEET_NAME, PLAYERS_HEADERS));
-  return teams.filter(function (team) { return String(team.Status).toLowerCase() === 'approved'; }).map(function (team) {
+  return teams.map(normalizeTeamRow).filter(function (team) { return String(team.Status).toLowerCase() === 'approved'; }).map(function (team) {
     const course = String(team.Course || '');
     const courseParts = course.split(String.fromCharCode(0x2014));
     const roster = players.filter(function (player) {
@@ -480,11 +555,12 @@ function getRegistration(teamId) {
   if (!found) throw new Error('No team found with ID ' + teamId + '.');
   const team = {};
   found.headers.forEach(function (h, i) { team[h] = found.row[i]; });
+  const normalizedTeam = normalizeTeamRow(team);
 
   const roster = sheetObjects(players).filter(function (p) { return String(p.TeamID) === String(teamId); });
   const teamDocs = sheetObjects(docs).filter(function (d) { return String(d.TeamID) === String(teamId); });
 
-  return { team: team, players: roster, documents: teamDocs };
+  return { team: normalizedTeam, players: roster, documents: teamDocs };
 }
 
 function updateTeamStatus(params, user) {

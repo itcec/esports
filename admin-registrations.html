@@ -114,18 +114,25 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <tr class="hover:bg-surface-container-lowest transition-colors group">
 <td class="px-sm py-sm text-center"><input class="row-checkbox w-4 h-4 rounded bg-surface-container border-outline-variant focus:ring-primary" type="checkbox"/></td>
 <td class="px-sm py-sm text-outline row-id cyber-mono"></td>
-<td class="px-sm py-sm flex items-center gap-sm">
-<div class="row-badge w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0"></div>
-<span class="font-bold row-team-name"></span>
+<td class="px-sm py-sm">
+  <div class="flex items-center gap-2.5 min-w-0">
+    <div class="row-badge w-9 h-9 rounded-xl flex items-center justify-center text-white text-[11px] font-bold shrink-0 border border-white/15 shadow-sm relative overflow-hidden" title="Team Chosen Logo"></div>
+    <span class="font-bold row-team-name text-on-surface truncate"></span>
+  </div>
 </td>
-<td class="px-sm py-sm text-on-surface-variant row-course"></td>
+<td class="px-sm py-sm">
+  <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-surface-container/60 border border-white/10 text-on-surface-variant text-xs">
+    <img class="row-dept-logo w-4 h-4 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/10 shrink-0" alt="Dept" />
+    <span class="row-course truncate"></span>
+  </div>
+</td>
 <td class="px-sm py-sm row-captain"></td>
 <td class="px-sm py-sm text-center cyber-mono row-players-count"></td>
 <td class="px-sm py-sm text-center">
 <span class="row-verification-badge inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border cyber-mono">—</span>
 </td>
 <td class="px-sm py-sm">
-<span class="row-status-badge inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border"></span>
+<span class="row-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border"></span>
 </td>
 <td class="px-sm py-sm text-right text-on-surface-variant text-sm row-submitted"></td>
 <td class="px-sm py-sm text-center whitespace-nowrap">
@@ -199,7 +206,32 @@ document.addEventListener('DOMContentLoaded', () => {
     return PALETTE[hash % PALETTE.length];
   }
 
-  function renderBadge(badgeEl, team, sizeClass) {
+  function sanitizeTeamData(team) {
+    if (!team) return team;
+    const t = Object.assign({}, team);
+    const statusVal = String(t.Status || '').trim();
+
+    // If Status field contains a file path, URL, or emblem
+    if (statusVal.startsWith('assets/') || statusVal.startsWith('http://') || statusVal.startsWith('https://') || statusVal.endsWith('.svg') || statusVal.endsWith('.png') || statusVal.endsWith('.jpg') || statusVal.endsWith('.webp')) {
+      if (!t.LogoUrl || String(t.LogoUrl).length < 5) {
+        t.LogoUrl = statusVal;
+      }
+      t.Status = 'Pending';
+    }
+
+    const submittedVal = String(t.SubmittedAt || '').trim();
+    if (submittedVal.startsWith('http://') || submittedVal.startsWith('https://') || submittedVal.startsWith('assets/')) {
+      if (!t.TeamPhotoUrl) t.TeamPhotoUrl = submittedVal;
+      t.SubmittedAt = t.UpdatedAt || '';
+    }
+
+    if (!STATUS_LABELS[t.Status]) {
+      t.Status = 'Pending';
+    }
+    return t;
+  }
+
+  function renderTeamLogo(badgeEl, team, sizeClass) {
     if (!badgeEl) return;
     badgeEl.style.background = colorFor(team.TeamID || team.teamId);
     badgeEl.classList.add('overflow-hidden');
@@ -208,15 +240,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const dept = parseDept(team.Course || team.course);
     const deptLogo = DEPT_LOGOS[dept];
 
-    if (logoUrl) {
+    if (logoUrl && logoUrl.length > 3) {
       const isSvg = logoUrl.endsWith('.svg') || logoUrl.includes('assets/icons/');
       badgeEl.innerHTML = '<img src="' + escHtml(logoUrl) + '" alt="' + escHtml(team.TeamName || 'Logo') + '" class="' +
-        (isSvg ? (sizeClass || 'w-5 h-5 object-contain filter invert') : 'w-full h-full object-cover') +
+        (isSvg ? (sizeClass || 'w-5 h-5 object-contain filter invert drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]') : 'w-full h-full object-cover') +
         '" onerror="this.onerror=null; if(\'' + (deptLogo || '') + '\') { this.src=\'' + (deptLogo || '') + '\'; this.className=\'' + (sizeClass || 'w-5 h-5 object-contain') + '\'; } else { this.style.display=\'none\'; }" />';
     } else if (deptLogo) {
       badgeEl.innerHTML = '<img src="' + deptLogo + '" alt="' + escHtml(dept) + '" class="' + (sizeClass || 'w-5 h-5 object-contain') + '" />';
     } else {
       badgeEl.textContent = initialsOf(team.TeamName);
+    }
+  }
+
+  function renderDeptLogo(imgEl, course) {
+    if (!imgEl) return;
+    const dept = parseDept(course);
+    const deptLogo = DEPT_LOGOS[dept];
+    if (deptLogo) {
+      imgEl.src = deptLogo;
+      imgEl.alt = dept;
+      imgEl.classList.remove('hidden');
+    } else {
+      imgEl.classList.add('hidden');
     }
   }
 
@@ -236,6 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
     set('detail-team-name', team.TeamName || '(unnamed)');
     set('detail-id', team.TeamID || '—');
     set('detail-course', team.Course || '—');
+    renderDeptLogo(document.getElementById('detail-dept-logo'), team.Course);
     set('detail-captain', team.CaptainName || '—');
     set('detail-contact', team.ContactNumber || '—');
     set('detail-players', (team.PlayerCount || 0) + '/7');
@@ -247,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     statusBadge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ' +
       ((STATUS_STYLES[status] || STATUS_STYLES.Pending).join(' '));
 
-    renderBadge(document.getElementById('detail-badge'), team, 'w-6 h-6 object-contain');
+    renderTeamLogo(document.getElementById('detail-badge'), team, 'w-6 h-6 object-contain');
 
     // Rejection reason banner on detail sheet if rejected
     const reasonRow = document.getElementById('detail-rejection-row');
@@ -305,16 +351,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkbox = node.querySelector('.row-checkbox');
         checkbox.dataset.teamId = team.TeamID;
         node.querySelector('.row-id').textContent = team.TeamID;
+        
         const badge = node.querySelector('.row-badge');
-        renderBadge(badge, team, 'w-5 h-5 object-contain');
+        renderTeamLogo(badge, team, 'w-5 h-5 object-contain');
         node.querySelector('.row-team-name').textContent = team.TeamName || '(unnamed)';
+        
+        const deptImg = node.querySelector('.row-dept-logo');
+        renderDeptLogo(deptImg, team.Course);
         node.querySelector('.row-course').textContent = team.Course || '—';
+        
         node.querySelector('.row-captain').textContent = team.CaptainName || '—';
         node.querySelector('.row-players-count').textContent = (team.PlayerCount || 0) + '/7';
         const vBadge = node.querySelector('.row-verification-badge');
         const verified = team.VerifiedCount || 0, total = team.PlayerCount || 0;
         vBadge.textContent = verified + '/' + total;
         vBadge.classList.add(total > 0 && verified === total ? 'text-primary' : 'text-on-surface-variant', 'border-outline-variant/40');
+        
         const sBadge = node.querySelector('.row-status-badge');
         const status = team.Status || 'Pending';
         sBadge.textContent = STATUS_LABELS[status] || status;
@@ -484,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
     apiStatus.textContent = '';
     try {
       const list = await callRegistrationApi('listRegistrations', {}, 'GET');
-      allRegistrations = list || [];
+      allRegistrations = (list || []).map(sanitizeTeamData);
       render();
     } catch (err) {
       allRegistrations = [];
@@ -529,7 +581,13 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Registration ID</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-id">—</span></div>
-      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Division / Dept</span><span class="text-sm text-on-surface text-right" id="detail-course">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5">
+        <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Division / Dept</span>
+        <div class="flex items-center gap-1.5 justify-end">
+          <img id="detail-dept-logo" class="w-4 h-4 object-contain rounded-full bg-surface-container-lowest border border-white/10 shrink-0 hidden" alt="Dept" />
+          <span class="text-sm text-on-surface text-right" id="detail-course">—</span>
+        </div>
+      </div>
       <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Captain</span><span class="text-sm text-on-surface text-right" id="detail-captain">—</span></div>
       <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Contact</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-contact">—</span></div>
       <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Players</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-players">—</span></div>
