@@ -165,6 +165,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const STATUS_LABELS = { Pending: 'Pending', UnderReview: 'Under Review', Approved: 'Approved', Rejected: 'Rejected' };
   const PALETTE = ['#1264ff', '#00e5ff', '#7c5cff', '#ff2fd8', '#00e676', '#ffb020'];
 
+  const DEPT_LOGOS = {
+    'IT': 'assets/IT.png',
+    'HTM': 'assets/HTM.png',
+    'HM': 'assets/HTM.png',
+    'TM': 'assets/HTM.png',
+    'CTE': 'assets/CTE.png',
+    'CTE-A': 'assets/CTE.png',
+    'CTE-B': 'assets/CTE.png',
+    'CRIM': 'assets/CRIM.png',
+    'SHS': 'assets/school_logo.jpg',
+    'JHS': 'assets/school_logo.jpg',
+    'Faculty': 'assets/school_logo.jpg'
+  };
+
+  function parseDept(course) {
+    if (!course) return '';
+    const parts = String(course).split(/[—–-]/).map(s => s.trim());
+    return parts.length > 1 ? parts[1] : parts[0];
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
   function initialsOf(name) {
     return (name || '').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '??';
   }
@@ -174,6 +198,28 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
     return PALETTE[hash % PALETTE.length];
   }
+
+  function renderBadge(badgeEl, team, sizeClass) {
+    if (!badgeEl) return;
+    badgeEl.style.background = colorFor(team.TeamID || team.teamId);
+    badgeEl.classList.add('overflow-hidden');
+
+    const logoUrl = team.LogoUrl || team.logoUrl || team.customLogoUrl || team.badgeIcon;
+    const dept = parseDept(team.Course || team.course);
+    const deptLogo = DEPT_LOGOS[dept];
+
+    if (logoUrl) {
+      const isSvg = logoUrl.endsWith('.svg') || logoUrl.includes('assets/icons/');
+      badgeEl.innerHTML = '<img src="' + escHtml(logoUrl) + '" alt="' + escHtml(team.TeamName || 'Logo') + '" class="' +
+        (isSvg ? (sizeClass || 'w-5 h-5 object-contain filter invert') : 'w-full h-full object-cover') +
+        '" onerror="this.onerror=null; if(\'' + (deptLogo || '') + '\') { this.src=\'' + (deptLogo || '') + '\'; this.className=\'' + (sizeClass || 'w-5 h-5 object-contain') + '\'; } else { this.style.display=\'none\'; }" />';
+    } else if (deptLogo) {
+      badgeEl.innerHTML = '<img src="' + deptLogo + '" alt="' + escHtml(dept) + '" class="' + (sizeClass || 'w-5 h-5 object-contain') + '" />';
+    } else {
+      badgeEl.textContent = initialsOf(team.TeamName);
+    }
+  }
+
   function formatDate(value) {
     if (!value) return '—';
     const d = new Date(value);
@@ -201,9 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     statusBadge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ' +
       ((STATUS_STYLES[status] || STATUS_STYLES.Pending).join(' '));
 
-    const badge = document.getElementById('detail-badge');
-    badge.textContent = initialsOf(team.TeamName);
-    badge.style.background = colorFor(team.TeamID);
+    renderBadge(document.getElementById('detail-badge'), team, 'w-6 h-6 object-contain');
 
     // Rejection reason banner on detail sheet if rejected
     const reasonRow = document.getElementById('detail-rejection-row');
@@ -262,8 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkbox.dataset.teamId = team.TeamID;
         node.querySelector('.row-id').textContent = team.TeamID;
         const badge = node.querySelector('.row-badge');
-        badge.textContent = initialsOf(team.TeamName);
-        badge.style.background = colorFor(team.TeamID);
+        renderBadge(badge, team, 'w-5 h-5 object-contain');
         node.querySelector('.row-team-name').textContent = team.TeamName || '(unnamed)';
         node.querySelector('.row-course').textContent = team.Course || '—';
         node.querySelector('.row-captain').textContent = team.CaptainName || '—';

@@ -81,9 +81,11 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
                     Team Information
                 </h2>
 <div class="flex flex-col items-center gap-sm mb-lg">
-<div class="w-24 h-24 rounded-full shadow-inner flex items-center justify-center relative text-white text-headline-lg font-headline-lg cyber-mono" id="team-badge" style="background:#1264ff">
-<div class="absolute inset-0 rounded-full border border-primary/20"></div>
-<span id="team-badge-initials">—</span>
+<div class="w-24 h-24 rounded-2xl shadow-inner flex items-center justify-center relative text-white text-headline-lg font-headline-lg cyber-mono overflow-hidden border border-white/15" id="team-badge" style="background:#1264ff">
+<div class="absolute inset-0 rounded-2xl border border-primary/20 pointer-events-none z-10"></div>
+<div id="team-badge-content" class="w-full h-full flex items-center justify-center p-1">
+  <span id="team-badge-initials">—</span>
+</div>
 </div>
 <div class="text-center">
 <h3 class="text-headline-md font-headline-md text-on-surface" id="detail-team-name">Loading…</h3>
@@ -250,6 +252,30 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentTeam = null;
   let currentDocs = [];
 
+  const DEPT_LOGOS = {
+    'IT': 'assets/IT.png',
+    'HTM': 'assets/HTM.png',
+    'HM': 'assets/HTM.png',
+    'TM': 'assets/HTM.png',
+    'CTE': 'assets/CTE.png',
+    'CTE-A': 'assets/CTE.png',
+    'CTE-B': 'assets/CTE.png',
+    'CRIM': 'assets/CRIM.png',
+    'SHS': 'assets/school_logo.jpg',
+    'JHS': 'assets/school_logo.jpg',
+    'Faculty': 'assets/school_logo.jpg'
+  };
+
+  function parseDept(course) {
+    if (!course) return '';
+    const parts = String(course).split(/[—–-]/).map(s => s.trim());
+    return parts.length > 1 ? parts[1] : parts[0];
+  }
+
+  function escHtml(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
   function initialsOf(name) {
     return (name || '').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '??';
   }
@@ -258,6 +284,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const s = String(id || '');
     for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
     return PALETTE[hash % PALETTE.length];
+  }
+
+  function renderTeamBadge(team) {
+    const badgeContainer = document.getElementById('team-badge');
+    const badgeContent = document.getElementById('team-badge-content');
+    if (!badgeContainer || !badgeContent) return;
+
+    badgeContainer.style.background = colorFor(team.TeamID || team.teamId);
+
+    const logoUrl = team.LogoUrl || team.logoUrl || team.customLogoUrl || team.badgeIcon;
+    const dept = parseDept(team.Course || team.course);
+    const deptLogo = DEPT_LOGOS[dept];
+
+    if (logoUrl) {
+      const isSvg = logoUrl.endsWith('.svg') || logoUrl.includes('assets/icons/');
+      badgeContent.innerHTML = '<img src="' + escHtml(logoUrl) + '" alt="' + escHtml(team.TeamName) + ' Logo" class="' +
+        (isSvg ? 'w-14 h-14 object-contain filter invert drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]' : 'w-full h-full object-cover rounded-xl') +
+        '" onerror="this.onerror=null; if(\'' + (deptLogo || '') + '\') { this.src=\'' + (deptLogo || '') + '\'; this.className=\'w-14 h-14 object-contain\'; } else { this.style.display=\'none\'; }" />';
+    } else if (deptLogo) {
+      badgeContent.innerHTML = '<img src="' + deptLogo + '" alt="' + escHtml(dept) + '" class="w-14 h-14 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]" />';
+    } else {
+      badgeContent.innerHTML = '<span id="team-badge-initials" class="text-headline-lg font-headline-lg cyber-mono text-white">' + initialsOf(team.TeamName) + '</span>';
+    }
   }
 
   const STATUS_STYLE = {
@@ -406,8 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('detail-captain-name').textContent = currentTeam.CaptainName || '—';
       document.getElementById('detail-contact').textContent = currentTeam.ContactNumber || '—';
       document.getElementById('detail-course').textContent = currentTeam.Course || '—';
-      document.getElementById('team-badge-initials').textContent = initialsOf(currentTeam.TeamName);
-      document.getElementById('team-badge').style.background = colorFor(currentTeam.TeamID);
+      renderTeamBadge(currentTeam);
       renderPlayers(data.players || [], currentDocs);
     } catch (err) {
       document.getElementById('detail-team-name').textContent = 'Error';
