@@ -248,7 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderTeamLogo(badgeEl, team, sizeClass) {
     if (!badgeEl) return;
-    badgeEl.style.background = colorFor(team.TeamID || team.teamId);
+    const brandColor = colorFor(team.TeamID || team.teamId);
+    badgeEl.style.background = 'radial-gradient(circle at center, ' + brandColor + '20 0%, rgba(10, 16, 30, 0.95) 75%)';
+    badgeEl.style.borderColor = brandColor;
+    badgeEl.style.borderWidth = '1.5px';
+    badgeEl.style.boxShadow = '0 0 10px ' + brandColor + '40';
     badgeEl.classList.add('overflow-hidden');
 
     const logoUrl = normalizeLogoUrl(team.LogoUrl || team.logoUrl || team.customLogoUrl || team.badgeIcon);
@@ -258,10 +262,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoUrl && logoUrl.length > 3) {
       const isSvg = logoUrl.endsWith('.svg') || logoUrl.includes('assets/icons/');
       badgeEl.innerHTML = '<img src="' + escHtml(logoUrl) + '" alt="' + escHtml(team.TeamName || 'Logo') + '" class="' +
-        (isSvg ? (sizeClass || 'w-5 h-5 object-contain filter invert drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]') : 'w-full h-full object-cover') +
-        '" onerror="this.onerror=null; if(\'' + (deptLogo || '') + '\') { this.src=\'' + (deptLogo || '') + '\'; this.className=\'' + (sizeClass || 'w-5 h-5 object-contain') + '\'; } else { this.style.display=\'none\'; }" />';
+        (isSvg ? (sizeClass || 'w-6 h-6 object-contain drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]') : 'w-full h-full object-cover') +
+        '" onerror="this.onerror=null; if(\'' + (deptLogo || '') + '\') { this.src=\'' + (deptLogo || '') + '\'; this.className=\'' + (sizeClass || 'w-6 h-6 object-contain') + '\'; } else { this.style.display=\'none\'; }" />';
     } else if (deptLogo) {
-      badgeEl.innerHTML = '<img src="' + deptLogo + '" alt="' + escHtml(dept) + '" class="' + (sizeClass || 'w-5 h-5 object-contain') + '" />';
+      badgeEl.innerHTML = '<img src="' + deptLogo + '" alt="' + escHtml(dept) + '" class="' + (sizeClass || 'w-6 h-6 object-contain') + '" />';
     } else {
       badgeEl.textContent = initialsOf(team.TeamName);
     }

@@ -218,8 +218,8 @@
   <div class="flex flex-col md:flex-row items-start md:items-center gap-lg bg-surface-container-lowest/80 p-md rounded-xl border border-white/5 mb-md">
     <!-- Live Badge Preview -->
     <div class="flex flex-col items-center gap-2 shrink-0">
-      <div class="relative flex items-center justify-center w-24 h-24 rounded-2xl shadow-[0_0_25px_rgba(18,100,255,0.4)] border-2 border-white/20 transition-all duration-300 overflow-hidden" id="team-badge-preview" style="background:#1264ff">
-        <img id="badge-icon-img" src="assets/icons/dragon-head.svg" alt="Team Emblem" class="w-14 h-14 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
+      <div class="relative flex items-center justify-center w-24 h-24 rounded-2xl border-2 transition-all duration-300 overflow-hidden shadow-lg" id="team-badge-preview">
+        <img id="badge-icon-img" src="assets/icons/dragon-head.svg" alt="Team Emblem" class="w-16 h-16 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]" />
       </div>
       <span class="text-[11px] font-label-caps text-primary cyber-mono" id="badge-icon-name">DRAGON HEAD</span>
     </div>
@@ -760,7 +760,7 @@
         const isSelected = logoMode === 'emblem' && selectedBadgeIcon === item.path;
         btn.className = 'flex flex-col items-center justify-center p-3 rounded-xl border transition-all group ' + 
           (isSelected ? 'bg-primary/25 border-primary shadow-[0_0_15px_rgba(18,100,255,0.45)] scale-105' : 'bg-surface-container/70 border-white/10 hover:border-primary/40 hover:bg-surface-container-high');
-        btn.innerHTML = `<img src="${item.path}" alt="${item.name}" class="w-10 h-10 object-contain filter invert opacity-90 group-hover:scale-110 transition-transform" />
+        btn.innerHTML = `<img src="${item.path}" alt="${item.name}" class="w-10 h-10 object-contain opacity-90 group-hover:scale-110 transition-transform" />
                          <span class="text-[10px] font-label-caps text-on-surface truncate w-full text-center mt-1.5">${item.name}</span>`;
         btn.addEventListener('click', () => {
           selectedBadgeIcon = item.path;
@@ -784,18 +784,32 @@
     });
 
     function updateBadge() {
+      const checked = document.querySelector('input[name="team-color"]:checked');
+      const brandColor = checked ? checked.dataset.color : '#1264ff';
+
+      if (badgePreview) {
+        badgePreview.style.background = 'radial-gradient(circle at center, ' + brandColor + '25 0%, rgba(10, 16, 30, 0.95) 75%)';
+        badgePreview.style.borderColor = brandColor;
+        badgePreview.style.borderWidth = '2px';
+        badgePreview.style.boxShadow = '0 0 20px ' + brandColor + '60, inset 0 0 12px ' + brandColor + '25';
+      }
+
       if (logoMode === 'upload' && customLogoUrl) {
         badgeIconImg.src = customLogoUrl;
-        badgeIconImg.className = 'w-full h-full object-contain p-1';
-        badgeIconName.textContent = 'CUSTOM LOGO';
+        badgeIconImg.className = 'w-full h-full object-contain p-2';
+        if (badgeIconName) {
+          badgeIconName.textContent = 'CUSTOM LOGO';
+          badgeIconName.style.color = brandColor;
+        }
       } else {
         badgeIconImg.src = selectedBadgeIcon;
-        badgeIconImg.className = 'w-14 h-14 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]';
+        badgeIconImg.className = 'w-16 h-16 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]';
         const curItem = ALL_EMBLEMS.find(e => e.path === selectedBadgeIcon);
-        if (badgeIconName && curItem) badgeIconName.textContent = curItem.name.toUpperCase();
+        if (badgeIconName && curItem) {
+          badgeIconName.textContent = curItem.name.toUpperCase();
+          badgeIconName.style.color = brandColor;
+        }
       }
-      const checked = document.querySelector('input[name="team-color"]:checked');
-      if (checked && badgePreview) badgePreview.style.background = checked.dataset.color;
     }
     colorInputs.forEach(input => input.addEventListener('change', updateBadge));
     updateBadge();

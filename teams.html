@@ -212,11 +212,12 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
         ? 'bg-surface-container glass-hover rounded-xl p-md flex flex-col border border-amber-400/30 shadow-lg bg-gradient-to-r from-amber-500/10 via-surface-container to-transparent overflow-hidden'
         : 'bg-surface-container glass-hover rounded-xl p-md flex flex-col border border-white/10 shadow-md overflow-hidden';
       
-      var logo = t.logoUrl;
+      var brandColor = t.color || t.teamColor || colorFor(t.TeamID);
+      var isSvg = logo && (logo.endsWith('.svg') || logo.includes('assets/icons/'));
       var iconHtml = logo
-        ? '<img src="' + esc(logo) + '" alt="' + esc(t.TeamName) + ' logo" class="w-full h-full object-cover" loading="lazy" onerror="this.remove()" />'
+        ? '<img src="' + esc(logo) + '" alt="' + esc(t.TeamName) + ' logo" class="' + (isSvg ? 'w-8 h-8 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]' : 'w-full h-full object-cover') + '" loading="lazy" onerror="this.remove()" />'
         : (t.icon || t.badgeIcon
-            ? '<img src="' + esc(t.icon || t.badgeIcon) + '" alt="Emblem" class="w-6 h-6 object-contain filter invert" />'
+            ? '<img src="' + esc(t.icon || t.badgeIcon) + '" alt="Emblem" class="w-8 h-8 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" />'
             : initials(t.TeamName));
 
       var deptLogoHtml = DEPT_LOGOS[p.dept]
@@ -245,7 +246,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       card.innerHTML =
         photoHtml +
         '<div class="flex items-center gap-md">' +
-          '<div class="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white font-bold cyber-mono border border-white/15 shadow-sm overflow-hidden" style="background:' + (t.color || t.teamColor || colorFor(t.TeamID)) + '">' + iconHtml + '</div>' +
+          '<div class="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white font-bold cyber-mono border-2 shadow-sm overflow-hidden" style="background:radial-gradient(circle at center, ' + brandColor + '20 0%, rgba(10, 16, 30, 0.95) 75%); border-color:' + brandColor + '; box-shadow:0 0 12px ' + brandColor + '40;">' + iconHtml + '</div>' +
           '<div class="min-w-0 flex flex-col flex-1">' +
             '<div class="flex items-center justify-between gap-1">' +
               '<span class="font-headline-md text-[17px] text-on-surface truncate cyber-title">' + esc(t.TeamName || 'Team') + '</span>' +
