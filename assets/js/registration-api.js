@@ -113,6 +113,44 @@ async function uploadProfileImage(file) {
   }, 'POST');
 }
 
+/**
+ * Updates a registration's status with a required rejection reason or audit note,
+ * and synchronizes with Firebase Realtime Database for instant captain notifications.
+ */
+async function updateRegistrationStatusWithReason(teamId, status, rejectionReason) {
+  if (status === 'Rejected' && (!rejectionReason || !rejectionReason.trim())) {
+    throw new Error('A specific rejection reason is required to notify the team captain.');
+  }
+
+  const payload = {
+    teamId: teamId,
+    status: status,
+    rejectionReason: (rejectionReason || '').trim(),
+    auditNote: (rejectionReason || '').trim()
+  };
+
+  const result = await callRegistrationApi('updateTeamStatus', payload, 'POST');
+
+  if (window.CECFirebase) {
+    try {
+      await window.CECFirebase.init();
+      const db = window.CECFirebase.db;
+      if (db) {
+        await db.ref('registrations/' + teamId).update({
+          status: status,
+          rejectionReason: (rejectionReason || '').trim(),
+          updatedAt: new Date().toISOString(),
+          updatedBy: (window.CECAuth && window.CECAuth.currentUser) ? window.CECAuth.currentUser.email : 'coordinator'
+        });
+      }
+    } catch (e) {
+      console.warn('Firebase registration status sync notice:', e);
+    }
+  }
+
+  return result;
+}
+
 const PublicTournamentApi = {
   listTeams: async function () {
     return await callRegistrationApi('listPublicTeams', {}, 'GET');

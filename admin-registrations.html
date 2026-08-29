@@ -66,6 +66,10 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <span class="material-symbols-outlined text-[20px]">download</span>
 <span class="font-label-caps text-label-caps uppercase">Export CSV</span>
 </button>
+<button class="flex items-center gap-xs px-md py-sm bg-red-500/20 text-red-300 hover:bg-red-500/30 border border-red-500/30 rounded-lg transition-colors shadow-sm font-bold text-xs" id="reject-selected-btn">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+<span class="font-label-caps text-label-caps uppercase">Reject Selected</span>
+</button>
 <button class="flex items-center gap-xs px-md py-sm bg-primary rounded-lg text-on-primary hover:bg-primary-fixed transition-colors shadow-md shadow-primary/20" id="approve-selected-btn">
 <span class="material-symbols-outlined text-[20px]">check_circle</span>
 <span class="font-label-caps text-label-caps uppercase">Approve Selected</span>
@@ -99,7 +103,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <th class="px-sm py-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider text-center">Verification</th>
 <th class="px-sm py-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider">Status</th>
 <th class="px-sm py-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider text-right">Submitted</th>
-<th class="px-sm py-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider text-center w-24">Actions</th>
+<th class="px-sm py-md font-label-caps text-label-caps text-on-surface-variant uppercase tracking-wider text-center w-28">Actions</th>
 </tr>
 </thead>
 <tbody class="divide-y divide-outline-variant/10 font-body-md text-body-md text-on-surface" id="registrations-tbody">
@@ -125,8 +129,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </td>
 <td class="px-sm py-sm text-right text-on-surface-variant text-sm row-submitted"></td>
 <td class="px-sm py-sm text-center whitespace-nowrap">
-<button type="button" class="row-view-btn md:hidden px-2.5 py-2 min-h-9 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-white/10 text-primary font-label-caps text-[10px] font-bold transition-colors">VIEW</button>
-<a class="row-detail-link p-1 rounded hover:bg-surface-container text-on-surface-variant transition-colors inline-flex" href="admin-verification.html"><span class="material-symbols-outlined text-[18px]">more_vert</span></a>
+<button type="button" class="row-view-btn px-2.5 py-1.5 min-h-8 rounded-lg bg-surface-container-high hover:bg-surface-container-highest border border-white/10 text-primary font-label-caps text-[10px] font-bold transition-colors">REVIEW</button>
 </td>
 </tr>
 </template>
@@ -136,11 +139,15 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <span class="text-sm text-on-surface-variant cyber-mono" id="registrations-api-status"></span>
 </div>
 </div>
-</div></main></div><script src="assets/js/registration-api.js"></script>
+</div></main></div><script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/auth-guard.js"></script>
+<script src="assets/js/registration-api.js"></script>
+<script>window.CECAuth.requireApprovedStaff();</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   let allRegistrations = [];
   let activeFilter = 'All';
+  let activeDetailTeam = null;
 
   const tbody = document.getElementById('registrations-tbody');
   const template = document.getElementById('registration-row-template');
@@ -175,26 +182,38 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openDetail(team) {
+    activeDetailTeam = team;
     const set = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
     const status = team.Status || 'Pending';
     const verified = team.VerifiedCount || 0, total = team.PlayerCount || 0;
+
     set('detail-team-name', team.TeamName || '(unnamed)');
     set('detail-id', team.TeamID || '—');
     set('detail-course', team.Course || '—');
     set('detail-captain', team.CaptainName || '—');
     set('detail-contact', team.ContactNumber || '—');
-    set('detail-players', total + '/7');
-    set('detail-verified', verified + '/' + total);
+    set('detail-players', (team.PlayerCount || 0) + '/7');
+    set('detail-verified', verified + '/' + total + (total > 0 && verified === total ? ' (All Verified)' : ''));
     set('detail-submitted', formatDate(team.SubmittedAt));
 
-    const sBadge = document.getElementById('detail-status');
-    sBadge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border';
-    sBadge.textContent = STATUS_LABELS[status] || status;
-    (STATUS_STYLES[status] || STATUS_STYLES.Pending).forEach(c => sBadge.classList.add(c));
+    const statusBadge = document.getElementById('detail-status');
+    statusBadge.textContent = STATUS_LABELS[status] || status;
+    statusBadge.className = 'inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ' +
+      ((STATUS_STYLES[status] || STATUS_STYLES.Pending).join(' '));
 
     const badge = document.getElementById('detail-badge');
     badge.textContent = initialsOf(team.TeamName);
     badge.style.background = colorFor(team.TeamID);
+
+    // Rejection reason banner on detail sheet if rejected
+    const reasonRow = document.getElementById('detail-rejection-row');
+    const reasonText = document.getElementById('detail-rejection-text');
+    if (status === 'Rejected' && team.RejectionReason) {
+      if (reasonRow) reasonRow.classList.remove('hidden');
+      if (reasonText) reasonText.textContent = team.RejectionReason;
+    } else {
+      if (reasonRow) reasonRow.classList.add('hidden');
+    }
 
     document.getElementById('detail-open-full').href =
       'admin-verification.html?teamId=' + encodeURIComponent(team.TeamID);
@@ -206,6 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function closeDetail() {
+    activeDetailTeam = null;
     const modal = document.getElementById('registration-detail-modal');
     modal.classList.add('hidden');
     modal.classList.remove('flex');
@@ -216,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('registration-detail-modal').addEventListener('click', (e) => {
     if (e.target.id === 'registration-detail-modal') closeDetail();
   });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDetail(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeDetail(); closeRejectionModal(); } });
 
   function render() {
     const q = (searchInput.value || '').toLowerCase().trim();
@@ -257,8 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sBadge.textContent = STATUS_LABELS[status] || status;
         (STATUS_STYLES[status] || STATUS_STYLES.Pending).forEach(c => sBadge.classList.add(c));
         node.querySelector('.row-submitted').textContent = formatDate(team.SubmittedAt);
-        node.querySelector('.row-detail-link').href = 'admin-verification.html?teamId=' + encodeURIComponent(team.TeamID);
-        // On phones the secondary columns are hidden, so surface them in a sheet.
         node.querySelector('.row-view-btn').addEventListener('click', () => openDetail(team));
         tbody.appendChild(node);
       });
@@ -295,15 +313,129 @@ document.addEventListener('DOMContentLoaded', () => {
     URL.revokeObjectURL(url);
   });
 
+  // Approve Actions
   document.getElementById('approve-selected-btn').addEventListener('click', async () => {
     const ids = Array.from(tbody.querySelectorAll('.row-checkbox:checked')).map(cb => cb.dataset.teamId);
-    if (!ids.length) return;
+    if (!ids.length) { alert('Select at least one registration to approve.'); return; }
     for (const teamId of ids) {
-      try { await callRegistrationApi('updateTeamStatus', { teamId: teamId, status: 'Approved' }); }
+      try { await updateRegistrationStatusWithReason(teamId, 'Approved', 'Approved by Tournament Committee'); }
       catch (err) { console.error('Failed to approve ' + teamId, err); }
     }
     await loadRegistrations();
   });
+
+  const detailApproveBtn = document.getElementById('detail-approve-btn');
+  if (detailApproveBtn) {
+    detailApproveBtn.addEventListener('click', async () => {
+      if (!activeDetailTeam) return;
+      try {
+        await updateRegistrationStatusWithReason(activeDetailTeam.TeamID, 'Approved', 'Approved by Tournament Committee');
+        closeDetail();
+        await loadRegistrations();
+      } catch (err) {
+        alert('Could not approve registration: ' + err.message);
+      }
+    });
+  }
+
+  // Reason-Required Rejection Modal Handlers
+  const rejectionModal = document.getElementById('rejection-reason-modal');
+  const rejectionForm = document.getElementById('rejection-reason-form');
+  const closeRejectionBtn = document.getElementById('close-rejection-modal');
+  const cancelRejectionBtn = document.getElementById('cancel-rejection-btn');
+  const categorySelect = document.getElementById('rejection-category-select');
+  const reasonTextarea = document.getElementById('rejection-reason-text');
+  const previewText = document.getElementById('rejection-preview-text');
+
+  const REASON_TEMPLATES = {
+    'Inappropriate / Non-compliant Team Name or IGN': 'Your team name or player in-game name violates CEC student conduct policies. Please update to a school-appropriate name and resubmit.',
+    'Invalid or Unverified Student ID(s)': 'One or more player student IDs could not be verified in school enrolment records. Please upload clear student ID proofs.',
+    'Incomplete Starter Roster (Must have exactly 5 starters with valid MLBB IDs)': 'The team roster must include exactly 5 starting players with verified MLBB User ID and Server Zone.',
+    'Duplicate Player Registration (Player already listed on another team)': 'One or more players on this roster are already registered on another department team. Dual registrations are not permitted.',
+    'Incorrect Department / Division Selection': 'Selected department does not match the players\' collegiate academic program. Please select the correct department.',
+    'Custom Reason': ''
+  };
+
+  function openRejectionModal(team) {
+    if (!team) return;
+    document.getElementById('rejection-team-id').value = team.TeamID;
+    document.getElementById('rejection-team-name-display').textContent = team.TeamName || 'Team';
+    document.getElementById('rejection-team-id-display').textContent = team.TeamID;
+    categorySelect.value = '';
+    reasonTextarea.value = '';
+    updatePreviewText();
+    rejectionModal.classList.remove('hidden');
+    rejectionModal.classList.add('flex');
+  }
+
+  function closeRejectionModal() {
+    rejectionModal.classList.add('hidden');
+    rejectionModal.classList.remove('flex');
+  }
+
+  function updatePreviewText() {
+    const val = (reasonTextarea.value || '').trim();
+    previewText.textContent = val 
+      ? `"${val} — Contact Jade Louis S. Cabucos (jlcabucos.cec@gmail.com)"`
+      : '"Select category and enter detailed explanation to notify team captain..."';
+  }
+
+  if (categorySelect) {
+    categorySelect.addEventListener('change', (e) => {
+      const templ = REASON_TEMPLATES[e.target.value] || '';
+      reasonTextarea.value = templ;
+      updatePreviewText();
+    });
+  }
+
+  if (reasonTextarea) {
+    reasonTextarea.addEventListener('input', updatePreviewText);
+  }
+
+  if (closeRejectionBtn) closeRejectionBtn.addEventListener('click', closeRejectionModal);
+  if (cancelRejectionBtn) cancelRejectionBtn.addEventListener('click', closeRejectionModal);
+
+  // Reject Selected in toolbar
+  document.getElementById('reject-selected-btn').addEventListener('click', () => {
+    const ids = Array.from(tbody.querySelectorAll('.row-checkbox:checked')).map(cb => cb.dataset.teamId);
+    if (!ids.length) { alert('Select at least one registration to reject.'); return; }
+    const firstTeam = allRegistrations.find(t => t.TeamID === ids[0]);
+    openRejectionModal(firstTeam || { TeamID: ids.join(', '), TeamName: `${ids.length} Selected Teams` });
+  });
+
+  // Reject Single from Detail modal
+  const detailRejectBtn = document.getElementById('detail-reject-btn');
+  if (detailRejectBtn) {
+    detailRejectBtn.addEventListener('click', () => {
+      if (activeDetailTeam) openRejectionModal(activeDetailTeam);
+    });
+  }
+
+  if (rejectionForm) {
+    rejectionForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const reason = reasonTextarea.value.trim();
+      if (!reason || reason.length < 8) {
+        alert('Please provide a specific rejection reason (minimum 8 characters) to notify the team captain.');
+        return;
+      }
+
+      const teamIdVal = document.getElementById('rejection-team-id').value;
+      const ids = teamIdVal.includes(',') ? teamIdVal.split(',').map(s => s.trim()) : [teamIdVal];
+
+      try {
+        for (const tid of ids) {
+          await updateRegistrationStatusWithReason(tid, 'Rejected', reason);
+        }
+        closeRejectionModal();
+        closeDetail();
+        await loadRegistrations();
+        alert('Registration rejected and captain notification dispatched.');
+      } catch (err) {
+        alert('Could not reject registration: ' + err.message);
+      }
+    });
+  }
 
   async function loadRegistrations() {
     apiStatus.textContent = '';
@@ -329,12 +461,6 @@ document.addEventListener('DOMContentLoaded', () => {
   loadRegistrations();
 });
 </script>
-<!-- Firebase SDK & Bridge Scripts -->
-<script src="assets/js/firebase-config.js"></script>
-<script src="assets/js/auth-guard.js"></script>
-<script>window.CECAuth.requireApprovedStaff();</script>
-
-<!-- Registration detail sheet (phones: the columns hidden from the table) -->
 <div id="registration-detail-modal" class="hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-md items-end sm:items-center justify-center p-0 sm:p-4">
   <div class="bg-surface-container w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl border border-white/15 shadow-2xl max-h-[85vh] flex flex-col cyber-panel">
     <div class="flex items-center justify-between gap-md p-lg border-b border-white/10">
@@ -346,27 +472,104 @@ document.addEventListener('DOMContentLoaded', () => {
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
-    <div class="p-lg overflow-y-auto flex-1">
+    <div class="p-lg overflow-y-auto flex-1 flex flex-col gap-1">
       <div class="flex items-center justify-between gap-md pb-3 mb-1 border-b border-white/5">
         <span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider">Status</span>
         <span id="detail-status" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border">—</span>
       </div>
+      
+      <div id="detail-rejection-row" class="hidden p-3 rounded-xl bg-red-500/15 border border-red-500/30 flex flex-col gap-1 my-1">
+        <span class="font-label-caps text-[10px] font-bold text-red-300 uppercase flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">warning</span> Rejection Reason Dispatched to Captain
+        </span>
+        <p class="text-xs text-on-surface" id="detail-rejection-text"></p>
+      </div>
+
       <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Registration ID</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-id">—</span></div>
-      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Division / Dept</span><span class="text-sm text-on-surface text-right " id="detail-course">—</span></div>
-      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Captain</span><span class="text-sm text-on-surface text-right " id="detail-captain">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Division / Dept</span><span class="text-sm text-on-surface text-right" id="detail-course">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Captain</span><span class="text-sm text-on-surface text-right" id="detail-captain">—</span></div>
       <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Contact</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-contact">—</span></div>
       <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Players</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-players">—</span></div>
       <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Verified</span><span class="text-sm text-on-surface text-right cyber-mono" id="detail-verified">—</span></div>
-      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Submitted</span><span class="text-sm text-on-surface text-right " id="detail-submitted">—</span></div>
+      <div class="flex items-start justify-between gap-md py-2.5 border-b border-white/5"><span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-wider shrink-0">Submitted</span><span class="text-sm text-on-surface text-right" id="detail-submitted">—</span></div>
     </div>
-    <div class="p-lg border-t border-white/10 flex gap-sm">
-      <button type="button" onclick="document.getElementById('detail-close').click()" class="flex-1 px-md py-3 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps text-xs font-bold transition-colors">CLOSE</button>
-      <a id="detail-open-full" href="admin-verification.html" class="flex-1 px-md py-3 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold text-center transition-colors">REVIEW TEAM</a>
+    
+    <div class="p-lg border-t border-white/10 flex flex-col gap-2">
+      <div class="flex items-center gap-2">
+        <button type="button" id="detail-approve-btn" class="flex-1 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-label-caps text-xs font-bold transition-colors shadow">APPROVE</button>
+        <button type="button" id="detail-reject-btn" class="flex-1 px-3 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/30 font-label-caps text-xs font-bold transition-colors">REJECT (WITH REASON)</button>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="document.getElementById('detail-close').click()" class="flex-1 px-3 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps text-xs font-bold transition-colors">CLOSE</button>
+        <a id="detail-open-full" href="admin-verification.html" class="flex-1 px-3 py-2 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold text-center transition-colors">REVIEW PLAYERS</a>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Mobile bottom app bar: primary staff destinations -->
+<div id="rejection-reason-modal" class="hidden fixed inset-0 z-[70] bg-black/85 backdrop-blur-md items-center justify-center p-4">
+  <div class="bg-surface-container w-full max-w-lg rounded-2xl border border-red-500/40 shadow-2xl overflow-hidden flex flex-col cyber-panel">
+    <div class="p-lg bg-red-500/10 border-b border-red-500/20 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-red-400 text-[24px]">gavel</span>
+        <div>
+          <h3 class="font-bold text-sm text-on-surface cyber-title">Reject Registration &amp; Notify Captain</h3>
+          <p class="text-[11px] text-on-surface-variant">A clear, official reason is required before rejecting this entry.</p>
+        </div>
+      </div>
+      <button type="button" id="close-rejection-modal" class="p-1 rounded-lg text-on-surface-variant hover:text-white hover:bg-white/10">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <form id="rejection-reason-form" class="p-lg flex flex-col gap-md">
+      <input type="hidden" id="rejection-team-id" />
+      
+      <div class="p-3 rounded-xl bg-surface-container-lowest border border-white/10 flex items-center justify-between">
+        <div>
+          <span class="text-[10px] font-label-caps uppercase text-on-surface-variant block">Target Team</span>
+          <span class="font-bold text-sm text-on-surface" id="rejection-team-name-display">—</span>
+        </div>
+        <span class="text-xs font-mono text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20" id="rejection-team-id-display">TEAM-ID</span>
+      </div>
+
+      <div>
+        <label for="rejection-category-select" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Standard Rejection Category <span class="text-error">*</span></label>
+        <select id="rejection-category-select" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-red-400 focus:outline-none text-xs" required>
+          <option value="">Select standard violation category...</option>
+          <option value="Inappropriate / Non-compliant Team Name or IGN">Inappropriate / Non-compliant Team Name or IGN</option>
+          <option value="Invalid or Unverified Student ID(s)">Invalid or Unverified Student ID(s)</option>
+          <option value="Incomplete Starter Roster (Must have exactly 5 starters with valid MLBB IDs)">Incomplete Starter Roster (Must have 5 starters)</option>
+          <option value="Duplicate Player Registration (Player already listed on another team)">Duplicate Player Registration</option>
+          <option value="Incorrect Department / Division Selection">Incorrect Department / Division Selection</option>
+          <option value="Custom Reason">Custom Reason / Specific Committee Instruction</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="rejection-reason-text" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Detailed Explanation &amp; Resubmission Instructions <span class="text-error">*</span></label>
+        <textarea id="rejection-reason-text" rows="3" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-red-400 focus:outline-none text-xs resize-none" placeholder="Provide clear instructions on what the captain needs to correct before resubmitting..." required minlength="8"></textarea>
+      </div>
+
+      <div class="p-3 rounded-xl bg-red-500/10 border border-red-500/25 flex flex-col gap-1.5 text-xs">
+        <span class="font-label-caps text-[10px] text-red-300 font-bold uppercase flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">mail</span> Official Captain Notification Preview
+        </span>
+        <p class="text-[11px] text-on-surface" id="rejection-preview-text">"Your team registration has been rejected by the Tournament Committee. Reason: ..."</p>
+        <span class="text-[10px] text-on-surface-variant font-mono">Contact: Jade Louis S. Cabucos (jlcabucos.cec@gmail.com)</span>
+      </div>
+
+      <div class="flex items-center justify-end gap-sm pt-sm border-t border-white/10">
+        <button type="button" id="cancel-rejection-btn" class="px-4 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant font-label-caps text-xs font-bold transition-colors">CANCEL</button>
+        <button type="submit" id="submit-rejection-btn" class="px-5 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white font-label-caps text-xs font-bold transition-all shadow-lg flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">send</span>
+          <span>CONFIRM REJECTION &amp; NOTIFY</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <nav aria-label="Staff sections" class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface-container-low/95 backdrop-blur-xl border-t border-white/10 shadow-[0_-4px_20px_rgba(0,0,0,0.45)] pb-[env(safe-area-inset-bottom)]">
   <div class="flex items-stretch gap-1 px-2 py-1.5">
     <a href="/control-center" class="flex flex-1 flex-col items-center justify-center gap-0.5 min-h-14 rounded-xl transition-colors text-on-surface-variant hover:text-on-surface">

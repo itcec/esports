@@ -106,14 +106,14 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
 (function(){
   // Department visual identity (tournament structure, not results).
   var DEPT_STYLE = {
-    'IT':   { color:'#1264ff', icon:'assets/icons/lorc/dragon-head.svg' },
-    'HTM':  { color:'#ffb020', icon:'assets/icons/lorc/wyvern.svg' },
-    'CTE':  { color:'#00e676', icon:'assets/icons/lorc/hydra.svg' },
-    'CRIM': { color:'#ff4b4b', icon:'assets/icons/lorc/werewolf.svg' },
-    'HM':   { color:'#ffb020', icon:'assets/icons/delapouite/griffin-symbol.svg' },
-    'TM':   { color:'#00e5ff', icon:'assets/icons/delapouite/kraken-tentacle.svg' },
-    'SHS':  { color:'#ff2fd8', icon:'assets/icons/delapouite/oni.svg' },
-    'JHS':  { color:'#ffd700', icon:'assets/icons/delapouite/ice-golem.svg' }
+    'IT':   { color:'#1264ff', icon:'assets/icons/dragon-head.svg' },
+    'HTM':  { color:'#ffb020', icon:'assets/icons/wyvern.svg' },
+    'CTE':  { color:'#00e676', icon:'assets/icons/hydra.svg' },
+    'CRIM': { color:'#ff4b4b', icon:'assets/icons/werewolf.svg' },
+    'HM':   { color:'#ffb020', icon:'assets/icons/griffin-symbol.svg' },
+    'TM':   { color:'#00e5ff', icon:'assets/icons/kraken-tentacle.svg' },
+    'SHS':  { color:'#ff2fd8', icon:'assets/icons/oni.svg' },
+    'JHS':  { color:'#ffd700', icon:'assets/icons/ice-golem.svg' }
   };
 
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -122,7 +122,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   function side(name, score, isWinner, fallbackColor){
     if (!name) return null;
     var m = String(name).toUpperCase().match(/IT|HTM|CTE|CRIM|HM|TM|SHS|JHS/);
-    var style = (m && DEPT_STYLE[m[0]]) || { color: fallbackColor || '#1264ff', icon: 'assets/icons/lorc/dragon-head.svg' };
+    var style = (m && DEPT_STYLE[m[0]]) || { color: fallbackColor || '#1264ff', icon: 'assets/icons/dragon-head.svg' };
     return {
       name: esc(name), dept: m ? m[0] : '', icon: style.icon, color: style.color,
       score: (score === 0 || score) ? String(score) : '', win: !!isWinner
@@ -133,10 +133,10 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     mens: {
       title: "Student Men's Division \u00b7 24 Teams",
       depts: [
-        { name:"IT Department (8 Teams)",   date:"SEP 5",  color:"#1264ff", key:"IT",   icon:"assets/icons/lorc/dragon-head.svg" },
-        { name:"HTM Department (8 Teams)",  date:"SEP 12", color:"#ffb020", key:"HTM",  icon:"assets/icons/lorc/wyvern.svg" },
-        { name:"CTE Department (4 Teams)",  date:"SEP 19", color:"#00e676", key:"CTE",  icon:"assets/icons/lorc/hydra.svg" },
-        { name:"CRIM Department (4 Teams)", date:"SEP 19", color:"#ff4b4b", key:"CRIM", icon:"assets/icons/lorc/werewolf.svg" }
+        { name:"IT Department (8 Teams)",   date:"SEP 5",  color:"#1264ff", key:"IT",   icon:"assets/icons/dragon-head.svg" },
+        { name:"HTM Department (8 Teams)",  date:"SEP 12", color:"#ffb020", key:"HTM",  icon:"assets/icons/wyvern.svg" },
+        { name:"CTE Department (4 Teams)",  date:"SEP 19", color:"#00e676", key:"CTE",  icon:"assets/icons/hydra.svg" },
+        { name:"CRIM Department (4 Teams)", date:"SEP 19", color:"#ff4b4b", key:"CRIM", icon:"assets/icons/werewolf.svg" }
       ],
       playoff: {
         sf1:   { match:"PLAYOFF SEMIFINAL 1", fmt:"BO3", key:"SF1" },
@@ -147,10 +147,10 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     womens: {
       title: "Student Women's Division \u00b7 16 Teams",
       depts: [
-        { name:"IT Department (4 Teams)",   date:"SEP 5",  color:"#00e5ff", key:"IT",   icon:"assets/icons/delapouite/horus.svg" },
-        { name:"HTM Department (4 Teams)",  date:"SEP 12", color:"#ffb020", key:"HTM",  icon:"assets/icons/delapouite/griffin-symbol.svg" },
-        { name:"CTE Department (4 Teams)",  date:"SEP 19", color:"#7c5cff", key:"CTE",  icon:"assets/icons/delapouite/anubis.svg" },
-        { name:"CRIM Department (4 Teams)", date:"SEP 19", color:"#ff2fd8", key:"CRIM", icon:"assets/icons/delapouite/oni.svg" }
+        { name:"IT Department (4 Teams)",   date:"SEP 5",  color:"#00e5ff", key:"IT",   icon:"assets/icons/horus.svg" },
+        { name:"HTM Department (4 Teams)",  date:"SEP 12", color:"#ffb020", key:"HTM",  icon:"assets/icons/griffin-symbol.svg" },
+        { name:"CTE Department (4 Teams)",  date:"SEP 19", color:"#7c5cff", key:"CTE",  icon:"assets/icons/anubis.svg" },
+        { name:"CRIM Department (4 Teams)", date:"SEP 19", color:"#ff2fd8", key:"CRIM", icon:"assets/icons/oni.svg" }
       ],
       playoff: {
         sf1:   { match:"WOMEN'S SEMIFINAL 1", fmt:"BO3", key:"SF1" },
@@ -226,8 +226,8 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   };
 
   function renderMatchCard(m, highlight) {
-    var a = m.a || { name: "TBD", icon: "assets/icons/lorc/dragon-head.svg", dept: "PENDING" };
-    var b = m.b || { name: "TBD", icon: "assets/icons/lorc/wyvern.svg", dept: "PENDING" };
+    var a = m.a || { name: "TBD", icon: "assets/icons/dragon-head.svg", dept: "PENDING" };
+    var b = m.b || { name: "TBD", icon: "assets/icons/wyvern.svg", dept: "PENDING" };
 
     var aDeptKey = (a.dept || a.name || '').match(/IT|HTM|CTE|CRIM|HM|TM/);
     var aLogoHtml = (aDeptKey && DEPT_CRESTS[aDeptKey[0]]) ? '<img src="' + DEPT_CRESTS[aDeptKey[0]] + '" class="w-4 h-4 object-contain ml-1 shrink-0" alt="Dept" />' : '';
@@ -249,7 +249,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
         '<div class="px-md py-3 flex items-center justify-between gap-3 ' + (a.win ? 'bg-primary/10' : '') + '">' +
           '<div class="flex items-center gap-3 min-w-0">' +
             '<div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-white/20 shadow-sm overflow-hidden" style="background:' + (a.color || '#1264ff') + '">' +
-              '<img src="' + (a.icon || 'assets/icons/lorc/dragon-head.svg') + '" alt="Emblem" class="w-5 h-5 object-contain filter invert drop-shadow" />' +
+              '<img src="' + (a.icon || 'assets/icons/dragon-head.svg') + '" alt="Emblem" class="w-5 h-5 object-contain filter invert drop-shadow" />' +
             '</div>' +
             '<div class="flex flex-col min-w-0">' +
               '<div class="flex items-center gap-1"><span class="font-bold text-on-surface text-sm truncate cyber-title">' + a.name + '</span>' + aLogoHtml + '</div>' +
@@ -262,7 +262,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
         '<div class="px-md py-3 flex items-center justify-between gap-3 ' + (b.win ? 'bg-primary/10' : '') + '">' +
           '<div class="flex items-center gap-3 min-w-0">' +
             '<div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-white/20 shadow-sm overflow-hidden" style="background:' + (b.color || '#ff4b4b') + '">' +
-              '<img src="' + (b.icon || 'assets/icons/lorc/werewolf.svg') + '" alt="Emblem" class="w-5 h-5 object-contain filter invert drop-shadow" />' +
+              '<img src="' + (b.icon || 'assets/icons/werewolf.svg') + '" alt="Emblem" class="w-5 h-5 object-contain filter invert drop-shadow" />' +
             '</div>' +
             '<div class="flex flex-col min-w-0">' +
               '<div class="flex items-center gap-1"><span class="font-bold text-on-surface text-sm truncate cyber-title">' + b.name + '</span>' + bLogoHtml + '</div>' +
