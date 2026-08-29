@@ -73,41 +73,56 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
 <!-- Left Column: Team Information -->
 <aside class="lg:col-span-3 flex flex-col gap-gutter">
-<div class="bg-surface-container p-md rounded-xl shadow-sm relative overflow-hidden group">
+<div class="bg-surface-container p-md rounded-xl shadow-sm relative overflow-hidden group border border-white/5 cyber-panel">
 <!-- Decorative background accent -->
 <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors duration-500"></div>
-<h2 class="text-xs font-label-caps uppercase text-on-surface-variant mb-md flex items-center gap-xs tracking-wider">
-<span class="material-symbols-outlined text-[16px] text-primary">info</span>
-                    Team Information
-                </h2>
+<h2 class="text-xs font-label-caps uppercase text-on-surface-variant mb-md flex items-center justify-between tracking-wider">
+  <span class="flex items-center gap-xs">
+    <span class="material-symbols-outlined text-[16px] text-primary">info</span>
+    Team Information
+  </span>
+  <span class="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono font-bold" id="detail-team-id">—</span>
+</h2>
+
+<!-- Chosen Team Emblem / Logo Display -->
 <div class="flex flex-col items-center gap-sm mb-lg">
-<div class="w-24 h-24 rounded-2xl shadow-inner flex items-center justify-center relative text-white text-headline-lg font-headline-lg cyber-mono overflow-hidden border border-white/15" id="team-badge" style="background:#1264ff">
-<div class="absolute inset-0 rounded-2xl border border-primary/20 pointer-events-none z-10"></div>
-<div id="team-badge-content" class="w-full h-full flex items-center justify-center p-1">
-  <span id="team-badge-initials">—</span>
+  <div class="relative group/badge">
+    <div class="w-24 h-24 rounded-2xl shadow-inner flex items-center justify-center relative text-white text-headline-lg font-headline-lg cyber-mono overflow-hidden border border-white/15 shadow-lg" id="team-badge" style="background:#1264ff" title="Team Chosen Logo">
+      <div class="absolute inset-0 rounded-2xl border border-primary/20 pointer-events-none z-10"></div>
+      <div id="team-badge-content" class="w-full h-full flex items-center justify-center p-2">
+        <span id="team-badge-initials">—</span>
+      </div>
+    </div>
+    <!-- Mini department overlay pill on corner of team badge -->
+    <div id="team-badge-dept-overlay" class="hidden absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-full bg-surface-container-lowest border-2 border-surface-container flex items-center justify-center shadow-md" title="Department Crest">
+      <img id="team-badge-dept-img" class="w-5 h-5 object-contain rounded-full" alt="Dept" />
+    </div>
+  </div>
+  <div class="text-center mt-1">
+    <h3 class="text-headline-md font-headline-md text-on-surface" id="detail-team-name">Loading…</h3>
+    <span class="text-[10px] uppercase font-bold text-primary font-mono tracking-wider block mt-0.5" id="team-emblem-name">CHOSEN TEAM LOGO</span>
+  </div>
 </div>
-</div>
-<div class="text-center">
-<h3 class="text-headline-md font-headline-md text-on-surface" id="detail-team-name">Loading…</h3>
-<span class="inline-block px-xs py-[2px] mt-xs bg-secondary-container/20 text-secondary-container text-[10px] font-label-caps rounded-DEFAULT uppercase tracking-widest" id="detail-team-id">—</span>
-</div>
-</div>
-<div class="space-y-sm text-sm">
-<div class="flex flex-col">
-<span class="text-[10px] text-outline font-label-caps uppercase tracking-wider">Captain Name</span>
-<span class="text-on-surface font-body-lg font-bold" id="detail-captain-name">—</span>
-</div>
-<div class="flex flex-col">
-<span class="text-[10px] text-outline font-label-caps uppercase tracking-wider">Contact</span>
-<span class="text-primary font-mono" id="detail-contact">—</span>
-</div>
-<div class="flex flex-col">
-<span class="text-[10px] text-outline font-label-caps uppercase tracking-wider">Course / Major</span>
-<div class="flex items-center gap-2 mt-1">
-  <img id="detail-dept-logo" class="w-5 h-5 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/10 shrink-0 hidden" alt="Department Crest" />
-  <span class="text-on-surface-variant font-bold text-sm" id="detail-course">—</span>
-</div>
-</div>
+
+<div class="space-y-sm text-sm border-t border-white/5 pt-sm">
+  <div class="flex flex-col">
+    <span class="text-[10px] text-outline font-label-caps uppercase tracking-wider">Department / Division</span>
+    <div class="flex items-center gap-2 mt-1 px-2.5 py-1.5 rounded-lg bg-surface-container-high/60 border border-white/5">
+      <img id="detail-dept-logo" class="w-6 h-6 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/15 shrink-0 hidden" alt="Department Crest" />
+      <div class="flex flex-col min-w-0">
+        <span class="text-on-surface font-bold text-xs" id="detail-course">—</span>
+        <span class="text-[9px] text-outline uppercase font-mono">Official Department</span>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col">
+    <span class="text-[10px] text-outline font-label-caps uppercase tracking-wider">Captain Name</span>
+    <span class="text-on-surface font-body-lg font-bold" id="detail-captain-name">—</span>
+  </div>
+  <div class="flex flex-col">
+    <span class="text-[10px] text-outline font-label-caps uppercase tracking-wider">Contact</span>
+    <span class="text-primary font-mono text-xs" id="detail-contact">—</span>
+  </div>
 </div>
 </div>
 <!-- Verification Method Notice -->
@@ -316,21 +331,37 @@ document.addEventListener('DOMContentLoaded', () => {
     return PALETTE[hash % PALETTE.length];
   }
 
+  function normalizeLogoUrl(url) {
+    if (!url) return '';
+    let s = String(url).trim();
+    if (s.toLowerCase().startsWith('assets/')) {
+      return s.toLowerCase();
+    }
+    return s;
+  }
+
   function sanitizeTeamData(team) {
     if (!team) return team;
     const t = Object.assign({}, team);
     const statusVal = String(t.Status || '').trim();
+    const statusLower = statusVal.toLowerCase();
 
-    if (statusVal.startsWith('assets/') || statusVal.startsWith('http://') || statusVal.startsWith('https://') || statusVal.endsWith('.svg') || statusVal.endsWith('.png') || statusVal.endsWith('.jpg') || statusVal.endsWith('.webp')) {
+    // If Status field contains a file path, URL, or emblem
+    if (statusLower.startsWith('assets/') || statusLower.startsWith('http://') || statusLower.startsWith('https://') || statusLower.endsWith('.svg') || statusLower.endsWith('.png') || statusLower.endsWith('.jpg') || statusLower.endsWith('.webp')) {
       if (!t.LogoUrl || String(t.LogoUrl).length < 5) {
-        t.LogoUrl = statusVal;
+        t.LogoUrl = normalizeLogoUrl(statusVal);
       }
       t.Status = 'Pending';
     }
 
+    if (t.LogoUrl) {
+      t.LogoUrl = normalizeLogoUrl(t.LogoUrl);
+    }
+
     const submittedVal = String(t.SubmittedAt || '').trim();
-    if (submittedVal.startsWith('http://') || submittedVal.startsWith('https://') || submittedVal.startsWith('assets/')) {
-      if (!t.TeamPhotoUrl) t.TeamPhotoUrl = submittedVal;
+    const subLower = submittedVal.toLowerCase();
+    if (subLower.startsWith('http://') || subLower.startsWith('https://') || subLower.startsWith('assets/')) {
+      if (!t.TeamPhotoUrl) t.TeamPhotoUrl = normalizeLogoUrl(submittedVal);
       t.SubmittedAt = t.UpdatedAt || '';
     }
 
@@ -361,14 +392,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     badgeContainer.style.background = colorFor(team.TeamID || team.teamId);
 
-    const logoUrl = team.LogoUrl || team.logoUrl || team.customLogoUrl || team.badgeIcon;
+    const logoUrl = normalizeLogoUrl(team.LogoUrl || team.logoUrl || team.customLogoUrl || team.badgeIcon);
     const dept = parseDept(team.Course || team.course);
     const deptLogo = DEPT_LOGOS[dept];
+
+    // Corner overlay on team badge
+    const overlay = document.getElementById('team-badge-dept-overlay');
+    const overlayImg = document.getElementById('team-badge-dept-img');
+    if (overlay && overlayImg) {
+      if (deptLogo) {
+        overlayImg.src = deptLogo;
+        overlay.classList.remove('hidden');
+      } else {
+        overlay.classList.add('hidden');
+      }
+    }
+
+    const emblemLabel = document.getElementById('team-emblem-name');
+    if (emblemLabel) {
+      if (logoUrl) {
+        const parts = logoUrl.split('/');
+        const file = parts[parts.length - 1].replace(/\.[^/.]+$/, '').toUpperCase();
+        emblemLabel.textContent = file ? file + ' EMBLEM' : 'CHOSEN TEAM LOGO';
+      } else {
+        emblemLabel.textContent = dept ? dept + ' CREST' : 'TEAM BADGE';
+      }
+    }
 
     if (logoUrl && logoUrl.length > 3) {
       const isSvg = logoUrl.endsWith('.svg') || logoUrl.includes('assets/icons/');
       badgeContent.innerHTML = '<img src="' + escHtml(logoUrl) + '" alt="' + escHtml(team.TeamName) + ' Logo" class="' +
-        (isSvg ? 'w-14 h-14 object-contain filter invert drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]' : 'w-full h-full object-cover rounded-xl') +
+        (isSvg ? 'w-16 h-16 object-contain filter invert drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]' : 'w-full h-full object-cover rounded-xl') +
         '" onerror="this.onerror=null; if(\'' + (deptLogo || '') + '\') { this.src=\'' + (deptLogo || '') + '\'; this.className=\'w-14 h-14 object-contain\'; } else { this.style.display=\'none\'; }" />';
     } else if (deptLogo) {
       badgeContent.innerHTML = '<img src="' + deptLogo + '" alt="' + escHtml(dept) + '" class="w-14 h-14 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]" />';

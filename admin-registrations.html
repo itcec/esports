@@ -206,22 +206,37 @@ document.addEventListener('DOMContentLoaded', () => {
     return PALETTE[hash % PALETTE.length];
   }
 
+  function normalizeLogoUrl(url) {
+    if (!url) return '';
+    let s = String(url).trim();
+    if (s.toLowerCase().startsWith('assets/')) {
+      return s.toLowerCase();
+    }
+    return s;
+  }
+
   function sanitizeTeamData(team) {
     if (!team) return team;
     const t = Object.assign({}, team);
     const statusVal = String(t.Status || '').trim();
+    const statusLower = statusVal.toLowerCase();
 
     // If Status field contains a file path, URL, or emblem
-    if (statusVal.startsWith('assets/') || statusVal.startsWith('http://') || statusVal.startsWith('https://') || statusVal.endsWith('.svg') || statusVal.endsWith('.png') || statusVal.endsWith('.jpg') || statusVal.endsWith('.webp')) {
+    if (statusLower.startsWith('assets/') || statusLower.startsWith('http://') || statusLower.startsWith('https://') || statusLower.endsWith('.svg') || statusLower.endsWith('.png') || statusLower.endsWith('.jpg') || statusLower.endsWith('.webp')) {
       if (!t.LogoUrl || String(t.LogoUrl).length < 5) {
-        t.LogoUrl = statusVal;
+        t.LogoUrl = normalizeLogoUrl(statusVal);
       }
       t.Status = 'Pending';
     }
 
+    if (t.LogoUrl) {
+      t.LogoUrl = normalizeLogoUrl(t.LogoUrl);
+    }
+
     const submittedVal = String(t.SubmittedAt || '').trim();
-    if (submittedVal.startsWith('http://') || submittedVal.startsWith('https://') || submittedVal.startsWith('assets/')) {
-      if (!t.TeamPhotoUrl) t.TeamPhotoUrl = submittedVal;
+    const subLower = submittedVal.toLowerCase();
+    if (subLower.startsWith('http://') || subLower.startsWith('https://') || subLower.startsWith('assets/')) {
+      if (!t.TeamPhotoUrl) t.TeamPhotoUrl = normalizeLogoUrl(submittedVal);
       t.SubmittedAt = t.UpdatedAt || '';
     }
 
@@ -236,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     badgeEl.style.background = colorFor(team.TeamID || team.teamId);
     badgeEl.classList.add('overflow-hidden');
 
-    const logoUrl = team.LogoUrl || team.logoUrl || team.customLogoUrl || team.badgeIcon;
+    const logoUrl = normalizeLogoUrl(team.LogoUrl || team.logoUrl || team.customLogoUrl || team.badgeIcon);
     const dept = parseDept(team.Course || team.course);
     const deptLogo = DEPT_LOGOS[dept];
 
