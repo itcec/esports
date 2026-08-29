@@ -137,7 +137,7 @@
           <div class="flex-1 min-w-0 flex items-center gap-3 sm:gap-4 md:flex-row-reverse md:pr-5 lg:pr-8">
             <div class="relative shrink-0 flex items-center">
               <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-[76px] lg:h-[76px] rounded-2xl flex items-center justify-center shadow-lg border-2 border-white/20 overflow-hidden shrink-0" id="team1-emblem-badge" style="background:#1264ff">
-                <img class="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" id="team1-emblem-img" src="assets/icons/lorc/dragon-head.svg" alt="Team 1 emblem" />
+                <img class="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" id="team1-emblem-img" src="assets/icons/dragon-head.svg" alt="Team 1 emblem" />
               </div>
               <img class="w-7 h-7 sm:w-9 sm:h-9 rounded-full border-2 border-white/20 object-contain bg-surface-container-lowest relative z-10 -ml-3" id="team1-dept-logo" src="assets/IT.png" alt="" />
             </div>
@@ -171,7 +171,7 @@
           <div class="flex-1 min-w-0 flex items-center gap-3 sm:gap-4 md:pl-5 lg:pl-8">
             <div class="relative shrink-0 flex items-center md:flex-row-reverse">
               <div class="w-14 h-14 sm:w-16 sm:h-16 lg:w-[76px] lg:h-[76px] rounded-2xl flex items-center justify-center shadow-lg border-2 border-white/20 overflow-hidden shrink-0" id="team2-emblem-badge" style="background:#ff4b4b">
-                <img class="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" id="team2-emblem-img" src="assets/icons/lorc/werewolf.svg" alt="Team 2 emblem" />
+                <img class="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.7)]" id="team2-emblem-img" src="assets/icons/werewolf.svg" alt="Team 2 emblem" />
               </div>
               <img class="w-7 h-7 sm:w-9 sm:h-9 rounded-full border-2 border-white/20 object-contain bg-surface-container-lowest relative z-10 -ml-3 md:ml-0 md:-mr-3" id="team2-dept-logo" src="assets/CRIM.png" alt="" />
             </div>
@@ -339,13 +339,13 @@
             <div class="flex flex-col gap-1">
               <label for="setting-team1-icon" class="text-[11px] font-label-caps text-on-surface-variant">Emblem Icon</label>
               <select id="setting-team1-icon" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10">
-                <option value="assets/icons/lorc/dragon-head.svg">Dragon Head</option>
-                <option value="assets/icons/lorc/double-dragon.svg">Twin Dragons</option>
-                <option value="assets/icons/lorc/wyvern.svg">Wyvern</option>
-                <option value="assets/icons/delapouite/oni.svg">Oni Demon</option>
-                <option value="assets/icons/delapouite/horus.svg">Horus Falcon</option>
-                <option value="assets/icons/delapouite/griffin-symbol.svg">Griffin</option>
-                <option value="assets/icons/lorc/werewolf.svg">Werewolf</option>
+                <option value="assets/icons/dragon-head.svg">Dragon Head</option>
+                <option value="assets/icons/double-dragon.svg">Twin Dragons</option>
+                <option value="assets/icons/wyvern.svg">Wyvern</option>
+                <option value="assets/icons/oni.svg">Oni Demon</option>
+                <option value="assets/icons/horus.svg">Horus Falcon</option>
+                <option value="assets/icons/griffin-symbol.svg">Griffin</option>
+                <option value="assets/icons/werewolf.svg">Werewolf</option>
               </select>
             </div>
           </div>
@@ -378,12 +378,12 @@
             <div class="flex flex-col gap-1">
               <label for="setting-team2-icon" class="text-[11px] font-label-caps text-on-surface-variant">Emblem Icon</label>
               <select id="setting-team2-icon" class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10">
-                <option value="assets/icons/lorc/werewolf.svg">Werewolf</option>
-                <option value="assets/icons/lorc/dragon-head.svg">Dragon Head</option>
-                <option value="assets/icons/delapouite/oni.svg">Oni Demon</option>
-                <option value="assets/icons/delapouite/ice-golem.svg">Ice Golem</option>
-                <option value="assets/icons/delapouite/kraken-tentacle.svg">Kraken</option>
-                <option value="assets/icons/lorc/hydra.svg">Hydra</option>
+                <option value="assets/icons/werewolf.svg">Werewolf</option>
+                <option value="assets/icons/dragon-head.svg">Dragon Head</option>
+                <option value="assets/icons/oni.svg">Oni Demon</option>
+                <option value="assets/icons/ice-golem.svg">Ice Golem</option>
+                <option value="assets/icons/kraken-tentacle.svg">Kraken</option>
+                <option value="assets/icons/hydra.svg">Hydra</option>
               </select>
             </div>
           </div>
@@ -757,7 +757,7 @@
     setText('team1-dept-tag', (t1.dept || 'IT') + ' DEPARTMENT');
     setText('team1-standing-seed', t1.seed || 'OFFICIAL ENTRY');
     setText('team1-sub-desc', t1.sub || '');
-    setSrc('team1-emblem-img', t1.icon || 'assets/icons/lorc/dragon-head.svg');
+    setSrc('team1-emblem-img', t1.icon || 'assets/icons/dragon-head.svg');
     setSrc('team1-dept-logo', DEPT_LOGOS[t1.dept] || 'assets/IT.png');
     setText('team1-roster-title', (t1.name || 'Team 1') + ' — Lineup');
     setSrc('team1-roster-dept-logo', DEPT_LOGOS[t1.dept] || 'assets/IT.png');
@@ -788,7 +788,7 @@
     setText('team2-dept-tag', (t2.dept || 'CRIM') + ' DEPARTMENT');
     setText('team2-standing-seed', t2.seed || 'OFFICIAL ENTRY');
     setText('team2-sub-desc', t2.sub || '');
-    setSrc('team2-emblem-img', t2.icon || 'assets/icons/lorc/werewolf.svg');
+    setSrc('team2-emblem-img', t2.icon || 'assets/icons/werewolf.svg');
     setSrc('team2-dept-logo', DEPT_LOGOS[t2.dept] || 'assets/CRIM.png');
     setText('team2-roster-title', (t2.name || 'Team 2') + ' — Lineup');
     setSrc('team2-roster-dept-logo', DEPT_LOGOS[t2.dept] || 'assets/CRIM.png');
@@ -890,13 +890,13 @@
     document.getElementById('setting-team1-name').value = t1.name || '';
     document.getElementById('setting-team1-score').value = t1.score || '0';
     document.getElementById('setting-team1-dept').value = t1.dept || 'IT';
-    document.getElementById('setting-team1-icon').value = t1.icon || 'assets/icons/lorc/dragon-head.svg';
+    document.getElementById('setting-team1-icon').value = t1.icon || 'assets/icons/dragon-head.svg';
 
     const t2 = m.team2 || {};
     document.getElementById('setting-team2-name').value = t2.name || '';
     document.getElementById('setting-team2-score').value = t2.score || '0';
     document.getElementById('setting-team2-dept').value = t2.dept || 'CRIM';
-    document.getElementById('setting-team2-icon').value = t2.icon || 'assets/icons/lorc/werewolf.svg';
+    document.getElementById('setting-team2-icon').value = t2.icon || 'assets/icons/werewolf.svg';
   }
 
   function openSettings() {

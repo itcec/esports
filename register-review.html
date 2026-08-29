@@ -321,11 +321,17 @@
     document.getElementById('summary-captain').textContent = draft['captain-name'] || '—';
 
     // Hydrate chosen badge emblem & color
-    if (draft.badgeIcon && document.getElementById('summary-badge-icon')) {
-      document.getElementById('summary-badge-icon').src = draft.badgeIcon;
+    const badgeIconEl = document.getElementById('summary-badge-icon');
+    const badgeWrapEl = document.getElementById('summary-badge-wrap');
+    if (draft.logoMode === 'upload' && draft.customLogoUrl && badgeIconEl) {
+      badgeIconEl.src = draft.customLogoUrl;
+      badgeIconEl.className = 'w-full h-full object-contain p-1';
+    } else if (draft.badgeIcon && badgeIconEl) {
+      badgeIconEl.src = draft.badgeIcon;
+      badgeIconEl.className = 'w-10 h-10 object-contain filter invert';
     }
-    if (draft.teamColor && document.getElementById('summary-badge-wrap')) {
-      document.getElementById('summary-badge-wrap').style.background = draft.teamColor;
+    if (draft.teamColor && badgeWrapEl) {
+      badgeWrapEl.style.background = draft.teamColor;
     }
 
     if (isFaculty) {
@@ -398,6 +404,8 @@
           captainName: draft['captain-name'] || '',
           contactNumber: draft['team-contact'] || '',
           description: draft['team-desc'] || '',
+          logoUrl: (draft.logoMode === 'upload' && draft.customLogoUrl) ? draft.customLogoUrl : (draft.badgeIcon || ''),
+          teamPhotoUrl: draft.customLogoUrl || '',
           players: JSON.stringify(players),
           docIds: JSON.stringify(draft.docIds || [])
         });

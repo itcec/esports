@@ -196,49 +196,86 @@
 <div class="w-[3px] h-8 bg-inverse-primary shadow-[0_0_12px_rgba(0,82,220,0.6)]"></div>
 <h2 class="font-headline-lg text-headline-lg text-on-background uppercase tracking-tight cyber-title">Team Foundation</h2>
 </div>
-<form class="flex flex-col gap-xl">
-<!-- Team Badge & Logo Icon Chooser -->
+<form class="flex flex-col gap-xl" onsubmit="return false;">
+
+<!-- Team Badge, Emblem & Custom Logo Chooser -->
 <div class="bg-surface-container-low/95 backdrop-blur-md rounded-xl p-lg relative overflow-hidden group shadow-lg cyber-panel border border-white/10">
   <div class="flex flex-col gap-sm mb-md">
-    <div class="flex items-center justify-between">
-      <label class="block font-label-caps text-label-caps text-primary uppercase tracking-widest font-bold">Team Emblem &amp; Badge</label>
-      <span class="text-xs font-label-caps text-on-surface-variant">SELECT EMBLEM &amp; ACCENT COLOR</span>
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <label class="block font-label-caps text-label-caps text-primary uppercase tracking-widest font-bold">Team Logo &amp; Identity Badge</label>
+      <div class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-lg border border-white/10 text-xs">
+        <button type="button" id="tab-emblem-btn" class="px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">shield</span> Emblem Gallery
+        </button>
+        <button type="button" id="tab-upload-btn" class="px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">upload_file</span> Upload Custom Logo
+        </button>
+      </div>
     </div>
-    <p class="font-body-md text-body-md text-on-surface-variant">Choose your team's official esports logo emblem from the asset gallery and customize your team's background color.</p>
+    <p class="font-body-md text-body-md text-on-surface-variant">Choose your team's official esports logo emblem from the asset gallery or upload your own custom team logo.</p>
   </div>
 
   <div class="flex flex-col md:flex-row items-start md:items-center gap-lg bg-surface-container-lowest/80 p-md rounded-xl border border-white/5 mb-md">
     <!-- Live Badge Preview -->
     <div class="flex flex-col items-center gap-2 shrink-0">
       <div class="relative flex items-center justify-center w-24 h-24 rounded-2xl shadow-[0_0_25px_rgba(18,100,255,0.4)] border-2 border-white/20 transition-all duration-300 overflow-hidden" id="team-badge-preview" style="background:#1264ff">
-        <img id="badge-icon-img" src="assets/icons/lorc/dragon-head.svg" alt="Team Emblem" class="w-14 h-14 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
+        <img id="badge-icon-img" src="assets/icons/dragon-head.svg" alt="Team Emblem" class="w-14 h-14 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]" />
       </div>
-      <span class="text-[11px] font-label-caps text-primary cyber-mono" id="badge-icon-name">DRAGON</span>
+      <span class="text-[11px] font-label-caps text-primary cyber-mono" id="badge-icon-name">DRAGON HEAD</span>
     </div>
 
-    <!-- Color Swatches -->
-    <div class="flex flex-col gap-2 flex-1">
-      <span class="font-label-caps text-xs text-on-surface-variant uppercase">Badge Accent Color:</span>
-      <div class="flex flex-wrap gap-2.5" id="team-color-picker" role="radiogroup" aria-label="Team badge color">
-        <label class="cursor-pointer" title="Electric Blue"><input checked="" class="sr-only peer" data-color="#1264ff" name="team-color" type="radio" value="#1264ff"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#1264ff"></span></label>
-        <label class="cursor-pointer" title="Neon Cyan"><input class="sr-only peer" data-color="#00e5ff" name="team-color" type="radio" value="#00e5ff"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#00e5ff"></span></label>
-        <label class="cursor-pointer" title="Cosmic Violet"><input class="sr-only peer" data-color="#7c5cff" name="team-color" type="radio" value="#7c5cff"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#7c5cff"></span></label>
-        <label class="cursor-pointer" title="Neon Magenta"><input class="sr-only peer" data-color="#ff2fd8" name="team-color" type="radio" value="#ff2fd8"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#ff2fd8"></span></label>
-        <label class="cursor-pointer" title="Emerald Green"><input class="sr-only peer" data-color="#00e676" name="team-color" type="radio" value="#00e676"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#00e676"></span></label>
-        <label class="cursor-pointer" title="Amber Gold"><input class="sr-only peer" data-color="#ffb020" name="team-color" type="radio" value="#ffb020"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#ffb020"></span></label>
-        <label class="cursor-pointer" title="Crimson Red"><input class="sr-only peer" data-color="#ff4b4b" name="team-color" type="radio" value="#ff4b4b"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#ff4b4b"></span></label>
+    <!-- Color Swatches & Custom Details -->
+    <div class="flex flex-col gap-2 flex-1 w-full">
+      <div id="color-picker-section">
+        <span class="font-label-caps text-xs text-on-surface-variant uppercase block mb-1">Badge Accent Color:</span>
+        <div class="flex flex-wrap gap-2.5" id="team-color-picker" role="radiogroup" aria-label="Team badge color">
+          <label class="cursor-pointer" title="Electric Blue"><input checked="" class="sr-only peer" data-color="#1264ff" name="team-color" type="radio" value="#1264ff"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#1264ff"></span></label>
+          <label class="cursor-pointer" title="Neon Cyan"><input class="sr-only peer" data-color="#00e5ff" name="team-color" type="radio" value="#00e5ff"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#00e5ff"></span></label>
+          <label class="cursor-pointer" title="Cosmic Violet"><input class="sr-only peer" data-color="#7c5cff" name="team-color" type="radio" value="#7c5cff"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#7c5cff"></span></label>
+          <label class="cursor-pointer" title="Neon Magenta"><input class="sr-only peer" data-color="#ff2fd8" name="team-color" type="radio" value="#ff2fd8"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#ff2fd8"></span></label>
+          <label class="cursor-pointer" title="Emerald Green"><input class="sr-only peer" data-color="#00e676" name="team-color" type="radio" value="#00e676"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#00e676"></span></label>
+          <label class="cursor-pointer" title="Amber Gold"><input class="sr-only peer" data-color="#ffb020" name="team-color" type="radio" value="#ffb020"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#ffb020"></span></label>
+          <label class="cursor-pointer" title="Crimson Red"><input class="sr-only peer" data-color="#ff4b4b" name="team-color" type="radio" value="#ff4b4b"/><span class="block w-8 h-8 rounded-lg border-2 border-transparent peer-checked:border-white peer-checked:scale-110 peer-focus-visible:ring-2 peer-focus-visible:ring-primary transition-all shadow-md" style="background:#ff4b4b"></span></label>
+        </div>
       </div>
+      <p class="text-xs text-on-surface-variant/80 mt-1" id="logo-mode-hint">This emblem &amp; accent color represent your team on live broadcast scoreboards and tournament brackets.</p>
     </div>
   </div>
 
-  <!-- Emblem Icon Selector Grid -->
-  <div>
-    <span class="font-label-caps text-xs text-on-surface-variant uppercase mb-2 block">Choose Team Logo Emblem:</span>
+  <!-- Mode 1: Preset Emblem Selector Grid -->
+  <div id="emblem-mode-panel">
+    <div class="flex items-center justify-between mb-2">
+      <span class="font-label-caps text-xs text-on-surface-variant uppercase">Choose Team Logo Emblem:</span>
+      <button type="button" id="open-emblem-modal-btn" class="text-xs font-label-caps text-primary hover:text-on-surface flex items-center gap-1 font-bold">
+        <span class="material-symbols-outlined text-[15px]">grid_view</span> Browse All 120+ Emblems
+      </button>
+    </div>
     <div class="grid grid-cols-4 sm:grid-cols-8 gap-2.5 max-h-48 overflow-y-auto p-1 bg-surface-container-lowest/60 rounded-xl border border-white/5" id="emblem-selector-grid">
       <!-- Icons populated by JS -->
     </div>
   </div>
+
+  <!-- Mode 2: Custom Logo Upload Section -->
+  <div id="upload-mode-panel" class="hidden flex-col gap-3">
+    <label class="cursor-pointer border-2 border-dashed border-white/15 hover:border-primary/50 rounded-xl p-md flex flex-col items-center justify-center gap-2 bg-surface-container-lowest/50 hover:bg-surface-container-high/40 transition-all text-center group">
+      <span class="material-symbols-outlined text-[36px] text-primary group-hover:scale-110 transition-transform">cloud_upload</span>
+      <span class="text-xs font-bold text-on-surface uppercase font-label-caps">Upload Team Logo / Mascot Image</span>
+      <span class="text-[11px] text-on-surface-variant">PNG, JPG or WEBP with transparent or square backdrop (Max 2MB)</span>
+      <input type="file" id="custom-logo-file-input" accept="image/png,image/jpeg,image/webp" class="hidden" />
+    </label>
+    <div id="logo-upload-progress" class="hidden text-xs text-primary flex items-center gap-1 font-mono">
+      <span class="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>
+      <span>Uploading custom logo…</span>
+    </div>
+    <div id="custom-logo-chip" class="hidden p-2 rounded-lg bg-primary/20 border border-primary/30 text-primary text-xs font-bold flex items-center justify-between">
+      <span class="truncate" id="custom-logo-name">custom_logo.png</span>
+      <button type="button" id="remove-custom-logo" class="text-xs text-error hover:underline flex items-center gap-0.5">
+        <span class="material-symbols-outlined text-[14px]">delete</span> Remove
+      </button>
+    </div>
+  </div>
 </div>
+
 <!-- Basic Info Grid -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
 <!-- Team Name -->
@@ -356,6 +393,54 @@
 </div>
 </div>
 </div>
+
+<!-- Modal: Browse All 120+ Emblems -->
+<div id="emblem-modal" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+  <div class="relative w-full max-w-3xl max-h-[90vh] bg-surface-container border border-primary/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+    <!-- Header -->
+    <div class="flex items-center justify-between p-md border-b border-white/10 bg-surface-container-high shrink-0">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary text-[22px]">shield</span>
+        <h3 class="font-headline-md text-headline-md text-on-surface uppercase cyber-title text-base sm:text-lg">Esports Emblem Gallery</h3>
+      </div>
+      <button type="button" id="close-emblem-modal-btn" class="p-1 rounded-lg hover:bg-white/10 text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Search & Filter Controls -->
+    <div class="p-md border-b border-white/10 flex flex-col sm:flex-row gap-sm bg-surface-container-low shrink-0">
+      <div class="relative flex-1">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+        <input type="text" id="modal-emblem-search" placeholder="Search emblems (e.g. dragon, wolf, skull, hydra, titan)..." class="w-full bg-[#050B14] pl-9 pr-3 py-2 rounded-lg border border-white/10 text-on-surface text-xs focus:border-primary focus:outline-none" />
+      </div>
+      <div class="flex flex-wrap gap-1.5" id="category-pills">
+        <button type="button" class="cat-pill active px-3 py-1.5 rounded-lg text-xs font-label-caps font-bold bg-primary text-on-primary" data-cat="all">All (120+)</button>
+        <button type="button" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-label-caps text-on-surface-variant hover:text-on-surface bg-surface-container-lowest border border-white/10" data-cat="dragon">Dragons &amp; Mythic</button>
+        <button type="button" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-label-caps text-on-surface-variant hover:text-on-surface bg-surface-container-lowest border border-white/10" data-cat="beast">Beasts &amp; Monsters</button>
+        <button type="button" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-label-caps text-on-surface-variant hover:text-on-surface bg-surface-container-lowest border border-white/10" data-cat="skull">Skulls &amp; Shadow</button>
+      </div>
+    </div>
+
+    <!-- Emblems Grid -->
+    <div class="flex-1 overflow-y-auto p-md grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 gap-3" id="modal-emblems-grid">
+      <!-- Generated by JS -->
+    </div>
+
+    <!-- Empty search result -->
+    <div id="no-icons-found" class="hidden p-8 text-center text-on-surface-variant text-xs flex-col items-center gap-2">
+      <span class="material-symbols-outlined text-[32px] text-outline">search_off</span>
+      <span>No emblems matching your search query.</span>
+    </div>
+
+    <!-- Footer -->
+    <div class="p-sm sm:p-md border-t border-white/10 bg-surface-container-high flex justify-between items-center shrink-0">
+      <span class="text-xs text-on-surface-variant font-mono">Click any emblem to equip</span>
+      <button type="button" id="modal-done-btn" class="px-5 py-2 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-bold text-xs shadow-md">CONFIRM EMBLEM</button>
+    </div>
+  </div>
+</div>
+
 <script src="assets/js/registration-api.js"></script>
 <script>
   (function(){
@@ -370,108 +455,107 @@
     });
   })();
 
-  // All 120+ SVG Emblems from assets/icons/
+  // Correct direct paths to all 120 SVG Emblems in assets/icons/
   const ALL_EMBLEMS = [
     // Top Popular (Quick bar)
-    { id: 'dragon-head', name: 'Dragon Head', path: 'assets/icons/lorc/dragon-head.svg', cat: 'dragon' },
-    { id: 'double-dragon', name: 'Twin Dragons', path: 'assets/icons/lorc/double-dragon.svg', cat: 'dragon' },
-    { id: 'wyvern', name: 'Wyvern', path: 'assets/icons/lorc/wyvern.svg', cat: 'dragon' },
-    { id: 'sea-dragon', name: 'Sea Dragon', path: 'assets/icons/lorc/sea-dragon.svg', cat: 'dragon' },
-    { id: 'drakkar-dragon', name: 'Drakkar Dragon', path: 'assets/icons/delapouite/drakkar-dragon.svg', cat: 'dragon' },
-    { id: 'spiked-dragon-head', name: 'Spiked Dragon', path: 'assets/icons/delapouite/spiked-dragon-head.svg', cat: 'dragon' },
-    { id: 'werewolf', name: 'Werewolf', path: 'assets/icons/lorc/werewolf.svg', cat: 'beast' },
-    { id: 'hydra', name: 'Hydra', path: 'assets/icons/lorc/hydra.svg', cat: 'dragon' },
-    { id: 'minotaur', name: 'Minotaur', path: 'assets/icons/lorc/minotaur.svg', cat: 'beast' },
-    { id: 'griffin-symbol', name: 'Griffin Crest', path: 'assets/icons/delapouite/griffin-symbol.svg', cat: 'beast' },
-    { id: 'oni', name: 'Oni Demon', path: 'assets/icons/delapouite/oni.svg', cat: 'mythic' },
-    { id: 'horus', name: 'Horus Falcon', path: 'assets/icons/delapouite/horus.svg', cat: 'mythic' },
-    { id: 'anubis', name: 'Anubis', path: 'assets/icons/delapouite/anubis.svg', cat: 'mythic' },
-    { id: 'ice-golem', name: 'Ice Golem', path: 'assets/icons/delapouite/ice-golem.svg', cat: 'mythic' },
-    { id: 'rock-golem', name: 'Rock Golem', path: 'assets/icons/delapouite/rock-golem.svg', cat: 'mythic' },
-    { id: 'golem-head', name: 'Golem Head', path: 'assets/icons/delapouite/golem-head.svg', cat: 'mythic' },
-    { id: 'kraken-tentacle', name: 'Kraken', path: 'assets/icons/delapouite/kraken-tentacle.svg', cat: 'beast' },
-    { id: 'horned-skull', name: 'Horned Skull', path: 'assets/icons/lorc/horned-skull.svg', cat: 'skull' },
-    { id: 'diablo-skull', name: 'Diablo Skull', path: 'assets/icons/lorc/diablo-skull.svg', cat: 'skull' },
-    { id: 'daemon-skull', name: 'Daemon Skull', path: 'assets/icons/lorc/daemon-skull.svg', cat: 'skull' },
-    { id: 'cracked-alien-skull', name: 'Alien Skull', path: 'assets/icons/lorc/cracked-alien-skull.svg', cat: 'skull' },
-    { id: 'grim-reaper', name: 'Grim Reaper', path: 'assets/icons/lorc/grim-reaper.svg', cat: 'skull' },
-    { id: 'devil-mask', name: 'Devil Mask', path: 'assets/icons/delapouite/devil-mask.svg', cat: 'mythic' },
-    { id: 'djinn', name: 'Djinn Spirit', path: 'assets/icons/delapouite/djinn.svg', cat: 'mythic' },
-    { id: 'egyptian-sphinx', name: 'Egyptian Sphinx', path: 'assets/icons/delapouite/egyptian-sphinx.svg', cat: 'mythic' },
-    { id: 'greek-sphinx', name: 'Greek Sphinx', path: 'assets/icons/delapouite/greek-sphinx.svg', cat: 'mythic' },
-    { id: 'gargoyle', name: 'Gargoyle', path: 'assets/icons/delapouite/gargoyle.svg', cat: 'mythic' },
-    { id: 'giant', name: 'Giant Titan', path: 'assets/icons/delapouite/giant.svg', cat: 'mythic' },
-    { id: 'cyclops', name: 'Cyclops', path: 'assets/icons/lorc/cyclops.svg', cat: 'mythic' },
-    { id: 'jawless-cyclop', name: 'Jawless Cyclop', path: 'assets/icons/delapouite/jawless-cyclop.svg', cat: 'mythic' },
-    { id: 'goblin-head', name: 'Goblin Head', path: 'assets/icons/delapouite/goblin-head.svg', cat: 'beast' },
-    { id: 'orc-head', name: 'Orc Head', path: 'assets/icons/delapouite/orc-head.svg', cat: 'beast' },
-    { id: 'ogre', name: 'Ogre', path: 'assets/icons/delapouite/ogre.svg', cat: 'beast' },
-    { id: 'centaur', name: 'Centaur', path: 'assets/icons/delapouite/centaur.svg', cat: 'mythic' },
-    { id: 'unicorn', name: 'Unicorn', path: 'assets/icons/delapouite/unicorn.svg', cat: 'mythic' },
-    { id: 'mermaid', name: 'Mermaid', path: 'assets/icons/delapouite/mermaid.svg', cat: 'mythic' },
-    { id: 'mummy-head', name: 'Mummy Head', path: 'assets/icons/delapouite/mummy-head.svg', cat: 'skull' },
-    { id: 'vampire-dracula', name: 'Dracula', path: 'assets/icons/delapouite/vampire-dracula.svg', cat: 'skull' },
-    { id: 'resting-vampire', name: 'Vampire', path: 'assets/icons/delapouite/resting-vampire.svg', cat: 'skull' },
-    { id: 'shambling-zombie', name: 'Zombie', path: 'assets/icons/delapouite/shambling-zombie.svg', cat: 'skull' },
-    { id: 'floating-ghost', name: 'Ghost', path: 'assets/icons/delapouite/floating-ghost.svg', cat: 'skull' },
-    { id: 'spectre', name: 'Spectre', path: 'assets/icons/lorc/spectre.svg', cat: 'skull' },
-    { id: 'haunting', name: 'Haunting Wraith', path: 'assets/icons/lorc/haunting.svg', cat: 'skull' },
-    { id: 'elysium-shade', name: 'Elysium Shade', path: 'assets/icons/delapouite/elysium-shade.svg', cat: 'skull' },
-    { id: 'ifrit', name: 'Ifrit Fire Lord', path: 'assets/icons/lorc/ifrit.svg', cat: 'mythic' },
-    { id: 'harpy', name: 'Harpy', path: 'assets/icons/lorc/harpy.svg', cat: 'beast' },
-    { id: 'lizardman', name: 'Lizardman', path: 'assets/icons/lorc/lizardman.svg', cat: 'beast' },
-    { id: 'triton-head', name: 'Triton Sea Lord', path: 'assets/icons/lorc/triton-head.svg', cat: 'mythic' },
-    { id: 'dinosaur-rex', name: 'T-Rex Skull', path: 'assets/icons/lorc/dinosaur-rex.svg', cat: 'beast' },
-    { id: 'dinosaur-bones', name: 'Dino Bones', path: 'assets/icons/lorc/dinosaur-bones.svg', cat: 'beast' },
-    { id: 'beast-eye', name: 'Beast Eye', path: 'assets/icons/lorc/beast-eye.svg', cat: 'beast' },
-    { id: 'spider-eye', name: 'Spider Eye', path: 'assets/icons/delapouite/spider-eye.svg', cat: 'beast' },
-    { id: 'bestial-fangs', name: 'Bestial Fangs', path: 'assets/icons/lorc/bestial-fangs.svg', cat: 'beast' },
-    { id: 'pretty-fangs', name: 'Viper Fangs', path: 'assets/icons/lorc/pretty-fangs.svg', cat: 'beast' },
-    { id: 'evil-bat', name: 'Evil Bat', path: 'assets/icons/lorc/evil-bat.svg', cat: 'beast' },
-    { id: 'swamp-bat', name: 'Swamp Bat', path: 'assets/icons/delapouite/swamp-bat.svg', cat: 'beast' },
-    { id: 'sea-creature', name: 'Sea Leviathan', path: 'assets/icons/skoll/sea-creature.svg', cat: 'beast' },
-    { id: 'fish-monster', name: 'Fish Monster', path: 'assets/icons/delapouite/fish-monster.svg', cat: 'beast' },
-    { id: 'troll', name: 'War Troll', path: 'assets/icons/skoll/troll.svg', cat: 'beast' },
-    { id: 'brute', name: 'Cyber Brute', path: 'assets/icons/delapouite/brute.svg', cat: 'beast' },
-    { id: 'sasquatch', name: 'Sasquatch', path: 'assets/icons/delapouite/sasquatch.svg', cat: 'beast' },
-    { id: 'troglodyte', name: 'Troglodyte', path: 'assets/icons/delapouite/troglodyte.svg', cat: 'beast' },
-    { id: 'carnivorous-plant', name: 'Carnivore Plant', path: 'assets/icons/delapouite/carnivorous-plant.svg', cat: 'beast' },
-    { id: 'evil-tree', name: 'Treant', path: 'assets/icons/lorc/evil-tree.svg', cat: 'mythic' },
-    { id: 'ent-mouth', name: 'Ancient Ent', path: 'assets/icons/lorc/ent-mouth.svg', cat: 'mythic' },
-    { id: 'tree-face', name: 'Forest Spirit', path: 'assets/icons/cathelineau/tree-face.svg', cat: 'mythic' },
-    { id: 'medusa-head', name: 'Medusa', path: 'assets/icons/cathelineau/medusa-head.svg', cat: 'mythic' },
-    { id: 'fomorian', name: 'Fomorian Giant', path: 'assets/icons/cathelineau/fomorian.svg', cat: 'mythic' },
-    { id: 'bad-gnome', name: 'Bad Gnome', path: 'assets/icons/cathelineau/bad-gnome.svg', cat: 'mythic' },
-    { id: 'witch-face', name: 'Shadow Witch', path: 'assets/icons/cathelineau/witch-face.svg', cat: 'mythic' },
-    { id: 'witch-flight', name: 'Witch Flight', path: 'assets/icons/lorc/witch-flight.svg', cat: 'mythic' },
-    { id: 'fairy', name: 'Fairy Blade', path: 'assets/icons/lorc/fairy.svg', cat: 'mythic' },
-    { id: 'kenku-head', name: 'Raven Kenku', path: 'assets/icons/delapouite/kenku-head.svg', cat: 'beast' },
-    { id: 'horned-reptile', name: 'Horned Basilisk', path: 'assets/icons/delapouite/horned-reptile.svg', cat: 'beast' },
-    { id: 'toad-teeth', name: 'Venom Toad', path: 'assets/icons/lorc/toad-teeth.svg', cat: 'beast' },
-    { id: 'spark-spirit', name: 'Spark Spirit', path: 'assets/icons/lorc/spark-spirit.svg', cat: 'mythic' },
-    { id: 'slime', name: 'Toxic Slime', path: 'assets/icons/delapouite/slime.svg', cat: 'beast' },
-    { id: 'transparent-slime', name: 'Acid Ooze', path: 'assets/icons/cathelineau/transparent-slime.svg', cat: 'beast' },
-    { id: 'alien-bug', name: 'Alien Swarm', path: 'assets/icons/delapouite/alien-bug.svg', cat: 'beast' },
-    { id: 'alien-egg', name: 'Alien Hive', path: 'assets/icons/delapouite/alien-egg.svg', cat: 'beast' },
-    { id: 'metroid', name: 'Parasite Prime', path: 'assets/icons/delapouite/metroid.svg', cat: 'beast' },
-    { id: 'brain-tentacle', name: 'Mind Flayer', path: 'assets/icons/delapouite/brain-tentacle.svg', cat: 'beast' },
-    { id: 'floating-tentacles', name: 'Void Tentacles', path: 'assets/icons/delapouite/floating-tentacles.svg', cat: 'beast' },
-    { id: 'purple-tentacle', name: 'Chasm Tentacle', path: 'assets/icons/delapouite/purple-tentacle.svg', cat: 'beast' },
-    { id: 'mimic-chest', name: 'Loot Mimic', path: 'assets/icons/delapouite/mimic-chest.svg', cat: 'mythic' },
-    { id: 'thwomp', name: 'Iron Crusher', path: 'assets/icons/delapouite/thwomp.svg', cat: 'mythic' },
-    { id: 'bullet-bill', name: 'Cyber Missile', path: 'assets/icons/delapouite/bullet-bill.svg', cat: 'beast' },
-    { id: 'pick-of-destiny', name: 'Destiny Crest', path: 'assets/icons/delapouite/pick-of-destiny.svg', cat: 'mythic' },
-    { id: 'tarot-15-the-devil', name: 'The Devil Tarot', path: 'assets/icons/caro-asercion/tarot-15-the-devil.svg', cat: 'mythic' },
-    { id: 'cloaked-figure', name: 'Shadow Rider', path: 'assets/icons/caro-asercion/cloaked-figure-on-horseback.svg', cat: 'mythic' },
-    { id: 'imp-laugh', name: 'Chaos Imp', path: 'assets/icons/lorc/imp-laugh.svg', cat: 'mythic' },
-    { id: 'imp', name: 'Shadow Imp', path: 'assets/icons/lorc/imp.svg', cat: 'mythic' },
-    { id: 'evil-minion', name: 'Evil Minion', path: 'assets/icons/lorc/evil-minion.svg', cat: 'mythic' },
-    { id: 'evil-book', name: 'Spell Grimoire', path: 'assets/icons/lorc/evil-book.svg', cat: 'mythic' },
-    { id: 'evil-moon', name: 'Eclipse Moon', path: 'assets/icons/lorc/evil-moon.svg', cat: 'mythic' },
-    { id: 'evil-comet', name: 'Doom Comet', path: 'assets/icons/lorc/evil-comet.svg', cat: 'mythic' },
-    { id: 'dragon-spiral', name: 'Dragon Spiral', path: 'assets/icons/lorc/dragon-spiral.svg', cat: 'dragon' },
-    { id: 'hydra-shot', name: 'Hydra Blast', path: 'assets/icons/lorc/hydra-shot.svg', cat: 'dragon' },
-    { id: 'faithtoken-dragon', name: 'Imperial Dragon', path: 'assets/icons/faithtoken/dragon-head.svg', cat: 'dragon' }
+    { id: 'dragon-head', name: 'Dragon Head', path: 'assets/icons/dragon-head.svg', cat: 'dragon' },
+    { id: 'double-dragon', name: 'Twin Dragons', path: 'assets/icons/double-dragon.svg', cat: 'dragon' },
+    { id: 'wyvern', name: 'Wyvern', path: 'assets/icons/wyvern.svg', cat: 'dragon' },
+    { id: 'sea-dragon', name: 'Sea Dragon', path: 'assets/icons/sea-dragon.svg', cat: 'dragon' },
+    { id: 'drakkar-dragon', name: 'Drakkar Dragon', path: 'assets/icons/drakkar-dragon.svg', cat: 'dragon' },
+    { id: 'spiked-dragon-head', name: 'Spiked Dragon', path: 'assets/icons/spiked-dragon-head.svg', cat: 'dragon' },
+    { id: 'werewolf', name: 'Werewolf', path: 'assets/icons/werewolf.svg', cat: 'beast' },
+    { id: 'hydra', name: 'Hydra', path: 'assets/icons/hydra.svg', cat: 'dragon' },
+    { id: 'minotaur', name: 'Minotaur', path: 'assets/icons/minotaur.svg', cat: 'beast' },
+    { id: 'griffin-symbol', name: 'Griffin Crest', path: 'assets/icons/griffin-symbol.svg', cat: 'beast' },
+    { id: 'oni', name: 'Oni Demon', path: 'assets/icons/oni.svg', cat: 'mythic' },
+    { id: 'horus', name: 'Horus Falcon', path: 'assets/icons/horus.svg', cat: 'mythic' },
+    { id: 'anubis', name: 'Anubis', path: 'assets/icons/anubis.svg', cat: 'mythic' },
+    { id: 'ice-golem', name: 'Ice Golem', path: 'assets/icons/ice-golem.svg', cat: 'mythic' },
+    { id: 'rock-golem', name: 'Rock Golem', path: 'assets/icons/rock-golem.svg', cat: 'mythic' },
+    { id: 'golem-head', name: 'Golem Head', path: 'assets/icons/golem-head.svg', cat: 'mythic' },
+    { id: 'kraken-tentacle', name: 'Kraken', path: 'assets/icons/kraken-tentacle.svg', cat: 'beast' },
+    { id: 'horned-skull', name: 'Horned Skull', path: 'assets/icons/horned-skull.svg', cat: 'skull' },
+    { id: 'diablo-skull', name: 'Diablo Skull', path: 'assets/icons/diablo-skull.svg', cat: 'skull' },
+    { id: 'daemon-skull', name: 'Daemon Skull', path: 'assets/icons/daemon-skull.svg', cat: 'skull' },
+    { id: 'cracked-alien-skull', name: 'Alien Skull', path: 'assets/icons/cracked-alien-skull.svg', cat: 'skull' },
+    { id: 'grim-reaper', name: 'Grim Reaper', path: 'assets/icons/grim-reaper.svg', cat: 'skull' },
+    { id: 'devil-mask', name: 'Devil Mask', path: 'assets/icons/devil-mask.svg', cat: 'mythic' },
+    { id: 'djinn', name: 'Djinn Spirit', path: 'assets/icons/djinn.svg', cat: 'mythic' },
+    { id: 'egyptian-sphinx', name: 'Egyptian Sphinx', path: 'assets/icons/egyptian-sphinx.svg', cat: 'mythic' },
+    { id: 'greek-sphinx', name: 'Greek Sphinx', path: 'assets/icons/greek-sphinx.svg', cat: 'mythic' },
+    { id: 'gargoyle', name: 'Gargoyle', path: 'assets/icons/gargoyle.svg', cat: 'mythic' },
+    { id: 'giant', name: 'Giant Titan', path: 'assets/icons/giant.svg', cat: 'mythic' },
+    { id: 'cyclops', name: 'Cyclops', path: 'assets/icons/cyclops.svg', cat: 'mythic' },
+    { id: 'jawless-cyclop', name: 'Jawless Cyclop', path: 'assets/icons/jawless-cyclop.svg', cat: 'mythic' },
+    { id: 'goblin-head', name: 'Goblin Head', path: 'assets/icons/goblin-head.svg', cat: 'beast' },
+    { id: 'orc-head', name: 'Orc Head', path: 'assets/icons/orc-head.svg', cat: 'beast' },
+    { id: 'ogre', name: 'Ogre', path: 'assets/icons/ogre.svg', cat: 'beast' },
+    { id: 'centaur', name: 'Centaur', path: 'assets/icons/centaur.svg', cat: 'mythic' },
+    { id: 'unicorn', name: 'Unicorn', path: 'assets/icons/unicorn.svg', cat: 'mythic' },
+    { id: 'mermaid', name: 'Mermaid', path: 'assets/icons/mermaid.svg', cat: 'mythic' },
+    { id: 'mummy-head', name: 'Mummy Head', path: 'assets/icons/mummy-head.svg', cat: 'skull' },
+    { id: 'vampire-dracula', name: 'Dracula', path: 'assets/icons/vampire-dracula.svg', cat: 'skull' },
+    { id: 'resting-vampire', name: 'Vampire', path: 'assets/icons/resting-vampire.svg', cat: 'skull' },
+    { id: 'shambling-zombie', name: 'Zombie', path: 'assets/icons/shambling-zombie.svg', cat: 'skull' },
+    { id: 'floating-ghost', name: 'Ghost', path: 'assets/icons/floating-ghost.svg', cat: 'skull' },
+    { id: 'spectre', name: 'Spectre', path: 'assets/icons/spectre.svg', cat: 'skull' },
+    { id: 'haunting', name: 'Haunting Wraith', path: 'assets/icons/haunting.svg', cat: 'skull' },
+    { id: 'elysium-shade', name: 'Elysium Shade', path: 'assets/icons/elysium-shade.svg', cat: 'skull' },
+    { id: 'ifrit', name: 'Ifrit Fire Lord', path: 'assets/icons/ifrit.svg', cat: 'mythic' },
+    { id: 'harpy', name: 'Harpy', path: 'assets/icons/harpy.svg', cat: 'beast' },
+    { id: 'lizardman', name: 'Lizardman', path: 'assets/icons/lizardman.svg', cat: 'beast' },
+    { id: 'triton-head', name: 'Triton Sea Lord', path: 'assets/icons/triton-head.svg', cat: 'mythic' },
+    { id: 'dinosaur-rex', name: 'T-Rex Skull', path: 'assets/icons/dinosaur-rex.svg', cat: 'beast' },
+    { id: 'dinosaur-bones', name: 'Dino Bones', path: 'assets/icons/dinosaur-bones.svg', cat: 'beast' },
+    { id: 'beast-eye', name: 'Beast Eye', path: 'assets/icons/beast-eye.svg', cat: 'beast' },
+    { id: 'spider-eye', name: 'Spider Eye', path: 'assets/icons/spider-eye.svg', cat: 'beast' },
+    { id: 'bestial-fangs', name: 'Bestial Fangs', path: 'assets/icons/bestial-fangs.svg', cat: 'beast' },
+    { id: 'pretty-fangs', name: 'Viper Fangs', path: 'assets/icons/pretty-fangs.svg', cat: 'beast' },
+    { id: 'evil-bat', name: 'Evil Bat', path: 'assets/icons/evil-bat.svg', cat: 'beast' },
+    { id: 'swamp-bat', name: 'Swamp Bat', path: 'assets/icons/swamp-bat.svg', cat: 'beast' },
+    { id: 'sea-creature', name: 'Sea Leviathan', path: 'assets/icons/sea-creature.svg', cat: 'beast' },
+    { id: 'fish-monster', name: 'Fish Monster', path: 'assets/icons/fish-monster.svg', cat: 'beast' },
+    { id: 'troll', name: 'War Troll', path: 'assets/icons/troll.svg', cat: 'beast' },
+    { id: 'brute', name: 'Cyber Brute', path: 'assets/icons/brute.svg', cat: 'beast' },
+    { id: 'sasquatch', name: 'Sasquatch', path: 'assets/icons/sasquatch.svg', cat: 'beast' },
+    { id: 'troglodyte', name: 'Troglodyte', path: 'assets/icons/troglodyte.svg', cat: 'beast' },
+    { id: 'carnivorous-plant', name: 'Carnivore Plant', path: 'assets/icons/carnivorous-plant.svg', cat: 'beast' },
+    { id: 'evil-tree', name: 'Treant', path: 'assets/icons/evil-tree.svg', cat: 'mythic' },
+    { id: 'ent-mouth', name: 'Ancient Ent', path: 'assets/icons/ent-mouth.svg', cat: 'mythic' },
+    { id: 'tree-face', name: 'Forest Spirit', path: 'assets/icons/tree-face.svg', cat: 'mythic' },
+    { id: 'medusa-head', name: 'Medusa', path: 'assets/icons/medusa-head.svg', cat: 'mythic' },
+    { id: 'fomorian', name: 'Fomorian Giant', path: 'assets/icons/fomorian.svg', cat: 'mythic' },
+    { id: 'bad-gnome', name: 'Bad Gnome', path: 'assets/icons/bad-gnome.svg', cat: 'mythic' },
+    { id: 'witch-face', name: 'Shadow Witch', path: 'assets/icons/witch-face.svg', cat: 'mythic' },
+    { id: 'witch-flight', name: 'Witch Flight', path: 'assets/icons/witch-flight.svg', cat: 'mythic' },
+    { id: 'fairy', name: 'Fairy Blade', path: 'assets/icons/fairy.svg', cat: 'mythic' },
+    { id: 'kenku-head', name: 'Raven Kenku', path: 'assets/icons/kenku-head.svg', cat: 'beast' },
+    { id: 'horned-reptile', name: 'Horned Basilisk', path: 'assets/icons/horned-reptile.svg', cat: 'beast' },
+    { id: 'toad-teeth', name: 'Venom Toad', path: 'assets/icons/toad-teeth.svg', cat: 'beast' },
+    { id: 'spark-spirit', name: 'Spark Spirit', path: 'assets/icons/spark-spirit.svg', cat: 'mythic' },
+    { id: 'slime', name: 'Toxic Slime', path: 'assets/icons/slime.svg', cat: 'beast' },
+    { id: 'transparent-slime', name: 'Acid Ooze', path: 'assets/icons/transparent-slime.svg', cat: 'beast' },
+    { id: 'alien-bug', name: 'Alien Swarm', path: 'assets/icons/alien-bug.svg', cat: 'beast' },
+    { id: 'alien-egg', name: 'Alien Hive', path: 'assets/icons/alien-egg.svg', cat: 'beast' },
+    { id: 'metroid', name: 'Parasite Prime', path: 'assets/icons/metroid.svg', cat: 'beast' },
+    { id: 'brain-tentacle', name: 'Mind Flayer', path: 'assets/icons/brain-tentacle.svg', cat: 'beast' },
+    { id: 'floating-tentacles', name: 'Void Tentacles', path: 'assets/icons/floating-tentacles.svg', cat: 'beast' },
+    { id: 'purple-tentacle', name: 'Chasm Tentacle', path: 'assets/icons/purple-tentacle.svg', cat: 'beast' },
+    { id: 'mimic-chest', name: 'Loot Mimic', path: 'assets/icons/mimic-chest.svg', cat: 'mythic' },
+    { id: 'thwomp', name: 'Iron Crusher', path: 'assets/icons/thwomp.svg', cat: 'mythic' },
+    { id: 'bullet-bill', name: 'Cyber Missile', path: 'assets/icons/bullet-bill.svg', cat: 'beast' },
+    { id: 'pick-of-destiny', name: 'Destiny Crest', path: 'assets/icons/pick-of-destiny.svg', cat: 'mythic' },
+    { id: 'tarot-15-the-devil', name: 'The Devil Tarot', path: 'assets/icons/tarot-15-the-devil.svg', cat: 'mythic' },
+    { id: 'cloaked-figure', name: 'Shadow Rider', path: 'assets/icons/cloaked-figure-on-horseback.svg', cat: 'mythic' },
+    { id: 'imp-laugh', name: 'Chaos Imp', path: 'assets/icons/imp-laugh.svg', cat: 'mythic' },
+    { id: 'imp', name: 'Shadow Imp', path: 'assets/icons/imp.svg', cat: 'mythic' },
+    { id: 'evil-minion', name: 'Evil Minion', path: 'assets/icons/evil-minion.svg', cat: 'mythic' },
+    { id: 'evil-book', name: 'Spell Grimoire', path: 'assets/icons/evil-book.svg', cat: 'mythic' },
+    { id: 'evil-moon', name: 'Eclipse Moon', path: 'assets/icons/evil-moon.svg', cat: 'mythic' },
+    { id: 'evil-comet', name: 'Doom Comet', path: 'assets/icons/evil-comet.svg', cat: 'mythic' },
+    { id: 'dragon-spiral', name: 'Dragon Spiral', path: 'assets/icons/dragon-spiral.svg', cat: 'dragon' },
+    { id: 'hydra-shot', name: 'Hydra Blast', path: 'assets/icons/hydra-shot.svg', cat: 'dragon' }
   ];
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -487,6 +571,9 @@
     }
 
     let selectedBadgeIcon = draft.badgeIcon || ALL_EMBLEMS[0].path;
+    let customLogoUrl = draft.customLogoUrl || '';
+    let customLogoFileId = draft.customLogoFileId || '';
+    let logoMode = draft.logoMode || (customLogoUrl ? 'upload' : 'emblem');
 
     const DEPT_OPTIONS = {
       "Men's": ["IT", "HTM", "CTE", "CRIM"],
@@ -513,6 +600,92 @@
     const quickGrid = document.getElementById('emblem-selector-grid');
     const colorInputs = document.querySelectorAll('input[name="team-color"]');
 
+    const tabEmblemBtn = document.getElementById('tab-emblem-btn');
+    const tabUploadBtn = document.getElementById('tab-upload-btn');
+    const emblemPanel = document.getElementById('emblem-mode-panel');
+    const uploadPanel = document.getElementById('upload-mode-panel');
+    const customFileInput = document.getElementById('custom-logo-file-input');
+    const uploadProgress = document.getElementById('logo-upload-progress');
+    const customLogoChip = document.getElementById('custom-logo-chip');
+    const customLogoName = document.getElementById('custom-logo-name');
+    const removeCustomLogoBtn = document.getElementById('remove-custom-logo');
+    const colorPickerSection = document.getElementById('color-picker-section');
+
+    function switchLogoMode(mode) {
+      logoMode = mode;
+      if (mode === 'emblem') {
+        tabEmblemBtn.className = 'px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1';
+        tabUploadBtn.className = 'px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1';
+        emblemPanel.classList.remove('hidden');
+        uploadPanel.classList.add('hidden');
+        uploadPanel.classList.remove('flex');
+        colorPickerSection.classList.remove('opacity-40');
+      } else {
+        tabUploadBtn.className = 'px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1';
+        tabEmblemBtn.className = 'px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1';
+        emblemPanel.classList.add('hidden');
+        uploadPanel.classList.remove('hidden');
+        uploadPanel.classList.add('flex');
+      }
+      updateBadge();
+    }
+
+    tabEmblemBtn.addEventListener('click', () => switchLogoMode('emblem'));
+    tabUploadBtn.addEventListener('click', () => switchLogoMode('upload'));
+
+    // Custom Logo File Upload
+    customFileInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Custom logo must be 2MB or less.');
+        return;
+      }
+      uploadProgress.classList.remove('hidden');
+      try {
+        if (typeof uploadProfileImage === 'function') {
+          const res = await uploadProfileImage(file);
+          customLogoUrl = res.profileImageUrl;
+          customLogoFileId = res.profileImageFileId;
+        } else {
+          customLogoUrl = await new Promise((resolve) => {
+            const r = new FileReader();
+            r.onload = () => resolve(r.result);
+            r.readAsDataURL(file);
+          });
+        }
+        customLogoName.textContent = file.name;
+        customLogoChip.classList.remove('hidden');
+        updateBadge();
+      } catch (err) {
+        // Fallback to local Data URL
+        const r = new FileReader();
+        r.onload = () => {
+          customLogoUrl = r.result;
+          customLogoName.textContent = file.name;
+          customLogoChip.classList.remove('hidden');
+          updateBadge();
+        };
+        r.readAsDataURL(file);
+      } finally {
+        uploadProgress.classList.add('hidden');
+      }
+    });
+
+    removeCustomLogoBtn.addEventListener('click', () => {
+      customLogoUrl = '';
+      customLogoFileId = '';
+      customFileInput.value = '';
+      customLogoChip.classList.add('hidden');
+      switchLogoMode('emblem');
+    });
+
+    if (customLogoUrl) {
+      customLogoName.textContent = 'Custom Logo Loaded';
+      customLogoChip.classList.remove('hidden');
+      switchLogoMode('upload');
+    }
+
     // Quick Selector (Top 16 Emblems)
     const quickList = ALL_EMBLEMS.slice(0, 16);
     function renderQuickGrid() {
@@ -520,13 +693,14 @@
       quickList.forEach(item => {
         const btn = document.createElement('button');
         btn.type = 'button';
+        const isSelected = logoMode === 'emblem' && selectedBadgeIcon === item.path;
         btn.className = 'flex flex-col items-center justify-center p-2 rounded-lg border transition-all ' + 
-          (selectedBadgeIcon === item.path ? 'bg-primary/25 border-primary shadow-[0_0_10px_rgba(18,100,255,0.4)] scale-105' : 'bg-surface-container/60 border-white/10 hover:border-white/30');
+          (isSelected ? 'bg-primary/25 border-primary shadow-[0_0_10px_rgba(18,100,255,0.4)] scale-105' : 'bg-surface-container/60 border-white/10 hover:border-white/30');
         btn.innerHTML = `<img src="${item.path}" alt="${item.name}" class="w-8 h-8 object-contain filter invert opacity-90" />
                          <span class="text-[9px] font-label-caps text-on-surface-variant truncate w-full text-center mt-1">${item.name}</span>`;
         btn.addEventListener('click', () => {
           selectedBadgeIcon = item.path;
-          updateBadge();
+          switchLogoMode('emblem');
           renderQuickGrid();
         });
         quickGrid.appendChild(btn);
@@ -573,14 +747,14 @@
       filtered.forEach(item => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        const isSelected = selectedBadgeIcon === item.path;
+        const isSelected = logoMode === 'emblem' && selectedBadgeIcon === item.path;
         btn.className = 'flex flex-col items-center justify-center p-3 rounded-xl border transition-all group ' + 
           (isSelected ? 'bg-primary/25 border-primary shadow-[0_0_15px_rgba(18,100,255,0.45)] scale-105' : 'bg-surface-container/70 border-white/10 hover:border-primary/40 hover:bg-surface-container-high');
         btn.innerHTML = `<img src="${item.path}" alt="${item.name}" class="w-10 h-10 object-contain filter invert opacity-90 group-hover:scale-110 transition-transform" />
                          <span class="text-[10px] font-label-caps text-on-surface truncate w-full text-center mt-1.5">${item.name}</span>`;
         btn.addEventListener('click', () => {
           selectedBadgeIcon = item.path;
-          updateBadge();
+          switchLogoMode('emblem');
           renderModalIcons();
         });
         modalGrid.appendChild(btn);
@@ -600,9 +774,16 @@
     });
 
     function updateBadge() {
-      if (badgeIconImg) badgeIconImg.src = selectedBadgeIcon;
-      const curItem = ALL_EMBLEMS.find(e => e.path === selectedBadgeIcon);
-      if (badgeIconName && curItem) badgeIconName.textContent = curItem.name.toUpperCase();
+      if (logoMode === 'upload' && customLogoUrl) {
+        badgeIconImg.src = customLogoUrl;
+        badgeIconImg.className = 'w-full h-full object-contain p-1';
+        badgeIconName.textContent = 'CUSTOM LOGO';
+      } else {
+        badgeIconImg.src = selectedBadgeIcon;
+        badgeIconImg.className = 'w-14 h-14 object-contain filter invert drop-shadow-[0_0_6px_rgba(255,255,255,0.6)]';
+        const curItem = ALL_EMBLEMS.find(e => e.path === selectedBadgeIcon);
+        if (badgeIconName && curItem) badgeIconName.textContent = curItem.name.toUpperCase();
+      }
       const checked = document.querySelector('input[name="team-color"]:checked');
       if (checked && badgePreview) badgePreview.style.background = checked.dataset.color;
     }
@@ -621,6 +802,10 @@
       const checkedColor = document.querySelector('input[name="team-color"]:checked');
       data.teamColor = checkedColor ? checkedColor.value : '#1264ff';
       data.badgeIcon = selectedBadgeIcon;
+      data.logoMode = logoMode;
+      data.customLogoUrl = customLogoUrl;
+      data.customLogoFileId = customLogoFileId;
+      data.logoUrl = (logoMode === 'upload' && customLogoUrl) ? customLogoUrl : selectedBadgeIcon;
       return data;
     }
 
