@@ -76,6 +76,186 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   </div>
 </div>
 
+<!-- Super Admin: Home Page Content Management System (CMS) -->
+<div id="super-admin-cms-panel" class="hidden bg-surface-container border border-primary/40 rounded-xl p-lg flex flex-col gap-md cyber-panel shadow-2xl bg-gradient-to-r from-primary/10 via-surface-container to-transparent">
+  <div class="flex flex-wrap items-center justify-between gap-sm border-b border-white/10 pb-sm">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary text-[24px]">edit_note</span>
+      <div>
+        <h2 class="font-headline-md text-headline-md text-on-surface cyber-title text-lg">Home Page CMS &amp; Live Broadcast Publisher</h2>
+        <p class="text-xs text-on-surface-variant">Manage public announcements, hero spotlight, tournament key dates, and logos synchronized via Firebase</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold font-label-caps flex items-center gap-1">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> REALTIME SYNC
+      </span>
+    </div>
+  </div>
+
+  <!-- CMS Tabs -->
+  <div class="flex flex-wrap items-center gap-2 border-b border-white/10 pb-2">
+    <button type="button" class="cms-tab-btn active px-3 py-1.5 rounded-lg bg-primary/15 border border-primary/30 text-primary font-label-caps font-bold text-xs flex items-center gap-1.5" data-tab="announcements">
+      <span class="material-symbols-outlined text-[16px]">campaign</span> Announcements &amp; Ticker
+    </button>
+    <button type="button" class="cms-tab-btn px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface font-label-caps font-bold text-xs flex items-center gap-1.5" data-tab="hero">
+      <span class="material-symbols-outlined text-[16px]">rocket_launch</span> Hero &amp; Intro Video
+    </button>
+    <button type="button" class="cms-tab-btn px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface font-label-caps font-bold text-xs flex items-center gap-1.5" data-tab="dates">
+      <span class="material-symbols-outlined text-[16px]">calendar_month</span> Key Dates &amp; Venue
+    </button>
+    <button type="button" class="cms-tab-btn px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface font-label-caps font-bold text-xs flex items-center gap-1.5" data-tab="logos">
+      <span class="material-symbols-outlined text-[16px]">verified</span> Logos &amp; Emblems
+    </button>
+  </div>
+
+  <!-- CMS Form -->
+  <form id="cms-editor-form" class="flex flex-col gap-md">
+    
+    <!-- Tab 1: Announcements -->
+    <div id="cms-tab-announcements" class="cms-tab-pane flex flex-col gap-md">
+      <div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-lowest border border-white/10">
+        <div>
+          <span class="font-bold text-sm text-on-surface block">Enable Public Announcement Banner</span>
+          <span class="text-xs text-on-surface-variant">Displays an alert banner at the very top of the public homepage</span>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" id="cms-input-ann-enabled" class="sr-only peer" checked>
+          <div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+        </label>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
+        <div>
+          <label for="cms-input-ann-badge" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Banner Badge</label>
+          <input type="text" id="cms-input-ann-badge" placeholder="OFFICIAL ANNOUNCEMENT" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs" />
+        </div>
+        <div class="sm:col-span-2">
+          <label for="cms-input-ann-text" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Announcement Message</label>
+          <input type="text" id="cms-input-ann-text" placeholder="Official Team Registration closes September 1, 2026! Be sure all 5 starters are locked in." class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+        <div>
+          <label for="cms-input-ann-linktext" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Action Button Label</label>
+          <input type="text" id="cms-input-ann-linktext" placeholder="REGISTER NOW" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs" />
+        </div>
+        <div>
+          <label for="cms-input-ann-linkurl" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Action Destination URL</label>
+          <input type="text" id="cms-input-ann-linkurl" placeholder="register-team.html" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs font-mono" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Hero Section -->
+    <div id="cms-tab-hero" class="cms-tab-pane hidden flex flex-col gap-md">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+        <div>
+          <label for="cms-input-hero-badge" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Hero Status Badge</label>
+          <input type="text" id="cms-input-hero-badge" placeholder="REGISTRATION OPEN · CLOSES SEP 1" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs" />
+        </div>
+        <div>
+          <label for="cms-input-hero-game" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Featured Esports Title</label>
+          <input type="text" id="cms-input-hero-game" placeholder="MOBILE LEGENDS: BANG BANG" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+        <div>
+          <label for="cms-input-hero-title1" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Primary Headline</label>
+          <input type="text" id="cms-input-hero-title1" placeholder="CEC Esports" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs" />
+        </div>
+        <div>
+          <label for="cms-input-hero-title2" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Secondary Headline</label>
+          <input type="text" id="cms-input-hero-title2" placeholder="Intramurals 2026" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs" />
+        </div>
+      </div>
+
+      <div>
+        <label for="cms-input-hero-desc" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Hero Description Summary</label>
+        <textarea id="cms-input-hero-desc" rows="3" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs resize-none"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+        <div>
+          <label for="cms-input-hero-videourl" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Intro Video File / URL</label>
+          <input type="text" id="cms-input-hero-videourl" placeholder="assets/VideoIntro.mp4" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs font-mono" />
+        </div>
+        <div>
+          <label for="cms-input-hero-cta1" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Primary Button Text</label>
+          <input type="text" id="cms-input-hero-cta1" placeholder="REGISTER YOUR TEAM" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Key Dates & Venue -->
+    <div id="cms-tab-dates" class="cms-tab-pane hidden flex flex-col gap-md">
+      <!-- Step 1 Date -->
+      <div class="p-3 rounded-xl bg-surface-container-lowest border border-white/10 flex flex-col gap-sm">
+        <span class="font-label-caps text-xs text-primary font-bold uppercase">Step 1: Registration Deadline</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+          <input type="text" id="cms-input-date-reg-date" placeholder="September 1, 2026" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+          <input type="text" id="cms-input-date-reg-badge" placeholder="CLOSES SEP 1" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+        </div>
+        <input type="text" id="cms-input-date-reg-desc" placeholder="Confirm and register your team roster with CEC Blue Dragon Esports." class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+      </div>
+
+      <!-- Step 2 Date -->
+      <div class="p-3 rounded-xl bg-surface-container-lowest border border-white/10 flex flex-col gap-sm">
+        <span class="font-label-caps text-xs text-[#00e676] font-bold uppercase">Step 2: Tournament Kickoff</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+          <input type="text" id="cms-input-date-kick-date" placeholder="September 5, 2026" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+          <input type="text" id="cms-input-date-kick-badge" placeholder="SATURDAYS" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+        </div>
+        <input type="text" id="cms-input-date-kick-desc" placeholder="Student divisions play Saturdays, 2:00–5:00 PM online." class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+      </div>
+
+      <!-- Step 3 Date -->
+      <div class="p-3 rounded-xl bg-surface-container-lowest border border-white/10 flex flex-col gap-sm">
+        <span class="font-label-caps text-xs text-[#ffb020] font-bold uppercase">Step 3: Championship Finals</span>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+          <input type="text" id="cms-input-date-finals-date" placeholder="October 2, 2026" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+          <input type="text" id="cms-input-date-finals-badge" placeholder="FINALS DAY" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+        </div>
+        <input type="text" id="cms-input-date-finals-desc" placeholder="Department champions clash for the ultimate Intramurals crown." class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+      </div>
+    </div>
+
+    <!-- Tab 4: Logos & Emblems -->
+    <div id="cms-tab-logos" class="cms-tab-pane hidden flex flex-col gap-md">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-md">
+        <div>
+          <label for="cms-input-logo-school" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">School Seal Logo</label>
+          <input type="text" id="cms-input-logo-school" placeholder="assets/school_logo.jpg" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs font-mono" />
+        </div>
+        <div>
+          <label for="cms-input-logo-esports" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">CEC Esports Logo</label>
+          <input type="text" id="cms-input-logo-esports" placeholder="assets/e-sportslogo.png" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs font-mono" />
+        </div>
+        <div>
+          <label for="cms-input-logo-intrams" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Intramurals 2026 Logo</label>
+          <input type="text" id="cms-input-logo-intrams" placeholder="assets/intrams_logo.png" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs font-mono" />
+        </div>
+      </div>
+    </div>
+
+    <!-- CMS Actions -->
+    <div class="flex items-center justify-between border-t border-white/10 pt-md mt-2">
+      <button type="button" id="cms-reset-btn" class="px-4 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface font-label-caps text-xs font-bold transition-colors">
+        RESET TO 2026 DEFAULTS
+      </button>
+      <div class="flex items-center gap-2">
+        <span id="cms-save-status" class="text-xs font-label-caps text-emerald-400 font-bold hidden">✓ Changes Published Live</span>
+        <button type="submit" class="px-6 py-2 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-all shadow-lg flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-[16px]">cloud_upload</span>
+          <span>SAVE &amp; PUBLISH LIVE</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
 <div class="flex flex-wrap justify-between items-end gap-sm">
 <div>
 <h1 class="font-headline-xl text-headline-xl text-on-surface cyber-title">Overview</h1>
@@ -166,12 +346,140 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/auth-guard.js"></script>
 <script src="assets/js/live-manager.js"></script>
+<script src="assets/js/cms-manager.js"></script>
 
 <script>
 (function(){
   var el = function(id){ return document.getElementById(id); };
 
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  // CMS Tabs & Form State Controller
+  const cmsPanel = el('super-admin-cms-panel');
+  const cmsTabBtns = document.querySelectorAll('.cms-tab-btn');
+  const cmsTabPanes = document.querySelectorAll('.cms-tab-pane');
+  const cmsForm = el('cms-editor-form');
+  const cmsResetBtn = el('cms-reset-btn');
+  const cmsSaveStatus = el('cms-save-status');
+
+  cmsTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetTab = btn.dataset.tab;
+      cmsTabBtns.forEach(b => {
+        const isCur = b.dataset.tab === targetTab;
+        b.classList.toggle('active', isCur);
+        b.classList.toggle('bg-primary/15', isCur);
+        b.classList.toggle('border', isCur);
+        b.classList.toggle('border-primary/30', isCur);
+        b.classList.toggle('text-primary', isCur);
+        b.classList.toggle('text-on-surface-variant', !isCur);
+      });
+      cmsTabPanes.forEach(pane => {
+        pane.classList.toggle('hidden', pane.id !== `cms-tab-${targetTab}`);
+      });
+    });
+  });
+
+  function populateCMSForm(cfg) {
+    if (!cfg) return;
+    const a = cfg.announcement || {};
+    if (el('cms-input-ann-enabled')) el('cms-input-ann-enabled').checked = a.enabled !== false;
+    if (el('cms-input-ann-badge')) el('cms-input-ann-badge').value = a.badge || '';
+    if (el('cms-input-ann-text')) el('cms-input-ann-text').value = a.text || '';
+    if (el('cms-input-ann-linktext')) el('cms-input-ann-linktext').value = a.linkText || '';
+    if (el('cms-input-ann-linkurl')) el('cms-input-ann-linkurl').value = a.linkUrl || '';
+
+    const h = cfg.hero || {};
+    if (el('cms-input-hero-badge')) el('cms-input-hero-badge').value = h.badge || '';
+    if (el('cms-input-hero-game')) el('cms-input-hero-game').value = h.gameTitle || '';
+    if (el('cms-input-hero-title1')) el('cms-input-hero-title1').value = h.headlinePrimary || '';
+    if (el('cms-input-hero-title2')) el('cms-input-hero-title2').value = h.headlineSecondary || '';
+    if (el('cms-input-hero-desc')) el('cms-input-hero-desc').value = h.description || '';
+    if (el('cms-input-hero-videourl')) el('cms-input-hero-videourl').value = h.videoUrl || '';
+    if (el('cms-input-hero-cta1')) el('cms-input-hero-cta1').value = h.ctaPrimaryText || '';
+
+    const ev = cfg.eventDetails || {};
+    if (el('cms-input-date-reg-date')) el('cms-input-date-reg-date').value = ev.regDeadlineDate || '';
+    if (el('cms-input-date-reg-badge')) el('cms-input-date-reg-badge').value = ev.regDeadlineBadge || '';
+    if (el('cms-input-date-reg-desc')) el('cms-input-date-reg-desc').value = ev.regDeadlineDesc || '';
+
+    if (el('cms-input-date-kick-date')) el('cms-input-date-kick-date').value = ev.kickoffDate || '';
+    if (el('cms-input-date-kick-badge')) el('cms-input-date-kick-badge').value = ev.kickoffBadge || '';
+    if (el('cms-input-date-kick-desc')) el('cms-input-date-kick-desc').value = ev.kickoffDesc || '';
+
+    if (el('cms-input-date-finals-date')) el('cms-input-date-finals-date').value = ev.finalsDate || '';
+    if (el('cms-input-date-finals-badge')) el('cms-input-date-finals-badge').value = ev.finalsBadge || '';
+    if (el('cms-input-date-finals-desc')) el('cms-input-date-finals-desc').value = ev.finalsDesc || '';
+
+    const l = cfg.logos || {};
+    if (el('cms-input-logo-school')) el('cms-input-logo-school').value = l.schoolLogo || '';
+    if (el('cms-input-logo-esports')) el('cms-input-logo-esports').value = l.esportsLogo || '';
+    if (el('cms-input-logo-intrams')) el('cms-input-logo-intrams').value = l.intramsLogo || '';
+  }
+
+  if (window.CECCMSManager) {
+    window.CECCMSManager.init().then(populateCMSForm);
+    window.CECCMSManager.onConfigChange(populateCMSForm);
+  }
+
+  if (cmsForm) {
+    cmsForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const updated = {
+        announcement: {
+          enabled: el('cms-input-ann-enabled').checked,
+          badge: el('cms-input-ann-badge').value,
+          text: el('cms-input-ann-text').value,
+          linkText: el('cms-input-ann-linktext').value,
+          linkUrl: el('cms-input-ann-linkurl').value
+        },
+        hero: {
+          badge: el('cms-input-hero-badge').value,
+          gameTitle: el('cms-input-hero-game').value,
+          headlinePrimary: el('cms-input-hero-title1').value,
+          headlineSecondary: el('cms-input-hero-title2').value,
+          description: el('cms-input-hero-desc').value,
+          videoUrl: el('cms-input-hero-videourl').value,
+          ctaPrimaryText: el('cms-input-hero-cta1').value
+        },
+        eventDetails: {
+          regDeadlineDate: el('cms-input-date-reg-date').value,
+          regDeadlineBadge: el('cms-input-date-reg-badge').value,
+          regDeadlineDesc: el('cms-input-date-reg-desc').value,
+          kickoffDate: el('cms-input-date-kick-date').value,
+          kickoffBadge: el('cms-input-date-kick-badge').value,
+          kickoffDesc: el('cms-input-date-kick-desc').value,
+          finalsDate: el('cms-input-date-finals-date').value,
+          finalsBadge: el('cms-input-date-finals-badge').value,
+          finalsDesc: el('cms-input-date-finals-desc').value
+        },
+        logos: {
+          schoolLogo: el('cms-input-logo-school').value,
+          esportsLogo: el('cms-input-logo-esports').value,
+          intramsLogo: el('cms-input-logo-intrams').value
+        }
+      };
+
+      try {
+        await window.CECCMSManager.saveConfig(updated);
+        cmsSaveStatus.classList.remove('hidden');
+        setTimeout(() => cmsSaveStatus.classList.add('hidden'), 3500);
+      } catch (err) {
+        alert('Could not publish CMS update: ' + (err && err.message ? err.message : 'failed'));
+      }
+    });
+  }
+
+  if (cmsResetBtn) {
+    cmsResetBtn.addEventListener('click', async () => {
+      if (confirm('Reset all CMS content and announcements back to official 2026 defaults?')) {
+        await window.CECCMSManager.resetToDefaults();
+        cmsSaveStatus.textContent = '✓ Reset to Season Defaults';
+        cmsSaveStatus.classList.remove('hidden');
+        setTimeout(() => cmsSaveStatus.classList.add('hidden'), 3500);
+      }
+    });
+  }
 
   function attentionRow(title, note, badge, tone, href){
     return '<a href="' + href + '" class="flex items-center justify-between gap-md p-md rounded-xl bg-surface-container border border-white/10 hover:border-primary/40 transition-colors glass-hover">' +
@@ -234,12 +542,19 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       el('auth-guard-title').textContent = 'Staff Authentication Required';
       el('auth-guard-desc').textContent = 'Sign in with your Google account to officiate matches and manage tournament feeds.';
       superAdminPanel.classList.add('hidden');
+      if (cmsPanel) cmsPanel.classList.add('hidden');
       return;
     }
 
     banner.classList.add('hidden');
 
     // Super Admin View for jlcabucos.cec@gmail.com
+    if (window.CECAuth.isSuperAdmin() || window.CECAuth.isApprovedStaff()) {
+      if (cmsPanel) cmsPanel.classList.remove('hidden');
+    } else {
+      if (cmsPanel) cmsPanel.classList.add('hidden');
+    }
+
     if (window.CECAuth.isSuperAdmin()) {
       superAdminPanel.classList.remove('hidden');
       window.CECAuth.onStaffListChange((staffList) => {
