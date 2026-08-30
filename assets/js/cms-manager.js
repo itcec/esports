@@ -46,6 +46,34 @@
       esportsLogo: 'assets/e-sportslogo.png',
       intramsLogo: 'assets/intrams_logo.png'
     },
+    format: {
+      title: 'Tournament Format',
+      badge: 'CUSTOM LOBBY',
+      item1Title: 'Department Brackets:',
+      item1Desc: 'Single-elimination, Best-of-1 matches.',
+      item2Title: 'Playoff Stages:',
+      item2Desc: 'Semifinals are Best-of-3; Grand Finals are Best-of-5.',
+      item3Title: 'Match Setup:',
+      item3Desc: 'Online Tournament Draft Pick, streamed live from Annex Lab.',
+      item4Title: 'Roster Structure:',
+      item4Desc: '5 starters + up to 2 substitute players.',
+      linkText: 'READ THE FULL RULES',
+      linkUrl: 'rules.html'
+    },
+    roadmap: {
+      title: 'Path to the Title',
+      badge: 'ROADMAP',
+      step1Title: 'Register:',
+      step1Desc: 'Confirm and register your team by September 1, 2026.',
+      step2Title: 'Department Battles:',
+      step2Desc: 'Play department brackets in one single Saturday session.',
+      step3Title: 'Department Champion:',
+      step3Desc: 'Win your bracket to advance to Grand Finals.',
+      step4Title: 'Grand Finals Day:',
+      step4Desc: 'Meet the other champions on October 2, 2026.',
+      linkText: 'SEE THE FULL SCHEDULE',
+      linkUrl: 'tournament.html'
+    },
     updatedAt: new Date().toISOString()
   };
 
@@ -230,6 +258,46 @@
       if (finalsDate && ev.finalsDate) finalsDate.textContent = ev.finalsDate;
       if (finalsBadge && ev.finalsBadge) finalsBadge.textContent = ev.finalsBadge;
       if (finalsDesc && ev.finalsDesc) finalsDesc.textContent = ev.finalsDesc;
+
+      // 4. Tournament Format
+      const fmt = cfg.format || {};
+      const fmtTitle = document.getElementById('cms-format-title');
+      const fmtBadge = document.getElementById('cms-format-badge');
+      const fmtLink = document.getElementById('cms-format-link');
+
+      if (fmtTitle && fmt.title) fmtTitle.textContent = fmt.title;
+      if (fmtBadge && fmt.badge) fmtBadge.textContent = fmt.badge;
+      if (fmtLink) {
+        if (fmt.linkText) fmtLink.innerHTML = `${fmt.linkText} <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>`;
+        if (fmt.linkUrl) fmtLink.href = fmt.linkUrl;
+      }
+
+      for (let i = 1; i <= 4; i++) {
+        const tEl = document.getElementById(`cms-format-item${i}-title`);
+        const dEl = document.getElementById(`cms-format-item${i}-desc`);
+        if (tEl && fmt[`item${i}Title`]) tEl.textContent = fmt[`item${i}Title`];
+        if (dEl && fmt[`item${i}Desc`]) dEl.textContent = fmt[`item${i}Desc`];
+      }
+
+      // 5. Path to the Title Roadmap
+      const rdm = cfg.roadmap || {};
+      const rdmTitle = document.getElementById('cms-roadmap-title');
+      const rdmBadge = document.getElementById('cms-roadmap-badge');
+      const rdmLink = document.getElementById('cms-roadmap-link');
+
+      if (rdmTitle && rdm.title) rdmTitle.textContent = rdm.title;
+      if (rdmBadge && rdm.badge) rdmBadge.textContent = rdm.badge;
+      if (rdmLink) {
+        if (rdm.linkText) rdmLink.innerHTML = `${rdm.linkText} <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>`;
+        if (rdm.linkUrl) rdmLink.href = rdm.linkUrl;
+      }
+
+      for (let i = 1; i <= 4; i++) {
+        const tEl = document.getElementById(`cms-roadmap-step${i}-title`);
+        const dEl = document.getElementById(`cms-roadmap-step${i}-desc`);
+        if (tEl && rdm[`step${i}Title`]) tEl.textContent = rdm[`step${i}Title`];
+        if (dEl && rdm[`step${i}Desc`]) dEl.textContent = rdm[`step${i}Desc`];
+      }
     }
   };
 

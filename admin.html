@@ -107,6 +107,9 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     <button type="button" class="cms-tab-btn px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface font-label-caps font-bold text-xs flex items-center gap-1.5" data-tab="logos">
       <span class="material-symbols-outlined text-[16px]">verified</span> Logos &amp; Emblems
     </button>
+    <button type="button" class="cms-tab-btn px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface font-label-caps font-bold text-xs flex items-center gap-1.5" data-tab="format">
+      <span class="material-symbols-outlined text-[16px]">sports_score</span> Format &amp; Roadmap
+    </button>
   </div>
 
   <!-- CMS Form -->
@@ -236,6 +239,129 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         <div>
           <label for="cms-input-logo-intrams" class="block text-[11px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Intramurals 2026 Logo</label>
           <input type="text" id="cms-input-logo-intrams" placeholder="assets/intrams_logo.png" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs font-mono" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Tournament Format & Roadmap -->
+    <div id="cms-tab-format" class="cms-tab-pane hidden flex flex-col gap-md">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-md">
+        <!-- Tournament Format Card Editor -->
+        <div class="p-4 rounded-xl bg-surface-container-lowest border border-primary/30 flex flex-col gap-sm">
+          <div class="flex items-center justify-between border-b border-white/10 pb-2">
+            <span class="font-label-caps text-xs text-primary font-bold uppercase flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">sports_score</span>
+              Tournament Format Card
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+            <div>
+              <label for="cms-input-format-title" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Card Title</label>
+              <input type="text" id="cms-input-format-title" placeholder="Tournament Format" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+            </div>
+            <div>
+              <label for="cms-input-format-badge" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Card Badge</label>
+              <input type="text" id="cms-input-format-badge" placeholder="CUSTOM LOBBY" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+            </div>
+          </div>
+
+          <!-- 4 Bullet items -->
+          <div class="flex flex-col gap-2 pt-1">
+            <span class="text-[10px] font-label-caps uppercase text-primary font-bold">Bullet 1: Department Brackets</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="cms-input-format-item1-title" placeholder="Department Brackets:" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-bold" />
+              <input type="text" id="cms-input-format-item1-desc" placeholder="Single-elimination, Best-of-1 matches." class="sm:col-span-2 w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+
+            <span class="text-[10px] font-label-caps uppercase text-primary font-bold mt-1">Bullet 2: Playoff Stages</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="cms-input-format-item2-title" placeholder="Playoff Stages:" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-bold" />
+              <input type="text" id="cms-input-format-item2-desc" placeholder="Semifinals are Best-of-3; Grand Finals are Best-of-5." class="sm:col-span-2 w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+
+            <span class="text-[10px] font-label-caps uppercase text-primary font-bold mt-1">Bullet 3: Match Setup</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="cms-input-format-item3-title" placeholder="Match Setup:" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-bold" />
+              <input type="text" id="cms-input-format-item3-desc" placeholder="Online Tournament Draft Pick, streamed live from Annex Lab." class="sm:col-span-2 w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+
+            <span class="text-[10px] font-label-caps uppercase text-primary font-bold mt-1">Bullet 4: Roster Structure</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="cms-input-format-item4-title" placeholder="Roster Structure:" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-bold" />
+              <input type="text" id="cms-input-format-item4-desc" placeholder="5 starters + up to 2 substitute players." class="sm:col-span-2 w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm pt-2 border-t border-white/5">
+            <div>
+              <label for="cms-input-format-linktext" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Button Label</label>
+              <input type="text" id="cms-input-format-linktext" placeholder="READ THE FULL RULES" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+            <div>
+              <label for="cms-input-format-linkurl" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Button Link</label>
+              <input type="text" id="cms-input-format-linkurl" placeholder="rules.html" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-mono" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Path to Title Roadmap Card Editor -->
+        <div class="p-4 rounded-xl bg-surface-container-lowest border border-[#ffb020]/30 flex flex-col gap-sm">
+          <div class="flex items-center justify-between border-b border-white/10 pb-2">
+            <span class="font-label-caps text-xs text-[#ffb020] font-bold uppercase flex items-center gap-1.5">
+              <span class="material-symbols-outlined text-[16px]">emoji_events</span>
+              Path to the Title Roadmap
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+            <div>
+              <label for="cms-input-roadmap-title" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Card Title</label>
+              <input type="text" id="cms-input-roadmap-title" placeholder="Path to the Title" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+            </div>
+            <div>
+              <label for="cms-input-roadmap-badge" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Card Badge</label>
+              <input type="text" id="cms-input-roadmap-badge" placeholder="ROADMAP" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 text-xs" />
+            </div>
+          </div>
+
+          <!-- 4 Roadmap Steps -->
+          <div class="flex flex-col gap-2 pt-1">
+            <span class="text-[10px] font-label-caps uppercase text-[#ffb020] font-bold">Step 1: Registration</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="cms-input-roadmap-step1-title" placeholder="Register:" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-bold" />
+              <input type="text" id="cms-input-roadmap-step1-desc" placeholder="Confirm and register your team by September 1, 2026." class="sm:col-span-2 w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+
+            <span class="text-[10px] font-label-caps uppercase text-[#ffb020] font-bold mt-1">Step 2: Department Battles</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="cms-input-roadmap-step2-title" placeholder="Department Battles:" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-bold" />
+              <input type="text" id="cms-input-roadmap-step2-desc" placeholder="Play department brackets in one single Saturday session." class="sm:col-span-2 w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+
+            <span class="text-[10px] font-label-caps uppercase text-[#ffb020] font-bold mt-1">Step 3: Department Champion</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="cms-input-roadmap-step3-title" placeholder="Department Champion:" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-bold" />
+              <input type="text" id="cms-input-roadmap-step3-desc" placeholder="Win your bracket to advance to Grand Finals." class="sm:col-span-2 w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+
+            <span class="text-[10px] font-label-caps uppercase text-[#ffb020] font-bold mt-1">Step 4: Grand Finals Day</span>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="text" id="cms-input-roadmap-step4-title" placeholder="Grand Finals Day:" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-bold" />
+              <input type="text" id="cms-input-roadmap-step4-desc" placeholder="Meet the other champions on October 2, 2026." class="sm:col-span-2 w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm pt-2 border-t border-white/5">
+            <div>
+              <label for="cms-input-roadmap-linktext" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Button Label</label>
+              <input type="text" id="cms-input-roadmap-linktext" placeholder="SEE THE FULL SCHEDULE" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs" />
+            </div>
+            <div>
+              <label for="cms-input-roadmap-linkurl" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Button Link</label>
+              <input type="text" id="cms-input-roadmap-linkurl" placeholder="tournament.html" class="w-full bg-[#050B14] text-on-surface px-2.5 py-1.5 rounded-lg border border-white/10 text-xs font-mono" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -415,6 +541,26 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     if (el('cms-input-logo-school')) el('cms-input-logo-school').value = l.schoolLogo || '';
     if (el('cms-input-logo-esports')) el('cms-input-logo-esports').value = l.esportsLogo || '';
     if (el('cms-input-logo-intrams')) el('cms-input-logo-intrams').value = l.intramsLogo || '';
+
+    const fmt = cfg.format || {};
+    if (el('cms-input-format-title')) el('cms-input-format-title').value = fmt.title || '';
+    if (el('cms-input-format-badge')) el('cms-input-format-badge').value = fmt.badge || '';
+    if (el('cms-input-format-linktext')) el('cms-input-format-linktext').value = fmt.linkText || '';
+    if (el('cms-input-format-linkurl')) el('cms-input-format-linkurl').value = fmt.linkUrl || '';
+    for (let i = 1; i <= 4; i++) {
+      if (el(`cms-input-format-item${i}-title`)) el(`cms-input-format-item${i}-title`).value = fmt[`item${i}Title`] || '';
+      if (el(`cms-input-format-item${i}-desc`)) el(`cms-input-format-item${i}-desc`).value = fmt[`item${i}Desc`] || '';
+    }
+
+    const rdm = cfg.roadmap || {};
+    if (el('cms-input-roadmap-title')) el('cms-input-roadmap-title').value = rdm.title || '';
+    if (el('cms-input-roadmap-badge')) el('cms-input-roadmap-badge').value = rdm.badge || '';
+    if (el('cms-input-roadmap-linktext')) el('cms-input-roadmap-linktext').value = rdm.linkText || '';
+    if (el('cms-input-roadmap-linkurl')) el('cms-input-roadmap-linkurl').value = rdm.linkUrl || '';
+    for (let i = 1; i <= 4; i++) {
+      if (el(`cms-input-roadmap-step${i}-title`)) el(`cms-input-roadmap-step${i}-title`).value = rdm[`step${i}Title`] || '';
+      if (el(`cms-input-roadmap-step${i}-desc`)) el(`cms-input-roadmap-step${i}-desc`).value = rdm[`step${i}Desc`] || '';
+    }
   }
 
   if (window.CECCMSManager) {
@@ -457,6 +603,34 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
           schoolLogo: el('cms-input-logo-school').value,
           esportsLogo: el('cms-input-logo-esports').value,
           intramsLogo: el('cms-input-logo-intrams').value
+        },
+        format: {
+          title: el('cms-input-format-title').value,
+          badge: el('cms-input-format-badge').value,
+          item1Title: el('cms-input-format-item1-title').value,
+          item1Desc: el('cms-input-format-item1-desc').value,
+          item2Title: el('cms-input-format-item2-title').value,
+          item2Desc: el('cms-input-format-item2-desc').value,
+          item3Title: el('cms-input-format-item3-title').value,
+          item3Desc: el('cms-input-format-item3-desc').value,
+          item4Title: el('cms-input-format-item4-title').value,
+          item4Desc: el('cms-input-format-item4-desc').value,
+          linkText: el('cms-input-format-linktext').value,
+          linkUrl: el('cms-input-format-linkurl').value
+        },
+        roadmap: {
+          title: el('cms-input-roadmap-title').value,
+          badge: el('cms-input-roadmap-badge').value,
+          step1Title: el('cms-input-roadmap-step1-title').value,
+          step1Desc: el('cms-input-roadmap-step1-desc').value,
+          step2Title: el('cms-input-roadmap-step2-title').value,
+          step2Desc: el('cms-input-roadmap-step2-desc').value,
+          step3Title: el('cms-input-roadmap-step3-title').value,
+          step3Desc: el('cms-input-roadmap-step3-desc').value,
+          step4Title: el('cms-input-roadmap-step4-title').value,
+          step4Desc: el('cms-input-roadmap-step4-desc').value,
+          linkText: el('cms-input-roadmap-linktext').value,
+          linkUrl: el('cms-input-roadmap-linkurl').value
         }
       };
 
