@@ -542,6 +542,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentDocList = [];
   let currentDocIndex = 0;
   let currentTeamPlayers = [];
+  let currentZoom = 1;
+  let currentRotate = 0;
 
   const modal = document.getElementById('doc-modal');
   const modalTitle = document.getElementById('modal-doc-title');
@@ -552,29 +554,71 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalVerifyBtn = document.getElementById('modal-verify-player-btn');
   const closeModal = () => modal.classList.add('hidden');
 
-  document.getElementById('close-doc-modal').addEventListener('click', closeModal);
-  document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+  const closeDocModalBtn = document.getElementById('close-doc-modal');
+  if (closeDocModalBtn) closeDocModalBtn.addEventListener('click', closeModal);
+  const modalCloseBtn = document.getElementById('modal-close-btn');
+  if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeModal);
 
-  document.getElementById('modal-prev-btn').addEventListener('click', () => {
-    if (currentDocList.length <= 1) return;
-    currentDocIndex = (currentDocIndex - 1 + currentDocList.length) % currentDocList.length;
-    renderModalCurrentDoc();
-  });
+  const prevBtn = document.getElementById('modal-prev-btn');
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      if (currentDocList.length <= 1) return;
+      currentDocIndex = (currentDocIndex - 1 + currentDocList.length) % currentDocList.length;
+      renderModalCurrentDoc();
+    });
+  }
 
-  document.getElementById('modal-next-btn').addEventListener('click', () => {
-    if (currentDocList.length <= 1) return;
-    currentDocIndex = (currentDocIndex + 1) % currentDocList.length;
-    renderModalCurrentDoc();
-  });
+  const nextBtn = document.getElementById('modal-next-btn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      if (currentDocList.length <= 1) return;
+      currentDocIndex = (currentDocIndex + 1) % currentDocList.length;
+      renderModalCurrentDoc();
+    });
+  }
+
+  const zoomInBtn = document.getElementById('modal-zoom-in');
+  if (zoomInBtn) {
+    zoomInBtn.addEventListener('click', () => {
+      currentZoom = Math.min(currentZoom + 0.25, 3);
+      applyTransform();
+    });
+  }
+
+  const zoomOutBtn = document.getElementById('modal-zoom-out');
+  if (zoomOutBtn) {
+    zoomOutBtn.addEventListener('click', () => {
+      currentZoom = Math.max(currentZoom - 0.25, 0.5);
+      applyTransform();
+    });
+  }
+
+  const rotateBtn = document.getElementById('modal-rotate');
+  if (rotateBtn) {
+    rotateBtn.addEventListener('click', () => {
+      currentRotate = (currentRotate + 90) % 360;
+      applyTransform();
+    });
+  }
+
+  function applyTransform() {
+    const img = modalContent.querySelector('img');
+    if (img) {
+      img.style.transform = `scale(${currentZoom}) rotate(${currentRotate}deg)`;
+      img.style.transformOrigin = 'center center';
+    }
+  }
 
   document.addEventListener('keydown', (e) => {
     if (modal.classList.contains('hidden')) return;
     if (e.key === 'Escape') closeModal();
-    if (e.key === 'ArrowLeft') document.getElementById('modal-prev-btn').click();
-    if (e.key === 'ArrowRight') document.getElementById('modal-next-btn').click();
+    if (e.key === 'ArrowLeft' && prevBtn) prevBtn.click();
+    if (e.key === 'ArrowRight' && nextBtn) nextBtn.click();
   });
 
   function openDocumentViewer(doc, player, allDocsForTeam) {
+    currentZoom = 1;
+    currentRotate = 0;
     if (allDocsForTeam && allDocsForTeam.length) {
       currentDocList = allDocsForTeam;
       currentDocIndex = currentDocList.findIndex(d => d.DriveFileId === doc.DriveFileId);
@@ -588,6 +632,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderModalCurrentDoc() {
+    currentZoom = 1;
+    currentRotate = 0;
     const doc = currentDocList[currentDocIndex];
     if (!doc) return;
 
@@ -599,6 +645,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalPlayerInfo) modalPlayerInfo.textContent = playerInfo;
     if (modalDocIndex) modalDocIndex.textContent = `${currentDocIndex + 1} / ${currentDocList.length}`;
     if (modalInfo) modalInfo.textContent = `Drive File ID: ${doc.DriveFileId || '—'} · Type: ${(doc.DocType || 'ID Proof').replace(/_/g, ' ')}`;
+
+    const driveLink = document.getElementById('modal-open-drive');
+    if (driveLink && doc.DriveFileId) {
+      driveLink.href = 'https://drive.google.com/file/d/' + doc.DriveFileId + '/view';
+    }
 
     if (modalVerifyBtn && player) {
       modalVerifyBtn.classList.remove('hidden');
@@ -632,6 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       modalContent.innerHTML = '<img src="data:' + fileData.mimeType + ';base64,' + fileData.base64 + '" alt="Verification Document" class="max-h-[75vh] max-w-full object-contain rounded-lg shadow-2xl transition-all duration-300" title="High-resolution document proof" />';
     }
+    applyTransform();
   }
 
   async function loadAllDocumentsBatch(documents) {
