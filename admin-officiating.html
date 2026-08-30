@@ -597,9 +597,11 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
               <button type="button" onclick="recordOfficialResult('${m.id}')" class="px-2.5 py-1 rounded bg-primary hover:bg-primary-fixed-dim text-on-primary font-bold text-xs flex items-center gap-1 shadow">
                 <span class="material-symbols-outlined text-[14px]">verified</span> Result
               </button>
-              <button type="button" onclick="deleteMatch('${m.id}')" title="Delete Match Lobby" class="p-1 rounded bg-red-500/10 hover:bg-red-500/25 text-red-400 hover:text-red-300 font-bold text-xs flex items-center border border-red-500/20 transition-colors">
-                <span class="material-symbols-outlined text-[16px]">delete</span>
-              </button>
+              ${window.CECAuth && window.CECAuth.canDeleteMatches() ? `
+                <button type="button" onclick="deleteMatch('${m.id}')" title="Delete Match Lobby (Admin Only)" class="p-1 rounded bg-red-500/10 hover:bg-red-500/25 text-red-400 hover:text-red-300 font-bold text-xs flex items-center border border-red-500/20 transition-colors">
+                  <span class="material-symbols-outlined text-[16px]">delete</span>
+                </button>
+              ` : ''}
             </div>
           </div>
         </div>
@@ -844,6 +846,10 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   });
 
   window.deleteMatch = async function(matchId) {
+    if (!window.CECAuth || !window.CECAuth.canDeleteMatches()) {
+      alert('Permission Denied: Deleting match lobbies is restricted to Committee Administrators.');
+      return;
+    }
     const match = window.CECLiveManager.matches[matchId];
     const name = match ? (match.court || match.title || matchId) : matchId;
     if (confirm('Delete match "' + name + '"?\n\nThis will remove it from the live scoreboard and public broadcast schedule.')) {
@@ -855,26 +861,32 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     }
   };
 
-  document.getElementById('delete-match-btn').addEventListener('click', async () => {
-    const matchId = document.getElementById('edit-match-id').value;
-    if (!matchId) return;
-    const match = window.CECLiveManager.matches[matchId];
-    const name = match ? (match.court || match.title || matchId) : matchId;
-    if (confirm('Delete match lobby "' + name + '"?')) {
-      const btn = document.getElementById('delete-match-btn');
-      btn.disabled = true;
-      btn.textContent = 'Deleting...';
-      try {
-        await window.CECLiveManager.deleteMatch(matchId);
-      } catch (err) {
-        alert('Failed to delete match: ' + (err && err.message ? err.message : err));
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">delete</span> Delete';
-        closeModal();
+  const modalDeleteBtn = document.getElementById('delete-match-btn');
+  if (modalDeleteBtn) {
+    modalDeleteBtn.addEventListener('click', async () => {
+      if (!window.CECAuth || !window.CECAuth.canDeleteMatches()) {
+        alert('Permission Denied: Deleting match lobbies is restricted to Committee Administrators.');
+        return;
       }
-    }
-  });
+      const matchId = document.getElementById('edit-match-id').value;
+      if (!matchId) return;
+      const match = window.CECLiveManager.matches[matchId];
+      const name = match ? (match.court || match.title || matchId) : matchId;
+      if (confirm('Delete match lobby "' + name + '"?')) {
+        modalDeleteBtn.disabled = true;
+        modalDeleteBtn.textContent = 'Deleting...';
+        try {
+          await window.CECLiveManager.deleteMatch(matchId);
+        } catch (err) {
+          alert('Failed to delete match: ' + (err && err.message ? err.message : err));
+        } finally {
+          modalDeleteBtn.disabled = false;
+          modalDeleteBtn.innerHTML = '<span class="material-symbols-outlined text-[14px]">delete</span> Delete';
+          closeModal();
+        }
+      }
+    });
+  }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

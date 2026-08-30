@@ -98,6 +98,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/auth-guard.js"></script>
 <script src="assets/js/registration-api.js"></script>
+<script src="assets/js/admin-mobile-mode.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', async () => {
   const disputeId = new URLSearchParams(location.search).get('disputeId');
@@ -123,6 +124,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('ruling-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (!window.CECAuth || !window.CECAuth.canResolveDisputes()) {
+      alert('Permission Denied: Finalizing dispute rulings and sanctions is reserved for Committee Administrators.');
+      return;
+    }
     const rulingChoice = document.querySelector('input[name="ruling"]:checked').value;
     const justification = document.getElementById('ruling-justification').value;
 

@@ -405,6 +405,10 @@ document.addEventListener('DOMContentLoaded', () => {
   divisionSelect.addEventListener('change', (e) => renderSeeds(e.target.value));
 
   document.getElementById('draw-bracket-btn').addEventListener('click', () => {
+    if (!window.CECAuth || !window.CECAuth.canPublishBracket()) {
+      alert('Permission Denied: Randomizing knockout draws is reserved for Committee Administrators.');
+      return;
+    }
     const div = divisionSelect.value;
     const list = [...(SEEDS[div] || [])].sort(() => Math.random() - 0.5);
     SEEDS[div] = list;
@@ -412,6 +416,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('publish-bracket-btn').addEventListener('click', async () => {
+    if (!window.CECAuth || !window.CECAuth.canPublishBracket()) {
+      alert('Permission Denied: Publishing brackets to live standings is reserved for Committee Administrators.');
+      return;
+    }
     const div = divisionSelect.value;
     const seeds = SEEDS[div] || [];
     if (seeds.length < 8) {

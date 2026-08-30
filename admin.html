@@ -382,6 +382,65 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   </form>
 </div>
 
+<!-- Match Official Operations Desk (Rendered for Referees / Marshals / Non-Admins) -->
+<div id="official-match-desk-panel" class="hidden bg-surface-container rounded-2xl border border-[#00e676]/30 p-lg shadow-xl mb-xl cyber-panel">
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md border-b border-white/10 pb-md mb-md">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-[#00e676]/15 border border-[#00e676]/30 flex items-center justify-center text-[#00e676] shrink-0">
+        <span class="material-symbols-outlined text-[24px]">sports_esports</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h2 class="font-headline-md text-headline-md text-on-surface cyber-title text-lg">Match Official &amp; Referee Control Desk</h2>
+          <span class="px-2 py-0.5 rounded bg-[#00e676]/20 text-[#00e676] border border-[#00e676]/30 text-[10px] font-bold">MATCH OFFICIAL</span>
+        </div>
+        <p class="text-xs text-on-surface-variant">Live court officiating, player check-in, match result reporting, and dispute submission portal.</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xs text-on-surface-variant font-mono"><span class="material-symbols-outlined text-[14px] text-amber-400 align-middle">lock</span> CMS Gated to Committee Admins</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-md">
+    <a href="admin-officiating.html" class="flex flex-col gap-2 p-md rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-white/10 hover:border-[#00e676]/40 transition-all group">
+      <div class="flex items-center justify-between">
+        <span class="material-symbols-outlined text-[28px] text-[#00e676] group-hover:scale-110 transition-transform">sports_esports</span>
+        <span class="text-[10px] font-mono text-outline">Active Courts</span>
+      </div>
+      <span class="font-bold text-sm text-on-surface">Live Match Officiating</span>
+      <p class="text-[11px] text-on-surface-variant leading-relaxed">Update live scores, set match status (LIVE/COMPLETED), and assign court Twitch streams.</p>
+    </a>
+
+    <a href="admin-checkin.html" class="flex flex-col gap-2 p-md rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-white/10 hover:border-primary/40 transition-all group">
+      <div class="flex items-center justify-between">
+        <span class="material-symbols-outlined text-[28px] text-primary group-hover:scale-110 transition-transform">how_to_reg</span>
+        <span class="text-[10px] font-mono text-outline">Pre-Match</span>
+      </div>
+      <span class="font-bold text-sm text-on-surface">Lobby Check-in</span>
+      <p class="text-[11px] text-on-surface-variant leading-relaxed">Verify team attendance, starter readiness, and custom 5v5 lobby credentials 15 mins prior.</p>
+    </a>
+
+    <a href="admin-match-report.html" class="flex flex-col gap-2 p-md rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-white/10 hover:border-secondary/40 transition-all group">
+      <div class="flex items-center justify-between">
+        <span class="material-symbols-outlined text-[28px] text-secondary group-hover:scale-110 transition-transform">receipt_long</span>
+        <span class="text-[10px] font-mono text-outline">Post-Match</span>
+      </div>
+      <span class="font-bold text-sm text-on-surface">Submit Match Report</span>
+      <p class="text-[11px] text-on-surface-variant leading-relaxed">File official game durations, MVPs, and upload screenshot battle result evidence.</p>
+    </a>
+
+    <a href="admin-disputes.html" class="flex flex-col gap-2 p-md rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-white/10 hover:border-amber-400/40 transition-all group">
+      <div class="flex items-center justify-between">
+        <span class="material-symbols-outlined text-[28px] text-amber-400 group-hover:scale-110 transition-transform">gavel</span>
+        <span class="text-[10px] font-mono text-outline">Field Incident</span>
+      </div>
+      <span class="font-bold text-sm text-on-surface">Report Match Dispute</span>
+      <p class="text-[11px] text-on-surface-variant leading-relaxed">Submit an official incident report or team protest statement directly to the Committee.</p>
+    </a>
+  </div>
+</div>
+
 <div class="flex flex-wrap justify-between items-end gap-sm">
 <div>
 <h1 class="font-headline-xl text-headline-xl text-on-surface cyber-title">Overview</h1>
@@ -711,6 +770,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   function renderStaffManagementUI(currentUser, profile) {
     const banner = el('admin-auth-guard-banner');
     const superAdminPanel = el('super-admin-staff-panel');
+    const officialDeskPanel = el('official-match-desk-panel');
 
     if (!currentUser) {
       banner.classList.remove('hidden');
@@ -718,18 +778,25 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       el('auth-guard-desc').textContent = 'Sign in with your Google account to officiate matches and manage tournament feeds.';
       superAdminPanel.classList.add('hidden');
       if (cmsPanel) cmsPanel.classList.add('hidden');
+      if (officialDeskPanel) officialDeskPanel.classList.add('hidden');
       return;
     }
 
     banner.classList.add('hidden');
 
-    // Super Admin View for jlcabucos.cec@gmail.com
-    if (window.CECAuth.isSuperAdmin() || window.CECAuth.isApprovedStaff()) {
+    // Differentiated CMS vs Official Match Desk
+    if (window.CECAuth.canEditCMS()) {
       if (cmsPanel) cmsPanel.classList.remove('hidden');
+      if (officialDeskPanel) officialDeskPanel.classList.add('hidden');
+    } else if (window.CECAuth.isApprovedStaff()) {
+      if (cmsPanel) cmsPanel.classList.add('hidden');
+      if (officialDeskPanel) officialDeskPanel.classList.remove('hidden');
     } else {
       if (cmsPanel) cmsPanel.classList.add('hidden');
+      if (officialDeskPanel) officialDeskPanel.classList.add('hidden');
     }
 
+    // Super Admin Staff Management & Approval Panel
     if (window.CECAuth.isSuperAdmin()) {
       superAdminPanel.classList.remove('hidden');
       window.CECAuth.onStaffListChange((staffList) => {
@@ -744,9 +811,11 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
           if (isSuper) return '';
 
           const isApproved = s.status === 'approved';
-          const statusBadge = isApproved 
-            ? '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">APPROVED (' + (s.role || 'OFFICIAL').toUpperCase() + ')</span>'
-            : '<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold animate-pulse">PENDING APPROVAL</span>';
+          const roleBadge = isApproved 
+            ? (s.role === 'admin' 
+                ? '<span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[10px] font-bold">🛡️ ADMINISTRATOR</span>'
+                : '<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">⚡ MATCH OFFICIAL</span>')
+            : '<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold animate-pulse">⏳ PENDING APPROVAL</span>';
 
           return `
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-surface-container-lowest border border-white/10">
@@ -755,20 +824,31 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
                 <div class="flex flex-col">
                   <div class="flex items-center gap-2">
                     <span class="font-bold text-on-surface text-sm">${s.displayName || 'Staff'}</span>
-                    ${statusBadge}
+                    ${roleBadge}
                   </div>
                   <span class="text-xs text-on-surface-variant">${s.email}</span>
                 </div>
               </div>
-              <div class="flex items-center gap-2 shrink-0">
+              <div class="flex flex-wrap items-center gap-2 shrink-0">
                 ${!isApproved ? `
-                  <button type="button" onclick="approveStaffUser('${s.uid}', 'official')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-label-caps text-xs font-bold transition-colors shadow">
-                    APPROVE (OFFICIAL)
+                  <button type="button" onclick="approveStaffUser('${s.uid}', 'official')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-label-caps text-xs font-bold transition-colors shadow flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">sports_esports</span>
+                    <span>APPROVE (OFFICIAL)</span>
                   </button>
-                  <button type="button" onclick="approveStaffUser('${s.uid}', 'admin')" class="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-colors shadow">
-                    APPROVE (ADMIN)
+                  <button type="button" onclick="approveStaffUser('${s.uid}', 'admin')" class="px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-colors shadow flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">shield</span>
+                    <span>APPROVE (ADMIN)</span>
                   </button>
                 ` : `
+                  ${s.role === 'admin' ? `
+                    <button type="button" onclick="approveStaffUser('${s.uid}', 'official')" class="px-2.5 py-1 rounded bg-surface-container-high hover:bg-surface-container-highest text-xs text-on-surface border border-white/10 font-bold" title="Change role to Match Official">
+                      DEMOTE TO OFFICIAL
+                    </button>
+                  ` : `
+                    <button type="button" onclick="approveStaffUser('${s.uid}', 'admin')" class="px-2.5 py-1 rounded bg-primary/20 hover:bg-primary/30 text-xs text-primary border border-primary/30 font-bold" title="Promote to Committee Administrator">
+                      PROMOTE TO ADMIN
+                    </button>
+                  `}
                   <button type="button" onclick="rejectStaffUser('${s.uid}')" class="px-2.5 py-1.5 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 font-label-caps text-xs font-bold transition-colors">
                     REVOKE ACCESS
                   </button>

@@ -602,6 +602,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Approve Actions
   async function handleApproveSelected() {
+    if (!window.CECAuth || !window.CECAuth.canApproveTeams()) {
+      alert('Permission Denied: Batch approving team registrations is reserved for Committee Administrators.');
+      return;
+    }
     const ids = getSelectedTeamIds();
     if (!ids.length) { alert('Select at least one registration to approve.'); return; }
     for (const teamId of ids) {
@@ -616,6 +620,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (mobileBatchReject) {
     mobileBatchReject.addEventListener('click', () => {
+      if (!window.CECAuth || !window.CECAuth.canApproveTeams()) {
+        alert('Permission Denied: Rejecting team registrations is reserved for Committee Administrators.');
+        return;
+      }
       const ids = getSelectedTeamIds();
       if (!ids.length) { alert('Select at least one registration to reject.'); return; }
       const firstTeam = allRegistrations.find(t => t.TeamID === ids[0]);
@@ -627,6 +635,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (detailApproveBtn) {
     detailApproveBtn.addEventListener('click', async () => {
       if (!activeDetailTeam) return;
+      if (!window.CECAuth || !window.CECAuth.canApproveTeams()) {
+        alert('Permission Denied: Approving team registrations is reserved for Committee Administrators.');
+        return;
+      }
       try {
         await updateRegistrationStatusWithReason(activeDetailTeam.TeamID, 'Approved', 'Approved by Tournament Committee');
         closeDetail();
@@ -645,6 +657,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const categorySelect = document.getElementById('rejection-category-select');
   const reasonTextarea = document.getElementById('rejection-reason-text');
   const previewText = document.getElementById('rejection-preview-text');
+
+  function openRejectionModal(team) {
+    if (!team) return;
+    if (!window.CECAuth || !window.CECAuth.canApproveTeams()) {
+      alert('Permission Denied: Formal team rejections require Committee Administrator credentials.');
+      return;
+    }
+    document.getElementById('rejection-team-id').value = team.TeamID;
+    document.getElementById('rejection-team-name-display').textContent = team.TeamName || 'Team';
+    document.getElementById('rejection-team-id-display').textContent = team.TeamID;
+    categorySelect.value = '';
+    reasonTextarea.value = '';
+    updatePreviewText();
+    rejectionModal.classList.remove('hidden');
+    rejectionModal.classList.add('flex');
+  }
 
   const REASON_TEMPLATES = {
     'Inappropriate / Non-compliant Team Name or IGN': 'Your team name or player in-game name violates CEC student conduct policies. Please update to a school-appropriate name and resubmit.',

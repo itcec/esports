@@ -865,6 +865,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function setTeamStatus(status) {
     if (!teamId) return;
+    if (!window.CECAuth || !window.CECAuth.canApproveTeams()) {
+      alert('Permission Denied: Whole-team approval or rejection requires Committee Administrator credentials. Officials can verify individual players and record notes.');
+      return;
+    }
     try {
       await callRegistrationApi('updateTeamStatus', { teamId: teamId, status: status });
       location.href = 'admin-registrations.html';

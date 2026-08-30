@@ -138,7 +138,20 @@ window.CECAuth = {
   },
 
   isSuperAdmin: function () { return !!(this.currentStaffProfile && this.currentStaffProfile.role === 'super_admin'); },
+  isAdmin: function () { return !!(this.currentStaffProfile && (this.currentStaffProfile.role === 'super_admin' || this.currentStaffProfile.role === 'admin')); },
+  isOfficial: function () { return !!(this.currentStaffProfile && this.currentStaffProfile.role === 'official'); },
   isApprovedStaff: function () { return !!(this.currentStaffProfile && this.currentStaffProfile.isApproved === true); },
+
+  // Granular Permission Checks
+  canEditCMS: function () { return this.isAdmin(); },
+  canManageStaff: function () { return this.isSuperAdmin(); },
+  canPublishBracket: function () { return this.isAdmin(); },
+  canDeleteMatches: function () { return this.isAdmin(); },
+  canApproveTeams: function () { return this.isAdmin(); },
+  canResolveDisputes: function () { return this.isAdmin(); },
+  canOfficiateMatches: function () { return this.isApprovedStaff(); },
+  canVerifyPlayers: function () { return this.isApprovedStaff(); },
+  canFileDisputes: function () { return this.isApprovedStaff(); },
 
   onAuthChange: function (fn) {
     this.listeners.push(fn);
@@ -174,8 +187,16 @@ window.CECAuth = {
     const widgets = document.querySelectorAll('.cec-auth-widget');
     widgets.forEach((widget) => {
       if (this.currentUser) {
-        const badge = this.isSuperAdmin() ? 'SUPER ADMIN' : (this.isApprovedStaff() ? 'OFFICIAL' : 'PENDING');
-        widget.innerHTML = '<div class="flex items-center gap-2 bg-surface-container-high/90 border border-white/10 px-2.5 py-1.5 rounded-xl shadow-md"><img src="' + this.esc(this.currentUser.photoURL || 'assets/school_logo.jpg') + '" alt="" class="w-7 h-7 rounded-full object-cover border border-white/20" /><div class="hidden sm:flex flex-col text-left"><span class="text-xs font-bold text-on-surface truncate max-w-[120px]">' + this.esc(this.currentUser.displayName || 'Staff') + '</span><span class="text-[10px] font-bold text-primary">' + badge + '</span></div><button type="button" onclick="window.CECAuth.signOut()" class="p-1 text-on-surface-variant hover:text-error" title="Sign out" aria-label="Sign out"><span class="material-symbols-outlined text-[18px]">logout</span></button></div>';
+        let badge = '<span class="text-[10px] font-bold text-amber-400">⏳ PENDING</span>';
+        if (this.isSuperAdmin()) {
+          badge = '<span class="text-[10px] font-bold text-[#ffb020] flex items-center gap-0.5">👑 SUPER ADMIN</span>';
+        } else if (this.isAdmin()) {
+          badge = '<span class="text-[10px] font-bold text-[#6ea3ff] flex items-center gap-0.5">🛡️ ADMIN</span>';
+        } else if (this.isApprovedStaff()) {
+          badge = '<span class="text-[10px] font-bold text-[#00e676] flex items-center gap-0.5">⚡ OFFICIAL</span>';
+        }
+
+        widget.innerHTML = '<div class="flex items-center gap-2 bg-surface-container-high/90 border border-white/10 px-2.5 py-1.5 rounded-xl shadow-md"><img src="' + this.esc(this.currentUser.photoURL || 'assets/school_logo.jpg') + '" alt="" class="w-7 h-7 rounded-full object-cover border border-white/20" /><div class="hidden sm:flex flex-col text-left"><span class="text-xs font-bold text-on-surface truncate max-w-[120px]">' + this.esc(this.currentUser.displayName || 'Staff') + '</span>' + badge + '</div><button type="button" onclick="window.CECAuth.signOut()" class="p-1 text-on-surface-variant hover:text-error" title="Sign out" aria-label="Sign out"><span class="material-symbols-outlined text-[18px]">logout</span></button></div>';
       } else {
         widget.innerHTML = '<a href="staff-login.html" class="flex items-center gap-1.5 bg-surface-container-high hover:bg-surface-container-highest border border-primary/30 text-primary font-label-caps text-xs px-2 sm:px-3 py-1.5 rounded-lg shadow-sm font-bold" title="Staff and admin login"><span class="material-symbols-outlined text-[18px]">shield_person</span><span class="hidden md:inline">STAFF LOGIN</span></a>';
       }
