@@ -69,10 +69,24 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
             </button>
 </div>
 </header>
+
+<!-- Mobile Tab Navigation Segmented Bar (Mobile View) -->
+<div class="flex lg:hidden items-center gap-1 p-1 bg-surface-container-lowest rounded-xl border border-white/10 mb-md shadow-inner" id="verify-mobile-tab-bar">
+  <button type="button" class="verify-mobile-tab-btn flex-1 py-2 px-1 text-center text-xs font-bold font-label-caps rounded-lg bg-primary text-on-primary shadow transition-all" data-vtab="roster">
+    <span class="material-symbols-outlined text-[16px] align-middle mr-0.5">groups</span> Roster
+  </button>
+  <button type="button" class="verify-mobile-tab-btn flex-1 py-2 px-1 text-center text-xs font-bold font-label-caps rounded-lg text-on-surface-variant hover:text-on-surface transition-all" data-vtab="team">
+    <span class="material-symbols-outlined text-[16px] align-middle mr-0.5">info</span> Team Info
+  </button>
+  <button type="button" class="verify-mobile-tab-btn flex-1 py-2 px-1 text-center text-xs font-bold font-label-caps rounded-lg text-on-surface-variant hover:text-on-surface transition-all" data-vtab="summary">
+    <span class="material-symbols-outlined text-[16px] align-middle mr-0.5">analytics</span> Summary
+  </button>
+</div>
+
 <!-- Main Grid Layout -->
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
 <!-- Left Column: Team Information -->
-<aside class="lg:col-span-3 flex flex-col gap-gutter">
+<aside id="verify-pane-team" class="lg:col-span-3 flex-col gap-gutter vtab-pane hidden lg:flex">
 <div class="bg-surface-container p-md rounded-xl shadow-sm relative overflow-hidden group border border-white/5 cyber-panel">
 <!-- Decorative background accent -->
 <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors duration-500"></div>
@@ -139,7 +153,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div>
 </aside>
 <!-- Center Column: Player Roster Verification -->
-<main class="lg:col-span-6 flex flex-col gap-sm">
+<main id="verify-pane-roster" class="lg:col-span-6 flex flex-col gap-sm vtab-pane">
 <div class="flex items-center justify-between px-xs mb-xs">
 <h2 class="text-sm font-label-caps uppercase text-on-surface-variant tracking-wider flex items-center gap-xs">
 <span class="material-symbols-outlined text-[18px] text-secondary">groups</span>
@@ -194,7 +208,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </template>
 </main>
 <!-- Right Column: Summary & Notes -->
-<aside class="lg:col-span-3 flex flex-col gap-sm">
+<aside id="verify-pane-summary" class="lg:col-span-3 flex-col gap-sm vtab-pane hidden lg:flex">
 <div class="bg-surface-container rounded-xl p-md shadow-sm sticky top-24">
 <h2 class="text-xs font-label-caps uppercase text-on-surface-variant mb-md flex items-center gap-xs tracking-wider">
 <span class="material-symbols-outlined text-[16px] text-primary">analytics</span>
@@ -241,6 +255,17 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div>
 </div></main></div>
 
+<!-- Mobile Floating Action Bar for Team Decision -->
+<div class="lg:hidden fixed bottom-16 left-3 right-3 max-w-md mx-auto p-3 rounded-2xl bg-surface-container-high/95 backdrop-blur-md border border-primary/40 shadow-2xl flex items-center justify-between gap-2 z-40">
+  <button type="button" onclick="document.getElementById('reject-team-btn').click()" class="flex-1 py-2.5 rounded-xl bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 text-xs font-bold font-label-caps text-center transition-colors">
+    REJECT TEAM
+  </button>
+  <button type="button" onclick="document.getElementById('approve-team-btn').click()" class="flex-1 py-2.5 rounded-xl bg-primary text-on-primary hover:bg-primary-fixed-dim text-xs font-bold font-label-caps text-center transition-colors shadow flex items-center justify-center gap-1">
+    <span class="material-symbols-outlined text-[16px]">verified</span>
+    APPROVE TEAM
+  </button>
+</div>
+
 <!-- Secure Document Lightbox Viewer Modal -->
 <div id="doc-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/85 backdrop-blur-md">
   <div class="relative w-full max-w-4xl bg-surface-container border border-primary/30 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[95vh] cyber-panel">
@@ -269,18 +294,23 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     <!-- Image Content / Zoom Area -->
     <div class="flex-1 p-md overflow-auto flex items-center justify-center min-h-[350px] bg-[#030914] relative select-none" id="modal-doc-content">
       <div class="flex flex-col items-center gap-2 text-primary">
-        <span class="material-symbols-outlined text-[36px] animate-spin">progress_activity</span>
-        <span class="text-xs font-mono">Fetching private document from Google Drive...</span>
+        <span class="material-symbols-outlined animate-spin text-[32px]">progress_activity</span>
+        <span class="text-xs font-mono">Loading verified document...</span>
       </div>
     </div>
-    <!-- Footer -->
-    <div class="px-md py-sm border-t border-white/10 bg-surface-container-high flex flex-wrap justify-between items-center gap-2 text-xs text-on-surface-variant">
-      <span id="modal-doc-info" class="font-mono text-[11px]">Secure transmission via Firebase Auth</span>
+    <!-- Footer with Verification Controls -->
+    <div class="px-md py-sm border-t border-white/10 bg-surface-container-high flex flex-wrap items-center justify-between gap-sm">
       <div class="flex items-center gap-2">
-        <button type="button" id="modal-verify-player-btn" class="hidden px-3 py-1.5 rounded bg-primary text-on-primary font-bold text-xs hover:bg-primary-fixed flex items-center gap-1">
-          <span class="material-symbols-outlined text-[16px]">check</span> Verify Player
-        </button>
-        <button type="button" id="modal-close-btn" class="px-3 py-1.5 rounded bg-surface border border-white/10 hover:bg-surface-container text-on-surface font-bold text-xs">Close (Esc)</button>
+        <span class="text-xs font-bold text-on-surface-variant" id="modal-doc-type">ID Card</span>
+        <span class="text-xs text-outline font-mono">· Secure authenticated session</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" id="modal-zoom-out" class="p-1.5 rounded bg-surface hover:bg-surface-container border border-white/10 text-on-surface text-xs" title="Zoom out"><span class="material-symbols-outlined text-[16px]">zoom_out</span></button>
+        <button type="button" id="modal-zoom-in" class="p-1.5 rounded bg-surface hover:bg-surface-container border border-white/10 text-on-surface text-xs" title="Zoom in"><span class="material-symbols-outlined text-[16px]">zoom_in</span></button>
+        <button type="button" id="modal-rotate" class="p-1.5 rounded bg-surface hover:bg-surface-container border border-white/10 text-on-surface text-xs" title="Rotate 90°"><span class="material-symbols-outlined text-[16px]">rotate_right</span></button>
+        <a id="modal-open-drive" href="#" target="_blank" rel="noopener" class="px-3 py-1.5 rounded bg-surface-container hover:bg-surface-container-highest border border-white/10 text-primary text-xs font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">open_in_new</span> Open Drive
+        </a>
       </div>
     </div>
   </div>
@@ -289,6 +319,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/auth-guard.js"></script>
 <script src="assets/js/registration-api.js"></script>
+<script src="assets/js/admin-mobile-mode.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const teamId = new URLSearchParams(location.search).get('teamId');
@@ -296,6 +327,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const PALETTE = ['#1264ff', '#00e5ff', '#7c5cff', '#ff2fd8', '#00e676', '#ffb020'];
   let currentTeam = null;
   let currentDocs = [];
+
+  // Mobile Tab Segmented Navigation
+  const vTabBtns = document.querySelectorAll('.verify-mobile-tab-btn');
+  const vTabPanes = {
+    roster: document.getElementById('verify-pane-roster'),
+    team: document.getElementById('verify-pane-team'),
+    summary: document.getElementById('verify-pane-summary')
+  };
+
+  vTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.vtab;
+      vTabBtns.forEach(b => {
+        const isCur = b.dataset.vtab === tab;
+        b.classList.toggle('bg-primary', isCur);
+        b.classList.toggle('text-on-primary', isCur);
+        b.classList.toggle('shadow', isCur);
+        b.classList.toggle('text-on-surface-variant', !isCur);
+      });
+      Object.keys(vTabPanes).forEach(key => {
+        const pane = vTabPanes[key];
+        if (pane) {
+          if (key === tab) {
+            pane.classList.remove('hidden');
+            pane.classList.add('flex');
+          } else {
+            pane.classList.add('hidden');
+            pane.classList.remove('flex');
+          }
+        }
+      });
+    });
+  });
 
   const DEPT_LOGOS = {
     'IT': 'assets/IT.png',

@@ -41,17 +41,18 @@
   .admin-shell { padding-left: 16rem !important; }
 }
 
-/* Registrations table on phones: keep select / team / status / actions,
-   hide the secondary columns so the primary approve workflow fits. */
-@media (max-width: 767px) {
-  #registrations-table th:nth-child(2), #registrations-table td:nth-child(2),
-  #registrations-table th:nth-child(4), #registrations-table td:nth-child(4),
-  #registrations-table th:nth-child(5), #registrations-table td:nth-child(5),
-  #registrations-table th:nth-child(6), #registrations-table td:nth-child(6),
-  #registrations-table th:nth-child(7), #registrations-table td:nth-child(7),
-  #registrations-table th:nth-child(9), #registrations-table td:nth-child(9) { display: none; }
-  #registrations-table th, #registrations-table td { padding-left: .5rem; padding-right: .5rem; }
+/* Mobile cards vs Table visibility */
+.mobile-only-feed { display: flex; }
+.desktop-only-table { display: none; }
+
+@media (min-width: 768px) {
+  .mobile-only-feed { display: none; }
+  .desktop-only-table { display: block; }
 }
+
+/* Force mobile cards if cec-mobile-mode is active */
+body.cec-mobile-mode .mobile-only-feed { display: flex !important; }
+body.cec-mobile-mode .desktop-only-table { display: none !important; }
 
 /* Page titles wrap on word boundaries; only break mid-word as a last resort. */
 main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
@@ -77,12 +78,12 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div>
 </div>
 <div class="bg-surface rounded-xl shadow-lg border border-outline-variant/10 flex-1 flex flex-col min-h-0">
-<div class="p-md flex flex-wrap items-center justify-between gap-sm border-b border-outline-variant/10">
-<div class="flex items-center gap-sm bg-surface-container-lowest rounded-lg px-sm py-xs w-96 border border-outline-variant/20 focus-within:border-primary transition-colors">
+<div class="p-md flex flex-col md:flex-row md:items-center justify-between gap-sm border-b border-outline-variant/10">
+<div class="flex items-center gap-sm bg-surface-container-lowest rounded-lg px-sm py-xs w-full md:w-96 border border-outline-variant/20 focus-within:border-primary transition-colors">
 <span class="material-symbols-outlined text-outline">search</span>
 <input class="bg-transparent border-none outline-none text-on-surface font-body-md text-body-md w-full placeholder-outline" id="reg-search" placeholder="Search registrations..." type="text"/>
 </div>
-<div class="flex gap-xs" id="reg-filters">
+<div class="flex gap-xs overflow-x-auto whitespace-nowrap pb-1 md:pb-0 touch-scroll" id="reg-filters">
 <button class="px-sm py-xs rounded-md bg-primary-container text-on-primary-container font-label-caps text-label-caps uppercase shadow-sm" data-filter="All">All</button>
 <button class="px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="Pending">Pending</button>
 <button class="px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="UnderReview">Under Review</button>
@@ -90,7 +91,9 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <button class="px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="Rejected">Rejected</button>
 </div>
 </div>
-<div class="flex-1 overflow-auto">
+
+<!-- Desktop Table View -->
+<div class="flex-1 overflow-auto desktop-only-table">
 <table id="registrations-table" class="w-full text-left border-collapse">
 <thead class="sticky top-0 bg-surface-container-lowest z-10 shadow-sm">
 <tr>
@@ -110,6 +113,65 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <tr id="registrations-loading-row"><td class="px-sm py-lg text-center text-on-surface-variant" colspan="10">Loading registrations…</td></tr>
 </tbody>
 </table>
+</div>
+
+<!-- Mobile Card Feed View -->
+<div id="registrations-mobile-feed" class="mobile-only-feed flex flex-col gap-sm p-sm overflow-y-auto flex-1">
+  <div class="p-lg text-center text-xs text-on-surface-variant">Loading registrations…</div>
+</div>
+</div>
+
+<!-- Mobile Floating Batch Action Bar -->
+<div id="mobile-batch-bar" class="fixed bottom-20 left-3 right-3 max-w-md mx-auto p-3 rounded-2xl bg-surface-container-high/95 backdrop-blur-md border border-primary/40 shadow-2xl flex items-center justify-between gap-2 z-40 hidden">
+  <div class="flex items-center gap-2">
+    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+    <span id="mobile-batch-count" class="font-bold text-xs text-on-surface font-label-caps">0 Selected</span>
+  </div>
+  <div class="flex items-center gap-2">
+    <button type="button" id="mobile-batch-reject" class="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-bold font-label-caps hover:bg-red-500/30 transition-colors">REJECT</button>
+    <button type="button" id="mobile-batch-approve" class="px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary text-xs font-bold font-label-caps transition-colors shadow">APPROVE</button>
+  </div>
+</div>
+
+<!-- Mobile Card Template -->
+<template id="registration-mobile-card-template">
+  <div class="bg-surface-container rounded-xl p-md border border-white/10 flex flex-col gap-sm shadow-md relative overflow-hidden group hover:border-primary/40 transition-colors">
+    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
+      <div class="flex items-center gap-2.5 min-w-0 flex-1">
+        <input class="mobile-row-checkbox w-4 h-4 rounded bg-surface-container-lowest border-outline-variant focus:ring-primary shrink-0" type="checkbox"/>
+        <div class="mobile-row-badge w-10 h-10 rounded-xl flex items-center justify-center text-white text-[11px] font-bold shrink-0 border border-white/15 shadow-sm relative overflow-hidden" title="Team Chosen Logo"></div>
+        <div class="flex flex-col min-w-0">
+          <span class="font-bold text-sm mobile-row-team-name text-on-surface truncate"></span>
+          <span class="text-[10px] text-outline cyber-mono mobile-row-id"></span>
+        </div>
+      </div>
+      <span class="mobile-row-status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border shrink-0"></span>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2 text-xs text-on-surface-variant pt-1">
+      <div class="flex items-center gap-1.5 min-w-0">
+        <img class="mobile-row-dept-logo w-4 h-4 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/10 shrink-0" alt="Dept" />
+        <span class="mobile-row-course truncate font-bold text-on-surface"></span>
+      </div>
+      <div class="flex items-center gap-1.5 justify-end">
+        <span class="material-symbols-outlined text-[15px] text-outline">person</span>
+        <span class="mobile-row-captain truncate"></span>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/5">
+      <div class="flex items-center gap-2">
+        <span class="mobile-row-players-count text-[11px] font-mono px-2 py-0.5 rounded bg-surface-container-lowest border border-white/10"></span>
+        <span class="mobile-row-verification-badge text-[10px] font-bold font-mono px-2 py-0.5 rounded border"></span>
+      </div>
+      <button type="button" class="mobile-row-view-btn px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-all shadow flex items-center gap-1">
+        <span>REVIEW</span>
+        <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+      </button>
+    </div>
+  </div>
+</template>
+
 <template id="registration-row-template">
 <tr class="hover:bg-surface-container-lowest transition-colors group">
 <td class="px-sm py-sm text-center"><input class="row-checkbox w-4 h-4 rounded bg-surface-container border-outline-variant focus:ring-primary" type="checkbox"/></td>
@@ -149,6 +211,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div></main></div><script src="assets/js/firebase-config.js"></script>
 <script src="assets/js/auth-guard.js"></script>
 <script src="assets/js/registration-api.js"></script>
+<script src="assets/js/admin-mobile-mode.js"></script>
 <script>window.CECAuth.requireApprovedStaff();</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -376,6 +439,39 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeDetail(); closeRejectionModal(); } });
 
+  const mobileFeed = document.getElementById('registrations-mobile-feed');
+  const mobileTemplate = document.getElementById('registration-mobile-card-template');
+  const mobileBatchBar = document.getElementById('mobile-batch-bar');
+  const mobileBatchCount = document.getElementById('mobile-batch-count');
+  const mobileBatchApprove = document.getElementById('mobile-batch-approve');
+  const mobileBatchReject = document.getElementById('mobile-batch-reject');
+
+  function getSelectedTeamIds() {
+    const checked = document.querySelectorAll('.row-checkbox:checked, .mobile-row-checkbox:checked');
+    const set = new Set();
+    checked.forEach(cb => { if (cb.dataset.teamId) set.add(cb.dataset.teamId); });
+    return Array.from(set);
+  }
+
+  function updateBatchBar() {
+    const ids = getSelectedTeamIds();
+    if (mobileBatchBar) {
+      if (ids.length > 0) {
+        mobileBatchBar.classList.remove('hidden');
+        if (mobileBatchCount) mobileBatchCount.textContent = ids.length + (ids.length === 1 ? ' Team Selected' : ' Teams Selected');
+      } else {
+        mobileBatchBar.classList.add('hidden');
+      }
+    }
+  }
+
+  function syncCheckboxes(teamId, checked) {
+    document.querySelectorAll(`.row-checkbox[data-team-id="${teamId}"], .mobile-row-checkbox[data-team-id="${teamId}"]`).forEach(cb => {
+      cb.checked = checked;
+    });
+    updateBatchBar();
+  }
+
   function render() {
     const q = (searchInput.value || '').toLowerCase().trim();
     const rows = allRegistrations.filter(t => {
@@ -385,6 +481,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     tbody.innerHTML = '';
+    if (mobileFeed) mobileFeed.innerHTML = '';
+
     if (!rows.length) {
       const tr = document.createElement('tr');
       const td = document.createElement('td');
@@ -393,11 +491,21 @@ document.addEventListener('DOMContentLoaded', () => {
       td.textContent = allRegistrations.length ? 'No registrations match your filters.' : 'No registrations yet — they will appear here once teams submit.';
       tr.appendChild(td);
       tbody.appendChild(tr);
+
+      if (mobileFeed) {
+        mobileFeed.innerHTML = `
+          <div class="p-lg text-center text-xs text-on-surface-variant bg-surface-container rounded-xl border border-white/5">
+            ${allRegistrations.length ? 'No registrations match your filters.' : 'No registrations yet — they will appear here once teams submit.'}
+          </div>
+        `;
+      }
     } else {
       rows.forEach(team => {
+        // 1. Desktop Row
         const node = template.content.cloneNode(true);
         const checkbox = node.querySelector('.row-checkbox');
         checkbox.dataset.teamId = team.TeamID;
+        checkbox.addEventListener('change', (e) => syncCheckboxes(team.TeamID, e.target.checked));
         node.querySelector('.row-id').textContent = team.TeamID;
         
         const badge = node.querySelector('.row-badge');
@@ -422,9 +530,42 @@ document.addEventListener('DOMContentLoaded', () => {
         node.querySelector('.row-submitted').textContent = formatDate(team.SubmittedAt);
         node.querySelector('.row-view-btn').addEventListener('click', () => openDetail(team));
         tbody.appendChild(node);
+
+        // 2. Mobile Card Feed
+        if (mobileFeed && mobileTemplate) {
+          const mNode = mobileTemplate.content.cloneNode(true);
+          const mCheckbox = mNode.querySelector('.mobile-row-checkbox');
+          mCheckbox.dataset.teamId = team.TeamID;
+          mCheckbox.addEventListener('change', (e) => syncCheckboxes(team.TeamID, e.target.checked));
+
+          const mBadge = mNode.querySelector('.mobile-row-badge');
+          renderTeamLogo(mBadge, team, 'w-6 h-6 object-contain');
+          mNode.querySelector('.mobile-row-team-name').textContent = team.TeamName || '(unnamed)';
+          mNode.querySelector('.mobile-row-id').textContent = team.TeamID;
+
+          const mDeptImg = mNode.querySelector('.mobile-row-dept-logo');
+          renderDeptLogo(mDeptImg, team.Course);
+          mNode.querySelector('.mobile-row-course').textContent = team.Course || '—';
+
+          mNode.querySelector('.mobile-row-captain').textContent = team.CaptainName || '—';
+          mNode.querySelector('.mobile-row-players-count').textContent = (team.PlayerCount || 0) + '/7 Players';
+
+          const mVBadge = mNode.querySelector('.mobile-row-verification-badge');
+          mVBadge.textContent = verified + '/' + total + ' Verified';
+          mVBadge.className = 'mobile-row-verification-badge text-[10px] font-bold font-mono px-2 py-0.5 rounded border ' +
+            (total > 0 && verified === total ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : 'text-amber-300 bg-amber-500/10 border-amber-500/30');
+
+          const mSBadge = mNode.querySelector('.mobile-row-status-badge');
+          mSBadge.textContent = STATUS_LABELS[status] || status;
+          (STATUS_STYLES[status] || STATUS_STYLES.Pending).forEach(c => mSBadge.classList.add(c));
+
+          mNode.querySelector('.mobile-row-view-btn').addEventListener('click', () => openDetail(team));
+          mobileFeed.appendChild(mNode);
+        }
       });
     }
     countLabel.textContent = 'Showing ' + rows.length + ' of ' + allRegistrations.length + ' registrations';
+    updateBatchBar();
   }
 
   filterButtons.forEach(btn => {
@@ -439,7 +580,8 @@ document.addEventListener('DOMContentLoaded', () => {
   searchInput.addEventListener('input', render);
 
   document.getElementById('select-all-checkbox').addEventListener('change', (e) => {
-    tbody.querySelectorAll('.row-checkbox').forEach(cb => { cb.checked = e.target.checked; });
+    document.querySelectorAll('.row-checkbox, .mobile-row-checkbox').forEach(cb => { cb.checked = e.target.checked; });
+    updateBatchBar();
   });
 
   document.getElementById('export-csv-btn').addEventListener('click', () => {
@@ -457,15 +599,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Approve Actions
-  document.getElementById('approve-selected-btn').addEventListener('click', async () => {
-    const ids = Array.from(tbody.querySelectorAll('.row-checkbox:checked')).map(cb => cb.dataset.teamId);
+  async function handleApproveSelected() {
+    const ids = getSelectedTeamIds();
     if (!ids.length) { alert('Select at least one registration to approve.'); return; }
     for (const teamId of ids) {
       try { await updateRegistrationStatusWithReason(teamId, 'Approved', 'Approved by Tournament Committee'); }
       catch (err) { console.error('Failed to approve ' + teamId, err); }
     }
     await loadRegistrations();
-  });
+  }
+
+  document.getElementById('approve-selected-btn').addEventListener('click', handleApproveSelected);
+  if (mobileBatchApprove) mobileBatchApprove.addEventListener('click', handleApproveSelected);
+
+  if (mobileBatchReject) {
+    mobileBatchReject.addEventListener('click', () => {
+      const ids = getSelectedTeamIds();
+      if (!ids.length) { alert('Select at least one registration to reject.'); return; }
+      const firstTeam = allRegistrations.find(t => t.TeamID === ids[0]);
+      if (firstTeam) openRejectionModal(firstTeam);
+    });
+  }
 
   const detailApproveBtn = document.getElementById('detail-approve-btn');
   if (detailApproveBtn) {
