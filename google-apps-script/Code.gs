@@ -847,7 +847,15 @@ function getBracketData(division) {
   const sheet = getSheet(BRACKETS_SHEET_NAME, BRACKET_HEADERS);
   const all = sheetObjects(sheet);
   if (division) {
-    return all.filter(function (b) { return String(b.Division).toLowerCase() === String(division).toLowerCase(); });
+    var target = String(division).toLowerCase();
+    return all.filter(function (b) {
+      var d = String(b.Division || '').toLowerCase();
+      if (d === target) return true;
+      if (target.indexOf('women') !== -1 && d.indexOf('women') !== -1) return true;
+      if ((target.indexOf('faculty') !== -1 || target.indexOf('exhibition') !== -1) && (d.indexOf('faculty') !== -1 || d.indexOf('exhibition') !== -1)) return true;
+      if (target.indexOf('men') !== -1 && target.indexOf('women') === -1 && d.indexOf('men') !== -1 && d.indexOf('women') === -1) return true;
+      return false;
+    });
   }
   return all;
 }

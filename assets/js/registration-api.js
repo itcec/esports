@@ -151,6 +151,13 @@ async function updateRegistrationStatusWithReason(teamId, status, rejectionReaso
   return result;
 }
 
+function normalizeDivisionKey(value) {
+  const c = String(value || '').toLowerCase();
+  if (c.indexOf('women') !== -1) return 'womens';
+  if (c.indexOf('faculty') !== -1 || c.indexOf('exhibition') !== -1) return 'faculty';
+  return 'mens';
+}
+
 const PublicTournamentApi = {
   listTeams: async function () {
     return await callRegistrationApi('listPublicTeams', {}, 'GET');
@@ -172,9 +179,10 @@ const PublicTournamentApi = {
     return await callRegistrationApi('listStandings', {}, 'GET');
   },
   listBracket: async function (division) {
+    const div = normalizeDivisionKey(division);
     if (window.CECFirebase && window.CECFirebase.db) {
       try {
-        const snap = await window.CECFirebase.db.ref('brackets/' + (division || 'mens')).once('value');
+        const snap = await window.CECFirebase.db.ref('brackets/' + div).once('value');
         const data = snap.val();
         if (data) {
           return Array.isArray(data) ? data : Object.values(data);
@@ -183,11 +191,12 @@ const PublicTournamentApi = {
         console.warn('Firebase bracket fetch notice, falling back to GAS:', e);
       }
     }
-    return await callRegistrationApi('getBracketData', { division: division || '' }, 'GET');
+    return await callRegistrationApi('getBracketData', { division: div }, 'GET');
   },
   listenBracket: function (division, callback) {
+    const div = normalizeDivisionKey(division);
     if (window.CECFirebase && window.CECFirebase.db) {
-      const ref = window.CECFirebase.db.ref('brackets/' + (division || 'mens'));
+      const ref = window.CECFirebase.db.ref('brackets/' + div);
       ref.on('value', (snap) => {
         const data = snap.val();
         const list = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
@@ -233,27 +242,45 @@ async function getPrivateVerificationBatch(fileIds) {
  */
 const TournamentOps = {
   recordMatchResult: async function (resultData) {
+    const div = normalizeDivisionKey(resultData.division);
+
     // 1. Sync to Firebase Realtime Database
     if (window.CECFirebase && window.CECFirebase.db) {
       try {
-        const div = resultData.division || 'mens';
-        const matchKey = resultData.matchKey || resultData.matchId;
-        
+        let targetKey = resultData.matchKey || resultData.matchId;
+
+        // Auto-resolve target bracket key if custom court ID was provided
+        const snap = await window.CECFirebase.db.ref('brackets/' + div).once('value');
+        const allBracketMatches = snap.val() || {};
+
+        if (!allBracketMatches[targetKey]) {
+          const rt1 = String(resultData.team1Name || '').trim().toLowerCase();
+          const rt2 = String(resultData.team2Name || '').trim().toLowerCase();
+          const foundKey = Object.keys(allBracketMatches).find(k => {
+            const bm = allBracketMatches[k];
+            if (!bm) return false;
+            const t1 = String(bm.team1Name || '').trim().toLowerCase();
+            const t2 = String(bm.team2Name || '').trim().toLowerCase();
+            return (t1 === rt1 && t2 === rt2) || (t1 === rt2 && t2 === rt1);
+          });
+          if (foundKey) targetKey = foundKey;
+        }
+
         // Update bracket match state
-        if (matchKey) {
-          const matchRef = window.CECFirebase.db.ref('brackets/' + div + '/' + matchKey);
+        if (targetKey && allBracketMatches[targetKey]) {
+          const matchRef = window.CECFirebase.db.ref('brackets/' + div + '/' + targetKey);
           await matchRef.update({
             status: 'Completed',
             winnerName: resultData.winnerName || '',
             winnerId: resultData.winnerId || '',
+            loserName: resultData.loserName || '',
             score1: resultData.score1 != null ? resultData.score1 : 0,
             score2: resultData.score2 != null ? resultData.score2 : 0,
             updatedAt: new Date().toISOString()
           });
 
           // Auto-progression: Advance winner to next round in bracket tree
-          const snap = await matchRef.once('value');
-          const mData = snap.val() || {};
+          const mData = allBracketMatches[targetKey] || {};
           if (mData.nextMatchKey && mData.nextSlot) {
             const nextRef = window.CECFirebase.db.ref('brackets/' + div + '/' + mData.nextMatchKey);
             const updateField = mData.nextSlot === 'team2' ? 'team2Name' : 'team1Name';
@@ -273,7 +300,10 @@ const TournamentOps = {
     }
 
     // 2. Persist to Google Sheets
-    return await callRegistrationApi('recordMatchResult', resultData, 'POST');
+    return await callRegistrationApi('recordMatchResult', {
+      ...resultData,
+      division: div
+    }, 'POST');
   },
   publishMatch: async function (matchData) {
     return await callRegistrationApi('publishMatch', matchData, 'POST');
@@ -294,6 +324,8 @@ const TournamentOps = {
     return await PublicTournamentApi.listBracket(division);
   },
   saveBracketData: async function (division, matches, flightTitle) {
+    const div = normalizeDivisionKey(division);
+
     // 1. Sync to Firebase Realtime Database
     if (window.CECFirebase && window.CECFirebase.db) {
       try {
@@ -301,9 +333,9 @@ const TournamentOps = {
         (matches || []).forEach(m => {
           if (m.matchKey) bracketMap[m.matchKey] = m;
         });
-        await window.CECFirebase.db.ref('brackets/' + division).set(bracketMap);
+        await window.CECFirebase.db.ref('brackets/' + div).set(bracketMap);
         if (flightTitle) {
-          await window.CECFirebase.db.ref('brackets/' + division + '_meta').set({
+          await window.CECFirebase.db.ref('brackets/' + div + '_meta').set({
             title: flightTitle,
             updatedAt: new Date().toISOString()
           });
@@ -315,7 +347,7 @@ const TournamentOps = {
 
     // 2. Persist to Google Sheets
     return await callRegistrationApi('saveBracketData', {
-      division: division,
+      division: div,
       matches: JSON.stringify(matches),
       flightTitle: flightTitle || ''
     }, 'POST');

@@ -667,14 +667,16 @@ document.addEventListener('DOMContentLoaded', () => {
     publishBtn.disabled = true;
     publishBtn.textContent = 'PUBLISHING…';
 
+    const getTeam = (name) => (allApprovedTeams[div] || []).find(t => t.name === name) || {};
+
     const matches = [
-      { matchKey: `${div}_QF1`, stage: 'Quarterfinals', title: `${title} · QF 1`, team1Name: seeds[0], team2Name: seeds[7], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF1`, nextSlot: 'team1' },
-      { matchKey: `${div}_QF2`, stage: 'Quarterfinals', title: `${title} · QF 2`, team1Name: seeds[3], team2Name: seeds[4], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF1`, nextSlot: 'team2' },
-      { matchKey: `${div}_QF3`, stage: 'Quarterfinals', title: `${title} · QF 3`, team1Name: seeds[1], team2Name: seeds[6], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF2`, nextSlot: 'team1' },
-      { matchKey: `${div}_QF4`, stage: 'Quarterfinals', title: `${title} · QF 4`, team1Name: seeds[2], team2Name: seeds[5], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF2`, nextSlot: 'team2' },
-      { matchKey: `${div}_SF1`, stage: 'Semifinals', title: `${title} · Semifinal 1`, team1Name: 'Winner QF 1', team2Name: 'Winner QF 2', score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_Final`, nextSlot: 'team1' },
-      { matchKey: `${div}_SF2`, stage: 'Semifinals', title: `${title} · Semifinal 2`, team1Name: 'Winner QF 3', team2Name: 'Winner QF 4', score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_Final`, nextSlot: 'team2' },
-      { matchKey: `${div}_Final`, stage: 'Grand Final', title: `${title} · Grand Final`, team1Name: 'Winner SF 1', team2Name: 'Winner SF 2', score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: '', nextSlot: '' }
+      { matchKey: `${div}_QF1`, stage: 'Quarterfinals', title: `${title} · QF 1`, team1Id: getTeam(seeds[0]).id || '', team1Name: seeds[0], team2Id: getTeam(seeds[7]).id || '', team2Name: seeds[7], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF1`, nextSlot: 'team1' },
+      { matchKey: `${div}_QF2`, stage: 'Quarterfinals', title: `${title} · QF 2`, team1Id: getTeam(seeds[3]).id || '', team1Name: seeds[3], team2Id: getTeam(seeds[4]).id || '', team2Name: seeds[4], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF1`, nextSlot: 'team2' },
+      { matchKey: `${div}_QF3`, stage: 'Quarterfinals', title: `${title} · QF 3`, team1Id: getTeam(seeds[1]).id || '', team1Name: seeds[1], team2Id: getTeam(seeds[6]).id || '', team2Name: seeds[6], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF2`, nextSlot: 'team1' },
+      { matchKey: `${div}_QF4`, stage: 'Quarterfinals', title: `${title} · QF 4`, team1Id: getTeam(seeds[2]).id || '', team1Name: seeds[2], team2Id: getTeam(seeds[5]).id || '', team2Name: seeds[5], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF2`, nextSlot: 'team2' },
+      { matchKey: `${div}_SF1`, stage: 'Semifinals', title: `${title} · Semifinal 1`, team1Id: '', team1Name: 'Winner QF 1', team2Id: '', team2Name: 'Winner QF 2', score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_Final`, nextSlot: 'team1' },
+      { matchKey: `${div}_SF2`, stage: 'Semifinals', title: `${title} · Semifinal 2`, team1Id: '', team1Name: 'Winner QF 3', team2Id: '', team2Name: 'Winner QF 4', score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_Final`, nextSlot: 'team2' },
+      { matchKey: `${div}_Final`, stage: 'Grand Final', title: `${title} · Grand Final`, team1Id: '', team1Name: 'Winner SF 1', team2Id: '', team2Name: 'Winner SF 2', score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: '', nextSlot: '' }
     ];
 
     try {

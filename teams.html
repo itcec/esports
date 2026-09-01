@@ -368,8 +368,8 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
           rejectionReason:t.rejectionReason||''
         };
       });
-      approved=all.filter(function(t){ return t.Status==='Approved'; });
-      rejected=all.filter(function(t){ return t.Status==='Rejected'; });
+      approved=all.filter(function(t){ return String(t.Status || '').toLowerCase()==='approved'; });
+      rejected=all.filter(function(t){ return String(t.Status || '').toLowerCase()==='rejected'; });
       statusEl.textContent=approved.length+' approved team'+(approved.length===1?'':'s')+' published by tournament officials.';
       render();
     }).catch(function(){
