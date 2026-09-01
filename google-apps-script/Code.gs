@@ -729,7 +729,9 @@ function deleteMatch(params, user) {
 }
 
 function listStandings() {
-  const teams = listPublicTeams();
+  const teams = listPublicTeams().filter(function (team) {
+    return String(team.approvalStatus || team.Status || '').toLowerCase() === 'approved';
+  });
   const matches = sheetObjects(getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS));
   const table = {};
   teams.forEach(function (team) {

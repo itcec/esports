@@ -658,7 +658,11 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         list = await callRegistrationApi('listPublicTeams', {}, 'GET');
       }
       if (Array.isArray(list)) {
-        approvedTeamsList = list.map(t => {
+        const approvedOnly = list.filter(t => {
+          const s = String(t.Status || t.approvalStatus || '').toLowerCase();
+          return s === 'approved';
+        });
+        approvedTeamsList = approvedOnly.map(t => {
           const rawDept = parseDept(t.Course || t.course || t.department);
           const rawIcon = t.LogoUrl || t.logoUrl || t.badgeIcon || 'assets/icons/dragon-head.svg';
           const teamId = t.TeamID || t.teamId || '';

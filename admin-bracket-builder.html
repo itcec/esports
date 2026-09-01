@@ -171,8 +171,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const teams = await PublicTournamentApi.listTeams();
       SEEDS.mens = []; SEEDS.womens = []; SEEDS.faculty = [];
       (teams || []).forEach((t) => {
+        const status = String(t.approvalStatus || t.Status || '').toLowerCase();
+        if (status !== 'approved') return;
         const bucket = divisionOf(t.division || t.course || '');
-        if (bucket && SEEDS[bucket]) SEEDS[bucket].push(t.teamName);
+        if (bucket && SEEDS[bucket]) SEEDS[bucket].push(t.teamName || t.TeamName);
       });
       seedsLoaded = true;
     } catch (err) {

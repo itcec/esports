@@ -68,6 +68,7 @@ window.CECLiveManager = {
       const teams = await window.PublicTournamentApi.listTeams();
       this.publicTeams = {};
       (teams || []).forEach((team) => {
+        if (String(team.approvalStatus || team.Status || 'Approved').toLowerCase() !== 'approved') return;
         const id = String(team.teamId || '').trim();
         const name = String(team.teamName || '').trim().toLowerCase();
         if (id) this.publicTeams[id] = team;
