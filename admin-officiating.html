@@ -829,32 +829,62 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     modal.classList.remove('hidden');
   };
 
-  document.getElementById('add-lobby-btn').addEventListener('click', () => {
-    const newId = 'MATCH-00' + (Object.keys(window.CECLiveManager.matches).length + 1);
+  document.getElementById('add-lobby-btn').addEventListener('click', async () => {
+    const count = Object.keys(window.CECLiveManager.matches || {}).length + 1;
+    const newId = 'MATCH-00' + count;
+    
+    // Pick actual approved registered teams if available
+    const t1Data = approvedTeamsList.length > 0 ? approvedTeamsList[0] : null;
+    const t2Data = approvedTeamsList.length > 1 ? approvedTeamsList[1] : null;
+
     const newMatch = {
       id: newId,
-      title: 'Court ' + (Object.keys(window.CECLiveManager.matches).length + 1),
-      court: 'Court ' + (Object.keys(window.CECLiveManager.matches).length + 1) + ' (Annex)',
+      title: 'Court ' + count,
+      court: 'Court ' + count + ' (Main Stage)',
       division: "Student Men's",
       formatBadge: 'BO3 · GAME 1',
       status: 'LIVE',
       streamUrl: '',
-      team1: { name: 'Team Alpha', dept: 'IT', score: '0', icon: 'assets/icons/dragon-head.svg' },
-      team2: { name: 'Team Bravo', dept: 'HTM', score: '0', icon: 'assets/icons/werewolf.svg' }
+      team1: t1Data ? {
+        id: t1Data.TeamID,
+        name: t1Data.TeamName,
+        dept: parseDept(t1Data.Course),
+        score: '0',
+        icon: t1Data.LogoUrl || ''
+      } : { name: 'Select Team 1', dept: 'IT', score: '0', icon: 'assets/IT.png' },
+      team2: t2Data ? {
+        id: t2Data.TeamID,
+        name: t2Data.TeamName,
+        dept: parseDept(t2Data.Course),
+        score: '0',
+        icon: t2Data.LogoUrl || ''
+      } : { name: 'Select Team 2', dept: 'HTM', score: '0', icon: 'assets/HTM.png' }
     };
-    window.CECLiveManager.saveMatch(newMatch);
+
+    try {
+      await window.CECLiveManager.saveMatch(newMatch);
+      openMatchEdit(newId);
+    } catch (err) {
+      alert('Could not initialize match lobby: ' + (err && err.message ? err.message : err));
+    }
   });
 
   window.deleteMatch = async function(matchId) {
     if (!window.CECAuth || !window.CECAuth.canDeleteMatches()) {
-      alert('Permission Denied: Deleting match lobbies is restricted to Committee Administrators.');
+      alert('Permission Denied: You must be an approved official or committee administrator to delete match lobbies.');
       return;
     }
     const match = window.CECLiveManager.matches[matchId];
     const name = match ? (match.court || match.title || matchId) : matchId;
     if (confirm('Delete match "' + name + '"?\n\nThis will remove it from the live scoreboard and public broadcast schedule.')) {
       try {
-        await window.CECLiveManager.deleteMatch(matchId);
+        const res = await window.CECLiveManager.deleteMatch(matchId);
+        if (res && res.warnings && res.warnings.length) {
+          alert('Match "' + name + '" removed locally. Note: ' + res.warnings.join(', '));
+        } else {
+          alert('Match "' + name + '" has been successfully deleted.');
+        }
+        refreshLegacyDemoBanner();
       } catch (err) {
         alert('Failed to delete match: ' + (err && err.message ? err.message : err));
       }
@@ -865,7 +895,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   if (modalDeleteBtn) {
     modalDeleteBtn.addEventListener('click', async () => {
       if (!window.CECAuth || !window.CECAuth.canDeleteMatches()) {
-        alert('Permission Denied: Deleting match lobbies is restricted to Committee Administrators.');
+        alert('Permission Denied: You must be an approved official or committee administrator to delete match lobbies.');
         return;
       }
       const matchId = document.getElementById('edit-match-id').value;
@@ -876,13 +906,19 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         modalDeleteBtn.disabled = true;
         modalDeleteBtn.textContent = 'Deleting...';
         try {
-          await window.CECLiveManager.deleteMatch(matchId);
+          const res = await window.CECLiveManager.deleteMatch(matchId);
+          if (res && res.warnings && res.warnings.length) {
+            alert('Match lobby "' + name + '" removed. Note: ' + res.warnings.join(', '));
+          } else {
+            alert('Match lobby "' + name + '" has been successfully deleted.');
+          }
+          closeModal();
+          refreshLegacyDemoBanner();
         } catch (err) {
           alert('Failed to delete match: ' + (err && err.message ? err.message : err));
         } finally {
           modalDeleteBtn.disabled = false;
           modalDeleteBtn.innerHTML = '<span class="material-symbols-outlined text-[14px]">delete</span> Delete';
-          closeModal();
         }
       }
     });
@@ -898,38 +934,31 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     if (!match.team1) match.team1 = { dept: 'IT' };
     if (!match.team2) match.team2 = { dept: 'CRIM' };
     match.team1.name = document.getElementById('edit-team1-name').value;
-    match.team1.score = String(document.getElementById('edit-team1-score').value);
-    match.team1.dept = document.getElementById('edit-team1-dept').value;
-    match.team1.icon = document.getElementById('edit-team1-icon').value;
-
     match.team2.name = document.getElementById('edit-team2-name').value;
-    match.team2.score = String(document.getElementById('edit-team2-score').value);
+    match.team1.dept = document.getElementById('edit-team1-dept').value;
     match.team2.dept = document.getElementById('edit-team2-dept').value;
+    match.team1.icon = document.getElementById('edit-team1-icon').value;
     match.team2.icon = document.getElementById('edit-team2-icon').value;
-
-    // Officials may publish Twitch links or leave blank for observer loop
-    const rawStream = document.getElementById('edit-stream-url').value;
-    if (rawStream && rawStream.trim()) {
-      const streamCheck = window.CECLiveManager.validateStreamUrl(rawStream);
-      if (!streamCheck.ok) { alert(streamCheck.message); return; }
-      match.streamUrl = streamCheck.url;
-    } else {
-      match.streamUrl = '';
-    }
+    match.streamUrl = document.getElementById('edit-stream-url').value;
     match.formatBadge = document.getElementById('edit-format-badge').value;
     match.status = document.getElementById('edit-status').value;
 
-    try {
-      await window.CECLiveManager.saveMatch(match);
-    } catch (err) {
-      alert('Could not publish this match: ' + (err && err.message ? err.message : 'request failed'));
+    const streamCheck = window.CECLiveManager.validateStreamUrl(match.streamUrl);
+    if (!streamCheck.ok) {
+      alert(streamCheck.message);
       return;
     }
-    closeModal();
+    match.streamUrl = streamCheck.url;
+
+    try {
+      await window.CECLiveManager.saveMatch(match);
+      closeModal();
+    } catch (err) {
+      alert('Could not save match: ' + (err && err.message ? err.message : err));
+    }
   });
 
-  // ---- Legacy sample matches seeded into the Realtime Database before the
-  // managed Apps Script data switch. They are not created by any current code.
+  // ---- Legacy and placeholder test matches detector
   var LEGACY_DEMO = {
     'MATCH-001': ['IT TITAN DRAGONS', 'CRIM IRON WEREWOLVES'],
     'MATCH-002': ['HTM GOLDEN WYVERNS', 'CTE EMERALD HYDRAS'],
@@ -940,13 +969,19 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   function findLegacyDemoMatches() {
     var all = window.CECLiveManager.matches || {};
     return Object.keys(all).filter(function (id) {
-      var expected = LEGACY_DEMO[id];
-      if (!expected) return false;
       var m = all[id] || {};
-      var n1 = String((m.team1 && m.team1.name) || '').toUpperCase();
-      var n2 = String((m.team2 && m.team2.name) || '').toUpperCase();
-      // Only remove rows that still carry the original sample team names.
-      return n1 === expected[0] && n2 === expected[1];
+      var n1 = String((m.team1 && m.team1.name) || '').trim().toUpperCase();
+      var n2 = String((m.team2 && m.team2.name) || '').trim().toUpperCase();
+      
+      // Check legacy seeded pairs
+      var expected = LEGACY_DEMO[id];
+      if (expected && n1 === expected[0] && n2 === expected[1]) return true;
+
+      // Check placeholder/test match names
+      if (n1.indexOf('TEAM ALPHA') !== -1 || n2.indexOf('TEAM BRAVO') !== -1) return true;
+      if (n1.indexOf('SAMPLE') !== -1 || n2.indexOf('SAMPLE') !== -1) return true;
+      if (n1.indexOf('TEST TEAM') !== -1 || n2.indexOf('TEST TEAM') !== -1) return true;
+      return false;
     });
   }
 
@@ -958,7 +993,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     if (!ids.length) return;
     var all = window.CECLiveManager.matches || {};
     document.getElementById('legacy-demo-list').textContent =
-      ids.length + ' sample match' + (ids.length === 1 ? '' : 'es') + ' still published: ' +
+      ids.length + ' sample/placeholder match' + (ids.length === 1 ? '' : 'es') + ' found: ' +
       ids.map(function (id) {
         var m = all[id] || {};
         return (m.team1 && m.team1.name || '?') + ' vs ' + (m.team2 && m.team2.name || '?');
@@ -970,17 +1005,18 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     purgeBtn.addEventListener('click', async function () {
       var ids = findLegacyDemoMatches();
       if (!ids.length) return;
-      if (!confirm('Remove ' + ids.length + ' sample match' + (ids.length === 1 ? '' : 'es') + ' from the public schedule?\n\n' + ids.join(', '))) return;
+      if (!confirm('Remove ' + ids.length + ' sample/placeholder match' + (ids.length === 1 ? '' : 'es') + ' from the live scoreboard?\n\n' + ids.join(', '))) return;
       purgeBtn.disabled = true;
       purgeBtn.textContent = 'REMOVING…';
       try {
         for (var i = 0; i < ids.length; i++) {
           await window.CECLiveManager.deleteMatch(ids[i]);
         }
+        alert('All sample and placeholder matches removed successfully.');
         refreshLegacyDemoBanner();
       } catch (err) {
         alert('Could not remove the sample matches: ' + (err && err.message ? err.message : 'request failed') +
-              '\n\nMake sure you are signed in as an approved official.');
+              '\n\nMake sure you are signed in as an approved official or administrator.');
       } finally {
         purgeBtn.disabled = false;
         purgeBtn.textContent = 'REMOVE SAMPLE MATCHES';

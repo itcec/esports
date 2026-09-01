@@ -84,21 +84,23 @@ window.CECLiveManager = {
     if (!window.PublicTournamentApi || typeof window.PublicTournamentApi.listMatches !== 'function') return;
     try {
       const rows = await window.PublicTournamentApi.listMatches();
-      if (!window.CECFirebase.db || !Object.keys(this.matches || {}).length) {
-        this.matches = {};
-        (rows || []).forEach((row) => {
-          const id = row.matchId || ('MATCH-' + Math.random().toString(36).slice(2, 8));
-          this.matches[id] = {
-            id: id, title: row.stage || 'Official match', court: row.court || '',
-            division: row.division || '', stageTitle: row.stage || '',
-            status: row.status || 'Scheduled', streamUrl: row.streamUrl || '',
-            team1: { id: row.team1Id || '', name: row.team1Name || 'TBD', score: row.team1Score || 0 },
-            team2: { id: row.team2Id || '', name: row.team2Name || 'TBD', score: row.team2Score || 0 }
-          };
-        });
-        this.activeMatchId = Object.keys(this.matches)[0] || null;
-        this._enrichMatchesWithPublicTeams();
-        this._notify();
+      if (!window.CECFirebase || !window.CECFirebase.db) {
+        if (!Object.keys(this.matches || {}).length && (rows || []).length > 0) {
+          this.matches = {};
+          (rows || []).forEach((row) => {
+            const id = row.matchId || ('MATCH-' + Math.random().toString(36).slice(2, 8));
+            this.matches[id] = {
+              id: id, title: row.stage || 'Official match', court: row.court || '',
+              division: row.division || '', stageTitle: row.stage || '',
+              status: row.status || 'Scheduled', streamUrl: row.streamUrl || '',
+              team1: { id: row.team1Id || '', name: row.team1Name || 'TBD', score: row.team1Score || 0 },
+              team2: { id: row.team2Id || '', name: row.team2Name || 'TBD', score: row.team2Score || 0 }
+            };
+          });
+          this.activeMatchId = Object.keys(this.matches)[0] || null;
+          this._enrichMatchesWithPublicTeams();
+          this._notify();
+        }
       }
     } catch (error) {
       console.warn('Published matches are unavailable:', error);
@@ -201,15 +203,21 @@ window.CECLiveManager = {
   },
 
   deleteMatch: async function(matchId) {
-    if (!matchId) return;
+    if (!matchId) return { ok: false, error: 'Match ID is required' };
     delete this.matches[matchId];
     this._saveLocalMatches();
 
+    const errors = [];
     if (window.CECFirebase && window.CECFirebase.db) {
       try {
         await window.CECFirebase.db.ref('liveMatches/' + matchId).remove();
+        if (this.activeMatchId === matchId) {
+          const nextActive = Object.keys(this.matches)[0] || '';
+          await window.CECFirebase.db.ref('activeMatchId').set(nextActive);
+        }
       } catch (e) {
         console.warn('Firebase liveMatches removal notice:', e);
+        errors.push('Firebase: ' + (e.message || e));
       }
     }
 
@@ -218,6 +226,7 @@ window.CECLiveManager = {
         await window.TournamentOps.deleteMatch(matchId);
       } catch (e) {
         console.warn('Google Sheets match deletion notice:', e);
+        errors.push('Sheets: ' + (e.message || e));
       }
     }
 
@@ -225,6 +234,7 @@ window.CECLiveManager = {
       this.activeMatchId = Object.keys(this.matches)[0] || null;
     }
     this._notify();
+    return { ok: true, matchId: matchId, warnings: errors };
   },
 
   onMatchesChange: function(fn) {

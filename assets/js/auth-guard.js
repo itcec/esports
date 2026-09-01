@@ -165,7 +165,7 @@ window.CECAuth = {
   canEditCMS: function () { return this.isAdmin(); },
   canManageStaff: function () { return this.isSuperAdmin(); },
   canPublishBracket: function () { return this.isAdmin(); },
-  canDeleteMatches: function () { return this.isAdmin(); },
+  canDeleteMatches: function () { return this.isApprovedStaff(); },
   canApproveTeams: function () { return this.isAdmin(); },
   canResolveDisputes: function () { return this.isAdmin(); },
   canOfficiateMatches: function () { return this.isApprovedStaff(); },
