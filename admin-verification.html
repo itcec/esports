@@ -819,8 +819,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderPlayers(players, documents) {
     currentTeamPlayers = players || [];
+    // Guard: if the DOM was wiped by the auth guard, abort silently
+    if (!document.getElementById('roster-list')) return;
     rosterList.innerHTML = '';
-    document.getElementById('roster-count-label').textContent = players.length + (players.length === 1 ? ' Player' : ' Players');
+    const countLabel = document.getElementById('roster-count-label');
+    if (countLabel) countLabel.textContent = players.length + (players.length === 1 ? ' Player' : ' Players');
     const template = document.getElementById('player-verify-card-template');
 
     if (!players.length) {
@@ -939,7 +942,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function setTeamStatus(status) {
     if (!teamId) return;
     if (!window.CECAuth || !window.CECAuth.canApproveTeams()) {
-      alert('Permission Denied: Whole-team approval or rejection requires Committee Administrator credentials. Officials can verify individual players and record notes.');
+      alert('Permission Denied: Team review and verification require approved official or administrator credentials.');
       return;
     }
     try {
@@ -983,10 +986,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function setSafeText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text == null ? '' : text;
+    return el;
+  }
+
   async function load() {
     if (!teamId) {
-      document.getElementById('breadcrumb-team-name').textContent = 'No team selected';
-      document.getElementById('detail-team-name').textContent = 'No team selected';
+      setSafeText('crumb-team-name', 'No team selected');
+      setSafeText('breadcrumb-team-name', 'No team selected');
+      setSafeText('detail-team-name', 'No team selected');
       rosterList.innerHTML = '<div class="p-lg text-center text-on-surface-variant bg-surface-container rounded-xl">Open this page from <a class="text-primary hover:underline" href="admin-registrations.html">Registration Management</a> to review a specific team.</div>';
       return;
     }
@@ -994,22 +1004,41 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await callRegistrationApi('getRegistration', { teamId: teamId }, 'POST');
       currentTeam = sanitizeTeamData(data.team);
       currentDocs = data.documents || [];
-      document.getElementById('breadcrumb-team-name').textContent = currentTeam.TeamName;
-      document.getElementById('detail-team-name').textContent = currentTeam.TeamName;
-      document.getElementById('detail-team-id').textContent = currentTeam.TeamID;
-      document.getElementById('detail-captain-name').textContent = currentTeam.CaptainName || '—';
-      document.getElementById('detail-contact').textContent = currentTeam.ContactNumber || '—';
-      document.getElementById('detail-course').textContent = currentTeam.Course || '—';
-      renderDeptLogo(document.getElementById('detail-dept-logo'), currentTeam.Course);
+      
+      setSafeText('crumb-team-name', currentTeam.TeamName);
+      setSafeText('breadcrumb-team-name', currentTeam.TeamName);
+      setSafeText('detail-team-name', currentTeam.TeamName);
+      setSafeText('detail-team-id', currentTeam.TeamID);
+      setSafeText('detail-captain-name', currentTeam.CaptainName || '—');
+      setSafeText('detail-contact', currentTeam.ContactNumber || '—');
+      setSafeText('detail-course', currentTeam.Course || '—');
+
+      const deptLogoEl = document.getElementById('detail-dept-logo');
+      if (deptLogoEl) renderDeptLogo(deptLogoEl, currentTeam.Course);
+      
       renderTeamBadge(currentTeam);
       renderPlayers(data.players || [], currentDocs);
     } catch (err) {
-      document.getElementById('detail-team-name').textContent = 'Error';
+      setSafeText('detail-team-name', 'Error loading team');
       rosterList.innerHTML = '<div class="p-lg text-center text-error bg-surface-container rounded-xl">Could not load this team: ' + err.message + '</div>';
     }
   }
 
-  load();
+  // Defer load() until auth resolves — prevents race condition where requireApprovedStaff
+  // wipes document.body before load() finishes, causing textContent-on-null crashes.
+  let _loadFired = false;
+  function _tryLoad() {
+    if (_loadFired || !window.CECAuth.isResolved) return;
+    if (window.CECAuth.isApprovedStaff()) {
+      _loadFired = true;
+      load();
+    }
+  }
+  if (window.CECAuth && window.CECAuth.isResolved) {
+    _tryLoad();
+  } else {
+    window.CECAuth.onAuthChange(_tryLoad);
+  }
 });
 </script>
 <script>window.CECAuth.requireApprovedStaff();</script>

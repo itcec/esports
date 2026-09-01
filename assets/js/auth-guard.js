@@ -164,10 +164,10 @@ window.CECAuth = {
   // Granular Permission Checks
   canEditCMS: function () { return this.isAdmin(); },
   canManageStaff: function () { return this.isSuperAdmin(); },
-  canPublishBracket: function () { return this.isAdmin(); },
+  canPublishBracket: function () { return this.isApprovedStaff(); },
   canDeleteMatches: function () { return this.isApprovedStaff(); },
-  canApproveTeams: function () { return this.isAdmin(); },
-  canResolveDisputes: function () { return this.isAdmin(); },
+  canApproveTeams: function () { return this.isApprovedStaff(); },
+  canResolveDisputes: function () { return this.isApprovedStaff(); },
   canOfficiateMatches: function () { return this.isApprovedStaff(); },
   canVerifyPlayers: function () { return this.isApprovedStaff(); },
   canFileDisputes: function () { return this.isApprovedStaff(); },
