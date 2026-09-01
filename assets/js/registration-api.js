@@ -4,9 +4,9 @@
 const REGISTRATION_API_URL = 'https://script.google.com/macros/s/AKfycbxhXkVdmyMYdMvcBTSvVIrVH5LZ6T5v77Z7aKXAt_k67q2cwN3ldII2UtTVBWS63oky/exec';
 const ADMIN_KEY = ''; // Legacy stopgap only; use Firebase ID-token auth.
 const STAFF_ACTIONS = [
-  'getRegistration', 'updateTeamStatus', 'updatePlayerVerification',
-  'getPrivateVerificationFile', 'getPrivateVerificationBatch', 'recordMatchResult', 'publishMatch', 'deleteMatch', 'listDisputes',
-  'resolveDispute', 'saveBracketData', 'getAuditLogs'
+  'listRegistrations', 'getRegistration', 'updateTeamStatus', 'updatePlayerVerification',
+  'getPrivateVerificationFile', 'getPrivateVerificationBatch', 'recordMatchResult', 'publishMatch', 'deleteMatch',
+  'fileDispute', 'listDisputes', 'resolveDispute', 'saveBracketData', 'getAuditLogs'
 ];
 
 function waitForStaffUser() {
@@ -27,8 +27,23 @@ function waitForStaffUser() {
 
 const RegistrationDraft = {
   KEY: 'cecRegistrationDraft',
-  get() { try { return JSON.parse(sessionStorage.getItem(this.KEY)) || {}; } catch (e) { return {}; } },
-  save(partial) { const draft = Object.assign(this.get(), partial); sessionStorage.setItem(this.KEY, JSON.stringify(draft)); return draft; },
+  get() {
+    try {
+      const d = JSON.parse(sessionStorage.getItem(this.KEY)) || {};
+      if (!d.draftKey) {
+        d.draftKey = 'draft_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+        sessionStorage.setItem(this.KEY, JSON.stringify(d));
+      }
+      return d;
+    } catch (e) {
+      return {};
+    }
+  },
+  save(partial) {
+    const draft = Object.assign(this.get(), partial);
+    sessionStorage.setItem(this.KEY, JSON.stringify(draft));
+    return draft;
+  },
   clear() { sessionStorage.removeItem(this.KEY); }
 };
 
@@ -78,18 +93,20 @@ async function uploadVerificationDocument(file, docType, metadata) {
     reader.readAsDataURL(file);
   });
 
+  const draft = RegistrationDraft.get();
   const payload = Object.assign({
     fileBase64: base64,
     fileName: file.name,
     mimeType: file.type || 'image/jpeg',
-    docType: docType || 'student_id_card'
+    docType: docType || 'student_id_card',
+    draftKey: (metadata && metadata.draftKey) || draft.draftKey || ''
   }, metadata || {});
 
   return await callRegistrationApi('uploadVerificationFile', payload, 'POST');
 }
 
 /** Optional public-facing player image. This is separate from identity proof uploads. */
-async function uploadProfileImage(file) {
+async function uploadProfileImage(file, metadata) {
   if (!file) throw new Error('No profile image selected.');
   const allowed = ['image/jpeg', 'image/png', 'image/webp'];
   if (allowed.indexOf(file.type) === -1) throw new Error('Use a JPG, PNG, or WEBP profile image.');
@@ -106,11 +123,15 @@ async function uploadProfileImage(file) {
     reader.readAsDataURL(file);
   });
 
-  return await callRegistrationApi('uploadProfileImage', {
+  const draft = RegistrationDraft.get();
+  const payload = Object.assign({
     fileBase64: base64,
     fileName: file.name,
-    mimeType: file.type
-  }, 'POST');
+    mimeType: file.type,
+    draftKey: (metadata && metadata.draftKey) || draft.draftKey || ''
+  }, metadata || {});
+
+  return await callRegistrationApi('uploadProfileImage', payload, 'POST');
 }
 
 /**
@@ -279,13 +300,25 @@ const TournamentOps = {
             updatedAt: new Date().toISOString()
           });
 
-          // Auto-progression: Advance winner to next round in bracket tree
+          // Auto-progression: Advance winner to next round in bracket tree with winner ID
           const mData = allBracketMatches[targetKey] || {};
           if (mData.nextMatchKey && mData.nextSlot) {
             const nextRef = window.CECFirebase.db.ref('brackets/' + div + '/' + mData.nextMatchKey);
             const updateField = mData.nextSlot === 'team2' ? 'team2Name' : 'team1Name';
+            const idField = mData.nextSlot === 'team2' ? 'team2Id' : 'team1Id';
+
+            let winnerId = resultData.winnerId;
+            if (!winnerId) {
+              if (String(mData.team1Name || '').trim().toLowerCase() === String(resultData.winnerName || '').trim().toLowerCase()) {
+                winnerId = mData.team1Id;
+              } else if (String(mData.team2Name || '').trim().toLowerCase() === String(resultData.winnerName || '').trim().toLowerCase()) {
+                winnerId = mData.team2Id;
+              }
+            }
+
             await nextRef.update({
-              [updateField]: resultData.winnerName
+              [updateField]: resultData.winnerName,
+              [idField]: winnerId || ''
             });
           }
         }
@@ -360,3 +393,7 @@ const TournamentOps = {
 // Expose the shared clients for pages that load this file as a classic script.
 window.PublicTournamentApi = PublicTournamentApi;
 window.TournamentOps = TournamentOps;
+window.RegistrationDraft = RegistrationDraft;
+window.uploadVerificationDocument = uploadVerificationDocument;
+window.uploadProfileImage = uploadProfileImage;
+window.updateRegistrationStatusWithReason = updateRegistrationStatusWithReason;

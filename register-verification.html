@@ -324,7 +324,7 @@
         // Render existing uploaded doc chips for this player
         function renderChips() {
           chipsContainer.innerHTML = '';
-          const playerDocs = attachedDocIds.filter(d => String(d.slot) === String(p.slot));
+          const playerDocs = attachedDocIds.filter(d => String(d.slot) === String(p.slot) && (d.rosterType || 'Starter') === (p.rosterType || 'Starter'));
           playerDocs.forEach((doc, idx) => {
             const chip = document.createElement('div');
             chip.className = 'inline-flex items-center gap-1 px-2 py-1 rounded bg-primary/15 border border-primary/30 text-primary text-[11px] font-bold shadow-sm';
@@ -356,6 +356,7 @@
           try {
             const result = await uploadVerificationDocument(file, 'student_id_proof', {
               playerSlot: p.slot,
+              rosterType: p.rosterType || 'Starter',
               playerName: p.realName
             });
 
@@ -364,7 +365,8 @@
               driveFileId: result.driveFileId,
               fileName: file.name,
               docType: 'student_id_proof',
-              slot: p.slot
+              slot: p.slot,
+              rosterType: p.rosterType || 'Starter'
             });
             RegistrationDraft.save({ docIds: attachedDocIds });
             renderChips();
@@ -389,9 +391,32 @@
         return Object.assign({}, p, { studentId: input ? input.value.trim() : (p.studentId || '') });
       });
       RegistrationDraft.save({ players: updated, docIds: attachedDocIds });
+      return updated;
     }
 
-    document.getElementById('next-step-btn').addEventListener('click', saveStudentIds);
-    document.getElementById('back-btn').addEventListener('click', saveStudentIds);
+    function validateStep3(updatedPlayers) {
+      if (isFaculty) return true;
+      for (let i = 0; i < updatedPlayers.length; i++) {
+        const p = updatedPlayers[i];
+        if (p.rosterType === 'Starter' && (!p.studentId || !p.studentId.trim() || p.studentId === 'Missing')) {
+          alert(`Please provide a Student ID Number for Starter ${p.slot} (${p.realName || p.ign}).`);
+          const input = container.querySelector('.row-student-id[data-slot="' + p.slot + '"][data-roster-type="' + p.rosterType + '"]');
+          if (input) input.focus();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    document.getElementById('next-step-btn').addEventListener('click', (e) => {
+      const updated = saveStudentIds();
+      if (!validateStep3(updated)) {
+        e.preventDefault();
+        return;
+      }
+    });
+    document.getElementById('back-btn').addEventListener('click', () => {
+      saveStudentIds();
+    });
   });
 </script></main></body></html>

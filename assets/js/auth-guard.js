@@ -17,25 +17,6 @@ window.CECAuth = {
   },
 
   init: async function () {
-    if (sessionStorage.getItem('cec_staff_auth_mock') === 'true') {
-      this.currentUser = {
-        email: "jlcabucos.cec@gmail.com",
-        displayName: "Tournament Coordinator",
-        uid: "superadmin123",
-        getIdToken: () => Promise.resolve("mock-id-token"),
-        getIdTokenResult: () => Promise.resolve({ token: "mock-id-token" })
-      };
-      this.currentStaffProfile = {
-        role: "super_admin",
-        roleLabel: "Super Admin / Coordinator",
-        isApproved: true,
-        status: "approved"
-      };
-      this.isResolved = true;
-      this._notifyListeners();
-      this.renderAuthUI();
-      return;
-    }
     await window.CECFirebase.init();
     if (!window.CECFirebase.auth) {
       console.warn('Firebase Auth unavailable; rendering signed-out state.');
@@ -186,7 +167,6 @@ window.CECAuth = {
   requireApprovedStaff: function () {
     const self = this;
     const deny = function (user, profile) {
-      if (sessionStorage.getItem('cec_staff_auth_mock') === 'true') return;
       if (user && self.isApprovedStaff()) return;
       if (!user) {
         // Keep protected pages out of the public navigation and send signed-out

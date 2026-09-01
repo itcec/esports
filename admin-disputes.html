@@ -165,6 +165,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
   async function loadDisputes() {
     try {
       const list = await TournamentOps.listDisputes(currentFilter);
@@ -172,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = `
           <div class="bg-surface-container border border-white/10 rounded-xl p-xl flex flex-col items-center text-center gap-sm cyber-panel">
             <span class="material-symbols-outlined text-[40px] text-outline">gavel</span>
-            <h2 class="font-headline-md text-headline-md text-on-surface">No ${currentFilter === 'All' ? '' : currentFilter} disputes</h2>
+            <h2 class="font-headline-md text-headline-md text-on-surface">No ${esc(currentFilter === 'All' ? '' : currentFilter)} disputes</h2>
             <p class="font-body-md text-body-md text-on-surface-variant max-w-md">No disputes currently in this queue state.</p>
           </div>
         `;
@@ -183,20 +189,20 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="bg-surface-container border border-white/10 rounded-xl p-md flex flex-col sm:flex-row sm:items-center justify-between gap-md cyber-panel shadow-md">
           <div class="flex flex-col gap-1">
             <div class="flex items-center gap-2">
-              <span class="px-2 py-0.5 rounded bg-primary/20 text-primary text-xs font-bold font-mono">${d.DisputeID}</span>
-              <span class="font-bold text-on-surface text-sm">${d.Category || 'Protest'}</span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${d.Status === 'Resolved' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${d.Status || 'Open'}</span>
+              <span class="px-2 py-0.5 rounded bg-primary/20 text-primary text-xs font-bold font-mono">${esc(d.DisputeID)}</span>
+              <span class="font-bold text-on-surface text-sm">${esc(d.Category || 'Protest')}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${d.Status === 'Resolved' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500/20 text-amber-300'}">${esc(d.Status || 'Open')}</span>
             </div>
-            <p class="text-xs text-on-surface-variant line-clamp-2">${d.Reason}</p>
-            <span class="text-[10px] text-outline">Match: ${d.MatchID || 'General'} · Filed by: ${d.FiledBy || 'Staff'}</span>
+            <p class="text-xs text-on-surface-variant line-clamp-2">${esc(d.Reason)}</p>
+            <span class="text-[10px] text-outline">Match: ${esc(d.MatchID || 'General')} · Filed by: ${esc(d.FiledBy || 'Staff')}</span>
           </div>
-          <a href="admin-dispute-review.html?disputeId=${d.DisputeID}" class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary font-bold text-xs flex items-center gap-1 border border-primary/30 shrink-0">
+          <a href="admin-dispute-review.html?disputeId=${encodeURIComponent(d.DisputeID || '')}" class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-primary font-bold text-xs flex items-center gap-1 border border-primary/30 shrink-0">
             <span>Review Case</span> <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
           </a>
         </div>
       `).join('');
     } catch (err) {
-      container.innerHTML = `<div class="p-md text-center text-error bg-surface-container rounded-xl">Error loading disputes: ${err.message}</div>`;
+      container.innerHTML = `<div class="p-md text-center text-error bg-surface-container rounded-xl">Error loading disputes: ${esc(err.message)}</div>`;
     }
   }
 

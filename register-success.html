@@ -241,35 +241,46 @@
   })();
 
   document.addEventListener('DOMContentLoaded', () => {
-    const draft = RegistrationDraft.get();
-    const players = draft.players || [];
-    const teamName = draft['team-name'] || 'Your Team';
-    const isFaculty = draft.division === 'Faculty';
+    let receipt = null;
+    try { receipt = JSON.parse(localStorage.getItem('cec_last_registration_receipt')); } catch (e) {}
 
-    document.getElementById('reg-id').textContent = draft.submittedTeamId || 'PENDING';
+    const draft = RegistrationDraft.get();
+    const submittedTeamId = draft.submittedTeamId || (receipt && receipt.teamId) || 'PENDING';
+    const teamName = (receipt && receipt.teamName) || draft['team-name'] || 'Your Team';
+    const captainName = (receipt && receipt.captainName) || draft['captain-name'] || '—';
+    const playerCount = (receipt && receipt.playerCount != null) ? receipt.playerCount : ((draft.players && draft.players.length) || 0);
+    const isFaculty = receipt ? receipt.isFaculty : (draft.division === 'Faculty');
+    const badgeIcon = (receipt && receipt.badgeIcon) || draft.badgeIcon;
+    const teamColor = (receipt && receipt.teamColor) || draft.teamColor || '#1264ff';
+
+    document.getElementById('reg-id').textContent = submittedTeamId;
     document.getElementById('success-team-name').textContent = teamName;
-    document.getElementById('success-captain').textContent = draft['captain-name'] || '—';
-    document.getElementById('success-roster-count').textContent = players.length;
+    document.getElementById('success-captain').textContent = captainName;
+    document.getElementById('success-roster-count').textContent = playerCount;
 
     if (isFaculty) {
       document.getElementById('success-verify-count').textContent = 'Faculty Exhibition (Verified via School Records)';
     } else {
+      const players = draft.players || [];
       const withStudentId = players.filter(p => p.studentId && p.studentId.trim() && p.studentId !== 'Missing').length;
-      document.getElementById('success-verify-count').textContent = withStudentId + '/' + players.length + ' Pending';
+      document.getElementById('success-verify-count').textContent = players.length ? (withStudentId + '/' + players.length + ' Pending') : (playerCount + '/' + playerCount + ' Submitted');
     }
 
-    if (draft.badgeIcon && document.getElementById('success-badge-icon')) {
-      document.getElementById('success-badge-icon').src = draft.badgeIcon;
+    if (badgeIcon && document.getElementById('success-badge-icon')) {
+      document.getElementById('success-badge-icon').src = badgeIcon;
+      if (badgeIcon.includes('data:') || badgeIcon.includes('http')) {
+        document.getElementById('success-badge-icon').className = 'w-full h-full object-contain p-1';
+      }
     }
-    if (draft.teamColor && document.getElementById('success-badge-wrap')) {
-      document.getElementById('success-badge-wrap').style.background = draft.teamColor;
+    if (teamColor && document.getElementById('success-badge-wrap')) {
+      document.getElementById('success-badge-wrap').style.background = teamColor;
     }
 
-    const now = new Date();
-    document.getElementById('success-date').textContent = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
-    document.getElementById('success-time').textContent = now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+    const submittedDate = (receipt && receipt.submittedAt) ? new Date(receipt.submittedAt) : new Date();
+    document.getElementById('success-date').textContent = submittedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase();
+    document.getElementById('success-time').textContent = submittedDate.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
 
-    // Registration is complete — clear the draft so a future visit starts fresh.
+    // Registration is complete — clear session draft so future visits start fresh, while localStorage holds receipt.
     RegistrationDraft.clear();
   });
 </script></main></body></html>

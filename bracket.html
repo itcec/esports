@@ -203,12 +203,25 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     if (divData.playoff) { fill(divData.playoff.sf1); fill(divData.playoff.sf2); fill(divData.playoff.grand); }
     if (divData.qfList) divData.qfList.forEach(fill);
     if (divData.depts) divData.depts.forEach(function(d){
-      var r = byKey[d.key + '_FINAL'];
+      var deptKey = String(d.key).toUpperCase();
+      var r = byKey[deptKey + '_FINAL'] || byKey['DEPT_' + deptKey + '_FINAL'];
+      if (!r) {
+        // Match only on a whole department segment. A bare endsWith would let
+        // "HTM_FINAL" satisfy department "TM", which is a real faculty key.
+        var matchingKey = Object.keys(byKey).find(function(k) {
+          return k.endsWith('_' + deptKey + '_FINAL');
+        });
+        if (matchingKey) r = byKey[matchingKey];
+      }
       if (!r) { d.champ = null; return; }
-      var s1 = Number(r.Score1 || 0), s2 = Number(r.Score2 || 0);
-      d.champ = r.WinnerID
-        ? (String(r.WinnerID) === String(r.Team1ID) ? r.Team1Name : r.Team2Name)
-        : (s1 === s2 ? null : (s1 > s2 ? r.Team1Name : r.Team2Name));
+      if (r.WinnerName) {
+        d.champ = r.WinnerName;
+      } else {
+        var s1 = Number(r.Score1 || 0), s2 = Number(r.Score2 || 0);
+        d.champ = r.WinnerID
+          ? (String(r.WinnerID) === String(r.Team1ID) ? r.Team1Name : r.Team2Name)
+          : (s1 === s2 ? null : (s1 > s2 ? r.Team1Name : r.Team2Name));
+      }
     });
   }
 

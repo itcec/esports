@@ -374,8 +374,58 @@
       return players;
     }
 
-    document.getElementById('next-step-btn').addEventListener('click', () => {
-      RegistrationDraft.save({ players: collectPlayers() });
+    function validateStep2(players) {
+      const starters = players.filter(p => p.rosterType === 'Starter');
+      if (starters.length < 5) {
+        alert('All 5 starting players must be filled out completely.');
+        return false;
+      }
+      for (let i = 0; i < starters.length; i++) {
+        const p = starters[i];
+        if (!p.realName || !p.ign || !p.mlbbId || !p.serverId || !p.role) {
+          alert(`Starter ${p.slot} is incomplete. Please fill in Real Name, IGN, MLBB ID, Server ID, and Role.`);
+          return false;
+        }
+      }
+
+      const subs = players.filter(p => p.rosterType === 'Substitute');
+      for (let i = 0; i < subs.length; i++) {
+        const p = subs[i];
+        if (!p.realName || !p.ign || !p.mlbbId || !p.serverId || !p.role) {
+          alert(`Substitute ${p.slot} is partially filled. Please complete all fields or clear the substitute.`);
+          return false;
+        }
+      }
+
+      const igns = new Set();
+      const mlbbIds = new Set();
+      for (let i = 0; i < players.length; i++) {
+        const p = players[i];
+        const ignLower = (p.ign || '').toLowerCase();
+        if (igns.has(ignLower)) {
+          alert(`Duplicate In-Game Name (IGN) detected: "${p.ign}". Each player must have a unique IGN.`);
+          return false;
+        }
+        igns.add(ignLower);
+
+        const mlbbKey = (p.mlbbId || '') + '_' + (p.serverId || '');
+        if (mlbbIds.has(mlbbKey)) {
+          alert(`Duplicate MLBB ID / Server ID detected for "${p.ign}". Each player must have a unique MLBB Account ID.`);
+          return false;
+        }
+        mlbbIds.add(mlbbKey);
+      }
+
+      return true;
+    }
+
+    document.getElementById('next-step-btn').addEventListener('click', (e) => {
+      const players = collectPlayers();
+      if (!validateStep2(players)) {
+        e.preventDefault();
+        return;
+      }
+      RegistrationDraft.save({ players: players });
     });
     document.getElementById('back-btn').addEventListener('click', () => {
       RegistrationDraft.save({ players: collectPlayers() });

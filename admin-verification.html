@@ -991,7 +991,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await window.CECFirebase.init();
       const db = window.CECFirebase && window.CECFirebase.db;
       if (db) {
-        await db.ref('registrations/' + teamId + '/internalNotes').set({
+        await db.ref('staffNotes/' + teamId).set({
           note: note,
           savedAt: new Date().toISOString(),
           savedBy: (window.CECAuth && window.CECAuth.currentUser) ? window.CECAuth.currentUser.email : 'staff'
@@ -1068,6 +1068,27 @@ document.addEventListener('DOMContentLoaded', () => {
       
       renderTeamBadge(currentTeam);
       renderPlayers(data.players || [], currentDocs);
+
+      if (window.CECFirebase) {
+        try {
+          await window.CECFirebase.init();
+          const db = window.CECFirebase && window.CECFirebase.db;
+          if (db) {
+            let snap = await db.ref('staffNotes/' + teamId).once('value');
+            let noteData = snap.val();
+            if (!noteData) {
+              snap = await db.ref('registrations/' + teamId + '/internalNotes').once('value');
+              noteData = snap.val();
+            }
+            if (noteData && noteData.note) {
+              const noteInput = document.getElementById('rejection-notes');
+              if (noteInput && !noteInput.value) noteInput.value = noteData.note;
+            }
+          }
+        } catch (noteErr) {
+          console.warn('Could not load internal notes:', noteErr);
+        }
+      }
     } catch (err) {
       setSafeText('detail-team-name', 'Error loading team');
       const isAuthErr = err.message && (err.message.includes('staff') || err.message.includes('token') || err.message.includes('approved') || err.message.includes('Firebase'));

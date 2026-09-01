@@ -409,7 +409,19 @@
           players: JSON.stringify(players),
           docIds: JSON.stringify(draft.docIds || [])
         });
-        RegistrationDraft.save({ submittedTeamId: result.teamId });
+        const receipt = {
+          teamId: result.teamId,
+          teamName: draft['team-name'] || '',
+          captainName: draft['captain-name'] || '',
+          playerCount: players.length,
+          course: draft.course || '',
+          badgeIcon: (draft.logoMode === 'upload' && draft.customLogoUrl) ? draft.customLogoUrl : (draft.badgeIcon || ''),
+          teamColor: draft.teamColor || '#1264ff',
+          submittedAt: new Date().toISOString(),
+          isFaculty: isFaculty
+        };
+        try { localStorage.setItem('cec_last_registration_receipt', JSON.stringify(receipt)); } catch (e) {}
+        RegistrationDraft.save({ submittedTeamId: result.teamId, receipt: receipt });
         location.href = 'register-success.html';
       } catch (err) {
         errorEl.textContent = 'Could not submit: ' + err.message;

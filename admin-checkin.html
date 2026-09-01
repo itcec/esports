@@ -121,9 +121,15 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   const matchSelector = document.getElementById('select-checkin-match');
   let activeId = 'MATCH-001';
 
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
   function populateDropdown(matches) {
     matchSelector.innerHTML = Object.values(matches || {}).map(m => `
-      <option value="${m.id}" ${m.id === activeId ? 'selected' : ''}>${m.court || m.title || m.id} (${(m.team1 && m.team1.name) || 'T1'} vs ${(m.team2 && m.team2.name) || 'T2'})</option>
+      <option value="${esc(m.id)}" ${m.id === activeId ? 'selected' : ''}>${esc(m.court || m.title || m.id)} (${esc((m.team1 && m.team1.name) || 'T1')} vs ${esc((m.team2 && m.team2.name) || 'T2')})</option>
     `).join('');
   }
 
@@ -132,9 +138,9 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     const t1 = match.team1 || { name: 'Team Alpha', dept: 'IT', roster: [] };
     const t2 = match.team2 || { name: 'Team Bravo', dept: 'CRIM', roster: [] };
 
-    document.getElementById('team1-title').textContent = t1.name;
+    document.getElementById('team1-title').textContent = t1.name || 'Team 1';
     document.getElementById('team1-dept-sub').textContent = (t1.dept || '') + ' Department';
-    document.getElementById('team2-title').textContent = t2.name;
+    document.getElementById('team2-title').textContent = t2.name || 'Team 2';
     document.getElementById('team2-dept-sub').textContent = (t2.dept || '') + ' Department';
 
     const t1List = document.getElementById('team1-player-list');
@@ -155,8 +161,8 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-high/60 border border-white/5 text-sm">
         <div class="flex items-center gap-2">
           <span class="w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center">${idx+1}</span>
-          <span class="font-bold text-on-surface">${p.ign || p.realName}</span>
-          <span class="text-[11px] text-on-surface-variant">(${p.role || 'Player'})</span>
+          <span class="font-bold text-on-surface">${esc(p.ign || p.realName || 'Player')}</span>
+          <span class="text-[11px] text-on-surface-variant">(${esc(p.role || 'Player')})</span>
         </div>
         <input type="checkbox" checked class="w-4 h-4 accent-primary rounded cursor-pointer" />
       </div>
@@ -166,8 +172,8 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-high/60 border border-white/5 text-sm">
         <div class="flex items-center gap-2">
           <span class="w-6 h-6 rounded-full bg-secondary/20 text-secondary text-xs font-bold flex items-center justify-center">${idx+1}</span>
-          <span class="font-bold text-on-surface">${p.ign || p.realName}</span>
-          <span class="text-[11px] text-on-surface-variant">(${p.role || 'Player'})</span>
+          <span class="font-bold text-on-surface">${esc(p.ign || p.realName || 'Player')}</span>
+          <span class="text-[11px] text-on-surface-variant">(${esc(p.role || 'Player')})</span>
         </div>
         <input type="checkbox" checked class="w-4 h-4 accent-secondary rounded cursor-pointer" />
       </div>

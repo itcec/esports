@@ -602,10 +602,18 @@ document.addEventListener('DOMContentLoaded', () => {
     updateBatchBar();
   });
 
+  function sanitizeCsvCell(val) {
+    let s = String(val == null ? '' : val);
+    if (/^[=+\-@\t\r]/.test(s)) {
+      s = "'" + s;
+    }
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+
   document.getElementById('export-csv-btn').addEventListener('click', () => {
     const headers = ['TeamID', 'TeamName', 'Course', 'CaptainName', 'ContactNumber', 'Status', 'SubmittedAt'];
     const csvRows = [headers.join(',')].concat(allRegistrations.map(t =>
-      headers.map(h => '"' + String(t[h] == null ? '' : t[h]).replace(/"/g, '""') + '"').join(',')
+      headers.map(h => sanitizeCsvCell(t[h])).join(',')
     ));
     const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);

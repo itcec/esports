@@ -647,8 +647,8 @@
     customFileInput.addEventListener('change', async (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
-      if (file.size > 2 * 1024 * 1024) {
-        alert('Custom logo must be 2MB or less.');
+      if (file.size > 1 * 1024 * 1024) {
+        alert('Custom logo must be 1MB or less (JPG, PNG, or WEBP).');
         return;
       }
       uploadProgress.classList.remove('hidden');
@@ -833,8 +833,45 @@
       return data;
     }
 
-    document.getElementById('next-step-btn').addEventListener('click', () => {
-      RegistrationDraft.save(collectFields());
+    function validateStep1(data) {
+      if (!data['team-name'] || !data['team-name'].trim()) {
+        alert('Please enter an Official Team Name.');
+        const el = document.getElementById('team-name');
+        if (el) el.focus();
+        return false;
+      }
+      if (!data['captain-name'] || !data['captain-name'].trim()) {
+        alert('Please enter the Team Captain name.');
+        const el = document.getElementById('captain-name');
+        if (el) el.focus();
+        return false;
+      }
+      if (!data['team-contact'] || !data['team-contact'].trim()) {
+        alert('Please enter a Contact Number.');
+        const el = document.getElementById('team-contact');
+        if (el) el.focus();
+        return false;
+      }
+      if (!data.division) {
+        alert('Please select a Tournament Division.');
+        if (divisionSel) divisionSel.focus();
+        return false;
+      }
+      if (!data.department) {
+        alert('Please select a Department.');
+        if (departmentSel) departmentSel.focus();
+        return false;
+      }
+      return true;
+    }
+
+    document.getElementById('next-step-btn').addEventListener('click', (e) => {
+      const data = collectFields();
+      if (!validateStep1(data)) {
+        e.preventDefault();
+        return;
+      }
+      RegistrationDraft.save(data);
     });
 
     document.getElementById('save-draft-btn').addEventListener('click', () => {

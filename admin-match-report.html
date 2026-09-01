@@ -149,9 +149,15 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   let activeId = new URLSearchParams(location.search).get('matchId') || 'MATCH-001';
   let uploadedEvidenceDoc = null;
 
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
   function populateDropdown(matches) {
     matchSelector.innerHTML = Object.values(matches || {}).map(m => `
-      <option value="${m.id}" ${m.id === activeId ? 'selected' : ''}>${m.court || m.title || m.id} (${(m.team1 && m.team1.name) || 'T1'} vs ${(m.team2 && m.team2.name) || 'T2'})</option>
+      <option value="${esc(m.id)}" ${m.id === activeId ? 'selected' : ''}>${esc(m.court || m.title || m.id)} (${esc((m.team1 && m.team1.name) || 'T1')} vs ${esc((m.team2 && m.team2.name) || 'T2')})</option>
     `).join('');
   }
 
@@ -160,10 +166,10 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     const t1 = match.team1 || { name: 'Team Alpha', score: 0 };
     const t2 = match.team2 || { name: 'Team Bravo', score: 0 };
 
-    document.getElementById('report-team1-name').textContent = t1.name;
-    document.getElementById('report-team2-name').textContent = t2.name;
-    document.getElementById('opt-team1').textContent = t1.name;
-    document.getElementById('opt-team2').textContent = t2.name;
+    document.getElementById('report-team1-name').textContent = t1.name || 'Team 1';
+    document.getElementById('report-team2-name').textContent = t2.name || 'Team 2';
+    document.getElementById('opt-team1').textContent = t1.name || 'Team 1';
+    document.getElementById('opt-team2').textContent = t2.name || 'Team 2';
     document.getElementById('report-court-label').textContent = match.court || match.title || 'Court';
     document.getElementById('report-format-badge').textContent = match.formatBadge || 'BEST OF 3';
     document.getElementById('final-score1').value = t1.score || 0;
@@ -205,7 +211,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     const s2 = parseInt(document.getElementById('final-score2').value, 10) || 0;
     const winnerChoice = document.getElementById('series-winner-select').value;
     const winnerName = winnerChoice === 'team1' ? match.team1.name : match.team2.name;
-    const winnerId = winnerChoice === 'team1' ? (match.team1.id || match.team1.dept) : (match.team2.id || match.team2.dept);
+    const winnerId = winnerChoice === 'team1' ? (match.team1.id || match.team1.dept || 'T1') : (match.team2.id || match.team2.dept || 'T2');
 
     const btn = document.getElementById('submit-report-btn');
     btn.disabled = true;
@@ -216,8 +222,10 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         matchId: match.id,
         court: match.court || match.title,
         division: match.division,
+        team1Id: (match.team1 && match.team1.id) || '',
         team1Name: match.team1.name,
         score1: s1,
+        team2Id: (match.team2 && match.team2.id) || '',
         team2Name: match.team2.name,
         score2: s2,
         winnerId: winnerId,
