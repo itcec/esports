@@ -41,40 +41,56 @@
   .admin-shell { padding-left: 16rem !important; }
 }
 
-/* Mobile cards vs Table visibility */
-.mobile-only-feed { display: flex; }
-.desktop-only-table { display: none; }
-
-@media (min-width: 768px) {
-  .mobile-only-feed { display: none; }
-  .desktop-only-table { display: block; }
+/* Desktop vs Mobile display rules */
+.mobile-only-feed {
+  display: flex !important;
+  flex-direction: column !important;
+}
+.desktop-only-table {
+  display: none !important;
 }
 
-/* Force mobile cards if cec-mobile-mode is active */
-body.cec-mobile-mode .mobile-only-feed { display: flex !important; }
-body.cec-mobile-mode .desktop-only-table { display: none !important; }
+@media (min-width: 1024px) {
+  body:not(.cec-mobile-mode) .mobile-only-feed {
+    display: none !important;
+  }
+  body:not(.cec-mobile-mode) .desktop-only-table {
+    display: block !important;
+  }
+}
 
-.mobile-team-card { flex-shrink: 0; }
+body.cec-mobile-mode .mobile-only-feed {
+  display: flex !important;
+  flex-direction: column !important;
+}
+body.cec-mobile-mode .desktop-only-table {
+  display: none !important;
+}
+
+.mobile-team-card {
+  flex-shrink: 0 !important;
+  min-height: fit-content !important;
+}
 
 /* Page titles wrap on word boundaries; only break mid-word as a last resort. */
 main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
-</style></head><body class="bg-background font-body-md text-on-surface"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low/95 backdrop-blur-md z-50 hidden lg:flex flex-col border-r border-white/10"><div class="h-16 px-md flex items-center gap-sm border-b border-white/10"><svg aria-hidden="true" class="h-6 w-6 text-primary shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.5L12 20.9 6.1 24.1l1.2-6.5L2.5 9l6.6-.9z"></path></svg><span class="font-headline-md text-headline-md text-primary tracking-tight uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md flex flex-col gap-base overflow-y-auto"><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-sm rounded bg-primary-container text-on-primary-container font-bold transition-colors" href="admin-registrations.html"><span class="material-symbols-outlined text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-bracket-builder.html"><span class="material-symbols-outlined text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-officiating.html"><span class="material-symbols-outlined text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-disputes.html"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav><div class="p-md border-t border-white/10"><a class="flex items-center gap-sm px-md py-sm rounded text-primary hover:bg-primary/10 transition-colors" href="index.html"><span class="material-symbols-outlined text-[20px]">arrow_back</span><span class="font-label-caps text-label-caps uppercase font-bold">Public Site</span></a></div></aside><div class="admin-shell lg:pl-64"><header class="admin-topbar fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface-container/95 backdrop-blur-md border-b border-white/10 z-40 flex items-center justify-between px-lg gap-md"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase truncate">CEC Esports Intramurals 2026 · Registrations</span><div class="cec-auth-widget flex items-center gap-sm shrink-0"></div></header><main class="relative z-10 pt-16 min-h-screen pb-24 lg:pb-0"><div class="flex flex-col w-full h-full p-lg">
+</style></head><body class="bg-background font-body-md text-on-surface"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><aside class="admin-sidebar fixed left-0 top-0 h-full w-64 bg-surface-container-low/95 backdrop-blur-md z-50 hidden lg:flex flex-col border-r border-white/10"><div class="h-16 px-md flex items-center gap-sm border-b border-white/10"><svg aria-hidden="true" class="h-6 w-6 text-primary shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.5L12 20.9 6.1 24.1l1.2-6.5L2.5 9l6.6-.9z"></path></svg><span class="font-headline-md text-headline-md text-primary tracking-tight uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md flex flex-col gap-base overflow-y-auto"><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-sm rounded bg-primary-container text-on-primary-container font-bold transition-colors" href="admin-registrations.html"><span class="material-symbols-outlined text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-bracket-builder.html"><span class="material-symbols-outlined text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-officiating.html"><span class="material-symbols-outlined text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-disputes.html"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav><div class="p-md border-t border-white/10"><a class="flex items-center gap-sm px-md py-sm rounded text-primary hover:bg-primary/10 transition-colors" href="index.html"><span class="material-symbols-outlined text-[20px]">arrow_back</span><span class="font-label-caps text-label-caps uppercase font-bold">Public Site</span></a></div></aside><div class="admin-shell lg:pl-64"><header class="admin-topbar fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface-container/95 backdrop-blur-md border-b border-white/10 z-40 flex items-center justify-between px-lg gap-md"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase truncate">CEC Esports Intramurals 2026 · Registrations</span><div class="cec-auth-widget flex items-center gap-sm shrink-0"></div></header><main class="relative z-10 pt-16 min-h-screen pb-24 lg:pb-0"><div class="flex flex-col w-full h-full p-lg">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md mb-xl">
 <div>
 <h1 class="font-headline-xl text-headline-xl text-on-background mb-xs cyber-title">Registrations</h1>
 <p class="font-body-md text-body-md text-on-surface-variant">Review, verify and approve team submissions for the CEC Esports Intramurals 2026.</p>
 </div>
-<div class="flex items-center gap-md">
-<button class="flex items-center gap-xs px-md py-sm bg-surface-container rounded-lg text-on-surface hover:bg-surface-container-high transition-colors shadow-sm" id="export-csv-btn">
-<span class="material-symbols-outlined text-[20px]">download</span>
+<div class="flex flex-wrap items-center gap-2 sm:gap-md">
+<button class="flex items-center gap-xs px-3 sm:px-md py-2 sm:py-sm bg-surface-container rounded-lg text-on-surface hover:bg-surface-container-high transition-colors shadow-sm text-xs font-bold" id="export-csv-btn">
+<span class="material-symbols-outlined text-[18px]">download</span>
 <span class="font-label-caps text-label-caps uppercase">Export CSV</span>
 </button>
-<button class="flex items-center gap-xs px-md py-sm bg-red-500/20 text-red-300 hover:bg-red-500/30 border border-red-500/30 rounded-lg transition-colors shadow-sm font-bold text-xs" id="reject-selected-btn">
+<button class="flex items-center gap-xs px-3 sm:px-md py-2 sm:py-sm bg-red-500/20 text-red-300 hover:bg-red-500/30 border border-red-500/30 rounded-lg transition-colors shadow-sm font-bold text-xs" id="reject-selected-btn">
 <span class="material-symbols-outlined text-[18px]">cancel</span>
 <span class="font-label-caps text-label-caps uppercase">Reject Selected</span>
 </button>
-<button class="flex items-center gap-xs px-md py-sm bg-primary rounded-lg text-on-primary hover:bg-primary-fixed transition-colors shadow-md shadow-primary/20" id="approve-selected-btn">
-<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<button class="flex items-center gap-xs px-3 sm:px-md py-2 sm:py-sm bg-primary rounded-lg text-on-primary hover:bg-primary-fixed transition-colors shadow-md shadow-primary/20 text-xs font-bold" id="approve-selected-btn">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
 <span class="font-label-caps text-label-caps uppercase">Approve Selected</span>
 </button>
 </div>
@@ -85,12 +101,12 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <span class="material-symbols-outlined text-outline">search</span>
 <input class="bg-transparent border-none outline-none text-on-surface font-body-md text-body-md w-full placeholder-outline" id="reg-search" placeholder="Search registrations..." type="text"/>
 </div>
-<div class="flex gap-xs overflow-x-auto whitespace-nowrap pb-1 md:pb-0 touch-scroll" id="reg-filters">
-<button class="px-sm py-xs rounded-md bg-primary-container text-on-primary-container font-label-caps text-label-caps uppercase shadow-sm" data-filter="All">All</button>
-<button class="px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="Pending">Pending</button>
-<button class="px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="UnderReview">Under Review</button>
-<button class="px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="Approved">Approved</button>
-<button class="px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="Rejected">Rejected</button>
+<div class="flex gap-xs overflow-x-auto whitespace-nowrap pb-1 md:pb-0 touch-scroll no-scrollbar" id="reg-filters">
+<button class="shrink-0 px-sm py-xs rounded-md bg-primary-container text-on-primary-container font-label-caps text-label-caps uppercase shadow-sm" data-filter="All">All</button>
+<button class="shrink-0 px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="Pending">Pending</button>
+<button class="shrink-0 px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="UnderReview">Under Review</button>
+<button class="shrink-0 px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="Approved">Approved</button>
+<button class="shrink-0 px-sm py-xs rounded-md hover:bg-surface-container-high text-on-surface-variant font-label-caps text-label-caps uppercase transition-colors" data-filter="Rejected">Rejected</button>
 </div>
 </div>
 
@@ -137,38 +153,38 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 
 <!-- Mobile Card Template -->
 <template id="registration-mobile-card-template">
-  <div class="bg-surface-container rounded-xl p-md border border-white/10 flex flex-col gap-sm shadow-md relative overflow-hidden group hover:border-primary/40 transition-colors">
-    <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
-      <div class="flex items-center gap-2.5 min-w-0 flex-1">
-        <input class="mobile-row-checkbox w-4 h-4 rounded bg-surface-container-lowest border-outline-variant focus:ring-primary shrink-0" type="checkbox"/>
-        <div class="mobile-row-badge w-10 h-10 rounded-xl flex items-center justify-center text-white text-[11px] font-bold shrink-0 border border-white/15 shadow-sm relative overflow-hidden" title="Team Chosen Logo"></div>
-        <div class="flex flex-col min-w-0">
-          <span class="font-bold text-sm mobile-row-team-name text-on-surface truncate"></span>
-          <span class="text-[10px] text-outline cyber-mono mobile-row-id"></span>
+  <div class="mobile-team-card shrink-0 w-full bg-surface-container/90 rounded-2xl p-4 border border-white/10 flex flex-col gap-3 shadow-lg relative overflow-hidden group hover:border-primary/40 transition-all">
+    <div class="flex items-center justify-between gap-2.5 border-b border-white/10 pb-3">
+      <div class="flex items-center gap-3 min-w-0 flex-1">
+        <input class="mobile-row-checkbox w-4 h-4 rounded bg-surface-container-lowest border-outline-variant focus:ring-primary shrink-0 cursor-pointer" type="checkbox"/>
+        <div class="mobile-row-badge w-11 h-11 rounded-xl flex items-center justify-center text-white text-xs font-bold shrink-0 border border-white/15 shadow-md relative overflow-hidden" title="Team Chosen Logo"></div>
+        <div class="flex flex-col min-w-0 flex-1">
+          <span class="font-bold text-sm text-on-surface mobile-row-team-name truncate"></span>
+          <span class="text-[11px] text-outline cyber-mono mobile-row-id tracking-wider mt-0.5"></span>
         </div>
       </div>
-      <span class="mobile-row-status-badge inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border shrink-0"></span>
+      <span class="mobile-row-status-badge inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shrink-0"></span>
     </div>
 
-    <div class="grid grid-cols-2 gap-2 text-xs text-on-surface-variant pt-1">
-      <div class="flex items-center gap-1.5 min-w-0">
+    <div class="grid grid-cols-2 gap-2 text-xs text-on-surface-variant py-1">
+      <div class="flex items-center gap-2 min-w-0">
         <img class="mobile-row-dept-logo w-4 h-4 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/10 shrink-0" alt="Dept" />
-        <span class="mobile-row-course truncate font-bold text-on-surface"></span>
+        <span class="mobile-row-course truncate font-bold text-on-surface text-xs"></span>
       </div>
-      <div class="flex items-center gap-1.5 justify-end">
-        <span class="material-symbols-outlined text-[15px] text-outline">person</span>
-        <span class="mobile-row-captain truncate"></span>
+      <div class="flex items-center gap-1.5 justify-end min-w-0">
+        <span class="material-symbols-outlined text-[15px] text-outline shrink-0">person</span>
+        <span class="mobile-row-captain truncate text-xs"></span>
       </div>
     </div>
 
-    <div class="flex items-center justify-between gap-2 pt-2 border-t border-white/5">
-      <div class="flex items-center gap-2">
-        <span class="mobile-row-players-count text-[11px] font-mono px-2 py-0.5 rounded bg-surface-container-lowest border border-white/10"></span>
-        <span class="mobile-row-verification-badge text-[10px] font-bold font-mono px-2 py-0.5 rounded border"></span>
+    <div class="flex items-center justify-between gap-2 pt-2.5 border-t border-white/10">
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="mobile-row-players-count text-[11px] font-mono px-2 py-1 rounded bg-surface-container-lowest border border-white/10 text-on-surface-variant font-bold"></span>
+        <span class="mobile-row-verification-badge text-[10px] font-bold font-mono px-2 py-1 rounded border"></span>
       </div>
-      <button type="button" class="mobile-row-view-btn px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-all shadow flex items-center gap-1">
+      <button type="button" class="mobile-row-view-btn px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-all shadow-md shadow-primary/20 flex items-center gap-1 shrink-0">
         <span>REVIEW</span>
-        <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+        <span class="material-symbols-outlined text-[15px]">arrow_forward</span>
       </button>
     </div>
   </div>

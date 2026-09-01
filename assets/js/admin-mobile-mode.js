@@ -133,8 +133,9 @@
       style.id = 'cec-mobile-styles';
       style.textContent = `
         /* Mobile Bottom Nav Spacing */
-        body.has-bottom-nav main {
-          padding-bottom: 5.5rem !important;
+        body.has-bottom-nav main,
+        html.cec-mobile-mode main {
+          padding-bottom: 6rem !important;
         }
 
         /* Mobile App View Simulation on Desktop when cec-mobile-mode is active */
@@ -150,24 +151,50 @@
             border-right: 1px solid rgba(255, 255, 255, 0.1);
             position: relative;
           }
-          html.cec-mobile-mode aside {
+          html.cec-mobile-mode aside.admin-sidebar {
             display: none !important;
           }
           html.cec-mobile-mode .admin-shell {
             padding-left: 0 !important;
           }
           html.cec-mobile-mode .admin-topbar {
-            left: auto !important;
-            right: auto !important;
+            left: 0 !important;
+            right: 0 !important;
             max-width: 480px;
             margin: 0 auto;
           }
           html.cec-mobile-mode #cec-admin-bottom-nav {
-            left: auto !important;
-            right: auto !important;
+            left: 0 !important;
+            right: 0 !important;
             max-width: 480px;
             margin: 0 auto;
             display: flex !important;
+          }
+
+          /* Force Mobile Views in Simulated Mobile Mode */
+          html.cec-mobile-mode .desktop-only-table {
+            display: none !important;
+          }
+          html.cec-mobile-mode .mobile-only-feed {
+            display: flex !important;
+            flex-direction: column !important;
+          }
+          html.cec-mobile-mode #verify-mobile-tab-bar {
+            display: flex !important;
+          }
+          html.cec-mobile-mode .grid.lg\\:grid-cols-12 {
+            display: flex !important;
+            flex-direction: column !important;
+            width: 100% !important;
+          }
+          html.cec-mobile-mode .vtab-pane.hidden {
+            display: none !important;
+          }
+          html.cec-mobile-mode .vtab-pane:not(.hidden) {
+            display: flex !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: 1 1 100% !important;
           }
         }
 

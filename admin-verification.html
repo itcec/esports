@@ -32,8 +32,6 @@
               linear-gradient(to bottom, rgba(5, 11, 20, 0.35) 0%, rgba(5, 11, 20, 0.8) 100%);
   pointer-events: none;
 }
-@media (max-width:1023px){aside{width:3.5rem!important;}aside nav a span+span,aside>div:first-child>span{display:none!important;}aside nav a{justify-content:center!important;padding-left:.25rem!important;padding-right:.25rem!important;}.pl-64{padding-left:3.5rem!important;}header{left:3.5rem!important;}}
-
 /* Staff shell: full-width top bar on mobile, offset beside the sidebar on desktop. */
 .admin-topbar { left: 0 !important; right: 0 !important; }
 .admin-shell { padding-left: 0 !important; }
@@ -41,32 +39,88 @@
   .admin-topbar { left: 16rem !important; }
   .admin-shell { padding-left: 16rem !important; }
 }
+/* Responsive 3-column desktop layout vs single-column mobile */
+.verify-layout-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+@media (min-width: 1024px) {
+  body:not(.cec-mobile-mode) .verify-layout-container {
+    display: grid !important;
+    grid-template-columns: 280px minmax(0, 1fr) 280px !important;
+    gap: 1.5rem !important;
+    align-items: start !important;
+  }
+  body:not(.cec-mobile-mode) #verify-mobile-tab-bar {
+    display: none !important;
+  }
+  body:not(.cec-mobile-mode) #verify-pane-team,
+  body:not(.cec-mobile-mode) #verify-pane-summary,
+  body:not(.cec-mobile-mode) #verify-pane-roster {
+    display: flex !important;
+  }
+  body:not(.cec-mobile-mode) #mobile-team-decision-bar {
+    display: none !important;
+  }
+}
+
+/* Explicit simulated mobile mode rules */
+html.cec-mobile-mode #verify-mobile-tab-bar,
+body.cec-mobile-mode #verify-mobile-tab-bar {
+  display: flex !important;
+}
+html.cec-mobile-mode .verify-layout-container,
+body.cec-mobile-mode .verify-layout-container {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+}
+html.cec-mobile-mode .vtab-pane,
+body.cec-mobile-mode .vtab-pane {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 1 1 100% !important;
+}
+html.cec-mobile-mode .vtab-pane.hidden,
+body.cec-mobile-mode .vtab-pane.hidden {
+  display: none !important;
+}
+html.cec-mobile-mode .vtab-pane:not(.hidden),
+body.cec-mobile-mode .vtab-pane:not(.hidden) {
+  display: flex !important;
+}
+html.cec-mobile-mode #mobile-team-decision-bar,
+body.cec-mobile-mode #mobile-team-decision-bar {
+  display: flex !important;
+}
 
 /* Page titles wrap on word boundaries; only break mid-word as a last resort. */
 main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
-</style></head><body class="bg-background font-body-md text-on-surface"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-low/95 backdrop-blur-md z-50 hidden lg:flex flex-col border-r border-white/10"><div class="h-16 px-md flex items-center gap-sm border-b border-white/10"><svg aria-hidden="true" class="h-6 w-6 text-primary shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.5L12 20.9 6.1 24.1l1.2-6.5L2.5 9l6.6-.9z"></path></svg><span class="font-headline-md text-headline-md text-primary tracking-tight uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md flex flex-col gap-base overflow-y-auto"><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-sm rounded bg-primary-container text-on-primary-container font-bold transition-colors" href="admin-registrations.html"><span class="material-symbols-outlined text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-bracket-builder.html"><span class="material-symbols-outlined text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-officiating.html"><span class="material-symbols-outlined text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-disputes.html"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav></aside><div class="admin-shell lg:pl-64"><header class="admin-topbar fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface-container/95 backdrop-blur-md border-b border-white/10 z-40 flex items-center justify-between px-lg gap-md"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase truncate">CEC Esports Intramurals 2026 · Admin</span><div class="cec-auth-widget flex items-center gap-sm shrink-0"></div></header><main class="relative z-10 pt-16 min-h-screen pb-24 lg:pb-0"><div class="flex flex-col w-full px-lg pb-xl pt-lg gap-lg font-body-md animate-[fadeIn_0.3s_ease-out]">
+</style></head><body class="bg-background font-body-md text-on-surface"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><aside class="admin-sidebar fixed left-0 top-0 h-full w-64 bg-surface-container-low/95 backdrop-blur-md z-50 hidden lg:flex flex-col border-r border-white/10"><div class="h-16 px-md flex items-center gap-sm border-b border-white/10"><svg aria-hidden="true" class="h-6 w-6 text-primary shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.5L12 20.9 6.1 24.1l1.2-6.5L2.5 9l6.6-.9z"></path></svg><span class="font-headline-md text-headline-md text-primary tracking-tight uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md flex flex-col gap-base overflow-y-auto"><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-sm rounded bg-primary-container text-on-primary-container font-bold transition-colors" href="admin-registrations.html"><span class="material-symbols-outlined text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-bracket-builder.html"><span class="material-symbols-outlined text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-officiating.html"><span class="material-symbols-outlined text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-disputes.html"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav></aside><div class="admin-shell lg:pl-64"><header class="admin-topbar fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface-container/95 backdrop-blur-md border-b border-white/10 z-40 flex items-center justify-between px-lg gap-md"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase truncate">CEC Esports Intramurals 2026 · Admin</span><div class="cec-auth-widget flex items-center gap-sm shrink-0"></div></header><main class="relative z-10 pt-16 min-h-screen pb-24 lg:pb-0"><div class="flex flex-col w-full px-lg pb-xl pt-lg gap-lg font-body-md animate-[fadeIn_0.3s_ease-out]">
 <!-- Header Section -->
 <header class="flex flex-col md:flex-row md:items-end justify-between gap-sm mb-md relative z-10">
 <div class="flex flex-col gap-xs">
 <div class="flex items-center gap-xs text-primary/70 text-sm font-label-caps uppercase tracking-wider">
 <span class="material-symbols-outlined text-[16px]">shield_person</span>
 <a class="hover:text-primary transition-colors" href="admin-registrations.html">Verification Queue</a>
-                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-<span class="text-on-surface-variant font-bold" id="breadcrumb-team-name">Loading…</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface" id="crumb-team-name">Team Review</span>
 </div>
-<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight cyber-title">
-                Team Verification
-            </h1>
+<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight uppercase cyber-title">
+    Team Verification
+</h1>
 </div>
 <div class="flex items-center gap-sm">
-<button class="px-md py-sm bg-surface-container text-on-surface rounded-DEFAULT border border-primary/20 hover:bg-surface-container-high transition-colors font-label-caps uppercase shadow-sm" id="reject-team-btn" type="button">
-                Reject Team
-            </button>
-<button class="px-md py-sm bg-primary text-on-primary rounded-DEFAULT hover:bg-primary-fixed transition-colors font-label-caps uppercase shadow-md shadow-primary/10 flex items-center gap-xs relative overflow-hidden group" id="approve-team-btn" type="button">
+<button class="px-md py-sm bg-surface-container text-on-surface rounded-lg border border-primary/20 hover:bg-surface-container-high transition-colors font-label-caps uppercase shadow-sm text-xs font-bold" id="reject-team-btn" type="button">
+    Reject Team
+</button>
+<button class="px-md py-sm bg-primary text-on-primary rounded-lg hover:bg-primary-fixed transition-colors font-label-caps uppercase shadow-md shadow-primary/10 flex items-center gap-xs relative overflow-hidden group text-xs font-bold" id="approve-team-btn" type="button">
 <div class="absolute inset-0 bg-white/20 w-full h-full translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 ease-in-out"></div>
 <span class="material-symbols-outlined text-[18px]">verified</span>
-                Approve Team
-            </button>
+    Approve Team
+</button>
 </div>
 </header>
 
@@ -84,9 +138,9 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div>
 
 <!-- Main Grid Layout -->
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<div class="verify-layout-container w-full">
 <!-- Left Column: Team Information -->
-<aside id="verify-pane-team" class="lg:col-span-3 flex-col gap-gutter vtab-pane hidden lg:flex">
+<aside id="verify-pane-team" class="w-full flex-col gap-gutter vtab-pane hidden lg:flex">
 <div class="bg-surface-container p-md rounded-xl shadow-sm relative overflow-hidden group border border-white/5 cyber-panel">
 <!-- Decorative background accent -->
 <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors duration-500"></div>
@@ -98,8 +152,8 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   <span class="text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono font-bold" id="detail-team-id">—</span>
 </h2>
 
-<!-- Chosen Team Emblem / Logo Display -->
-<div class="flex flex-col items-center gap-sm mb-lg">
+<!-- Chosen Team Logo & Name Header -->
+<div class="flex flex-col items-center gap-sm pb-md border-b border-white/10">
   <div class="relative group/badge">
     <div class="w-24 h-24 rounded-2xl shadow-inner flex items-center justify-center relative text-white text-headline-lg font-headline-lg cyber-mono overflow-hidden border border-white/15 shadow-lg" id="team-badge" style="background:#1264ff" title="Team Chosen Logo">
       <div class="absolute inset-0 rounded-2xl border border-primary/20 pointer-events-none z-10"></div>
@@ -153,67 +207,86 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div>
 </aside>
 <!-- Center Column: Player Roster Verification -->
-<main id="verify-pane-roster" class="lg:col-span-6 flex flex-col gap-sm vtab-pane">
+<main id="verify-pane-roster" class="w-full flex-col gap-sm vtab-pane flex">
 <div class="flex items-center justify-between px-xs mb-xs">
 <h2 class="text-sm font-label-caps uppercase text-on-surface-variant tracking-wider flex items-center gap-xs">
 <span class="material-symbols-outlined text-[18px] text-secondary">groups</span>
-                    Player Roster Verification
-                </h2>
+    Player Roster Verification
+</h2>
 <div class="text-xs text-outline font-mono" id="roster-count-label">— Players</div>
 </div>
 <!-- Roster List -->
-<div class="flex flex-col gap-sm" id="roster-list"></div>
+<div class="flex flex-col gap-sm w-full" id="roster-list"></div>
 
 <template id="player-verify-card-template">
-<div class="bg-surface-container rounded-xl p-md shadow-sm flex flex-col gap-md relative group hover:bg-surface-container-high transition-colors duration-300 cyber-panel border border-white/5">
-<div class="status-bar absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"></div>
-<div class="flex flex-col md:flex-row gap-md items-start md:items-center justify-between">
-  <div class="flex items-center gap-sm flex-1 min-w-0 w-full">
-    <div class="row-badge w-12 h-12 rounded-full shrink-0 flex items-center justify-center text-white font-bold text-sm cyber-mono"></div>
-    <div class="flex-1 min-w-0">
-      <div class="flex items-center justify-between gap-sm mb-xs">
-        <h3 class="row-name text-body-lg font-bold text-on-surface break-words"></h3>
-        <span class="row-status-badge px-2 py-1 text-[10px] font-label-caps rounded-DEFAULT shrink-0 uppercase tracking-widest flex items-center gap-[4px]"><span class="row-status-dot w-1.5 h-1.5 rounded-full"></span><span class="row-status-text"></span></span>
-      </div>
-      <div class="flex flex-wrap items-center gap-sm text-xs text-on-surface-variant cyber-mono">
-        <span class="flex items-center gap-xs"><span class="text-outline uppercase text-[10px]">IGN:</span> <span class="row-ign"></span></span>
-        <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-        <span class="flex items-center gap-xs"><span class="text-outline uppercase text-[10px]">MLBB:</span> <span class="row-mlbb"></span></span>
-        <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-        <span class="flex items-center gap-xs text-secondary"><span class="material-symbols-outlined text-[14px]">sports_martial_arts</span> <span class="row-role"></span></span>
-        <span class="w-1 h-1 rounded-full bg-outline-variant"></span>
-        <span class="flex items-center gap-xs"><span class="text-outline uppercase text-[10px]">STUDENT ID:</span> <span class="row-student-id font-bold text-primary"></span></span>
+<div class="player-verify-card bg-surface-container/90 rounded-2xl p-4 sm:p-5 shadow-lg flex flex-col gap-3.5 relative group hover:bg-surface-container-high transition-all duration-300 cyber-panel border border-white/10 overflow-hidden w-full">
+  <div class="status-bar absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl"></div>
+  
+  <!-- Header: Avatar + Real Name & IGN + Status Badge -->
+  <div class="flex items-start justify-between gap-3 min-w-0">
+    <div class="flex items-center gap-3 min-w-0 flex-1">
+      <div class="row-badge w-11 h-11 sm:w-12 sm:h-12 rounded-2xl shrink-0 flex items-center justify-center text-white font-bold text-sm cyber-mono shadow-md border border-white/15"></div>
+      <div class="flex flex-col min-w-0 flex-1">
+        <h3 class="row-name text-base font-bold text-on-surface truncate"></h3>
+        <span class="text-xs text-outline font-mono mt-0.5"><span class="text-on-surface-variant font-bold">IGN:</span> <span class="row-ign text-primary"></span></span>
       </div>
     </div>
-  </div>
-  <div class="flex gap-xs w-full md:w-auto shrink-0 pt-sm md:pt-0 border-t md:border-t-0 border-outline-variant/10">
-    <button class="row-verify-btn flex-1 md:flex-none px-3.5 py-2 bg-primary text-on-primary hover:bg-primary-fixed transition-colors text-xs font-bold uppercase rounded flex items-center justify-center gap-1 shadow-sm" type="button"><span class="material-symbols-outlined text-[16px]">check</span> Verify</button>
-    <button class="row-reject-btn flex-1 md:flex-none px-3.5 py-2 bg-surface text-on-surface hover:text-error hover:bg-error-container/10 transition-colors text-xs font-bold uppercase rounded flex items-center justify-center gap-1 border border-outline-variant/30" type="button"><span class="material-symbols-outlined text-[16px]">close</span> Reject</button>
-  </div>
-</div>
-
-<!-- Uploaded Proofs Container (Inline Document Photos) -->
-<div class="row-documents-wrap pt-xs border-t border-white/10 flex flex-col gap-2">
-  <div class="flex items-center justify-between">
-    <span class="text-[11px] uppercase font-bold text-on-surface-variant flex items-center gap-1.5 tracking-wider">
-      <span class="material-symbols-outlined text-[16px] text-primary">badge</span>
-      Uploaded Verification Documents
+    <span class="row-status-badge px-2.5 py-1 text-[10px] font-label-caps rounded-full shrink-0 uppercase tracking-widest flex items-center gap-1 border shadow-sm">
+      <span class="row-status-dot w-1.5 h-1.5 rounded-full"></span>
+      <span class="row-status-text"></span>
     </span>
-    <span class="row-doc-count text-[11px] text-outline cyber-mono"></span>
   </div>
-  <!-- Inline Photo Gallery Grid -->
-  <div class="row-documents-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 pt-1"></div>
-</div>
+
+  <!-- Action Buttons Row (Full Width Stack on mobile) -->
+  <div class="flex items-center gap-2 w-full pt-1">
+    <button class="row-verify-btn flex-1 py-2 px-3 bg-primary text-on-primary hover:bg-primary-fixed transition-colors text-xs font-bold uppercase font-label-caps rounded-lg flex items-center justify-center gap-1.5 shadow-md shadow-primary/20 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" type="button">
+      <span class="material-symbols-outlined text-[16px]">check_circle</span>
+      <span>Verify</span>
+    </button>
+    <button class="row-reject-btn flex-1 py-2 px-3 bg-red-500/15 text-red-300 hover:bg-red-500/25 border border-red-500/30 transition-colors text-xs font-bold uppercase font-label-caps rounded-lg flex items-center justify-center gap-1.5 shadow-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed" type="button">
+      <span class="material-symbols-outlined text-[16px]">cancel</span>
+      <span>Reject</span>
+    </button>
+  </div>
+
+  <!-- Player Meta Info Chips -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs cyber-mono pt-1">
+    <div class="p-2 rounded-lg bg-surface-container-lowest border border-white/5 flex flex-col min-w-0">
+      <span class="text-[9px] uppercase tracking-wider text-outline">MLBB ID</span>
+      <span class="row-mlbb font-bold text-on-surface truncate mt-0.5"></span>
+    </div>
+    <div class="p-2 rounded-lg bg-surface-container-lowest border border-white/5 flex flex-col min-w-0">
+      <span class="text-[9px] uppercase tracking-wider text-outline">Assigned Role</span>
+      <span class="row-role font-bold text-secondary truncate mt-0.5 flex items-center gap-1"></span>
+    </div>
+    <div class="p-2 rounded-lg bg-surface-container-lowest border border-white/5 flex flex-col min-w-0">
+      <span class="text-[9px] uppercase tracking-wider text-outline">Student Credential</span>
+      <span class="row-student-id font-bold text-primary truncate mt-0.5"></span>
+    </div>
+  </div>
+
+  <!-- Uploaded Proofs Container (Inline Document Photos) -->
+  <div class="row-documents-wrap pt-2 border-t border-white/10 flex flex-col gap-2">
+    <div class="flex items-center justify-between">
+      <span class="text-[11px] uppercase font-bold text-on-surface-variant flex items-center gap-1.5 tracking-wider">
+        <span class="material-symbols-outlined text-[16px] text-primary">badge</span>
+        Uploaded Verification Documents
+      </span>
+      <span class="row-doc-count text-[11px] text-outline cyber-mono"></span>
+    </div>
+    <!-- Inline Photo Gallery Grid -->
+    <div class="row-documents-grid grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1"></div>
+  </div>
 </div>
 </template>
 </main>
 <!-- Right Column: Summary & Notes -->
-<aside id="verify-pane-summary" class="lg:col-span-3 flex-col gap-sm vtab-pane hidden lg:flex">
+<aside id="verify-pane-summary" class="w-full flex-col gap-sm vtab-pane hidden lg:flex">
 <div class="bg-surface-container rounded-xl p-md shadow-sm sticky top-24">
 <h2 class="text-xs font-label-caps uppercase text-on-surface-variant mb-md flex items-center gap-xs tracking-wider">
 <span class="material-symbols-outlined text-[16px] text-primary">analytics</span>
-                    Verification Summary
-                </h2>
+    Verification Summary
+</h2>
 <!-- Progress Ring Chart (SVG) -->
 <div class="flex flex-col items-center justify-center mb-md relative">
 <svg class="transform -rotate-90" height="120" viewbox="0 0 120 120" width="120">
@@ -256,7 +329,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 </div></main></div>
 
 <!-- Mobile Floating Action Bar for Team Decision -->
-<div class="lg:hidden fixed bottom-16 left-3 right-3 max-w-md mx-auto p-3 rounded-2xl bg-surface-container-high/95 backdrop-blur-md border border-primary/40 shadow-2xl flex items-center justify-between gap-2 z-40">
+<div id="mobile-team-decision-bar" class="lg:hidden fixed bottom-20 left-3 right-3 max-w-md mx-auto p-3 rounded-2xl bg-surface-container-high/95 backdrop-blur-md border border-primary/40 shadow-2xl flex items-center justify-between gap-2 z-40">
   <button type="button" onclick="document.getElementById('reject-team-btn').click()" class="flex-1 py-2.5 rounded-xl bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 text-xs font-bold font-label-caps text-center transition-colors">
     REJECT TEAM
   </button>
@@ -881,6 +954,33 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('reject-team-btn').addEventListener('click', () => setTeamStatus('Rejected'));
   document.getElementById('save-note-btn').addEventListener('click', () => {
     alert('Internal note saved.');
+  });
+
+  // Mobile Tab Navigation Logic
+  document.querySelectorAll('.verify-mobile-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.vtab;
+      document.querySelectorAll('.verify-mobile-tab-btn').forEach(b => {
+        const active = b.dataset.vtab === tab;
+        b.classList.toggle('bg-primary', active);
+        b.classList.toggle('text-on-primary', active);
+        b.classList.toggle('shadow', active);
+        b.classList.toggle('text-on-surface-variant', !active);
+      });
+      const panes = {
+        roster: document.getElementById('verify-pane-roster'),
+        team: document.getElementById('verify-pane-team'),
+        summary: document.getElementById('verify-pane-summary')
+      };
+      Object.keys(panes).forEach(k => {
+        if (!panes[k]) return;
+        if (k === tab) {
+          panes[k].classList.remove('hidden');
+        } else {
+          panes[k].classList.add('hidden');
+        }
+      });
+    });
   });
 
   async function load() {
