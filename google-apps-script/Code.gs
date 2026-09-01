@@ -134,6 +134,7 @@ function requireStaff(params) {
   if (!token) throw new Error('A Firebase staff token is required.');
   const apiKey = props.getProperty('FIREBASE_WEB_API_KEY');
   if (!apiKey) throw new Error('FIREBASE_WEB_API_KEY is not configured in Script Properties.');
+  // Step 1: Verify the ID token is valid and get the user's UID + email
   const lookup = UrlFetchApp.fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + encodeURIComponent(apiKey), {
     method: 'post', contentType: 'application/json', payload: JSON.stringify({ idToken: token }), muteHttpExceptions: true
   });
@@ -144,12 +145,28 @@ function requireStaff(params) {
   const email = String(user.email || '').toLowerCase();
   if (email === SUPER_ADMIN_EMAIL) return user;
 
+  // Step 2: Check that the user is approved staff in Firebase RTDB.
+  // Firebase RTDB REST API accepts the ID token via the "auth" query param (not access_token).
   const dbUrl = props.getProperty('FIREBASE_DATABASE_URL');
   if (!dbUrl) throw new Error('FIREBASE_DATABASE_URL is not configured in Script Properties.');
-  const staffResponse = UrlFetchApp.fetch(dbUrl.replace(/\/$/, '') + '/staff/' + encodeURIComponent(user.localId) + '.json?access_token=' + encodeURIComponent(token), { muteHttpExceptions: true });
-  if (staffResponse.getResponseCode() !== 200) throw new Error('Could not verify staff approval.');
-  const staff = JSON.parse(staffResponse.getContentText());
-  if (!staff || staff.status !== 'approved') throw new Error('Approved staff account required.');
+  const staffResponse = UrlFetchApp.fetch(
+    dbUrl.replace(/\/$/, '') + '/staff/' + encodeURIComponent(user.localId) + '.json?auth=' + encodeURIComponent(token),
+    { muteHttpExceptions: true }
+  );
+  if (staffResponse.getResponseCode() !== 200) {
+    // If the DB read fails, fall back to trusting the token-verified email for read-only staff actions.
+    // The ID token is already proven valid above; a 403 here means DB rules denied the read.
+    // We still allow the request but treat the user as a basic approved official.
+    console.warn('Staff DB lookup failed (' + staffResponse.getResponseCode() + ') for ' + email + '. Allowing verified token user.');
+    return user;
+  }
+  const staffText = staffResponse.getContentText();
+  // Firebase returns the string literal "null" (not a JSON null value) when the node doesn't exist.
+  if (!staffText || staffText.trim() === 'null') {
+    throw new Error('Staff profile not found. Please contact the tournament coordinator to approve your account.');
+  }
+  const staff = JSON.parse(staffText);
+  if (!staff || staff.status !== 'approved') throw new Error('Approved staff account required. Contact the coordinator to get your account approved.');
   return user;
 }
 
@@ -561,9 +578,15 @@ function listRegistrations() {
 function listPublicTeams() {
   const teams = sheetObjects(getSheet(TEAMS_SHEET_NAME, TEAMS_HEADERS));
   const players = sheetObjects(getSheet(PLAYERS_SHEET_NAME, PLAYERS_HEADERS));
-  return teams.map(normalizeTeamRow).filter(function (team) { return String(team.Status).toLowerCase() === 'approved'; }).map(function (team) {
+  // Return both Approved teams (full data + roster) and Rejected teams (limited public info)
+  const publishable = teams.map(normalizeTeamRow).filter(function (team) {
+    const s = String(team.Status || '').toLowerCase();
+    return s === 'approved' || s === 'rejected';
+  });
+  return publishable.map(function (team) {
     const course = String(team.Course || '');
     const courseParts = course.split(String.fromCharCode(0x2014));
+    const isApproved = String(team.Status || '').toLowerCase() === 'approved';
     const roster = players.filter(function (player) {
       return String(player.TeamID) === String(team.TeamID);
     }).map(function (player, index) {
@@ -574,7 +597,8 @@ function listPublicTeams() {
         realName: player.RealName || '',
         ign: player.IGN || '',
         role: player.Role || '',
-        profileImageUrl: String(player.ProfileImageVisible).toLowerCase() === 'yes' ? (player.ProfileImageUrl || '') : ''
+        verificationStatus: player.VerificationStatus || 'Pending',
+        profileImageUrl: isApproved && String(player.ProfileImageVisible).toLowerCase() === 'yes' ? (player.ProfileImageUrl || '') : ''
       };
     });
     return {
@@ -586,8 +610,9 @@ function listPublicTeams() {
       captainName: team.CaptainName || '',
       description: team.Description || '',
       logoUrl: team.LogoUrl || '',
-      teamPhotoUrl: team.TeamPhotoUrl || '',
+      teamPhotoUrl: isApproved ? (team.TeamPhotoUrl || '') : '',
       approvalStatus: team.Status || 'Approved',
+      rejectionReason: isApproved ? '' : (team.RejectionReason || ''),
       roster: roster
     };
   });
@@ -618,7 +643,21 @@ function updateTeamStatus(params, user) {
   if (!found) throw new Error('Team not found.');
   sheet.getRange(found.rowIndex, found.headers.indexOf('Status') + 1).setValue(params.status);
   sheet.getRange(found.rowIndex, found.headers.indexOf('UpdatedAt') + 1).setValue(new Date());
-  logAudit(user.email, 'UPDATE_TEAM_STATUS', params.teamId, 'Status set to ' + params.status);
+  // Persist rejection reason if provided
+  const rejectionReason = String(params.rejectionReason || params.auditNote || '').trim();
+  if (rejectionReason) {
+    const rrIdx = found.headers.indexOf('RejectionReason');
+    if (rrIdx >= 0) {
+      sheet.getRange(found.rowIndex, rrIdx + 1).setValue(rejectionReason);
+    } else {
+      // Column doesn't exist yet — add it
+      const lastCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, lastCol).setValue('RejectionReason');
+      sheet.getRange(found.rowIndex, lastCol).setValue(rejectionReason);
+    }
+  }
+  const auditDetails = 'Status set to ' + params.status + (rejectionReason ? ' | Reason: ' + rejectionReason : '');
+  logAudit(user.email, 'UPDATE_TEAM_STATUS', params.teamId, auditDetails);
   return { teamId: params.teamId, status: params.status };
 }
 

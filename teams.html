@@ -88,211 +88,295 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
 <div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs shadow-lg" id="division-summary"></div>
 <p class="font-body-md text-body-md text-on-surface-variant" id="teams-status">Loading confirmed teams…</p>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-md" id="team-grid"></div>
-</div></main><footer class="w-full bg-surface-container-lowest py-xl border-t border-white/10 relative z-10"><div class="max-w-container-max mx-auto px-lg flex flex-col md:flex-row justify-between items-center gap-md text-center md:text-left"><div class="flex flex-col gap-base"><span class="font-label-caps text-label-caps text-on-surface">CEC ESPORTS INTRAMURALS 2026</span><span class="font-body-md text-body-md text-on-surface-variant">© 2026 CEC Blue Dragon Esports · Cebu Eastern College, Incorporated</span></div><div class="flex flex-wrap justify-center gap-md font-label-caps text-label-caps text-on-surface-variant"><a class="hover:text-primary inline-block py-2" href="tournament.html">SCHEDULE</a><a class="hover:text-primary inline-block py-2" href="bracket.html">BRACKET</a><a class="hover:text-primary inline-block py-2" href="teams.html">TEAMS</a><a class="hover:text-primary inline-block py-2" href="standings.html">STANDINGS</a><a class="hover:text-primary inline-block py-2" href="rules.html">RULES</a><a class="hover:text-primary inline-block py-2" href="register-team.html">REGISTER</a><a class="hover:text-primary text-xs opacity-70 inline-block py-2" href="/staff">STAFF LOGIN</a></div></div></footer><script src="assets/js/registration-api.js"></script><script>
+
+<!-- Rejected Teams Section (publicly visible, informational) -->
+<div id="rejected-section" class="hidden flex flex-col gap-md mt-xs">
+  <div class="flex items-center gap-sm">
+    <div class="h-[2px] flex-1 bg-red-500/30"></div>
+    <span class="font-label-caps text-xs text-red-400 uppercase tracking-widest cyber-mono flex items-center gap-1">
+      <span class="material-symbols-outlined text-[14px]">cancel</span>
+      Rejected Registrations
+    </span>
+    <div class="h-[2px] flex-1 bg-red-500/30"></div>
+  </div>
+  <p class="text-xs text-on-surface-variant font-body-md">The following team registrations were reviewed and rejected by tournament officials. Team captains may contact the coordinator to inquire or resubmit.</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-sm" id="rejected-grid"></div>
+</div>
+</div></main>
+
+<!-- Rejection Details Review Modal -->
+<div id="rejection-review-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+  <div class="bg-surface-container w-full max-w-lg rounded-2xl border border-red-500/40 shadow-2xl overflow-hidden flex flex-col cyber-panel max-h-[90vh]">
+    <div class="p-md bg-red-500/10 border-b border-red-500/20 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-red-400 text-[22px]">cancel</span>
+        <div>
+          <h3 class="font-bold text-sm text-on-surface cyber-title" id="rr-modal-team-name">Team</h3>
+          <p class="text-[11px] text-red-300">Registration Rejected by Tournament Officials</p>
+        </div>
+      </div>
+      <button type="button" id="close-rr-modal" class="p-1 rounded-lg text-on-surface-variant hover:text-white hover:bg-white/10">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="p-md flex flex-col gap-sm overflow-y-auto flex-1">
+      <div class="p-sm rounded-xl bg-red-500/10 border border-red-500/25 flex flex-col gap-1">
+        <span class="text-[10px] font-label-caps uppercase text-red-300 font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">warning</span> Official Rejection Reason
+        </span>
+        <p class="text-sm text-on-surface" id="rr-modal-reason">—</p>
+      </div>
+      <div>
+        <h4 class="text-[11px] font-label-caps uppercase text-on-surface-variant mb-sm tracking-wider flex items-center gap-1">
+          <span class="material-symbols-outlined text-[14px]">groups</span> Player Roster Status
+        </h4>
+        <div class="flex flex-col gap-xs" id="rr-modal-roster"></div>
+      </div>
+    </div>
+    <div class="p-md border-t border-white/10 flex items-center justify-between gap-sm">
+      <span class="text-[11px] text-outline font-mono">Contact: <a href="mailto:jlcabucos.cec@gmail.com" class="text-primary hover:underline">jlcabucos.cec@gmail.com</a></span>
+      <button type="button" id="close-rr-modal-btn" class="px-4 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps text-xs font-bold transition-colors">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<footer class="w-full bg-surface-container-lowest py-xl border-t border-white/10 relative z-10"><div class="max-w-container-max mx-auto px-lg flex flex-col md:flex-row justify-between items-center gap-md text-center md:text-left"><div class="flex flex-col gap-base"><span class="font-label-caps text-label-caps text-on-surface">CEC ESPORTS INTRAMURALS 2026</span><span class="font-body-md text-body-md text-on-surface-variant">© 2026 CEC Blue Dragon Esports · Cebu Eastern College, Incorporated</span></div><div class="flex flex-wrap justify-center gap-md font-label-caps text-label-caps text-on-surface-variant"><a class="hover:text-primary inline-block py-2" href="tournament.html">SCHEDULE</a><a class="hover:text-primary inline-block py-2" href="bracket.html">BRACKET</a><a class="hover:text-primary inline-block py-2" href="teams.html">TEAMS</a><a class="hover:text-primary inline-block py-2" href="standings.html">STANDINGS</a><a class="hover:text-primary inline-block py-2" href="rules.html">RULES</a><a class="hover:text-primary inline-block py-2" href="register-team.html">REGISTER</a><a class="hover:text-primary text-xs opacity-70 inline-block py-2" href="/staff">STAFF LOGIN</a></div></div></footer>
+<script src="assets/js/registration-api.js"></script>
+<script>
 (function(){
   var DIVS = {
     mens:    { title: "Student Division — Men's (College)",  sub: "The official intramurals competition — 24 teams competing across 4 departments", total: 24, depts: [["IT",8],["HTM",8],["CTE",4],["CRIM",4]] },
     womens:  { title: "Student Division — Women's (College)", sub: "The official intramurals competition — 16 teams competing across 4 departments", total: 16, depts: [["IT",4],["HTM",4],["CTE",4],["CRIM",4]] },
-    faculty: { 
-      title: "Faculty & Staff Exhibition Showcase",    
-      sub: "Special VIP friendly games — 8 department teams participating in Friday showcase matches. Faculty members are exempt from student ID requirements.", 
-      total: 8, 
-      depts: [["IT",1],["CTE-A",1],["CTE-B",1],["HM",1],["TM",1],["CRIM",1],["SHS",1],["JHS",1]],
+    faculty: {
+      title: "Faculty & Staff Exhibition Showcase",
+      sub: "Special VIP friendly games — 8 department teams participating in Friday showcase matches. Faculty members are exempt from student ID requirements.",
+      total: 8, depts: [["IT",1],["CTE-A",1],["CTE-B",1],["HM",1],["TM",1],["CRIM",1],["SHS",1],["JHS",1]],
       isFaculty: true
     }
   };
-
-
   var PALETTE = ['#1264ff','#00e5ff','#7c5cff','#ff2fd8','#00e676','#ffb020'];
   var active = 'mens';
   var approved = [];
+  var rejected = [];
   var apiReady = false;
-
   var tabs = document.getElementById('division-tabs');
   var summaryEl = document.getElementById('division-summary');
   var statusEl = document.getElementById('teams-status');
   var gridEl = document.getElementById('team-grid');
   var searchEl = document.getElementById('team-search');
-
-  function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
-  function initials(s){ return (s||'').trim().split(/\s+/).map(function(w){return w[0];}).join('').slice(0,2).toUpperCase() || '??'; }
+  var rejectedSection = document.getElementById('rejected-section');
+  var rejectedGrid = document.getElementById('rejected-grid');
+  var DEPT_LOGOS = {
+    'IT':'assets/IT.png','HTM':'assets/HTM.png','CTE':'assets/CTE.png',
+    'CRIM':'assets/CRIM.png','HM':'assets/HTM.png','TM':'assets/HTM.png',
+    'CTE-A':'assets/CTE.png','CTE-B':'assets/CTE.png',
+    'SHS':'assets/school_logo.jpg','JHS':'assets/school_logo.jpg'
+  };
+  function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function initials(s){ return (s||'').trim().split(/\s+/).map(function(w){return w[0];}).join('').slice(0,2).toUpperCase()||'??'; }
   function colorFor(s){ var h=0; s=String(s||''); for(var i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; return PALETTE[h%PALETTE.length]; }
   function parseCourse(c){
-    c = String(c||'');
-    var div = /women/i.test(c) ? 'womens' : /faculty|exhibition/i.test(c) ? 'faculty' : /men/i.test(c) ? 'mens' : '';
-    var dept = '';
-    var m = c.split(/[-–—:|·]/); if (m.length > 1) dept = m[m.length-1].trim().toUpperCase();
-    return { div: div, dept: dept };
+    c=String(c||'');
+    var div=/women/i.test(c)?'womens':/faculty|exhibition/i.test(c)?'faculty':/men/i.test(c)?'mens':'';
+    var dept='';
+    var m=c.split(/[-–—:|·]/); if(m.length>1) dept=m[m.length-1].trim().toUpperCase();
+    return {div:div,dept:dept};
   }
 
+  // Rejection Review Modal
+  var rrModal = document.getElementById('rejection-review-modal');
+  function openRejectionReview(t) {
+    document.getElementById('rr-modal-team-name').textContent = t.TeamName||t.teamName||'Team';
+    document.getElementById('rr-modal-reason').textContent = t.rejectionReason||t.RejectionReason||'No specific reason recorded. Contact the coordinator.';
+    var rosterEl = document.getElementById('rr-modal-roster');
+    rosterEl.innerHTML = '';
+    var roster = t.roster||[];
+    if (!roster.length) { rosterEl.innerHTML='<p class="text-xs text-outline">No player roster data available.</p>'; }
+    else {
+      roster.forEach(function(pl){
+        var vs=pl.verificationStatus||'Pending';
+        var vsColor=vs==='Verified'?'text-emerald-400':vs==='Rejected'?'text-red-400':'text-amber-300';
+        var vsIcon=vs==='Verified'?'check_circle':vs==='Rejected'?'cancel':'pending';
+        var row=document.createElement('div');
+        row.className='flex items-center justify-between gap-2 px-sm py-xs rounded-lg bg-surface-container-lowest border border-white/5';
+        row.innerHTML='<div class="flex items-center gap-2 min-w-0">'+
+          '<span class="text-[10px] font-mono text-outline shrink-0">'+esc(pl.rosterType==='Substitute'?'SUB':'P'+(pl.slot||''))+'</span>'+
+          '<span class="font-bold text-xs text-on-surface truncate">'+esc(pl.realName||pl.ign||'Player')+'</span>'+
+          '<span class="text-[10px] text-outline cyber-mono truncate">'+esc(pl.ign?'('+pl.ign+')':'')+'</span>'+
+          '</div>'+
+          '<span class="flex items-center gap-1 text-[11px] font-bold '+vsColor+' shrink-0">'+
+          '<span class="material-symbols-outlined text-[14px]">'+vsIcon+'</span>'+esc(vs)+'</span>';
+        rosterEl.appendChild(row);
+      });
+    }
+    rrModal.classList.remove('hidden');
+    document.body.style.overflow='hidden';
+  }
+  function closeRejectionReview() { rrModal.classList.add('hidden'); document.body.style.overflow=''; }
+  document.getElementById('close-rr-modal').addEventListener('click',closeRejectionReview);
+  document.getElementById('close-rr-modal-btn').addEventListener('click',closeRejectionReview);
+  rrModal.addEventListener('click',function(e){ if(e.target===rrModal) closeRejectionReview(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeRejectionReview(); });
+
   function renderTabs(){
-    Array.prototype.forEach.call(tabs.children, function(btn){
-      var on = btn.dataset.division === active;
-      if (btn.dataset.division === 'faculty') {
-        btn.className = on 
-          ? 'flex-1 md:flex-none px-md py-sm rounded-lg font-label-caps text-label-caps transition-all font-bold bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 flex items-center justify-center gap-1 shadow-lg'
-          : 'flex-1 md:flex-none px-md py-sm rounded-lg font-label-caps text-label-caps transition-all font-bold text-amber-300 flex items-center justify-center gap-1 hover:bg-amber-400/10';
+    Array.prototype.forEach.call(tabs.children,function(btn){
+      var on=btn.dataset.division===active;
+      if(btn.dataset.division==='faculty'){
+        btn.className=on?'flex-1 md:flex-none px-md py-sm rounded-lg font-label-caps text-label-caps transition-all font-bold bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 flex items-center justify-center gap-1 shadow-lg'
+          :'flex-1 md:flex-none px-md py-sm rounded-lg font-label-caps text-label-caps transition-all font-bold text-amber-300 flex items-center justify-center gap-1 hover:bg-amber-400/10';
       } else {
-        btn.classList.toggle('bg-primary', on);
-        btn.classList.toggle('text-on-primary', on);
-        btn.classList.toggle('text-on-surface-variant', !on);
+        btn.classList.toggle('bg-primary',on);
+        btn.classList.toggle('text-on-primary',on);
+        btn.classList.toggle('text-on-surface-variant',!on);
       }
     });
   }
 
   function render(){
-    var d = DIVS[active];
-    summaryEl.innerHTML = '';
-    
-    if (active === 'faculty') {
-      // Golden VIP Highlight Banner for Faculty
-      summaryEl.className = 'bg-surface-container border border-amber-400/40 rounded-xl p-lg flex flex-col gap-xs shadow-2xl relative overflow-hidden bg-gradient-to-r from-amber-500/15 via-surface-container to-purple-500/10';
-      summaryEl.innerHTML = 
-        '<div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-400/20 pb-3">' +
-          '<div class="flex items-center gap-2">' +
-            '<span class="material-symbols-outlined text-amber-400 text-[26px]">workspace_premium</span>' +
-            '<div class="font-headline-md text-headline-md text-amber-300 cyber-title">' + d.title + '</div>' +
-          '</div>' +
-          '<div class="flex items-center gap-2">' +
-            '<span class="px-3 py-1 rounded bg-amber-400/20 border border-amber-400/40 text-amber-200 text-xs font-bold font-label-caps">ID EXEMPT</span>' +
-            '<span class="px-3 py-1 rounded bg-purple-500/20 text-purple-200 text-xs font-bold font-label-caps">FRIENDLY MATCHES</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="font-body-md text-body-md text-on-surface-variant mt-2">' + d.sub + '</div>' +
-        '<div class="flex flex-wrap gap-1.5 mt-sm">' + d.depts.map(function(x){
-          return '<span class="font-label-caps text-xs text-amber-200 bg-amber-400/15 border border-amber-400/20 rounded-full px-sm py-xs font-bold">' + x[0] + ' · ' + x[1] + ' team</span>';
-        }).join('') + '</div>';
+    var d=DIVS[active];
+    summaryEl.innerHTML='';
+    if(active==='faculty'){
+      summaryEl.className='bg-surface-container border border-amber-400/40 rounded-xl p-lg flex flex-col gap-xs shadow-2xl relative overflow-hidden bg-gradient-to-r from-amber-500/15 via-surface-container to-purple-500/10';
+      summaryEl.innerHTML=
+        '<div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-400/20 pb-3">'+
+          '<div class="flex items-center gap-2">'+
+            '<span class="material-symbols-outlined text-amber-400 text-[26px]">workspace_premium</span>'+
+            '<div class="font-headline-md text-headline-md text-amber-300 cyber-title">'+d.title+'</div>'+
+          '</div>'+
+          '<div class="flex items-center gap-2">'+
+            '<span class="px-3 py-1 rounded bg-amber-400/20 border border-amber-400/40 text-amber-200 text-xs font-bold font-label-caps">ID EXEMPT</span>'+
+            '<span class="px-3 py-1 rounded bg-purple-500/20 text-purple-200 text-xs font-bold font-label-caps">FRIENDLY MATCHES</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="font-body-md text-body-md text-on-surface-variant mt-2">'+d.sub+'</div>'+
+        '<div class="flex flex-wrap gap-1.5 mt-sm">'+d.depts.map(function(x){
+          return '<span class="font-label-caps text-xs text-amber-200 bg-amber-400/15 border border-amber-400/20 rounded-full px-sm py-xs font-bold">'+x[0]+' · '+x[1]+' team</span>';
+        }).join('')+'</div>';
     } else {
-      summaryEl.className = 'bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs shadow-lg';
-      summaryEl.innerHTML = 
-        '<div class="font-headline-md text-headline-md text-on-surface cyber-title">' + d.title + '</div>' +
-        '<div class="font-body-md text-body-md text-on-surface-variant">' + d.sub + '</div>' +
-        '<div class="flex flex-wrap gap-xs mt-sm">' + d.depts.map(function(x){
-          return '<span class="font-label-caps text-label-caps text-on-surface bg-surface-container-high border border-white/10 rounded-full px-sm py-xs">' + x[0] + ' · ' + x[1] + ' team' + (x[1]>1?'s':'') + '</span>';
-        }).join('') + '</div>';
+      summaryEl.className='bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs shadow-lg';
+      summaryEl.innerHTML=
+        '<div class="font-headline-md text-headline-md text-on-surface cyber-title">'+d.title+'</div>'+
+        '<div class="font-body-md text-body-md text-on-surface-variant">'+d.sub+'</div>'+
+        '<div class="flex flex-wrap gap-xs mt-sm">'+d.depts.map(function(x){
+          return '<span class="font-label-caps text-label-caps text-on-surface bg-surface-container-high border border-white/10 rounded-full px-sm py-xs">'+x[0]+' · '+x[1]+' team'+(x[1]>1?'s':'')+'</span>';
+        }).join('')+'</div>';
     }
 
-    var q = (searchEl.value||'').toLowerCase().trim();
-    var sourceList = approved;
-
-    var rows = sourceList.filter(function(t){
-      var p = parseCourse(t.Course);
-      if (p.div !== active) return false;
-      if (!q) return true;
-      return (t.TeamName||'').toLowerCase().indexOf(q) > -1 || (p.dept||'').toLowerCase().indexOf(q) > -1;
+    var q=(searchEl.value||'').toLowerCase().trim();
+    var rows=approved.filter(function(t){
+      var p=parseCourse(t.Course);
+      if(p.div!==active) return false;
+      if(!q) return true;
+      return (t.TeamName||'').toLowerCase().indexOf(q)>-1||(p.dept||'').toLowerCase().indexOf(q)>-1;
     });
 
-    gridEl.innerHTML = '';
-    if (!rows.length){
-      var msg = document.createElement('div');
-      msg.className = 'sm:col-span-2 lg:col-span-3 bg-surface-container border border-dashed border-white/15 rounded-xl p-xl text-center flex flex-col gap-sm';
-      msg.innerHTML = '<span class="material-symbols-outlined text-[32px] text-on-surface-variant mx-auto">groups</span>' +
-        '<p class="font-body-md text-body-md text-on-surface-variant">' +
-        (apiReady && approved.length ? 'No approved teams in this division yet.'
-                  : 'Approved teams will appear here. Registration closes September 1, 2026.') + '</p>' +
+    gridEl.innerHTML='';
+    if(!rows.length){
+      var msg=document.createElement('div');
+      msg.className='sm:col-span-2 lg:col-span-3 bg-surface-container border border-dashed border-white/15 rounded-xl p-xl text-center flex flex-col gap-sm';
+      msg.innerHTML='<span class="material-symbols-outlined text-[32px] text-on-surface-variant mx-auto">groups</span>'+
+        '<p class="font-body-md text-body-md text-on-surface-variant">'+(apiReady&&approved.length?'No approved teams in this division yet.':'Approved teams will appear here. Registration closes September 1, 2026.')+'</p>'+
         '<a class="font-label-caps text-label-caps text-primary hover:text-primary-container font-bold" href="register-team.html">REGISTER YOUR TEAM</a>';
       gridEl.appendChild(msg);
-      return;
+    } else {
+      rows.forEach(function(t){
+        var p=parseCourse(t.Course);
+        var card=document.createElement('div');
+        var isFac=active==='faculty';
+        card.className=isFac
+          ?'bg-surface-container glass-hover rounded-xl p-md flex flex-col border border-amber-400/30 shadow-lg bg-gradient-to-r from-amber-500/10 via-surface-container to-transparent overflow-hidden'
+          :'bg-surface-container glass-hover rounded-xl p-md flex flex-col border border-white/10 shadow-md overflow-hidden';
+        var bc=colorFor(t.TeamID);
+        var logo=t.logoUrl||t.LogoUrl||'';
+        var isSvg=logo&&(logo.endsWith('.svg')||logo.indexOf('assets/icons/')!==-1);
+        var iconHtml=logo
+          ?'<img src="'+esc(logo)+'" alt="'+esc(t.TeamName)+' logo" class="'+(isSvg?'w-8 h-8 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]':'w-full h-full object-cover')+'" loading="lazy" onerror="this.remove()" />'
+          :initials(t.TeamName);
+        var dL=DEPT_LOGOS[p.dept]?'<img src="'+DEPT_LOGOS[p.dept]+'" alt="'+p.dept+' Logo" class="w-5 h-5 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/15 shrink-0" />':'';
+        var photoHtml=t.teamPhotoUrl?'<div class="-mx-md -mt-md mb-md h-28 overflow-hidden rounded-t-xl border-b border-white/10"><img src="'+esc(t.teamPhotoUrl)+'" alt="'+esc(t.TeamName)+' team photo" class="w-full h-full object-cover" loading="lazy" onerror="this.parentNode.remove()" /></div>':'';
+        var descHtml=t.description?'<p class="font-body-md text-[13px] leading-snug text-on-surface-variant mt-sm line-clamp-2">'+esc(t.description)+'</p>':'';
+        var faces=(t.roster||[]).filter(function(pl){return pl.profileImageUrl;}).slice(0,5);
+        var rosterHtml=faces.length?'<div class="flex items-center mt-sm" aria-label="Players with public profile images">'+faces.map(function(pl){
+            return '<img src="'+esc(pl.profileImageUrl)+'" alt="'+esc(pl.ign||pl.realName||'Player')+'" title="'+esc(pl.ign||pl.realName||'Player')+'" class="w-7 h-7 rounded-full object-cover border-2 border-surface-container -mr-2 bg-surface-container-lowest" loading="lazy" onerror="this.remove()" />';
+          }).join('')+'<span class="ml-3 font-label-caps text-[10px] text-on-surface-variant">ROSTER</span></div>':'';
+        card.innerHTML=photoHtml+
+          '<div class="flex items-center gap-md">'+
+            '<div class="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white font-bold cyber-mono border-2 shadow-sm overflow-hidden" style="background:radial-gradient(circle at center,'+bc+'20 0%,rgba(10,16,30,0.95) 75%);border-color:'+bc+';box-shadow:0 0 12px '+bc+'40;">'+iconHtml+'</div>'+
+            '<div class="min-w-0 flex flex-col flex-1">'+
+              '<div class="flex items-center justify-between gap-1">'+
+                '<span class="font-headline-md text-[17px] text-on-surface truncate cyber-title">'+esc(t.TeamName||'Team')+'</span>'+
+                (isFac?'<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 font-bold uppercase shrink-0">FACULTY</span>':'')+
+              '</div>'+
+              '<div class="flex items-center gap-1.5 mt-0.5">'+dL+'<span class="font-label-caps text-xs text-on-surface-variant truncate">'+(p.dept?esc(p.dept)+' · ':'')+' Captain: '+esc(t.CaptainName||'TBA')+'</span></div>'+
+            '</div>'+
+          '</div>'+descHtml+rosterHtml;
+        gridEl.appendChild(card);
+      });
     }
 
-    var DEPT_LOGOS = {
-      'IT': 'assets/IT.png',
-      'HTM': 'assets/HTM.png',
-      'CTE': 'assets/CTE.png',
-      'CRIM': 'assets/CRIM.png',
-      'HM': 'assets/HTM.png',
-      'TM': 'assets/HTM.png'
-    };
-
-    rows.forEach(function(t){
-      var p = parseCourse(t.Course);
-      var card = document.createElement('div');
-      var isFac = active === 'faculty';
-      card.className = isFac 
-        ? 'bg-surface-container glass-hover rounded-xl p-md flex flex-col border border-amber-400/30 shadow-lg bg-gradient-to-r from-amber-500/10 via-surface-container to-transparent overflow-hidden'
-        : 'bg-surface-container glass-hover rounded-xl p-md flex flex-col border border-white/10 shadow-md overflow-hidden';
-      
-      var brandColor = t.color || t.teamColor || colorFor(t.TeamID);
-      var isSvg = logo && (logo.endsWith('.svg') || logo.includes('assets/icons/'));
-      var iconHtml = logo
-        ? '<img src="' + esc(logo) + '" alt="' + esc(t.TeamName) + ' logo" class="' + (isSvg ? 'w-8 h-8 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]' : 'w-full h-full object-cover') + '" loading="lazy" onerror="this.remove()" />'
-        : (t.icon || t.badgeIcon
-            ? '<img src="' + esc(t.icon || t.badgeIcon) + '" alt="Emblem" class="w-8 h-8 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" />'
-            : initials(t.TeamName));
-
-      var deptLogoHtml = DEPT_LOGOS[p.dept]
-        ? '<img src="' + DEPT_LOGOS[p.dept] + '" alt="' + p.dept + ' Logo" class="w-5 h-5 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/15 shrink-0" />'
-        : '';
-
-      // Official team photo published by tournament staff.
-      var photoHtml = t.teamPhotoUrl
-        ? '<div class="-mx-md -mt-md mb-md h-28 overflow-hidden rounded-t-xl border-b border-white/10">' +
-            '<img src="' + esc(t.teamPhotoUrl) + '" alt="' + esc(t.TeamName) + ' team photo" class="w-full h-full object-cover" loading="lazy" onerror="this.parentNode.remove()" />' +
-          '</div>'
-        : '';
-
-      var descHtml = t.description
-        ? '<p class="font-body-md text-[13px] leading-snug text-on-surface-variant mt-sm line-clamp-2">' + esc(t.description) + '</p>'
-        : '';
-
-      // Only players who opted in to a public profile image are shown.
-      var faces = (t.roster || []).filter(function(pl){ return pl.profileImageUrl; }).slice(0, 5);
-      var rosterHtml = faces.length
-        ? '<div class="flex items-center mt-sm" aria-label="Players with public profile images">' + faces.map(function(pl){
-            return '<img src="' + esc(pl.profileImageUrl) + '" alt="' + esc(pl.ign || pl.realName || 'Player') + '" title="' + esc(pl.ign || pl.realName || 'Player') + '" class="w-7 h-7 rounded-full object-cover border-2 border-surface-container -mr-2 bg-surface-container-lowest" loading="lazy" onerror="this.remove()" />';
-          }).join('') + '<span class="ml-3 font-label-caps text-[10px] text-on-surface-variant">ROSTER</span></div>'
-        : '';
-
-      card.innerHTML =
-        photoHtml +
-        '<div class="flex items-center gap-md">' +
-          '<div class="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white font-bold cyber-mono border-2 shadow-sm overflow-hidden" style="background:radial-gradient(circle at center, ' + brandColor + '20 0%, rgba(10, 16, 30, 0.95) 75%); border-color:' + brandColor + '; box-shadow:0 0 12px ' + brandColor + '40;">' + iconHtml + '</div>' +
-          '<div class="min-w-0 flex flex-col flex-1">' +
-            '<div class="flex items-center justify-between gap-1">' +
-              '<span class="font-headline-md text-[17px] text-on-surface truncate cyber-title">' + esc(t.TeamName || 'Team') + '</span>' +
-              (isFac ? '<span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 font-bold uppercase shrink-0">FACULTY</span>' : '') +
-            '</div>' +
-            '<div class="flex items-center gap-1.5 mt-0.5">' +
-              deptLogoHtml +
-              '<span class="font-label-caps text-xs text-on-surface-variant truncate">' + (p.dept ? esc(p.dept) + ' · ' : '') + 'Captain: ' + esc(t.CaptainName || 'TBA') + '</span>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-        descHtml +
-        rosterHtml;
-      gridEl.appendChild(card);
-    });
+    // Rejected teams (same active division filter)
+    var rejRows=rejected.filter(function(t){ return parseCourse(t.Course).div===active; });
+    if(rejectedGrid){
+      rejectedGrid.innerHTML='';
+      if(rejRows.length){
+        if(rejectedSection) rejectedSection.classList.remove('hidden');
+        rejRows.forEach(function(t){
+          var p=parseCourse(t.Course);
+          var bc=colorFor(t.TeamID);
+          var rc=document.createElement('div');
+          rc.className='bg-surface-container rounded-xl p-md flex flex-col border border-red-500/25 shadow-sm overflow-hidden';
+          var dL=DEPT_LOGOS[p.dept]?'<img src="'+DEPT_LOGOS[p.dept]+'" class="w-4 h-4 object-contain rounded-full bg-surface-container-lowest border border-white/10 shrink-0" alt="" />':'';
+          rc.innerHTML=
+            '<div class="flex items-center gap-sm">'+
+              '<div class="w-10 h-10 rounded-xl shrink-0 flex items-center justify-center text-white text-xs font-bold cyber-mono border overflow-hidden opacity-50" style="background:radial-gradient(circle at center,'+bc+'15 0%,rgba(10,16,30,.95) 75%);border-color:'+bc+'40">'+initials(t.TeamName)+'</div>'+
+              '<div class="min-w-0 flex-1">'+
+                '<span class="font-bold text-sm text-on-surface truncate block">'+esc(t.TeamName||'Team')+'</span>'+
+                '<div class="flex items-center gap-1 mt-0.5">'+dL+'<span class="text-[11px] text-outline">'+esc(p.dept||'')+(t.CaptainName?' · Cpt: '+esc(t.CaptainName):'')+' </span></div>'+
+              '</div>'+
+              '<span class="px-2 py-0.5 rounded bg-red-500/20 border border-red-500/30 text-red-300 text-[10px] font-bold font-label-caps shrink-0">Rejected</span>'+
+            '</div>'+
+            '<button type="button" class="rj-review-btn mt-sm w-full py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/25 text-red-300 font-label-caps text-xs font-bold transition-colors flex items-center justify-center gap-1.5">'+
+              '<span class="material-symbols-outlined text-[15px]">info</span> Review Rejection Details'+
+            '</button>';
+          rc.querySelector('.rj-review-btn').addEventListener('click',function(){openRejectionReview(t);});
+          rejectedGrid.appendChild(rc);
+        });
+      } else {
+        if(rejectedSection) rejectedSection.classList.add('hidden');
+      }
+    }
   }
 
-  tabs.addEventListener('click', function(e){
-    var btn = e.target.closest('button[data-division]');
-    if (!btn) return;
-    active = btn.dataset.division;
+  tabs.addEventListener('click',function(e){
+    var btn=e.target.closest('button[data-division]');
+    if(!btn) return;
+    active=btn.dataset.division;
     renderTabs(); render();
   });
-  searchEl.addEventListener('input', render);
-
+  searchEl.addEventListener('input',render);
   renderTabs(); render();
 
-  if (window.PublicTournamentApi && typeof PublicTournamentApi.listTeams === 'function') {
+  if(window.PublicTournamentApi && typeof PublicTournamentApi.listTeams==='function'){
     PublicTournamentApi.listTeams().then(function(list){
-      apiReady = true;
-      // Managed tournament records: only officially approved teams are published.
-      approved = (list || []).map(function(t){
+      apiReady=true;
+      var all=(list||[]).map(function(t){
         return {
-          TeamID: t.teamId, TeamName: t.teamName, Course: t.course || t.division || '',
-          CaptainName: t.captainName, Status: t.approvalStatus || 'Approved',
-          description: t.description || '', logoUrl: t.logoUrl || '',
-          teamPhotoUrl: t.teamPhotoUrl || '', roster: t.roster || []
+          TeamID:t.teamId, TeamName:t.teamName, Course:t.course||t.division||'',
+          CaptainName:t.captainName, Status:t.approvalStatus||'Approved',
+          description:t.description||'', logoUrl:t.logoUrl||'',
+          teamPhotoUrl:t.teamPhotoUrl||'', roster:t.roster||[],
+          rejectionReason:t.rejectionReason||''
         };
       });
-      statusEl.textContent = approved.length + ' approved team' + (approved.length === 1 ? '' : 's') + ' published by tournament officials.';
+      approved=all.filter(function(t){ return t.Status==='Approved'; });
+      rejected=all.filter(function(t){ return t.Status==='Rejected'; });
+      statusEl.textContent=approved.length+' approved team'+(approved.length===1?'':'s')+' published by tournament officials.';
       render();
     }).catch(function(){
-      statusEl.textContent = 'Official team directory is temporarily unavailable.';
+      statusEl.textContent='Official team directory is temporarily unavailable.';
     });
   } else {
-    statusEl.textContent = 'Official directory of approved teams.';
+    statusEl.textContent='Official directory of approved teams.';
   }
 })();
 </script><script>(function(){var t=document.getElementById('nav-toggle'),n=document.getElementById('mobile-nav'),i=document.getElementById('nav-toggle-icon');if(!t||!n)return;t.addEventListener('click',function(){var open=n.classList.contains('hidden');n.classList.toggle('hidden',!open);n.classList.toggle('flex',open);t.setAttribute('aria-expanded',String(open));if(i)i.textContent=open?'close':'menu';});})();</script>

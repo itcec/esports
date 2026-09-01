@@ -400,6 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const PALETTE = ['#1264ff', '#00e5ff', '#7c5cff', '#ff2fd8', '#00e676', '#ffb020'];
   let currentTeam = null;
   let currentDocs = [];
+  let currentTeamPlayers = [];
 
   // Mobile Tab Segmented Navigation
   const vTabBtns = document.querySelectorAll('.verify-mobile-tab-btn');
@@ -940,23 +941,73 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function setTeamStatus(status) {
-    if (!teamId) return;
+    if (!teamId || !currentTeam) { alert('No team loaded.'); return; }
     if (!window.CECAuth || !window.CECAuth.canApproveTeams()) {
       alert('Permission Denied: Team review and verification require approved official or administrator credentials.');
       return;
     }
-    try {
-      await callRegistrationApi('updateTeamStatus', { teamId: teamId, status: status });
-      location.href = 'admin-registrations.html';
-    } catch (err) {
-      alert('Could not update team: ' + err.message);
+
+    const players = currentTeamPlayers || [];
+    const verified = players.filter(p => (p.VerificationStatus || 'Pending') === 'Verified').length;
+    const rejected = players.filter(p => p.VerificationStatus === 'Rejected').length;
+    const pending = players.filter(p => (p.VerificationStatus || 'Pending') === 'Pending').length;
+    const total = players.length;
+
+    if (status === 'Approved') {
+      let msg = `Approve "${currentTeam.TeamName}" (${teamId})\n\nRoster: ${verified}/${total} players verified`;
+      if (pending > 0) msg += `\n⚠️ ${pending} player(s) still PENDING — approving anyway?`;
+      if (rejected > 0) msg += `\n⛔ ${rejected} player(s) marked REJECTED`;
+      if (!confirm(msg)) return;
+      const reason = 'Approved after roster verification. Verified: ' + verified + '/' + total;
+      try {
+        await updateRegistrationStatusWithReason(teamId, 'Approved', reason);
+        location.href = 'admin-registrations.html';
+      } catch (err) {
+        alert('Could not approve team: ' + err.message);
+      }
+    } else {
+      // Reject — auto-build the reason from player statuses, no text form needed
+      let reasonParts = [];
+      if (rejected > 0) reasonParts.push(rejected + ' player(s) rejected during roster verification');
+      if (pending > 0) reasonParts.push(pending + ' player(s) not yet verified');
+      const autoReason = reasonParts.length ? reasonParts.join('; ') + '.' : 'Rejected during staff verification review.';
+      const msg = `Reject "${currentTeam.TeamName}" (${teamId})?\n\nReason: ${autoReason}\n\nThis will be shown on the public Teams page.`;
+      if (!confirm(msg)) return;
+      try {
+        await updateRegistrationStatusWithReason(teamId, 'Rejected', autoReason);
+        location.href = 'admin-registrations.html';
+      } catch (err) {
+        alert('Could not reject team: ' + err.message);
+      }
     }
   }
 
   document.getElementById('approve-team-btn').addEventListener('click', () => setTeamStatus('Approved'));
   document.getElementById('reject-team-btn').addEventListener('click', () => setTeamStatus('Rejected'));
-  document.getElementById('save-note-btn').addEventListener('click', () => {
-    alert('Internal note saved.');
+  document.getElementById('save-note-btn').addEventListener('click', async () => {
+    const note = document.getElementById('rejection-notes').value.trim();
+    if (!note) return;
+    if (!teamId) return;
+    try {
+      await window.CECFirebase.init();
+      const db = window.CECFirebase && window.CECFirebase.db;
+      if (db) {
+        await db.ref('registrations/' + teamId + '/internalNotes').set({
+          note: note,
+          savedAt: new Date().toISOString(),
+          savedBy: (window.CECAuth && window.CECAuth.currentUser) ? window.CECAuth.currentUser.email : 'staff'
+        });
+        const btn = document.getElementById('save-note-btn');
+        const orig = btn.textContent;
+        btn.textContent = 'Saved ✓';
+        btn.classList.add('text-primary');
+        setTimeout(() => { btn.textContent = orig; btn.classList.remove('text-primary'); }, 2000);
+      } else {
+        alert('Internal note saved locally (Firebase unavailable).');
+      }
+    } catch (e) {
+      alert('Could not save note: ' + e.message);
+    }
   });
 
   // Mobile Tab Navigation Logic
@@ -1020,7 +1071,13 @@ document.addEventListener('DOMContentLoaded', () => {
       renderPlayers(data.players || [], currentDocs);
     } catch (err) {
       setSafeText('detail-team-name', 'Error loading team');
-      rosterList.innerHTML = '<div class="p-lg text-center text-error bg-surface-container rounded-xl">Could not load this team: ' + err.message + '</div>';
+      const isAuthErr = err.message && (err.message.includes('staff') || err.message.includes('token') || err.message.includes('approved') || err.message.includes('Firebase'));
+      rosterList.innerHTML = '<div class="p-lg text-center text-error bg-surface-container rounded-xl flex flex-col gap-sm">'
+        + '<span class="material-symbols-outlined text-[32px] mx-auto">error</span>'
+        + '<strong>' + (isAuthErr ? 'Staff Authentication Error' : 'Could not load team') + '</strong>'
+        + '<span class="text-sm text-on-surface-variant">' + err.message + '</span>'
+        + (isAuthErr ? '<span class="text-xs text-outline mt-1">Make sure your account is approved by the coordinator, then <a class="text-primary underline" href="" onclick="location.reload();return false;">refresh the page</a>.</span>' : '')
+        + '</div>';
     }
   }
 
@@ -1028,10 +1085,20 @@ document.addEventListener('DOMContentLoaded', () => {
   // wipes document.body before load() finishes, causing textContent-on-null crashes.
   let _loadFired = false;
   function _tryLoad() {
-    if (_loadFired || !window.CECAuth.isResolved) return;
+    if (_loadFired || !window.CECAuth || !window.CECAuth.isResolved) return;
     if (window.CECAuth.isApprovedStaff()) {
       _loadFired = true;
       load();
+    } else if (window.CECAuth.currentUser) {
+      // User is logged in but not yet approved — show a helpful wait state
+      // requireApprovedStaff() will handle the redirect/wall, but if this fires
+      // first, show a non-destructive message in the roster area.
+      if (rosterList && !_loadFired) {
+        rosterList.innerHTML = '<div class="p-lg text-center text-on-surface-variant bg-surface-container rounded-xl">'
+          + '<span class="material-symbols-outlined text-[28px] text-amber-400 block mx-auto mb-2">pending</span>'
+          + '<strong class="text-sm">Awaiting Staff Approval</strong>'
+          + '<p class="text-xs text-outline mt-1">Your account is pending approval by the Tournament Coordinator.</p></div>';
+      }
     }
   }
   if (window.CECAuth && window.CECAuth.isResolved) {

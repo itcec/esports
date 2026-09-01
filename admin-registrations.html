@@ -699,17 +699,7 @@ document.addEventListener('DOMContentLoaded', () => {
     'Custom Reason': ''
   };
 
-  function openRejectionModal(team) {
-    if (!team) return;
-    document.getElementById('rejection-team-id').value = team.TeamID;
-    document.getElementById('rejection-team-name-display').textContent = team.TeamName || 'Team';
-    document.getElementById('rejection-team-id-display').textContent = team.TeamID;
-    categorySelect.value = '';
-    reasonTextarea.value = '';
-    updatePreviewText();
-    rejectionModal.classList.remove('hidden');
-    rejectionModal.classList.add('flex');
-  }
+
 
   function closeRejectionModal() {
     rejectionModal.classList.add('hidden');
