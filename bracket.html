@@ -349,23 +349,26 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
             '<span class="material-symbols-outlined text-primary">account_tree</span>' +
             'Department Champions' +
           '</h2>' +
-          '<span class="px-3 py-1 rounded bg-primary/20 text-primary text-xs font-bold font-label-caps">SEP 5 – 19</span>' +
+          '<span class="px-3 py-1 rounded bg-primary/20 text-primary text-xs font-bold font-label-caps">SEP 5 – 19 · CLICK TO VIEW BRACKET</span>' +
         '</div>' +
         '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">' +
           data.depts.map(function(d){
-            return '<div class="bg-surface-container glass-hover rounded-xl p-md border border-white/10 border-t-2 flex flex-col gap-2 shadow-lg" style="border-top-color:' + d.color + '">' +
+            return '<div onclick="openDeptBracketModal(\'' + d.key + '\', \'' + esc(d.name) + '\', \'' + d.color + '\', \'' + d.icon + '\')" class="bg-surface-container glass-hover rounded-xl p-md border border-white/10 border-t-2 flex flex-col gap-2 shadow-lg cursor-pointer group" style="border-top-color:' + d.color + '">' +
               '<div class="flex justify-between items-center">' +
-                '<span class="text-xs font-bold font-label-caps text-on-surface">' + d.name + '</span>' +
-                '<span class="text-[10px] font-label-caps px-2 py-0.5 rounded bg-surface-container-high text-primary">' + d.date + '</span>' +
+                '<span class="text-xs font-bold font-label-caps text-on-surface group-hover:text-primary transition-colors">' + d.name + '</span>' +
+                '<span class="text-[10px] font-label-caps px-2 py-0.5 rounded bg-surface-container-high text-primary flex items-center gap-1 font-mono">' +
+                  '<span class="material-symbols-outlined text-[12px]">visibility</span> VIEW' +
+                '</span>' +
               '</div>' +
-              '<div class="flex items-center gap-2.5 mt-1 p-2 rounded-lg bg-surface-container-lowest/80 border border-white/5">' +
+              '<div class="flex items-center gap-2.5 mt-1 p-2 rounded-lg bg-surface-container-lowest/80 border border-white/5 group-hover:border-primary/30 transition-colors">' +
                 '<div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-white/15" style="background:' + d.color + '">' +
                   '<img src="' + d.icon + '" alt="Emblem" class="w-5 h-5 object-contain filter invert" />' +
                 '</div>' +
-                '<div class="flex flex-col min-w-0">' +
+                '<div class="flex flex-col min-w-0 flex-1">' +
                   '<span class="text-[10px] font-label-caps text-on-surface-variant">DEPARTMENT CHAMPION</span>' +
                   '<span class="text-xs font-bold ' + (d.champ ? 'text-on-surface' : 'text-on-surface-variant') + ' truncate cyber-title">' + (d.champ ? esc(d.champ) : 'To be decided') + '</span>' +
                 '</div>' +
+                '<span class="material-symbols-outlined text-outline text-[16px] group-hover:text-primary transition-colors">arrow_forward</span>' +
               '</div>' +
             '</div>';
           }).join('') +
@@ -400,6 +403,109 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     });
   }
 
+  // Realtime Department Bracket Modal Logic
+  var deptModal = document.getElementById('dept-bracket-modal');
+  var closeDeptModalBtn = document.getElementById('close-dept-modal');
+  var closeDeptModalBottom = document.getElementById('btn-close-dept-modal-bottom');
+  var deptModalContent = document.getElementById('dept-modal-content');
+  var currentDeptListener = null;
+
+  function closeDeptModal() {
+    if (deptModal) deptModal.classList.add('hidden');
+    if (currentDeptListener && typeof currentDeptListener === 'function') {
+      currentDeptListener();
+      currentDeptListener = null;
+    }
+  }
+
+  if (closeDeptModalBtn) closeDeptModalBtn.addEventListener('click', closeDeptModal);
+  if (closeDeptModalBottom) closeDeptModalBottom.addEventListener('click', closeDeptModal);
+
+  window.openDeptBracketModal = function(deptKey, deptName, deptColor, deptIcon) {
+    if (!deptModal) return;
+    document.getElementById('dept-modal-title').textContent = deptName + ' — Tournament Bracket';
+    document.getElementById('dept-modal-subtitle').textContent = (active === 'womens' ? "Women's Division" : (active === 'faculty' ? "Faculty Exhibition" : "Men's Division")) + ' · Realtime Knockout Stage';
+    document.getElementById('dept-modal-logo').src = deptIcon || 'assets/IT.png';
+
+    deptModalContent.innerHTML = '<div class="py-12 flex flex-col items-center justify-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[32px] text-primary animate-spin">sync</span><span>Loading live bracket matches…</span></div>';
+    deptModal.classList.remove('hidden');
+
+    function renderDeptModalMatches(matches) {
+      if (!matches || !matches.length) {
+        deptModalContent.innerHTML = '<div class="p-8 text-center bg-surface-container-lowest rounded-xl border border-dashed border-white/10 text-xs text-on-surface-variant">No published knockout bracket found for this division yet. Tournament administrators publish the bracket during stage draw.</div>';
+        return;
+      }
+
+      // Group matches into QF, SF, Final
+      var qfs = matches.filter(function(m){ return String(m.stage || '').toUpperCase().indexOf('QUARTER') !== -1 || String(m.matchKey || '').indexOf('QF') !== -1; });
+      var sfs = matches.filter(function(m){ return String(m.stage || '').toUpperCase().indexOf('SEMI') !== -1 || String(m.matchKey || '').indexOf('SF') !== -1; });
+      var finals = matches.filter(function(m){ return String(m.stage || '').toUpperCase().indexOf('FINAL') !== -1 || String(m.matchKey || '').indexOf('Final') !== -1; });
+
+      var cardHtml = function(m, highlight) {
+        var t1 = m.team1Name || 'TBD';
+        var t2 = m.team2Name || 'TBD';
+        var s1 = m.score1 !== undefined ? m.score1 : 0;
+        var s2 = m.score2 !== undefined ? m.score2 : 0;
+        var isDone = m.status === 'Completed' || m.status === 'COMPLETED';
+        var isLive = m.status === 'LIVE' || m.status === 'Live';
+        var w = isDone ? (m.winnerName || (s1 > s2 ? t1 : (s2 > s1 ? t2 : ''))) : '';
+
+        return '<div class="bg-surface-container-high rounded-xl p-3 border ' + (highlight ? 'border-[#ffb020]/40' : (isLive ? 'border-primary/50 ring-1 ring-primary/40' : 'border-white/10')) + ' shadow flex flex-col gap-2">' +
+          '<div class="flex items-center justify-between text-[11px] border-b border-white/5 pb-1">' +
+            '<span class="font-bold ' + (highlight ? 'text-[#ffb020]' : 'text-primary') + ' font-mono">' + (m.stage || m.title || 'Knockout') + '</span>' +
+            '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold ' + (isDone ? 'bg-emerald-500/20 text-emerald-300' : (isLive ? 'bg-red-500/20 text-red-300 animate-pulse' : 'bg-white/5 text-outline')) + '">' +
+              (isDone ? 'COMPLETED' : (isLive ? '🔴 LIVE' : 'SCHEDULED')) +
+            '</span>' +
+          '</div>' +
+          '<div class="flex flex-col gap-1 text-xs">' +
+            '<div class="flex items-center justify-between p-1.5 rounded ' + (w && w === t1 ? 'bg-emerald-500/15 font-bold text-emerald-300' : 'bg-surface-container-lowest text-on-surface') + '">' +
+              '<span class="truncate flex items-center gap-1">' + (w && w === t1 ? '<span class="material-symbols-outlined text-[14px] text-emerald-400">trophy</span>' : '') + esc(t1) + '</span>' +
+              '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface">' + s1 + '</span>' +
+            '</div>' +
+            '<div class="flex items-center justify-between p-1.5 rounded ' + (w && w === t2 ? 'bg-emerald-500/15 font-bold text-emerald-300' : 'bg-surface-container-lowest text-on-surface') + '">' +
+              '<span class="truncate flex items-center gap-1">' + (w && w === t2 ? '<span class="material-symbols-outlined text-[14px] text-emerald-400">trophy</span>' : '') + esc(t2) + '</span>' +
+              '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface">' + s2 + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      };
+
+      deptModalContent.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+          <!-- Quarterfinals -->
+          <div class="flex flex-col gap-3">
+            <span class="text-xs font-label-caps text-primary uppercase font-bold tracking-wider flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px]">sports_esports</span> QUARTERFINALS (BO1)
+            </span>
+            ${(qfs.length ? qfs : matches.slice(0, 4)).map(function(m){ return cardHtml(m, false); }).join('')}
+          </div>
+
+          <!-- Semifinals -->
+          <div class="flex flex-col gap-3">
+            <span class="text-xs font-label-caps text-secondary uppercase font-bold tracking-wider flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px]">swords</span> SEMIFINALS (BO3)
+            </span>
+            ${(sfs.length ? sfs : matches.slice(4, 6)).map(function(m){ return cardHtml(m, false); }).join('')}
+          </div>
+
+          <!-- Grand Final -->
+          <div class="flex flex-col gap-3">
+            <span class="text-xs font-label-caps text-[#ffb020] uppercase font-bold tracking-wider flex items-center gap-1">
+              <span class="material-symbols-outlined text-[16px]">emoji_events</span> GRAND FINALS (BO5)
+            </span>
+            ${(finals.length ? finals : matches.slice(6, 7)).map(function(m){ return cardHtml(m, true); }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    if (window.PublicTournamentApi && typeof PublicTournamentApi.listenBracket === 'function') {
+      currentDeptListener = PublicTournamentApi.listenBracket(active, renderDeptModalMatches);
+    } else if (window.PublicTournamentApi && typeof PublicTournamentApi.listBracket === 'function') {
+      PublicTournamentApi.listBracket(active).then(renderDeptModalMatches).catch(function(){ renderDeptModalMatches([]); });
+    }
+  };
+
   tabs.addEventListener('click', function(e){
     var btn = e.target.closest('button[data-division]');
     if (!btn) return;
@@ -411,7 +517,42 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   loadDivision(active);
 })();
 </script><script>(function(){var t=document.getElementById('nav-toggle'),n=document.getElementById('mobile-nav'),i=document.getElementById('nav-toggle-icon');if(!t||!n)return;t.addEventListener('click',function(){var open=n.classList.contains('hidden');n.classList.toggle('hidden',!open);n.classList.toggle('flex',open);t.setAttribute('aria-expanded',String(open));if(i)i.textContent=open?'close':'menu';});})();</script>
+
+<!-- Realtime Department Bracket Results Modal -->
+<div id="dept-bracket-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+  <div class="bg-surface-container w-full max-w-4xl rounded-2xl border border-primary/40 shadow-2xl overflow-hidden flex flex-col cyber-panel max-h-[90vh]">
+    <!-- Modal Header -->
+    <div class="p-md bg-primary/10 border-b border-primary/20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img id="dept-modal-logo" src="assets/IT.png" class="w-9 h-9 object-contain rounded-lg bg-surface-container-lowest p-1 border border-white/10" />
+        <div>
+          <h3 class="font-bold text-base text-on-surface cyber-title" id="dept-modal-title">IT Department Knockout Tournament</h3>
+          <p class="text-xs text-primary font-mono flex items-center gap-1 mt-0.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="dept-modal-subtitle">Live Realtime Synchronized Standings</span>
+          </p>
+        </div>
+      </div>
+      <button type="button" id="close-dept-modal" class="p-1.5 rounded-lg text-on-surface-variant hover:text-white hover:bg-white/10 transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Modal Body / Realtime Tree -->
+    <div class="p-lg overflow-y-auto flex-1 flex flex-col gap-lg" id="dept-modal-content">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="px-md py-3 bg-surface-container-low border-t border-white/10 flex items-center justify-between text-xs text-on-surface-variant">
+      <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-primary">cloud_sync</span> Realtime Sync Active</span>
+      <button type="button" id="btn-close-dept-modal-bottom" class="px-4 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps font-bold text-xs">CLOSE</button>
+    </div>
+  </div>
+</div>
+
 <!-- Firebase SDK & Bridge Scripts -->
 <script src="assets/js/firebase-config.js"></script>
+<script src="assets/js/registration-api.js"></script>
 <script src="assets/js/auth-guard.js"></script>
 </body></html>

@@ -172,7 +172,30 @@ const PublicTournamentApi = {
     return await callRegistrationApi('listStandings', {}, 'GET');
   },
   listBracket: async function (division) {
+    if (window.CECFirebase && window.CECFirebase.db) {
+      try {
+        const snap = await window.CECFirebase.db.ref('brackets/' + (division || 'mens')).once('value');
+        const data = snap.val();
+        if (data) {
+          return Array.isArray(data) ? data : Object.values(data);
+        }
+      } catch (e) {
+        console.warn('Firebase bracket fetch notice, falling back to GAS:', e);
+      }
+    }
     return await callRegistrationApi('getBracketData', { division: division || '' }, 'GET');
+  },
+  listenBracket: function (division, callback) {
+    if (window.CECFirebase && window.CECFirebase.db) {
+      const ref = window.CECFirebase.db.ref('brackets/' + (division || 'mens'));
+      ref.on('value', (snap) => {
+        const data = snap.val();
+        const list = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+        try { callback(list); } catch (e) {}
+      });
+      return () => ref.off();
+    }
+    return () => {};
   }
 };
 
@@ -210,6 +233,46 @@ async function getPrivateVerificationBatch(fileIds) {
  */
 const TournamentOps = {
   recordMatchResult: async function (resultData) {
+    // 1. Sync to Firebase Realtime Database
+    if (window.CECFirebase && window.CECFirebase.db) {
+      try {
+        const div = resultData.division || 'mens';
+        const matchKey = resultData.matchKey || resultData.matchId;
+        
+        // Update bracket match state
+        if (matchKey) {
+          const matchRef = window.CECFirebase.db.ref('brackets/' + div + '/' + matchKey);
+          await matchRef.update({
+            status: 'Completed',
+            winnerName: resultData.winnerName || '',
+            winnerId: resultData.winnerId || '',
+            score1: resultData.score1 != null ? resultData.score1 : 0,
+            score2: resultData.score2 != null ? resultData.score2 : 0,
+            updatedAt: new Date().toISOString()
+          });
+
+          // Auto-progression: Advance winner to next round in bracket tree
+          const snap = await matchRef.once('value');
+          const mData = snap.val() || {};
+          if (mData.nextMatchKey && mData.nextSlot) {
+            const nextRef = window.CECFirebase.db.ref('brackets/' + div + '/' + mData.nextMatchKey);
+            const updateField = mData.nextSlot === 'team2' ? 'team2Name' : 'team1Name';
+            await nextRef.update({
+              [updateField]: resultData.winnerName
+            });
+          }
+        }
+
+        // Remove from active liveMatches
+        if (resultData.matchId && window.CECLiveManager) {
+          await window.CECLiveManager.deleteMatch(resultData.matchId);
+        }
+      } catch (fbErr) {
+        console.warn('Firebase match progression notice:', fbErr);
+      }
+    }
+
+    // 2. Persist to Google Sheets
     return await callRegistrationApi('recordMatchResult', resultData, 'POST');
   },
   publishMatch: async function (matchData) {
@@ -228,10 +291,34 @@ const TournamentOps = {
     return await callRegistrationApi('resolveDispute', { disputeId: disputeId, status: status, resolution: resolution }, 'POST');
   },
   getBracketData: async function (division) {
-    return await callRegistrationApi('getBracketData', { division: division || '' }, 'GET');
+    return await PublicTournamentApi.listBracket(division);
   },
-  saveBracketData: async function (division, matches) {
-    return await callRegistrationApi('saveBracketData', { division: division, matches: JSON.stringify(matches) }, 'POST');
+  saveBracketData: async function (division, matches, flightTitle) {
+    // 1. Sync to Firebase Realtime Database
+    if (window.CECFirebase && window.CECFirebase.db) {
+      try {
+        const bracketMap = {};
+        (matches || []).forEach(m => {
+          if (m.matchKey) bracketMap[m.matchKey] = m;
+        });
+        await window.CECFirebase.db.ref('brackets/' + division).set(bracketMap);
+        if (flightTitle) {
+          await window.CECFirebase.db.ref('brackets/' + division + '_meta').set({
+            title: flightTitle,
+            updatedAt: new Date().toISOString()
+          });
+        }
+      } catch (fbErr) {
+        console.warn('Firebase bracket sync notice:', fbErr);
+      }
+    }
+
+    // 2. Persist to Google Sheets
+    return await callRegistrationApi('saveBracketData', {
+      division: division,
+      matches: JSON.stringify(matches),
+      flightTitle: flightTitle || ''
+    }, 'POST');
   },
   getAuditLogs: async function () {
     return await callRegistrationApi('getAuditLogs', {}, 'POST');
