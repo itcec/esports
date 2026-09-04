@@ -229,6 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedTeams = {};     // scopeKey -> [teamName, ...] in seed order
   let roundFormats = {};      // scopeKey -> { roundNumber: 'BO1' }
   let matchFormats = {};      // scopeKey -> { matchKey: 'BO3' }  per-match override
+  let matchResults = {};      // scopeKey -> { matchKey: 'team1' | 'team2' }  who advanced
   let currentActiveDept = 'ALL';
   let searchQuery = '';
   let seedsLoaded = false;
@@ -368,6 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
           title: (title ? title + ' - ' : '') + stage + ' ' + i,
           format: formatFor(scope, r, rounds, div, key),
           team1Id: '', team1Name: '', team2Id: '', team2Name: '',
+          team1Ready: false, team2Ready: false,
           score1: 0, score2: 0, winnerId: '', winnerName: '',
           status: 'Scheduled',
           department: dept,
@@ -390,8 +392,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const b = slots[(i - 1) * 2 + 1];
       m.team1Name = a || '';
       m.team1Id = a ? (getTeam(a).id || '') : '';
+      m.team1Ready = !!a;
       m.team2Name = b || '';
       m.team2Id = b ? (getTeam(b).id || '') : '';
+      m.team2Ready = !!b;
 
       // A pairing with only one team is a bye: settle it and carry the team on.
       if (a && !b) {
@@ -405,8 +409,40 @@ document.addEventListener('DOMContentLoaded', () => {
         if (nxt) {
           nxt[m.nextSlot + 'Name'] = a;
           nxt[m.nextSlot + 'Id'] = m.team1Id;
+          nxt[m.nextSlot + 'Ready'] = true;
         }
       }
+    }
+
+    // Apply the recorded winners round by round so each result cascades into the
+    // next match. Everything is recomputed from this map, which is what makes
+    // undo safe: clearing one pick automatically un-fills every slot it fed.
+    const results = opts.results || {};
+    for (let r = 1; r <= rounds; r++) {
+      matches.filter(function (m) { return m.round === r; }).forEach(function (m) {
+        if (m.team2Name === 'BYE') return;               // already settled above
+        const pick = results[m.matchKey];
+        if (pick !== 'team1' && pick !== 'team2') return;
+
+        // A match can only be decided once both slots hold a real team.
+        if (!m.team1Ready || !m.team2Ready) return;
+        const winName = pick === 'team2' ? m.team2Name : m.team1Name;
+        const loseName = pick === 'team2' ? m.team1Name : m.team2Name;
+
+        m.status = 'Completed';
+        m.winnerName = winName;
+        m.winnerId = pick === 'team2' ? m.team2Id : m.team1Id;
+        m.loserName = loseName;
+        m.score1 = pick === 'team1' ? 1 : 0;
+        m.score2 = pick === 'team2' ? 1 : 0;
+
+        const nxt = byKey[m.nextMatchKey];
+        if (nxt) {
+          nxt[m.nextSlot + 'Name'] = winName;
+          nxt[m.nextSlot + 'Id'] = m.winnerId;
+          nxt[m.nextSlot + 'Ready'] = true;
+        }
+      });
     }
 
     // Placeholder labels for slots still waiting on a result.
@@ -419,7 +455,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    return { matches: matches, rounds: rounds, size: size, byes: byes, scope: scope };
+    const champion = matches.filter(function (m) { return !m.nextMatchKey; })[0];
+    return {
+      matches: matches, rounds: rounds, size: size, byes: byes, scope: scope,
+      champion: champion && champion.winnerName ? champion.winnerName : ''
+    };
   }
 
   function escHtml(str) {
@@ -575,6 +615,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (idx !== -1) sel.splice(idx, 1);
         }
         selectedTeams[scope] = sel;
+        resetResults(scope);
         renderAll();
       });
     });
@@ -627,6 +668,7 @@ document.addEventListener('DOMContentLoaded', () => {
     list[index] = list[target];
     list[target] = temp;
     selectedTeams[scope] = list;
+    resetResults(scope);
     renderAll();
   };
 
@@ -669,6 +711,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  /** Changing who is in the draw invalidates the recorded results. */
+  function resetResults(scope) {
+    delete matchResults[scope || currentScope()];
+  }
+
   function updateButtonStates() {
     const count = (selectedTeams[currentScope()] || []).length;
     const isValid = count >= 2 && count <= 32;
@@ -687,26 +734,60 @@ document.addEventListener('DOMContentLoaded', () => {
       division: div,
       department: currentDepartment(),
       title: flightTitleInput.value.trim() || getDefaultTitle(div, currentDepartment()),
+      results: matchResults[scope] || {},
       lookup: (name) => pool.find(t => t.name === name) || {}
     });
   }
 
+  /**
+   * One match card. Each side gets an advance arrow while the match is
+   * undecided; once decided the card shows a back arrow that clears the result
+   * (and, through the recompute, every later round it had filled in).
+   */
   function matchCardHtml(m, isFinal) {
     const bye = m.team2Name === 'BYE';
     const accent = isFinal ? 'border-[#ffb020]/60' : 'border-white/10';
+    const decided = m.status === 'Completed' && !bye;
+    const ready = m.team1Ready && m.team2Ready && !bye;
+
+    function teamRow(slot, name, border) {
+      const isWinner = decided && m.winnerName === name;
+      const isLoser = decided && m.winnerName !== name;
+      const tone = isWinner ? 'text-emerald-300'
+        : isLoser ? 'text-outline line-through'
+        : (name && m.round === 1 ? 'text-on-surface' : 'text-on-surface-variant');
+      const arrow = (ready && !decided)
+        ? `<button type="button" class="advance-btn shrink-0 w-5 h-5 rounded flex items-center justify-center text-outline hover:text-primary hover:bg-primary/15 transition-colors" data-key="${escHtml(m.matchKey)}" data-slot="${slot}" title="Advance ${escHtml(name)}" aria-label="Advance ${escHtml(name)}"><span class="material-symbols-outlined text-[14px]">arrow_forward</span></button>`
+        : '';
+      const mark = isWinner
+        ? '<span class="material-symbols-outlined text-[13px] text-emerald-400 shrink-0">check_circle</span>'
+        : (isLoser ? '<span class="text-[8px] font-bold text-outline shrink-0">OUT</span>' : '');
+      return `<div class="flex items-center gap-1 py-0.5 ${border}">
+          <span class="font-bold ${tone} truncate flex-1">${escHtml(name || 'TBD')}</span>
+          ${mark}${arrow}
+        </div>`;
+    }
+
     return `
-      <div class="p-2 rounded-xl bg-surface-container border ${accent} text-xs w-52 shadow ${isFinal ? 'cyber-panel border-2' : ''}">
-        <div class="flex items-center justify-between mb-1">
+      <div class="p-2 rounded-xl bg-surface-container border ${decided ? 'border-emerald-500/40' : accent} text-xs w-52 shadow ${isFinal ? 'cyber-panel border-2' : ''}">
+        <div class="flex items-center justify-between mb-1 gap-1">
           <span class="text-[9px] font-mono text-outline truncate">${escHtml(m.stage)} ${m.matchKey.split('M').pop()}</span>
-          ${bye
-            ? '<span class="text-[9px] font-bold text-emerald-300">BYE</span>'
-            : `<select data-key="${escHtml(m.matchKey)}" class="match-format-select bg-[#050B14] text-primary text-[9px] font-mono font-bold px-1 py-0.5 rounded border border-white/10 focus:border-primary focus:outline-none">
-                ${SERIES_OPTIONS.map(o => `<option value="${o}"${o === m.format ? ' selected' : ''}>${o}</option>`).join('')}
-              </select>`}
+          <div class="flex items-center gap-1 shrink-0">
+            ${decided
+              ? `<button type="button" class="undo-btn w-5 h-5 rounded flex items-center justify-center text-amber-300 hover:text-amber-200 hover:bg-amber-400/15 transition-colors" data-key="${escHtml(m.matchKey)}" title="Undo this result" aria-label="Undo this result"><span class="material-symbols-outlined text-[14px]">arrow_back</span></button>`
+              : ''}
+            ${bye
+              ? '<span class="text-[9px] font-bold text-emerald-300">BYE</span>'
+              : `<select data-key="${escHtml(m.matchKey)}" class="match-format-select bg-[#050B14] text-primary text-[9px] font-mono font-bold px-1 py-0.5 rounded border border-white/10 focus:border-primary focus:outline-none">
+                  ${SERIES_OPTIONS.map(o => `<option value="${o}"${o === m.format ? ' selected' : ''}>${o}</option>`).join('')}
+                </select>`}
+          </div>
         </div>
-        <div class="font-bold ${m.team1Name && m.round === 1 ? 'text-on-surface' : 'text-on-surface-variant'} py-0.5 border-b border-white/5 truncate">${escHtml(m.team1Name || 'TBD')}</div>
-        <div class="font-bold ${bye ? 'text-outline' : (m.team2Name && m.round === 1 ? 'text-on-surface' : 'text-on-surface-variant')} py-0.5 truncate">${escHtml(m.team2Name || 'TBD')}</div>
-        ${isFinal ? '<div class="text-center text-[10px] text-[#ffb020] font-bold mt-1 font-label-caps flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[14px]">emoji_events</span> CHAMPION</div>' : ''}
+        ${teamRow('team1', m.team1Name, 'border-b border-white/5')}
+        ${teamRow('team2', bye ? 'BYE' : m.team2Name, '')}
+        ${isFinal
+          ? `<div class="text-center text-[10px] ${m.winnerName ? 'text-emerald-300' : 'text-[#ffb020]'} font-bold mt-1 font-label-caps flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[14px]">emoji_events</span> ${m.winnerName ? escHtml(m.winnerName) : 'CHAMPION'}</div>`
+          : ''}
       </div>`;
   }
 
@@ -716,6 +797,25 @@ document.addEventListener('DOMContentLoaded', () => {
       sel.addEventListener('change', (e) => {
         matchFormats[scope] = matchFormats[scope] || {};
         matchFormats[scope][e.target.dataset.key] = e.target.value;
+        renderAll();
+      });
+    });
+
+    root.querySelectorAll('.advance-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const el = e.currentTarget;
+        matchResults[scope] = matchResults[scope] || {};
+        matchResults[scope][el.dataset.key] = el.dataset.slot;
+        renderAll();
+      });
+    });
+
+    root.querySelectorAll('.undo-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const key = e.currentTarget.dataset.key;
+        if (matchResults[scope]) delete matchResults[scope][key];
+        // Later rounds are rebuilt from the remaining picks, so any result that
+        // depended on this one simply stops applying.
         renderAll();
       });
     });
@@ -784,22 +884,39 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>`;
       html += roundMatches.map(m => {
         const bye = m.team2Name === 'BYE';
+        const decided = m.status === 'Completed' && !bye;
+        const ready = m.team1Ready && m.team2Ready && !bye;
+
+        const row = (slot, name) => {
+          const isWinner = decided && m.winnerName === name;
+          const isLoser = decided && m.winnerName !== name;
+          return `
+          <div class="flex items-center justify-between gap-2 p-2 rounded-lg ${isWinner ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-surface-container-lowest border-white/5'} border">
+            <span class="font-bold ${isWinner ? 'text-emerald-300' : isLoser ? 'text-outline line-through' : (bye && slot === 'team2' ? 'text-outline' : 'text-on-surface')} text-xs truncate flex-1">${escHtml(name || 'TBD')}</span>
+            ${isLoser ? '<span class="text-[9px] font-bold text-outline shrink-0">ELIMINATED</span>' : ''}
+            ${ready && !decided
+              ? `<button type="button" class="advance-btn shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-primary/15 transition-colors" data-key="${escHtml(m.matchKey)}" data-slot="${slot}" aria-label="Advance ${escHtml(name)}"><span class="material-symbols-outlined text-[18px]">arrow_forward</span></button>`
+              : ''}
+          </div>`;
+        };
+
         return `
-        <div class="bg-surface-container rounded-xl p-md border border-white/10 flex flex-col gap-2 shadow-md">
-          <div class="flex items-center justify-between text-[11px] text-outline border-b border-white/5 pb-1">
-            <span class="font-bold text-primary font-mono">${escHtml(m.stage)} ${m.matchKey.split('M').pop()}</span>
-            ${bye
-              ? '<span class="font-bold text-emerald-300">BYE</span>'
-              : `<select data-key="${escHtml(m.matchKey)}" class="match-format-select bg-[#050B14] text-primary text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-white/10 focus:border-primary focus:outline-none">
-                  ${SERIES_OPTIONS.map(o => `<option value="${o}"${o === m.format ? ' selected' : ''}>${o}</option>`).join('')}
-                </select>`}
+        <div class="bg-surface-container rounded-xl p-md border ${decided ? 'border-emerald-500/30' : 'border-white/10'} flex flex-col gap-2 shadow-md">
+          <div class="flex items-center justify-between text-[11px] text-outline border-b border-white/5 pb-1 gap-2">
+            <span class="font-bold text-primary font-mono truncate">${escHtml(m.stage)} ${m.matchKey.split('M').pop()}</span>
+            <div class="flex items-center gap-1 shrink-0">
+              ${decided
+                ? `<button type="button" class="undo-btn w-7 h-7 rounded-lg flex items-center justify-center text-amber-300 hover:text-amber-200 hover:bg-amber-400/15 transition-colors" data-key="${escHtml(m.matchKey)}" aria-label="Undo this result"><span class="material-symbols-outlined text-[18px]">arrow_back</span></button>`
+                : ''}
+              ${bye
+                ? '<span class="font-bold text-emerald-300">BYE</span>'
+                : `<select data-key="${escHtml(m.matchKey)}" class="match-format-select bg-[#050B14] text-primary text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-white/10 focus:border-primary focus:outline-none">
+                    ${SERIES_OPTIONS.map(o => `<option value="${o}"${o === m.format ? ' selected' : ''}>${o}</option>`).join('')}
+                  </select>`}
+            </div>
           </div>
-          <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest border border-white/5">
-            <span class="font-bold text-on-surface text-xs truncate flex-1">${escHtml(m.team1Name || 'TBD')}</span>
-          </div>
-          <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest border border-white/5">
-            <span class="font-bold ${bye ? 'text-outline' : 'text-on-surface'} text-xs truncate flex-1">${escHtml(m.team2Name || 'TBD')}</span>
-          </div>
+          ${row('team1', m.team1Name)}
+          ${row('team2', bye ? 'BYE' : m.team2Name)}
         </div>`;
       }).join('');
     }
@@ -869,12 +986,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // Select every eligible team for this bracket
   document.getElementById('btn-select-all-scope').addEventListener('click', () => {
     selectedTeams[currentScope()] = poolForScope().slice(0, 32).map(t => t.name);
+    resetResults();
     renderAll();
   });
 
   // Clear Button
   document.getElementById('btn-clear-selection').addEventListener('click', () => {
     selectedTeams[currentScope()] = [];
+    resetResults();
     renderAll();
   });
 
@@ -883,6 +1002,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scope = currentScope();
     delete roundFormats[scope];
     delete matchFormats[scope];
+    resetResults(scope);
     renderAll();
   });
 
@@ -915,6 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scope = currentScope();
     const list = [...(selectedTeams[scope] || [])].sort(() => Math.random() - 0.5);
     selectedTeams[scope] = list;
+    resetResults(scope);
     renderAll();
   });
 
@@ -948,7 +1069,8 @@ document.addEventListener('DOMContentLoaded', () => {
       await TournamentOps.saveBracketData(div, dept, tree.matches, title);
       alert('Bracket "' + title + '" published successfully!\n\n' +
         seeds.length + ' teams, ' + tree.rounds + ' rounds' +
-        (tree.byes ? ', ' + tree.byes + ' first-round bye(s)' : '') + '.\n' +
+        (tree.byes ? ', ' + tree.byes + ' first-round bye(s)' : '') +
+        (tree.champion ? '. Champion: ' + tree.champion : '') + '.\n' +
         'Matches are now available in the Live Arena for match officiating.');
     } catch (err) {
       alert('Could not publish bracket: ' + err.message);

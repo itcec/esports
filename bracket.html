@@ -130,13 +130,13 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
   // Turn one published bracket side into the shape renderMatchCard expects.
-  function side(name, score, isWinner, fallbackColor){
+  function side(name, score, isWinner, fallbackColor, isLoser){
     if (!name) return null;
     var m = String(name).toUpperCase().match(/STEM|HUMSS|TVL-ICT|TVL-HE|ABM|GAS|IT|HTM|CTE|CRIM|HM|TM|SHS|JHS/);
     var style = (m && DEPT_STYLE[m[0]]) || { color: fallbackColor || '#1264ff', icon: 'assets/icons/dragon-head.svg' };
     return {
       name: esc(name), dept: m ? m[0] : '', icon: style.icon, color: style.color,
-      score: (score === 0 || score) ? String(score) : '', win: !!isWinner
+      score: (score === 0 || score) ? String(score) : '', win: !!isWinner, lose: !!isLoser
     };
   }
 
@@ -268,11 +268,12 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     else { w1 = !!(played && s1 > s2); w2 = !!(played && s2 > s1); }
     var fmt = fieldOf(m, 'format', 'Format');
     var key = String(fieldOf(m, 'matchKey', 'MatchKey'));
+    var settled = w1 || w2;
     return {
       match: String(fieldOf(m, 'stage', 'Stage') || 'Match') + ' ' + (key.split('M').pop() || ''),
       fmt: fmt && fmt !== '-' ? fmt : (String(t2).toUpperCase() === 'BYE' ? 'BYE' : ''),
-      a: side(t1, s1, w1, '#1264ff'),
-      b: side(t2, s2, w2, '#ff4b4b')
+      a: side(t1, s1, w1, '#1264ff', settled && !w1),
+      b: side(t2, s2, w2, '#ff4b4b', settled && !w2)
     };
   }
 
@@ -290,7 +291,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       var isLast = idx === keys.length - 1;
       var label = String(fieldOf(list[0], 'stage', 'Stage') || ('Round ' + r));
       var colour = isLast ? 'text-[#ffb020]' : (idx === keys.length - 2 ? 'text-secondary' : 'text-primary');
-      return '<div class="flex flex-col gap-3 min-w-[260px] shrink-0">' +
+      return '<div class="flex flex-col gap-3 min-w-[260px] shrink-0 justify-center">' +
           '<span class="text-xs font-label-caps ' + colour + ' uppercase font-bold tracking-widest">' + esc(label) + '</span>' +
           list.map(function(m){ return renderMatchCard(toCard(m), isLast); }).join('') +
         '</div>';
@@ -301,7 +302,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
           '<h2 class="font-headline-lg text-headline-lg text-on-surface cyber-title">' + esc(heading) + '</h2>' +
           '<span class="px-3 py-1 rounded bg-primary/20 text-primary text-xs font-bold font-label-caps">PUBLISHED</span>' +
         '</div>' +
-        '<div class="flex gap-6 items-start overflow-x-auto pb-2">' + cols + '</div>' +
+        '<div class="flex gap-6 items-center justify-center overflow-x-auto pb-2">' + cols + '</div>' +
       '</section>';
   }
 
@@ -352,27 +353,27 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       '</div>' +
       '<div class="divide-y divide-white/10">' +
         // Team A Row
-        '<div class="px-md py-3 flex items-center justify-between gap-3 ' + (a.win ? 'bg-primary/10' : '') + '">' +
+        '<div class="px-md py-3 flex items-center justify-between gap-3 ' + (a.win ? 'bg-primary/10' : (a.lose ? 'opacity-60' : '')) + '">' +
           '<div class="flex items-center gap-3 min-w-0">' +
-            '<div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-white/20 shadow-sm overflow-hidden" style="background:' + (a.color || '#1264ff') + '">' +
+            '<div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-white/20 shadow-sm overflow-hidden ' + (a.lose ? 'grayscale' : '') + '" style="background:' + (a.color || '#1264ff') + '">' +
               '<img src="' + (a.icon || 'assets/icons/dragon-head.svg') + '" alt="Emblem" class="w-5 h-5 object-contain filter invert drop-shadow" />' +
             '</div>' +
             '<div class="flex flex-col min-w-0">' +
-              '<div class="flex items-center gap-1"><span class="font-bold text-on-surface text-sm truncate cyber-title">' + a.name + '</span>' + aLogoHtml + '</div>' +
-              '<span class="text-[10px] font-label-caps text-on-surface-variant">' + (a.dept || '') + '</span>' +
+              '<div class="flex items-center gap-1"><span class="font-bold text-sm truncate cyber-title ' + (a.lose ? 'text-outline line-through' : 'text-on-surface') + '">' + a.name + '</span>' + aLogoHtml + '</div>' +
+              '<span class="text-[10px] font-label-caps ' + (a.lose ? 'text-outline' : 'text-on-surface-variant') + '">' + (a.lose ? 'ELIMINATED' : (a.dept || '')) + '</span>' +
             '</div>' +
           '</div>' +
           '<div class="font-stats-impact text-lg text-primary shrink-0 px-2">' + (a.score || (a.win ? '1' : '–')) + '</div>' +
         '</div>' +
         // Team B Row
-        '<div class="px-md py-3 flex items-center justify-between gap-3 ' + (b.win ? 'bg-primary/10' : '') + '">' +
+        '<div class="px-md py-3 flex items-center justify-between gap-3 ' + (b.win ? 'bg-primary/10' : (b.lose ? 'opacity-60' : '')) + '">' +
           '<div class="flex items-center gap-3 min-w-0">' +
-            '<div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-white/20 shadow-sm overflow-hidden" style="background:' + (b.color || '#ff4b4b') + '">' +
+            '<div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border border-white/20 shadow-sm overflow-hidden ' + (b.lose ? 'grayscale' : '') + '" style="background:' + (b.color || '#ff4b4b') + '">' +
               '<img src="' + (b.icon || 'assets/icons/werewolf.svg') + '" alt="Emblem" class="w-5 h-5 object-contain filter invert drop-shadow" />' +
             '</div>' +
             '<div class="flex flex-col min-w-0">' +
-              '<div class="flex items-center gap-1"><span class="font-bold text-on-surface text-sm truncate cyber-title">' + b.name + '</span>' + bLogoHtml + '</div>' +
-              '<span class="text-[10px] font-label-caps text-on-surface-variant">' + (b.dept || '') + '</span>' +
+              '<div class="flex items-center gap-1"><span class="font-bold text-sm truncate cyber-title ' + (b.lose ? 'text-outline line-through' : 'text-on-surface') + '">' + b.name + '</span>' + bLogoHtml + '</div>' +
+              '<span class="text-[10px] font-label-caps ' + (b.lose ? 'text-outline' : 'text-on-surface-variant') + '">' + (b.lose ? 'ELIMINATED' : (b.dept || '')) + '</span>' +
             '</div>' +
           '</div>' +
           '<div class="font-stats-impact text-lg text-on-surface-variant shrink-0 px-2">' + (b.score || (b.win ? '1' : '–')) + '</div>' +
@@ -591,6 +592,24 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       });
       var roundKeys = Object.keys(rounds).map(Number).sort(function(a,b){ return a - b; });
 
+      // A decided match greys out and strikes through the team that went out,
+      // so the public bracket reads the same way the builder does.
+      function teamRowHtml(name, score, winner, isBye) {
+        var isWinner = winner && winner === name;
+        var isLoser = winner && winner !== name && String(name).toUpperCase() !== 'BYE';
+        var tone = isWinner ? 'bg-emerald-500/15 font-bold text-emerald-300'
+          : isLoser ? 'bg-surface-container-lowest text-outline line-through opacity-70'
+          : 'bg-surface-container-lowest text-on-surface';
+        return '<div class="flex items-center justify-between p-1.5 rounded ' + tone + '">' +
+            '<span class="truncate flex items-center gap-1">' +
+              (isWinner ? '<span class="material-symbols-outlined text-[14px] text-emerald-400">trophy</span>' : '') +
+              esc(name) +
+            '</span>' +
+            (isLoser ? '<span class="text-[9px] font-bold text-outline mr-1 shrink-0">ELIMINATED</span>' : '') +
+            '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface">' + esc(score) + '</span>' +
+          '</div>';
+      }
+
       var cardHtml = function(m, highlight) {
         var t1 = m.team1Name || 'TBD';
         var t2 = m.team2Name || 'TBD';
@@ -612,14 +631,8 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
             badge +
           '</div>' +
           '<div class="flex flex-col gap-1 text-xs">' +
-            '<div class="flex items-center justify-between p-1.5 rounded ' + (w && w === t1 ? 'bg-emerald-500/15 font-bold text-emerald-300' : 'bg-surface-container-lowest text-on-surface') + '">' +
-              '<span class="truncate flex items-center gap-1">' + (w && w === t1 ? '<span class="material-symbols-outlined text-[14px] text-emerald-400">trophy</span>' : '') + esc(t1) + '</span>' +
-              '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface">' + esc(s1) + '</span>' +
-            '</div>' +
-            '<div class="flex items-center justify-between p-1.5 rounded ' + (w && w === t2 ? 'bg-emerald-500/15 font-bold text-emerald-300' : 'bg-surface-container-lowest text-on-surface') + '">' +
-              '<span class="truncate flex items-center gap-1">' + (w && w === t2 ? '<span class="material-symbols-outlined text-[14px] text-emerald-400">trophy</span>' : '') + esc(t2) + '</span>' +
-              '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface">' + esc(s2) + '</span>' +
-            '</div>' +
+            teamRowHtml(t1, s1, w, isBye) +
+            teamRowHtml(t2, s2, w, isBye) +
           '</div>' +
         '</div>';
       };
@@ -630,7 +643,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
         var label = list[0] && list[0].stage ? list[0].stage : ('Round ' + r);
         var icon = isLast ? 'emoji_events' : (idx === roundKeys.length - 2 ? 'swords' : 'sports_esports');
         var colour = isLast ? 'text-[#ffb020]' : (idx === roundKeys.length - 2 ? 'text-secondary' : 'text-primary');
-        return '<div class="flex flex-col gap-3 min-w-[220px]">' +
+        return '<div class="flex flex-col gap-3 min-w-[220px] justify-center">' +
             '<span class="text-xs font-label-caps ' + colour + ' uppercase font-bold tracking-wider flex items-center gap-1">' +
               '<span class="material-symbols-outlined text-[16px]">' + icon + '</span> ' + esc(label) +
             '</span>' +
@@ -639,7 +652,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       }).join('');
 
       deptModalContent.innerHTML =
-        '<div class="flex gap-6 items-start overflow-x-auto pb-2">' + cols + '</div>';
+        '<div class="flex gap-6 items-center justify-center overflow-x-auto pb-2 min-h-full">' + cols + '</div>';
     }
 
     // Each department publishes its own bracket, so the modal subscribes to that
