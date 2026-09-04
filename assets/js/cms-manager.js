@@ -12,17 +12,16 @@
     announcement: {
       enabled: true,
       badge: 'OFFICIAL ANNOUNCEMENT',
-      text: 'Official Team Registration closes September 1, 2026! Ensure all 5 starters and substitutes are locked in before the deadline.',
+      text: 'Official Team Registration closes {reg.deadline}! Ensure all {roster.starters} starters and substitutes are locked in before the deadline.',
       linkText: 'REGISTER NOW',
       linkUrl: 'register-team.html',
       type: 'info'
     },
     hero: {
-      badge: 'REGISTRATION OPEN · CLOSES SEP 1',
       gameTitle: 'MOBILE LEGENDS: BANG BANG',
       headlinePrimary: 'CEC Esports',
       headlineSecondary: 'Intramurals 2026',
-      description: "Cebu Eastern College's collegiate Mobile Legends intramurals, run by CEC Blue Dragon Esports. Student Men's, Student Women's, and Faculty Exhibition — every match played online and streamed from the Computer Laboratory Annex Building.",
+      description: "Cebu Eastern College's collegiate Mobile Legends intramurals, run by {org.name}. Student Men's, Student Women's, and Faculty Exhibition — every match played online and streamed from the {event.venue}.",
       videoUrl: 'assets/VideoIntro.mp4',
       ctaPrimaryText: 'REGISTER YOUR TEAM',
       ctaPrimaryUrl: 'register-team.html',
@@ -31,7 +30,6 @@
     },
     eventDetails: {
       regDeadlineDate: 'September 1, 2026',
-      regDeadlineBadge: 'CLOSES SEP 1',
       regDeadlineDesc: 'Confirm and register your team roster with CEC Blue Dragon Esports.',
       kickoffDate: 'September 5, 2026',
       kickoffBadge: 'SATURDAYS',
@@ -54,9 +52,9 @@
       item2Title: 'Playoff Stages:',
       item2Desc: 'Semifinals are Best-of-3; Grand Finals are Best-of-5.',
       item3Title: 'Match Setup:',
-      item3Desc: 'Online Tournament Draft Pick, streamed live from Annex Lab.',
+      item3Desc: 'Online Tournament Draft Pick, streamed live from {event.venueShort}.',
       item4Title: 'Roster Structure:',
-      item4Desc: '5 starters + up to 2 substitute players.',
+      item4Desc: '{roster.summary}.',
       linkText: 'READ THE FULL RULES',
       linkUrl: 'rules.html'
     },
@@ -64,18 +62,27 @@
       title: 'Path to the Title',
       badge: 'ROADMAP',
       step1Title: 'Register:',
-      step1Desc: 'Confirm and register your team by September 1, 2026.',
+      step1Desc: 'Confirm and register your team by {reg.deadline}.',
       step2Title: 'Department Battles:',
       step2Desc: 'Play department brackets in one single Saturday session.',
       step3Title: 'Department Champion:',
       step3Desc: 'Win your bracket to advance to Grand Finals.',
       step4Title: 'Grand Finals Day:',
-      step4Desc: 'Meet the other champions on October 2, 2026.',
+      step4Desc: 'Meet the other champions on {finals.date}.',
       linkText: 'SEE THE FULL SCHEDULE',
       linkUrl: 'tournament.html'
     },
     updatedAt: new Date().toISOString()
   };
+
+  // Expands {dotted.path} tokens against the canonical site config so CMS copy
+  // can quote a date without ever storing its own copy of it.
+  function fmt(str) {
+    if (window.CECSite && typeof window.CECSite.format === 'function') {
+      return window.CECSite.format(str);
+    }
+    return str;
+  }
 
   const CECCMSManager = {
     config: null,
@@ -188,7 +195,7 @@
           const textEl = document.getElementById('cms-announcement-text');
           const linkEl = document.getElementById('cms-announcement-link');
           if (badgeEl) badgeEl.textContent = a.badge || 'ANNOUNCEMENT';
-          if (textEl) textEl.textContent = a.text;
+          if (textEl) textEl.textContent = fmt(a.text);
           if (linkEl) {
             if (a.linkText && a.linkUrl) {
               linkEl.textContent = a.linkText;
@@ -205,7 +212,6 @@
 
       // 2. Hero Section
       const h = cfg.hero || {};
-      const heroBadge = document.getElementById('cms-hero-badge');
       const heroGame = document.getElementById('cms-hero-game');
       const heroTitle1 = document.getElementById('cms-hero-title-1');
       const heroTitle2 = document.getElementById('cms-hero-title-2');
@@ -214,11 +220,10 @@
       const heroCta2 = document.getElementById('cms-hero-cta-2');
       const heroVideo = document.getElementById('intro-video');
 
-      if (heroBadge && h.badge) heroBadge.textContent = h.badge;
       if (heroGame && h.gameTitle) heroGame.textContent = h.gameTitle;
       if (heroTitle1 && h.headlinePrimary) heroTitle1.textContent = h.headlinePrimary;
       if (heroTitle2 && h.headlineSecondary) heroTitle2.textContent = h.headlineSecondary;
-      if (heroDesc && h.description) heroDesc.textContent = h.description;
+      if (heroDesc && h.description) heroDesc.textContent = fmt(h.description);
       if (heroCta1 && h.ctaPrimaryText) {
         heroCta1.innerHTML = `${h.ctaPrimaryText} <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>`;
         if (h.ctaPrimaryUrl) heroCta1.href = h.ctaPrimaryUrl;
@@ -233,50 +238,30 @@
         heroVideo.src = h.videoUrl;
       }
 
-      // 3. Event Key Dates
-      const ev = cfg.eventDetails || {};
-      const regDate = document.getElementById('cms-event-reg-date');
-      const regBadge = document.getElementById('cms-event-reg-badge');
-      const regDesc = document.getElementById('cms-event-reg-desc');
-
-      const kickDate = document.getElementById('cms-event-kick-date');
-      const kickBadge = document.getElementById('cms-event-kick-badge');
-      const kickDesc = document.getElementById('cms-event-kick-desc');
-
-      const finalsDate = document.getElementById('cms-event-finals-date');
-      const finalsBadge = document.getElementById('cms-event-finals-badge');
-      const finalsDesc = document.getElementById('cms-event-finals-desc');
-
-      if (regDate && ev.regDeadlineDate) regDate.textContent = ev.regDeadlineDate;
-      if (regBadge && ev.regDeadlineBadge) regBadge.textContent = ev.regDeadlineBadge;
-      if (regDesc && ev.regDeadlineDesc) regDesc.textContent = ev.regDeadlineDesc;
-
-      if (kickDate && ev.kickoffDate) kickDate.textContent = ev.kickoffDate;
-      if (kickBadge && ev.kickoffBadge) kickBadge.textContent = ev.kickoffBadge;
-      if (kickDesc && ev.kickoffDesc) kickDesc.textContent = ev.kickoffDesc;
-
-      if (finalsDate && ev.finalsDate) finalsDate.textContent = ev.finalsDate;
-      if (finalsBadge && ev.finalsBadge) finalsBadge.textContent = ev.finalsBadge;
-      if (finalsDesc && ev.finalsDesc) finalsDesc.textContent = ev.finalsDesc;
+      // 3. Event Key Dates — intentionally NOT written here.
+      // Dates, deadlines and their badges are bound by assets/js/site-config.js
+      // (data-cec attributes) from the single stored value in eventDetails, so
+      // every page shows the same deadline. Editing them here would reintroduce
+      // the drift this split was created to fix.
 
       // 4. Tournament Format
-      const fmt = cfg.format || {};
+      const fmtCfg = cfg.format || {};
       const fmtTitle = document.getElementById('cms-format-title');
       const fmtBadge = document.getElementById('cms-format-badge');
       const fmtLink = document.getElementById('cms-format-link');
 
-      if (fmtTitle && fmt.title) fmtTitle.textContent = fmt.title;
-      if (fmtBadge && fmt.badge) fmtBadge.textContent = fmt.badge;
+      if (fmtTitle && fmtCfg.title) fmtTitle.textContent = fmt(fmtCfg.title);
+      if (fmtBadge && fmtCfg.badge) fmtBadge.textContent = fmt(fmtCfg.badge);
       if (fmtLink) {
-        if (fmt.linkText) fmtLink.innerHTML = `${fmt.linkText} <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>`;
-        if (fmt.linkUrl) fmtLink.href = fmt.linkUrl;
+        if (fmtCfg.linkText) fmtLink.innerHTML = `${fmtCfg.linkText} <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>`;
+        if (fmtCfg.linkUrl) fmtLink.href = fmtCfg.linkUrl;
       }
 
       for (let i = 1; i <= 4; i++) {
         const tEl = document.getElementById(`cms-format-item${i}-title`);
         const dEl = document.getElementById(`cms-format-item${i}-desc`);
-        if (tEl && fmt[`item${i}Title`]) tEl.textContent = fmt[`item${i}Title`];
-        if (dEl && fmt[`item${i}Desc`]) dEl.textContent = fmt[`item${i}Desc`];
+        if (tEl && fmtCfg[`item${i}Title`]) tEl.textContent = fmt(fmtCfg[`item${i}Title`]);
+        if (dEl && fmtCfg[`item${i}Desc`]) dEl.textContent = fmt(fmtCfg[`item${i}Desc`]);
       }
 
       // 5. Path to the Title Roadmap
@@ -295,8 +280,8 @@
       for (let i = 1; i <= 4; i++) {
         const tEl = document.getElementById(`cms-roadmap-step${i}-title`);
         const dEl = document.getElementById(`cms-roadmap-step${i}-desc`);
-        if (tEl && rdm[`step${i}Title`]) tEl.textContent = rdm[`step${i}Title`];
-        if (dEl && rdm[`step${i}Desc`]) dEl.textContent = rdm[`step${i}Desc`];
+        if (tEl && rdm[`step${i}Title`]) tEl.textContent = fmt(rdm[`step${i}Title`]);
+        if (dEl && rdm[`step${i}Desc`]) dEl.textContent = fmt(rdm[`step${i}Desc`]);
       }
     }
   };

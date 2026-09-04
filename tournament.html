@@ -186,7 +186,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
     rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script><script src="assets/js/site-config.js"></script>
   <script
     id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-background": "#d7e3f7", "on-secondary": "#003064", "on-primary": "#002a78", "surface-container-low": "#101c2a", "tertiary": "#c0c7d4", "primary-container": "#1264ff", "on-error": "#690005", "secondary-container": "#3e90ff", "primary": "#b4c5ff", "background": "#081422", "outline-variant": "#424656", "surface-dim": "#081422", "inverse-primary": "#0052dc", "on-secondary-fixed": "#001b3e", "on-primary-fixed": "#00174b", "on-primary-fixed-variant": "#003ea8", "on-tertiary-container": "#f4f6ff", "primary-fixed": "#dbe1ff", "tertiary-fixed": "#dce3f0", "on-surface-variant": "#c2c6d8", "surface-container-highest": "#2a3645", "outline": "#8c90a2", "surface-container-high": "#1f2b39", "surface-container-lowest": "#030f1c", "inverse-on-surface": "#263140", "on-surface": "#d7e3f7", "error": "#ffb4ab", "on-error-container": "#ffdad6", "on-tertiary": "#2a313b", "on-secondary-container": "#002957", "tertiary-container": "#6a717d", "tertiary-fixed-dim": "#c0c7d4", "secondary": "#aac7ff", "secondary-fixed": "#d6e3ff", "on-tertiary-fixed-variant": "#404752", "surface-container": "#15202f", "on-secondary-fixed-variant": "#00468d", "surface-variant": "#2a3645", "surface": "#081422", "primary-fixed-dim": "#b4c5ff", "inverse-surface": "#d7e3f7", "on-tertiary-fixed": "#151c26", "surface-bright": "#2e3a49", "surface-tint": "#b4c5ff", "error-container": "#93000a", "secondary-fixed-dim": "#aac7ff", "on-primary-container": "#f6f6ff" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "xl": "40px", "gutter": "16px", "base": "4px", "sm": "12px", "xs": "8px", "lg": "24px", "md": "16px", "container-max": "1280px" }, "fontFamily": { "stats-impact": ["Hanken Grotesk"], "headline-lg-mobile": ["Hanken Grotesk"], "headline-xl": ["Hanken Grotesk"], "body-lg": ["Inter"], "headline-md": ["Hanken Grotesk"], "body-md": ["Inter"], "label-caps": ["Inter"], "headline-lg": ["Hanken Grotesk"] }, "fontSize": { "stats-impact": ["24px", { "lineHeight": "24px", "letterSpacing": "0.05em", "fontWeight": "900" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "800" }], "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "700" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "700" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "800" }] } } } }</script>
 </head>
@@ -843,24 +843,23 @@
             </div>
           </div>
 
-          <!-- Registration & Event Dates -->
+          <!-- Registration & Event Dates (read-only) -->
           <div class="p-md rounded-xl bg-surface-container-lowest/80 border border-white/10 flex flex-col gap-sm">
             <span class="font-label-caps text-xs text-on-surface-variant font-bold uppercase">Dates &amp; Registration
               Deadline</span>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
               <div class="flex flex-col gap-1">
-                <label for="setting-reg-deadline"
-                  class="text-[11px] font-label-caps text-on-surface-variant">Registration Deadline</label>
-                <input id="setting-reg-deadline" type="text" placeholder="September 1, 2026"
-                  class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10" />
+                <span class="text-[11px] font-label-caps text-on-surface-variant">Registration Deadline</span>
+                <span class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-dashed border-white/10 font-mono" data-cec="reg.deadline">September 1, 2026</span>
               </div>
               <div class="flex flex-col gap-1">
-                <label for="setting-finals-date" class="text-[11px] font-label-caps text-on-surface-variant">Grand
-                  Finals Date</label>
-                <input id="setting-finals-date" type="text" placeholder="October 2, 2026"
-                  class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10" />
+                <span class="text-[11px] font-label-caps text-on-surface-variant">Grand Finals Date</span>
+                <span class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-dashed border-white/10 font-mono" data-cec="finals.date">October 2, 2026</span>
               </div>
             </div>
+            <span class="text-[10px] text-on-surface-variant">These dates are site-wide content. Change them once in
+              <a href="admin.html" class="text-primary hover:underline">Admin &rsaquo; Site Content &rsaquo; Key Dates</a>
+              and every page updates.</span>
           </div>
 
         </form>
@@ -893,15 +892,17 @@
             <div
               class="inline-flex items-center gap-xs px-sm py-base rounded-full bg-surface-container-high w-fit border border-primary/20">
               <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <span class="font-label-caps text-label-caps text-on-surface" id="reg-status-badge">REGISTRATION CLOSES
+              <span class="font-label-caps text-label-caps text-on-surface" id="reg-status-badge" data-cec="reg.closesLine">REGISTRATION CLOSES
                 SEPTEMBER 1, 2026</span>
             </div>
             <h2 class="font-headline-xl text-headline-xl text-on-background tracking-tight cyber-title">
               TOURNAMENT SCHEDULE &amp; STRUCTURE
             </h2>
             <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-              How the CEC Esports Intramurals 2026 is structured, and when every division plays. All matches are online
-              and streamed from the Computer Laboratory Annex Building.
+              How the <span data-cec="event.name">CEC Esports Intramurals 2026</span> is structured, and when every
+              division plays. College and Faculty matches are online and streamed from the
+              <span data-cec="event.venue">Computer Laboratory Annex Building</span>; the SHS Showdown is played
+              in person at the <span data-cec="shs.venue">Auditorium Hall, CEC, Inc. Jakosalem Campus</span>.
             </p>
           </div>
           <div class="flex flex-wrap gap-xs">
@@ -1062,6 +1063,23 @@
             </div>
           </div>
 
+            <!-- SHS Showdown — separate one-day, in-person event -->
+            <div class="bg-surface-container border border-white/10 border-l-4 border-l-[#ff2fd8] rounded-xl flex flex-col scroll-mt-24 cyber-panel"
+              id="shs-schedule">
+              <div class="p-md border-b border-white/10 flex flex-wrap justify-between items-center gap-xs">
+                <div class="flex flex-col">
+                  <h3 class="font-headline-md text-headline-md text-on-surface">SHS SHOWDOWN — PROGRAM FLOW</h3>
+                  <span class="font-body-md text-body-md text-on-surface-variant"><span data-cec="shs.date">September 11, 2026</span> · <span data-cec="shs.venue">Auditorium Hall, CEC, Inc. Jakosalem Campus</span></span>
+                </div>
+                <span class="font-label-caps text-label-caps text-[#ff80ea]" data-cec="shs.time">8:00 AM – 2:00 PM</span>
+              </div>
+              <div class="divide-y divide-white/10" id="shs-program-rows" data-cec-program="shs.program"></div>
+              <div class="p-md border-t border-white/10">
+                <p class="font-body-md text-body-md text-on-surface-variant" data-cec="shs.programNote">Round format and timing may be adjusted by the organizers based on the final number of registered teams.</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Sidebar -->
           <div class="lg:col-span-4 flex flex-col gap-lg">
             <div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-md">
@@ -1075,7 +1093,7 @@
                   </div>
                   <div class="flex flex-col -mt-1"><span
                       class="font-body-md text-body-md text-on-surface font-bold">Registration</span><span
-                      class="font-body-md text-body-md text-primary font-bold" id="sidebar-deadline-text">Closes
+                      class="font-body-md text-body-md text-primary font-bold" id="sidebar-deadline-text" data-cec-text="Closes {reg.deadline}">Closes
                       September 1, 2026</span></div>
                 </div>
                 <div class="flex gap-md items-start py-sm opacity-70 relative">
