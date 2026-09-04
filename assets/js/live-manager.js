@@ -10,14 +10,36 @@ window.CECLiveManager = {
   STREAM_PARENT_HOSTS: ['cec-esports.vercel.app'],
 
   /**
-   * Officials may only publish Twitch links; this mirrors the Apps Script
-   * `publishMatch` rule so the UI fails early instead of at save time.
+   * Officials may publish Twitch, YouTube or TikTok LIVE links; this mirrors the
+   * Apps Script `publishMatch` rule so the UI fails early instead of at save time.
    */
+  STREAM_URL_PATTERNS: [
+    /^https?:\/\/(www\.)?twitch\.tv\/[A-Za-z0-9_]/i,
+    /^https?:\/\/(www\.)?youtube\.com\/(watch\?|live\/|embed\/)/i,
+    /^https?:\/\/youtu\.be\/[A-Za-z0-9_-]/i,
+    /^https?:\/\/(www\.)?tiktok\.com\/@[A-Za-z0-9._-]+/i,
+    // Short share links (vt./vm.tiktok.com) resolve to a profile only in the
+    // browser that opens them, so they are accepted but cannot be embedded.
+    /^https?:\/\/(vt|vm)\.tiktok\.com\/[A-Za-z0-9_-]+/i
+  ],
+
   validateStreamUrl: function (url) {
     const raw = String(url || '').trim();
     if (!raw) return { ok: true, url: '' };
-    if (!/^https?:\/\/(www\.)?twitch\.tv\/[A-Za-z0-9_]/i.test(raw)) {
-      return { ok: false, url: raw, message: 'Only Twitch links can be published — e.g. https://twitch.tv/yourchannel or a twitch.tv/videos/... VOD.' };
+    const matched = this.STREAM_URL_PATTERNS.some(function (re) { return re.test(raw); });
+    if (!matched) {
+      return {
+        ok: false,
+        url: raw,
+        message: 'Use a Twitch, YouTube or TikTok LIVE link — e.g. https://twitch.tv/yourchannel, https://youtube.com/live/..., or https://www.tiktok.com/@yourhandle/live.'
+      };
+    }
+    if (/^https?:\/\/(vt|vm)\.tiktok\.com\//i.test(raw)) {
+      return {
+        ok: true,
+        url: raw,
+        warning: 'This is a TikTok share link, which cannot be embedded. Open it once and paste the full https://www.tiktok.com/@handle/live address so the stream plays inside the page.'
+      };
     }
     return { ok: true, url: raw };
   },
@@ -290,6 +312,16 @@ window.CECLiveManager = {
 
       const channel = url.split('twitch.tv/')[1].split(/[?&/]/)[0];
       if (channel) return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${parentQuery}&autoplay=true`;
+      return '';
+    }
+
+    // TikTok LIVE. The embeddable player is /embed/live/@handle; a plain profile
+    // or /live URL is normalised to it. vt./vm. share links carry no handle, so
+    // they cannot be embedded and fall through to the local loop.
+    if (/tiktok\.com/i.test(url)) {
+      if (/^https?:\/\/(vt|vm)\.tiktok\.com\//i.test(url)) return '';
+      const handle = url.match(/tiktok\.com\/@([A-Za-z0-9._-]+)/i);
+      if (handle) return `https://www.tiktok.com/embed/live/@${encodeURIComponent(handle[1])}`;
       return '';
     }
 

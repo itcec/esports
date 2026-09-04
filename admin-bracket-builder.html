@@ -66,14 +66,8 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   <button type="button" class="bracket-mobile-tab-btn flex-1 py-2 px-2.5 text-center text-xs font-bold font-label-caps rounded-lg bg-primary text-on-primary shadow transition-all whitespace-nowrap" data-btab="tree">
     <span class="material-symbols-outlined text-[16px] align-middle mr-1">account_tree</span> Visual Tree
   </button>
-  <button type="button" class="bracket-mobile-tab-btn flex-1 py-2 px-2.5 text-center text-xs font-bold font-label-caps rounded-lg text-on-surface-variant hover:text-on-surface transition-all whitespace-nowrap" data-btab="qf">
-    Quarterfinals
-  </button>
-  <button type="button" class="bracket-mobile-tab-btn flex-1 py-2 px-2.5 text-center text-xs font-bold font-label-caps rounded-lg text-on-surface-variant hover:text-on-surface transition-all whitespace-nowrap" data-btab="sf">
-    Semifinals
-  </button>
-  <button type="button" class="bracket-mobile-tab-btn flex-1 py-2 px-2.5 text-center text-xs font-bold font-label-caps rounded-lg text-on-surface-variant hover:text-on-surface transition-all whitespace-nowrap" data-btab="finals">
-    Finals
+  <button type="button" class="bracket-mobile-tab-btn flex-1 py-2 px-2.5 text-center text-xs font-bold font-label-caps rounded-lg text-on-surface-variant hover:text-on-surface transition-all whitespace-nowrap" data-btab="matches">
+    <span class="material-symbols-outlined text-[16px] align-middle mr-1">list</span> Matches
   </button>
   <button type="button" class="bracket-mobile-tab-btn flex-1 py-2 px-2.5 text-center text-xs font-bold font-label-caps rounded-lg text-on-surface-variant hover:text-on-surface transition-all whitespace-nowrap" data-btab="config">
     <span class="material-symbols-outlined text-[16px] align-middle mr-1">tune</span> Config
@@ -101,6 +95,13 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       <option value="shs">SHS Showdown (Senior High School)</option>
     </select>
     <div>
+      <label for="bracket-scope-select" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Bracket</label>
+      <select id="bracket-scope-select" class="w-full bg-[#050B14] p-2.5 rounded-lg border border-white/10 text-on-surface font-bold text-sm focus:border-primary focus:outline-none">
+        <!-- Populated by JS from the division -->
+      </select>
+      <span class="block text-[10px] text-on-surface-variant mt-1" id="scope-hint">Each department runs its own bracket; the champions meet in the Grand Finals bracket.</span>
+    </div>
+    <div>
       <label for="bracket-flight-title" class="block text-[10px] font-label-caps uppercase text-on-surface-variant mb-1 font-bold">Bracket Flight / Stage Title</label>
       <input type="text" id="bracket-flight-title" placeholder="e.g. Men's IT Department Bracket (Knockout)" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:border-primary focus:outline-none text-xs font-bold" />
     </div>
@@ -110,9 +111,9 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   <div class="bg-surface-container rounded-xl p-md flex flex-col gap-sm border border-white/10 cyber-panel">
     <div class="flex items-center justify-between">
       <label class="text-xs font-label-caps uppercase text-on-surface-variant font-bold">2. Select Participating Teams</label>
-      <span class="px-2 py-0.5 rounded text-xs font-mono font-bold" id="pool-count-badge">0 / 8 Selected</span>
+      <span class="px-2 py-0.5 rounded text-xs font-mono font-bold" id="pool-count-badge">0 Selected</span>
     </div>
-    <p class="text-[11px] text-on-surface-variant">Check exactly 8 approved teams to join this knockout bracket.</p>
+    <p class="text-[11px] text-on-surface-variant">Check the approved teams for this bracket. Any number from 2 to 32 works &mdash; if it isn&rsquo;t a power of two, the top seeds receive first-round byes.</p>
 
     <!-- Quick Filter Chips & Action Buttons -->
     <div class="flex items-center justify-between gap-1 flex-wrap pt-1 border-t border-white/5">
@@ -124,7 +125,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         <button type="button" class="dept-filter-btn px-2 py-1 rounded text-[10px] font-bold bg-surface-container-high text-on-surface-variant hover:text-on-surface" data-dept="CRIM">CRIM</button>
       </div>
       <div class="flex items-center gap-1">
-        <button type="button" id="btn-select-top8" class="px-2 py-1 rounded bg-primary/10 hover:bg-primary/20 text-primary font-bold text-[10px] transition-colors">TOP 8</button>
+        <button type="button" id="btn-select-all-scope" class="px-2 py-1 rounded bg-primary/10 hover:bg-primary/20 text-primary font-bold text-[10px] transition-colors">SELECT ALL</button>
         <button type="button" id="btn-clear-selection" class="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-on-surface-variant font-bold text-[10px] transition-colors">CLEAR</button>
       </div>
     </div>
@@ -144,10 +145,22 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   <!-- Seed Order & Matchup Positioning -->
   <div class="bg-surface-container rounded-xl p-md flex flex-col gap-sm border border-white/10 cyber-panel">
     <div class="flex items-center justify-between">
-      <label class="text-xs font-label-caps uppercase text-on-surface-variant font-bold">3. Seed Positions (#1 to #8)</label>
+      <label class="text-xs font-label-caps uppercase text-on-surface-variant font-bold">3. Seed Positions</label>
       <span class="text-[10px] text-outline">Reorder seeds or randomize</span>
     </div>
     <div id="seed-order-list" class="flex flex-col gap-1.5 max-h-[250px] overflow-y-auto pr-1">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- Series length per round (each match can still be overridden individually) -->
+  <div class="bg-surface-container rounded-xl p-md flex flex-col gap-sm border border-white/10 cyber-panel">
+    <div class="flex items-center justify-between">
+      <label class="text-xs font-label-caps uppercase text-on-surface-variant font-bold">4. Series Length</label>
+      <button type="button" id="btn-reset-formats" class="px-2 py-1 rounded bg-white/5 hover:bg-white/10 text-on-surface-variant font-bold text-[10px] transition-colors">RESET</button>
+    </div>
+    <p class="text-[11px] text-on-surface-variant">Sets the default for every match in a round. Override a single match on its card in the preview.</p>
+    <div id="round-format-list" class="flex flex-col gap-1.5">
       <!-- Populated by JS -->
     </div>
   </div>
@@ -205,11 +218,209 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // State
-  let allApprovedTeams = { mens: [], womens: [], faculty: [] };
-  let selectedTeams = { mens: [], womens: [], faculty: [] };
+  const scopeSelect = document.getElementById('bracket-scope-select');
+  const scopeHint = document.getElementById('scope-hint');
+  const roundFormatList = document.getElementById('round-format-list');
+
+  // Approved teams are pooled per division; selections, seed order and series
+  // lengths are held per *scope* (division + department), because a division now
+  // publishes several independent brackets.
+  let allApprovedTeams = { mens: [], womens: [], faculty: [], shs: [] };
+  let selectedTeams = {};     // scopeKey -> [teamName, ...] in seed order
+  let roundFormats = {};      // scopeKey -> { roundNumber: 'BO1' }
+  let matchFormats = {};      // scopeKey -> { matchKey: 'BO3' }  per-match override
   let currentActiveDept = 'ALL';
   let searchQuery = '';
   let seedsLoaded = false;
+
+  const SERIES_OPTIONS = ['BO1', 'BO3', 'BO5', 'BO7'];
+
+  // Men's and Women's run a bracket per department plus a division-wide Grand
+  // Finals; Faculty and SHS run a single division-wide bracket.
+  function scopeOptionsFor(div) {
+    if (div === 'mens' || div === 'womens') {
+      return [
+        { value: 'IT', label: 'IT Department bracket' },
+        { value: 'HTM', label: 'HTM Department bracket' },
+        { value: 'CTE', label: 'CTE Department bracket' },
+        { value: 'CRIM', label: 'CRIM Department bracket' },
+        { value: '', label: 'Grand Finals (department champions)' }
+      ];
+    }
+    if (div === 'shs') {
+      return [{ value: '', label: 'SHS Showdown (all strands)' }];
+    }
+    return [{ value: '', label: 'Faculty Exhibition (all teams)' }];
+  }
+
+  function currentDepartment() {
+    return scopeSelect ? scopeSelect.value : '';
+  }
+
+  function scopeKey(div, dept) {
+    return dept ? div + '__' + dept : div;
+  }
+
+  function currentScope() {
+    return scopeKey(divisionSelect.value, currentDepartment());
+  }
+
+  function scopeLabel() {
+    const div = divisionSelect.value;
+    const dept = currentDepartment();
+    const opt = scopeOptionsFor(div).filter(function (o) { return o.value === dept; })[0];
+    return opt ? opt.label : div;
+  }
+
+  function renderScopeSelect(preserve) {
+    if (!scopeSelect) return;
+    const div = divisionSelect.value;
+    const opts = scopeOptionsFor(div);
+    const keep = opts.some(function (o) { return o.value === preserve; }) ? preserve : opts[0].value;
+    scopeSelect.innerHTML = opts.map(function (o) {
+      return '<option value="' + escHtml(o.value) + '"' +
+        (o.value === keep ? ' selected' : '') + '>' + escHtml(o.label) + '</option>';
+    }).join('');
+    if (scopeHint) {
+      scopeHint.textContent = (div === 'mens' || div === 'womens')
+        ? 'Each department runs its own bracket; the champions meet in the Grand Finals bracket.'
+        : 'This division plays one bracket.';
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Single-elimination generator (any team count, byes for the top seeds)
+   * ------------------------------------------------------------------ */
+
+  // Slot order for a bracket of size n: 1 v n, then the standard mirror split,
+  // so the top seeds can only meet in the later rounds.
+  function seedSlots(n) {
+    let order = [1];
+    while (order.length < n) {
+      const size = order.length * 2 + 1;
+      const next = [];
+      order.forEach(function (seed) { next.push(seed, size - seed); });
+      order = next;
+    }
+    return order;
+  }
+
+  function bracketSizeFor(count) {
+    let size = 2;
+    while (size < count) size *= 2;
+    return size;
+  }
+
+  function stageNameFor(round, totalRounds) {
+    const remaining = totalRounds - round;
+    if (remaining === 0) return 'Final';
+    if (remaining === 1) return 'Semifinals';
+    if (remaining === 2) return 'Quarterfinals';
+    return 'Round of ' + Math.pow(2, remaining + 1);
+  }
+
+  function defaultFormatFor(round, totalRounds, div) {
+    const remaining = totalRounds - round;
+    if (remaining === 0) return div === 'shs' ? 'BO3' : 'BO5';
+    if (remaining === 1) return 'BO3';
+    return 'BO1';
+  }
+
+  function formatFor(scope, round, totalRounds, div, matchKey) {
+    const perMatch = matchFormats[scope] || {};
+    if (perMatch[matchKey]) return perMatch[matchKey];
+    const perRound = roundFormats[scope] || {};
+    if (perRound[round]) return perRound[round];
+    return defaultFormatFor(round, totalRounds, div);
+  }
+
+  /**
+   * Builds the whole match tree for a scope. Matches carry everything the public
+   * bracket page and the officiating screen need, including per-match format.
+   */
+  function buildBracket(seedNames, opts) {
+    opts = opts || {};
+    const div = opts.division || divisionSelect.value;
+    const dept = opts.department === undefined ? currentDepartment() : opts.department;
+    const scope = scopeKey(div, dept);
+    const title = opts.title || '';
+    const teams = seedNames.slice();
+    const size = bracketSizeFor(teams.length);
+    const rounds = Math.round(Math.log(size) / Math.log(2));
+
+    // Place teams into slots; slots past the team count become byes.
+    const slots = seedSlots(size).map(function (seed) {
+      return seed <= teams.length ? teams[seed - 1] : null;
+    });
+
+    const matches = [];
+    const byKey = {};
+    for (let r = 1; r <= rounds; r++) {
+      const inRound = size / Math.pow(2, r);
+      for (let i = 1; i <= inRound; i++) {
+        const key = scope + '_R' + r + 'M' + i;
+        const isLast = r === rounds;
+        const stage = stageNameFor(r, rounds);
+        const m = {
+          matchKey: key,
+          round: r,
+          stage: stage,
+          title: (title ? title + ' - ' : '') + stage + ' ' + i,
+          format: formatFor(scope, r, rounds, div, key),
+          team1Id: '', team1Name: '', team2Id: '', team2Name: '',
+          score1: 0, score2: 0, winnerId: '', winnerName: '',
+          status: 'Scheduled',
+          department: dept,
+          division: div,
+          nextMatchKey: isLast ? '' : scope + '_R' + (r + 1) + 'M' + Math.ceil(i / 2),
+          nextSlot: isLast ? '' : (i % 2 === 1 ? 'team1' : 'team2')
+        };
+        matches.push(m);
+        byKey[key] = m;
+      }
+    }
+
+    const getTeam = opts.lookup || function () { return {}; };
+
+    // Round 1 from the seeded slots.
+    let byes = 0;
+    for (let i = 1; i <= size / 2; i++) {
+      const m = byKey[scope + '_R1M' + i];
+      const a = slots[(i - 1) * 2];
+      const b = slots[(i - 1) * 2 + 1];
+      m.team1Name = a || '';
+      m.team1Id = a ? (getTeam(a).id || '') : '';
+      m.team2Name = b || '';
+      m.team2Id = b ? (getTeam(b).id || '') : '';
+
+      // A pairing with only one team is a bye: settle it and carry the team on.
+      if (a && !b) {
+        byes++;
+        m.team2Name = 'BYE';
+        m.status = 'Completed';
+        m.winnerName = a;
+        m.winnerId = m.team1Id;
+        m.format = '-';
+        const nxt = byKey[m.nextMatchKey];
+        if (nxt) {
+          nxt[m.nextSlot + 'Name'] = a;
+          nxt[m.nextSlot + 'Id'] = m.team1Id;
+        }
+      }
+    }
+
+    // Placeholder labels for slots still waiting on a result.
+    matches.forEach(function (m) {
+      if (m.round === 1) return;
+      matches.filter(function (f) { return f.nextMatchKey === m.matchKey; })
+        .forEach(function (f) {
+          const slot = f.nextSlot + 'Name';
+          if (!m[slot]) m[slot] = 'Winner ' + f.stage + ' ' + f.matchKey.split('M').pop();
+        });
+    });
+
+    return { matches: matches, rounds: rounds, size: size, byes: byes, scope: scope };
+  }
 
   function escHtml(str) {
     return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -231,18 +442,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return window.CECSite.divisionKeyFromCourse(value);
   }
 
-  function getDefaultTitle(div) {
-    if (div === 'womens') return "Student Women's Division Championship Bracket";
+  function getDefaultTitle(div, dept) {
     if (div === 'faculty') return "Faculty & Staff Exhibition Showcase Bracket";
     if (div === 'shs') return "SHS Showdown Championship Bracket";
-    return "Student Men's Division Championship Bracket";
+    const divisionName = div === 'womens' ? "Women's" : "Men's";
+    return dept
+      ? "Student " + divisionName + " - " + dept + " Department Bracket"
+      : "Student " + divisionName + " Grand Finals";
   }
 
   async function loadApprovedTeams() {
     try {
       const teams = await PublicTournamentApi.listTeams();
-      allApprovedTeams = { mens: [], womens: [], faculty: [] };
-      selectedTeams = { mens: [], womens: [], faculty: [] };
+      allApprovedTeams = { mens: [], womens: [], faculty: [], shs: [] };
+      selectedTeams = {};
 
       (teams || []).forEach((t) => {
         const status = String(t.approvalStatus || t.Status || '').toLowerCase();
@@ -259,11 +472,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      // Default: select up to the first 8 approved teams for each division
-      ['mens', 'womens', 'faculty'].forEach(div => {
-        selectedTeams[div] = allApprovedTeams[div].slice(0, 8).map(t => t.name);
-      });
-
       seedsLoaded = true;
       document.getElementById('division-status-text').textContent = 'Ready';
     } catch (err) {
@@ -272,28 +480,47 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('division-status-text').textContent = 'Offline';
     }
 
+    renderScopeSelect('');
+    seedDefaultSelection();
     renderAll();
+  }
+
+  /** Teams eligible for the current scope. A department bracket only ever draws
+   *  from that department; the Grand Finals bracket draws from the whole division. */
+  function poolForScope() {
+    const div = divisionSelect.value;
+    const dept = currentDepartment();
+    const pool = allApprovedTeams[div] || [];
+    if (!dept) return pool;
+    return pool.filter(function (t) { return t.dept === dept; });
+  }
+
+  /** Pre-tick every eligible team the first time a scope is opened. */
+  function seedDefaultSelection() {
+    const scope = currentScope();
+    if (selectedTeams[scope] && selectedTeams[scope].length) return;
+    selectedTeams[scope] = poolForScope().map(function (t) { return t.name; });
   }
 
   function renderAll() {
     const div = divisionSelect.value;
     if (!flightTitleInput.value || flightTitleInput.dataset.autoFilled) {
-      flightTitleInput.value = getDefaultTitle(div);
+      flightTitleInput.value = getDefaultTitle(div, currentDepartment());
       flightTitleInput.dataset.autoFilled = 'true';
     }
 
     renderTeamSelectionList();
     renderSeedOrderList();
+    renderRoundFormats();
     renderBracketPreview();
     updateButtonStates();
   }
 
   function renderTeamSelectionList() {
-    const div = divisionSelect.value;
-    const available = allApprovedTeams[div] || [];
-    const selected = selectedTeams[div] || [];
+    const scope = currentScope();
+    const available = poolForScope();
+    const selected = selectedTeams[scope] || [];
 
-    // Filter by Dept and Search
     const filtered = available.filter(t => {
       if (currentActiveDept !== 'ALL' && t.dept !== currentActiveDept) return false;
       if (searchQuery && t.name.toLowerCase().indexOf(searchQuery) === -1 && t.dept.toLowerCase().indexOf(searchQuery) === -1) return false;
@@ -301,7 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (!available.length) {
-      teamSelectList.innerHTML = `<div class="p-3 text-center text-xs text-on-surface-variant bg-surface-container-lowest rounded-lg border border-dashed border-white/10">No approved teams found in this division.</div>`;
+      teamSelectList.innerHTML = `<div class="p-3 text-center text-xs text-on-surface-variant bg-surface-container-lowest rounded-lg border border-dashed border-white/10">No approved teams found for ${escHtml(scopeLabel())}.</div>`;
       return;
     }
 
@@ -330,15 +557,14 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }).join('');
 
-    // Attach checkbox change listeners
     teamSelectList.querySelectorAll('.team-checkbox').forEach(cb => {
       cb.addEventListener('change', (e) => {
         const name = e.target.value;
-        const sel = selectedTeams[div] || [];
+        const sel = selectedTeams[scope] || [];
         if (e.target.checked) {
           if (sel.indexOf(name) === -1) {
-            if (sel.length >= 8) {
-              alert('A standard quarterfinal bracket requires exactly 8 teams. Please uncheck a team before adding another.');
+            if (sel.length >= 32) {
+              alert('A bracket can hold at most 32 teams.');
               e.target.checked = false;
               return;
             }
@@ -348,24 +574,25 @@ document.addEventListener('DOMContentLoaded', () => {
           const idx = sel.indexOf(name);
           if (idx !== -1) sel.splice(idx, 1);
         }
-        selectedTeams[div] = sel;
+        selectedTeams[scope] = sel;
         renderAll();
       });
     });
   }
 
   function renderSeedOrderList() {
-    const div = divisionSelect.value;
-    const selected = selectedTeams[div] || [];
-
-    // Update Counter Badge
+    const scope = currentScope();
+    const selected = selectedTeams[scope] || [];
     const count = selected.length;
-    poolCountBadge.textContent = `${count} / 8 Selected`;
-    if (count === 8) {
-      poolCountBadge.className = 'px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-    } else {
-      poolCountBadge.className = 'px-2 py-0.5 rounded text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
-    }
+    const size = bracketSizeFor(Math.max(count, 2));
+    const byes = count >= 2 ? size - count : 0;
+
+    poolCountBadge.textContent = count < 2
+      ? `${count} Selected`
+      : `${count} Teams · ${size}-slot bracket${byes ? ` · ${byes} bye${byes > 1 ? 's' : ''}` : ''}`;
+    poolCountBadge.className = count >= 2
+      ? 'px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+      : 'px-2 py-0.5 rounded text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
 
     if (!selected.length) {
       seedOrderList.innerHTML = `<div class="p-3 text-center text-xs text-on-surface-variant bg-surface-container-lowest rounded-lg border border-dashed border-white/10">No teams selected. Check teams from above to seed.</div>`;
@@ -377,12 +604,13 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="flex items-center gap-2 min-w-0">
           <span class="text-primary font-mono font-black text-xs w-6 shrink-0">#${idx + 1}</span>
           <span class="font-bold text-on-surface truncate">${escHtml(name)}</span>
+          ${idx < byes ? '<span class="text-[9px] font-bold text-emerald-300 bg-emerald-500/15 rounded px-1 py-0.5 shrink-0">BYE R1</span>' : ''}
         </div>
         <div class="flex items-center gap-1 shrink-0">
-          <button type="button" onclick="moveSeed('${div}', ${idx}, -1)" ${idx === 0 ? 'disabled class="opacity-30 p-1 text-outline"' : 'class="p-1 text-on-surface hover:text-primary transition-colors"'} title="Move Up">
+          <button type="button" onclick="moveSeed(${idx}, -1)" ${idx === 0 ? 'disabled class="opacity-30 p-1 text-outline"' : 'class="p-1 text-on-surface hover:text-primary transition-colors"'} title="Move Up">
             <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
           </button>
-          <button type="button" onclick="moveSeed('${div}', ${idx}, 1)" ${idx === selected.length - 1 ? 'disabled class="opacity-30 p-1 text-outline"' : 'class="p-1 text-on-surface hover:text-primary transition-colors"'} title="Move Down">
+          <button type="button" onclick="moveSeed(${idx}, 1)" ${idx === selected.length - 1 ? 'disabled class="opacity-30 p-1 text-outline"' : 'class="p-1 text-on-surface hover:text-primary transition-colors"'} title="Move Down">
             <span class="material-symbols-outlined text-[16px]">arrow_downward</span>
           </button>
         </div>
@@ -390,84 +618,147 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  window.moveSeed = function(div, index, delta) {
-    const list = selectedTeams[div] || [];
+  window.moveSeed = function(index, delta) {
+    const scope = currentScope();
+    const list = selectedTeams[scope] || [];
     const target = index + delta;
     if (target < 0 || target >= list.length) return;
     const temp = list[index];
     list[index] = list[target];
     list[target] = temp;
-    selectedTeams[div] = list;
+    selectedTeams[scope] = list;
     renderAll();
   };
 
-  function updateButtonStates() {
+  /** One series-length control per round of the current bracket. */
+  function renderRoundFormats() {
+    if (!roundFormatList) return;
+    const scope = currentScope();
     const div = divisionSelect.value;
-    const count = (selectedTeams[div] || []).length;
-    const isValid = count === 8;
+    const selected = selectedTeams[scope] || [];
+    if (selected.length < 2) {
+      roundFormatList.innerHTML = `<div class="p-3 text-center text-xs text-on-surface-variant bg-surface-container-lowest rounded-lg border border-dashed border-white/10">Select at least 2 teams.</div>`;
+      return;
+    }
+    const rounds = Math.round(Math.log(bracketSizeFor(selected.length)) / Math.log(2));
+    let html = '';
+    for (let r = 1; r <= rounds; r++) {
+      const value = (roundFormats[scope] || {})[r] || defaultFormatFor(r, rounds, div);
+      html += `
+        <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-surface-container-lowest border border-white/5">
+          <span class="text-[11px] font-bold text-on-surface truncate">${escHtml(stageNameFor(r, rounds))}</span>
+          <select data-round="${r}" class="round-format-select bg-[#050B14] text-on-surface text-[11px] font-mono font-bold px-2 py-1 rounded border border-white/10 focus:border-primary focus:outline-none">
+            ${SERIES_OPTIONS.map(o => `<option value="${o}"${o === value ? ' selected' : ''}>${o}</option>`).join('')}
+          </select>
+        </div>`;
+    }
+    roundFormatList.innerHTML = html;
+
+    roundFormatList.querySelectorAll('.round-format-select').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        const r = e.target.dataset.round;
+        roundFormats[scope] = roundFormats[scope] || {};
+        roundFormats[scope][r] = e.target.value;
+        // A round-wide change clears the per-match overrides for that round.
+        const perMatch = matchFormats[scope] || {};
+        Object.keys(perMatch).forEach(function (k) {
+          if (k.indexOf('_R' + r + 'M') !== -1) delete perMatch[k];
+        });
+        renderAll();
+      });
+    });
+  }
+
+  function updateButtonStates() {
+    const count = (selectedTeams[currentScope()] || []).length;
+    const isValid = count >= 2 && count <= 32;
     if (publishBtn) publishBtn.disabled = !isValid;
     if (drawBtn) drawBtn.disabled = count < 2;
   }
 
-  function renderBracketPreview() {
+  /** The tree the preview and the publish button both work from. */
+  function currentTree() {
+    const scope = currentScope();
     const div = divisionSelect.value;
-    const seeds = selectedTeams[div] || [];
+    const seeds = selectedTeams[scope] || [];
+    if (seeds.length < 2) return null;
+    const pool = allApprovedTeams[div] || [];
+    return buildBracket(seeds, {
+      division: div,
+      department: currentDepartment(),
+      title: flightTitleInput.value.trim() || getDefaultTitle(div, currentDepartment()),
+      lookup: (name) => pool.find(t => t.name === name) || {}
+    });
+  }
 
-    visualContainer.innerHTML = `
-      <!-- Quarterfinals -->
-      <div class="flex flex-col gap-4">
-        <span class="text-[10px] uppercase font-bold text-center text-primary cyber-mono">Quarterfinals (BO1)</span>
-        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
-          <div class="font-bold text-primary py-0.5 border-b border-white/5 flex items-center justify-between"><span class="truncate">${escHtml(seeds[0] || 'Seed #1')}</span><span class="font-mono text-[9px] text-outline">#1</span></div>
-          <div class="font-bold text-on-surface py-0.5 flex items-center justify-between"><span class="truncate">${escHtml(seeds[7] || 'Seed #8')}</span><span class="font-mono text-[9px] text-outline">#8</span></div>
+  function matchCardHtml(m, isFinal) {
+    const bye = m.team2Name === 'BYE';
+    const accent = isFinal ? 'border-[#ffb020]/60' : 'border-white/10';
+    return `
+      <div class="p-2 rounded-xl bg-surface-container border ${accent} text-xs w-52 shadow ${isFinal ? 'cyber-panel border-2' : ''}">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[9px] font-mono text-outline truncate">${escHtml(m.stage)} ${m.matchKey.split('M').pop()}</span>
+          ${bye
+            ? '<span class="text-[9px] font-bold text-emerald-300">BYE</span>'
+            : `<select data-key="${escHtml(m.matchKey)}" class="match-format-select bg-[#050B14] text-primary text-[9px] font-mono font-bold px-1 py-0.5 rounded border border-white/10 focus:border-primary focus:outline-none">
+                ${SERIES_OPTIONS.map(o => `<option value="${o}"${o === m.format ? ' selected' : ''}>${o}</option>`).join('')}
+              </select>`}
         </div>
-        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
-          <div class="font-bold text-on-surface py-0.5 border-b border-white/5 flex items-center justify-between"><span class="truncate">${escHtml(seeds[3] || 'Seed #4')}</span><span class="font-mono text-[9px] text-outline">#4</span></div>
-          <div class="font-bold text-on-surface py-0.5 flex items-center justify-between"><span class="truncate">${escHtml(seeds[4] || 'Seed #5')}</span><span class="font-mono text-[9px] text-outline">#5</span></div>
-        </div>
-        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
-          <div class="font-bold text-on-surface py-0.5 border-b border-white/5 flex items-center justify-between"><span class="truncate">${escHtml(seeds[1] || 'Seed #2')}</span><span class="font-mono text-[9px] text-outline">#2</span></div>
-          <div class="font-bold text-on-surface py-0.5 flex items-center justify-between"><span class="truncate">${escHtml(seeds[6] || 'Seed #7')}</span><span class="font-mono text-[9px] text-outline">#7</span></div>
-        </div>
-        <div class="p-2 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow">
-          <div class="font-bold text-on-surface py-0.5 border-b border-white/5 flex items-center justify-between"><span class="truncate">${escHtml(seeds[2] || 'Seed #3')}</span><span class="font-mono text-[9px] text-outline">#3</span></div>
-          <div class="font-bold text-on-surface py-0.5 flex items-center justify-between"><span class="truncate">${escHtml(seeds[5] || 'Seed #6')}</span><span class="font-mono text-[9px] text-outline">#6</span></div>
-        </div>
-      </div>
+        <div class="font-bold ${m.team1Name && m.round === 1 ? 'text-on-surface' : 'text-on-surface-variant'} py-0.5 border-b border-white/5 truncate">${escHtml(m.team1Name || 'TBD')}</div>
+        <div class="font-bold ${bye ? 'text-outline' : (m.team2Name && m.round === 1 ? 'text-on-surface' : 'text-on-surface-variant')} py-0.5 truncate">${escHtml(m.team2Name || 'TBD')}</div>
+        ${isFinal ? '<div class="text-center text-[10px] text-[#ffb020] font-bold mt-1 font-label-caps flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[14px]">emoji_events</span> CHAMPION</div>' : ''}
+      </div>`;
+  }
 
-      <!-- Arrow -->
-      <span class="material-symbols-outlined text-primary text-[24px]">arrow_forward</span>
+  function bindMatchFormatSelects(root) {
+    const scope = currentScope();
+    root.querySelectorAll('.match-format-select').forEach(sel => {
+      sel.addEventListener('change', (e) => {
+        matchFormats[scope] = matchFormats[scope] || {};
+        matchFormats[scope][e.target.dataset.key] = e.target.value;
+        renderAll();
+      });
+    });
+  }
 
-      <!-- Semifinals -->
-      <div class="flex flex-col gap-12">
-        <span class="text-[10px] uppercase font-bold text-center text-secondary cyber-mono">Semifinals (BO3)</span>
-        <div class="p-2.5 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow flex flex-col gap-1">
-          <div class="text-on-surface-variant py-0.5 border-b border-white/5">Winner QF 1</div>
-          <div class="text-on-surface-variant py-0.5">Winner QF 2</div>
-        </div>
-        <div class="p-2.5 rounded-xl bg-surface-container border border-white/10 text-xs w-48 shadow flex flex-col gap-1">
-          <div class="text-on-surface-variant py-0.5 border-b border-white/5">Winner QF 3</div>
-          <div class="text-on-surface-variant py-0.5">Winner QF 4</div>
-        </div>
-      </div>
+  function renderBracketPreview() {
+    const tree = currentTree();
+    const titleEl = document.getElementById('preview-title');
+    const subEl = document.getElementById('preview-subtitle');
+    const badgeEl = document.getElementById('preview-format-badge');
 
-      <!-- Arrow -->
-      <span class="material-symbols-outlined text-primary text-[24px]">arrow_forward</span>
+    if (titleEl) titleEl.textContent = scopeLabel();
+    if (subEl) subEl.textContent = 'Live Synchronized with Realtime Standings & Live Arena';
 
-      <!-- Grand Final -->
-      <div class="flex flex-col gap-4">
-        <span class="text-[10px] uppercase font-bold text-center text-[#ffb020] cyber-mono">Grand Final (BO5)</span>
-        <div class="p-3.5 rounded-2xl bg-surface-container border-2 border-[#ffb020]/60 text-xs w-56 shadow-2xl cyber-panel flex flex-col gap-1.5">
-          <div class="text-on-surface font-bold py-1 border-b border-white/10">Winner SF 1</div>
-          <div class="text-on-surface font-bold py-1">Winner SF 2</div>
-          <div class="text-center text-[10px] text-[#ffb020] font-bold mt-1 font-label-caps flex items-center justify-center gap-1">
-            <span class="material-symbols-outlined text-[14px]">emoji_events</span> CHAMPION
-          </div>
-        </div>
-      </div>
-    `;
+    if (!tree) {
+      if (badgeEl) badgeEl.textContent = 'SELECT AT LEAST 2 TEAMS';
+      visualContainer.innerHTML = `<div class="p-6 text-center text-xs text-on-surface-variant border border-dashed border-white/15 rounded-xl">Select at least 2 approved teams to preview the bracket.</div>`;
+      renderMobileMatchups();
+      updateMobileTabDisplay();
+      return;
+    }
 
-    renderMobileMatchups(seeds);
+    if (badgeEl) {
+      badgeEl.textContent = `SINGLE ELIMINATION (${(selectedTeams[currentScope()] || []).length} TEAMS` +
+        (tree.byes ? ` · ${tree.byes} BYE${tree.byes > 1 ? 'S' : ''}` : '') + ')';
+    }
+
+    let html = '';
+    for (let r = 1; r <= tree.rounds; r++) {
+      const roundMatches = tree.matches.filter(m => m.round === r);
+      const isFinalRound = r === tree.rounds;
+      const colour = isFinalRound ? 'text-[#ffb020]' : (r === tree.rounds - 1 ? 'text-secondary' : 'text-primary');
+      if (r > 1) html += '<span class="material-symbols-outlined text-primary text-[24px] shrink-0">arrow_forward</span>';
+      html += `
+        <div class="flex flex-col gap-3 justify-center shrink-0">
+          <span class="text-[10px] uppercase font-bold text-center ${colour} cyber-mono">${escHtml(stageNameFor(r, tree.rounds))}</span>
+          ${roundMatches.map(m => matchCardHtml(m, isFinalRound)).join('')}
+        </div>`;
+    }
+    visualContainer.innerHTML = html;
+    bindMatchFormatSelects(visualContainer);
+
+    renderMobileMatchups();
     updateMobileTabDisplay();
   }
 
@@ -475,85 +766,45 @@ document.addEventListener('DOMContentLoaded', () => {
   const bTabBtns = document.querySelectorAll('.bracket-mobile-tab-btn');
   let activeBTab = 'tree';
 
-  function renderMobileMatchups(seeds) {
+  function renderMobileMatchups() {
     if (!mobileMatchupsEl) return;
-    if (!seeds.length) {
-      mobileMatchupsEl.innerHTML = `<div class="p-4 rounded-xl bg-surface-container border border-dashed border-white/15 text-xs text-on-surface-variant text-center">No approved seeds selected yet.</div>`;
+    const tree = currentTree();
+    if (!tree) {
+      mobileMatchupsEl.innerHTML = `<div class="p-4 rounded-xl bg-surface-container border border-dashed border-white/15 text-xs text-on-surface-variant text-center">Select at least 2 approved teams.</div>`;
       return;
     }
 
-    if (activeBTab === 'qf') {
-      const qfs = [
-        { id: 'QF 1', t1: seeds[0] || 'Seed 1', s1: '#1 Seed', t2: seeds[7] || 'Seed 8', s2: '#8 Seed' },
-        { id: 'QF 2', t1: seeds[3] || 'Seed 4', s1: '#4 Seed', t2: seeds[4] || 'Seed 5', s2: '#5 Seed' },
-        { id: 'QF 3', t1: seeds[1] || 'Seed 2', s1: '#2 Seed', t2: seeds[6] || 'Seed 7', s2: '#7 Seed' },
-        { id: 'QF 4', t1: seeds[2] || 'Seed 3', s1: '#3 Seed', t2: seeds[5] || 'Seed 6', s2: '#6 Seed' }
-      ];
-
-      mobileMatchupsEl.innerHTML = `
-        <div class="flex items-center justify-between px-1">
-          <span class="text-xs font-bold font-label-caps text-primary uppercase">Quarterfinals (Round of 8)</span>
-          <span class="text-[10px] text-outline font-mono">Best-of-1</span>
-        </div>
-        ${qfs.map(q => `
-          <div class="bg-surface-container rounded-xl p-md border border-white/10 flex flex-col gap-2 shadow-md">
-            <div class="flex items-center justify-between text-[11px] text-outline border-b border-white/5 pb-1">
-              <span class="font-bold text-primary font-mono">${q.id}</span>
-              <span>Court 1 / Annex Lab</span>
-            </div>
-            <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest border border-white/5">
-              <span class="font-bold text-on-surface text-xs truncate flex-1">${escHtml(q.t1)}</span>
-              <span class="text-[10px] text-primary font-mono px-1.5 py-0.5 rounded bg-primary/10">${q.s1}</span>
-            </div>
-            <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest border border-white/5">
-              <span class="font-bold text-on-surface text-xs truncate flex-1">${escHtml(q.t2)}</span>
-              <span class="text-[10px] text-outline font-mono px-1.5 py-0.5 rounded bg-surface-container-high">${q.s2}</span>
-            </div>
-          </div>
-        `).join('')}
-      `;
-    } else if (activeBTab === 'sf') {
-      mobileMatchupsEl.innerHTML = `
-        <div class="flex items-center justify-between px-1">
-          <span class="text-xs font-bold font-label-caps text-secondary uppercase">Semifinals (Final 4)</span>
-          <span class="text-[10px] text-outline font-mono">Best-of-3</span>
-        </div>
+    let html = '';
+    for (let r = 1; r <= tree.rounds; r++) {
+      const roundMatches = tree.matches.filter(m => m.round === r);
+      html += `
+        <div class="flex items-center justify-between px-1 pt-2">
+          <span class="text-xs font-bold font-label-caps text-primary uppercase">${escHtml(stageNameFor(r, tree.rounds))}</span>
+          <span class="text-[10px] text-outline font-mono">${roundMatches.length} match${roundMatches.length > 1 ? 'es' : ''}</span>
+        </div>`;
+      html += roundMatches.map(m => {
+        const bye = m.team2Name === 'BYE';
+        return `
         <div class="bg-surface-container rounded-xl p-md border border-white/10 flex flex-col gap-2 shadow-md">
           <div class="flex items-center justify-between text-[11px] text-outline border-b border-white/5 pb-1">
-            <span class="font-bold text-secondary font-mono">SF 1</span>
-            <span>Winner QF 1 vs Winner QF 2</span>
+            <span class="font-bold text-primary font-mono">${escHtml(m.stage)} ${m.matchKey.split('M').pop()}</span>
+            ${bye
+              ? '<span class="font-bold text-emerald-300">BYE</span>'
+              : `<select data-key="${escHtml(m.matchKey)}" class="match-format-select bg-[#050B14] text-primary text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border border-white/10 focus:border-primary focus:outline-none">
+                  ${SERIES_OPTIONS.map(o => `<option value="${o}"${o === m.format ? ' selected' : ''}>${o}</option>`).join('')}
+                </select>`}
           </div>
-          <div class="p-2.5 rounded-lg bg-surface-container-lowest text-xs text-on-surface-variant">Winner of QF 1 (${escHtml(seeds[0] || 'Seed 1')} / ${escHtml(seeds[7] || 'Seed 8')})</div>
-          <div class="p-2.5 rounded-lg bg-surface-container-lowest text-xs text-on-surface-variant">Winner of QF 2 (${escHtml(seeds[3] || 'Seed 4')} / ${escHtml(seeds[4] || 'Seed 5')})</div>
-        </div>
-        <div class="bg-surface-container rounded-xl p-md border border-white/10 flex flex-col gap-2 shadow-md">
-          <div class="flex items-center justify-between text-[11px] text-outline border-b border-white/5 pb-1">
-            <span class="font-bold text-secondary font-mono">SF 2</span>
-            <span>Winner QF 3 vs Winner QF 4</span>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest border border-white/5">
+            <span class="font-bold text-on-surface text-xs truncate flex-1">${escHtml(m.team1Name || 'TBD')}</span>
           </div>
-          <div class="p-2.5 rounded-lg bg-surface-container-lowest text-xs text-on-surface-variant">Winner of QF 3 (${escHtml(seeds[1] || 'Seed 2')} / ${escHtml(seeds[6] || 'Seed 7')})</div>
-          <div class="p-2.5 rounded-lg bg-surface-container-lowest text-xs text-on-surface-variant">Winner of QF 4 (${escHtml(seeds[2] || 'Seed 3')} / ${escHtml(seeds[5] || 'Seed 6')})</div>
-        </div>
-      `;
-    } else if (activeBTab === 'finals') {
-      mobileMatchupsEl.innerHTML = `
-        <div class="flex items-center justify-between px-1">
-          <span class="text-xs font-bold font-label-caps text-[#ffb020] uppercase flex items-center gap-1">
-            <span class="material-symbols-outlined text-[16px]">emoji_events</span> Grand Finals Day
-          </span>
-          <span class="text-[10px] text-outline font-mono">Best-of-5</span>
-        </div>
-        <div class="bg-surface-container rounded-2xl p-lg border-2 border-primary shadow-2xl flex flex-col gap-3 cyber-panel">
-          <div class="flex items-center justify-between text-xs text-primary font-bold border-b border-white/10 pb-2">
-            <span>CHAMPIONSHIP DECIDER</span>
-            <span class="font-mono">Oct 2, 2026</span>
+          <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-lowest border border-white/5">
+            <span class="font-bold ${bye ? 'text-outline' : 'text-on-surface'} text-xs truncate flex-1">${escHtml(m.team2Name || 'TBD')}</span>
           </div>
-          <div class="p-3 rounded-xl bg-surface-container-lowest border border-white/10 font-bold text-sm text-primary text-center">Winner Semifinal 1</div>
-          <div class="text-center font-stats-impact text-on-surface-variant text-xs font-bold">VS</div>
-          <div class="p-3 rounded-xl bg-surface-container-lowest border border-white/10 font-bold text-sm text-primary text-center">Winner Semifinal 2</div>
-        </div>
-      `;
+        </div>`;
+      }).join('');
     }
+    mobileMatchupsEl.innerHTML = html;
+    bindMatchFormatSelects(mobileMatchupsEl);
   }
 
   function updateMobileTabDisplay() {
@@ -573,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         if (mobileMatchupsEl) {
           mobileMatchupsEl.classList.remove('hidden');
-          renderMobileMatchups(selectedTeams[divisionSelect.value] || []);
+          renderMobileMatchups();
         }
         if (previewPanel) previewPanel.classList.add('hidden');
         if (configPanel) configPanel.classList.add('hidden');
@@ -615,18 +866,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Top 8 Button
-  document.getElementById('btn-select-top8').addEventListener('click', () => {
-    const div = divisionSelect.value;
-    const available = allApprovedTeams[div] || [];
-    selectedTeams[div] = available.slice(0, 8).map(t => t.name);
+  // Select every eligible team for this bracket
+  document.getElementById('btn-select-all-scope').addEventListener('click', () => {
+    selectedTeams[currentScope()] = poolForScope().slice(0, 32).map(t => t.name);
     renderAll();
   });
 
   // Clear Button
   document.getElementById('btn-clear-selection').addEventListener('click', () => {
-    const div = divisionSelect.value;
-    selectedTeams[div] = [];
+    selectedTeams[currentScope()] = [];
+    renderAll();
+  });
+
+  // Reset series lengths back to the per-round defaults
+  document.getElementById('btn-reset-formats').addEventListener('click', () => {
+    const scope = currentScope();
+    delete roundFormats[scope];
+    delete matchFormats[scope];
     renderAll();
   });
 
@@ -637,7 +893,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   divisionSelect.addEventListener('change', () => {
-    flightTitleInput.dataset.autoFilled = '';
+    flightTitleInput.dataset.autoFilled = 'true';
+    currentActiveDept = 'ALL';
+    renderScopeSelect('');
+    seedDefaultSelection();
+    renderAll();
+  });
+
+  scopeSelect.addEventListener('change', () => {
+    flightTitleInput.dataset.autoFilled = 'true';
+    seedDefaultSelection();
     renderAll();
   });
 
@@ -647,9 +912,9 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Permission Denied: Randomizing knockout draws is reserved for Committee Administrators.');
       return;
     }
-    const div = divisionSelect.value;
-    const list = [...(selectedTeams[div] || [])].sort(() => Math.random() - 0.5);
-    selectedTeams[div] = list;
+    const scope = currentScope();
+    const list = [...(selectedTeams[scope] || [])].sort(() => Math.random() - 0.5);
+    selectedTeams[scope] = list;
     renderAll();
   });
 
@@ -660,31 +925,31 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     const div = divisionSelect.value;
-    const seeds = selectedTeams[div] || [];
-    if (seeds.length !== 8) {
-      alert('Please select exactly 8 teams for this bracket. Currently ' + seeds.length + ' selected.');
+    const dept = currentDepartment();
+    const scope = currentScope();
+    const seeds = selectedTeams[scope] || [];
+    if (seeds.length < 2) {
+      alert('Select at least 2 teams for this bracket. Currently ' + seeds.length + ' selected.');
+      return;
+    }
+    if (seeds.length > 32) {
+      alert('A bracket can hold at most 32 teams.');
       return;
     }
 
-    const title = flightTitleInput.value.trim() || getDefaultTitle(div);
+    const title = flightTitleInput.value.trim() || getDefaultTitle(div, dept);
+    const tree = currentTree();
+    if (!tree) return;
+
     publishBtn.disabled = true;
-    publishBtn.textContent = 'PUBLISHING…';
-
-    const getTeam = (name) => (allApprovedTeams[div] || []).find(t => t.name === name) || {};
-
-    const matches = [
-      { matchKey: `${div}_QF1`, stage: 'Quarterfinals', title: `${title} · QF 1`, team1Id: getTeam(seeds[0]).id || '', team1Name: seeds[0], team2Id: getTeam(seeds[7]).id || '', team2Name: seeds[7], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF1`, nextSlot: 'team1' },
-      { matchKey: `${div}_QF2`, stage: 'Quarterfinals', title: `${title} · QF 2`, team1Id: getTeam(seeds[3]).id || '', team1Name: seeds[3], team2Id: getTeam(seeds[4]).id || '', team2Name: seeds[4], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF1`, nextSlot: 'team2' },
-      { matchKey: `${div}_QF3`, stage: 'Quarterfinals', title: `${title} · QF 3`, team1Id: getTeam(seeds[1]).id || '', team1Name: seeds[1], team2Id: getTeam(seeds[6]).id || '', team2Name: seeds[6], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF2`, nextSlot: 'team1' },
-      { matchKey: `${div}_QF4`, stage: 'Quarterfinals', title: `${title} · QF 4`, team1Id: getTeam(seeds[2]).id || '', team1Name: seeds[2], team2Id: getTeam(seeds[5]).id || '', team2Name: seeds[5], score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_SF2`, nextSlot: 'team2' },
-      { matchKey: `${div}_SF1`, stage: 'Semifinals', title: `${title} · Semifinal 1`, team1Id: '', team1Name: 'Winner QF 1', team2Id: '', team2Name: 'Winner QF 2', score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_Final`, nextSlot: 'team1' },
-      { matchKey: `${div}_SF2`, stage: 'Semifinals', title: `${title} · Semifinal 2`, team1Id: '', team1Name: 'Winner QF 3', team2Id: '', team2Name: 'Winner QF 4', score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: `${div}_Final`, nextSlot: 'team2' },
-      { matchKey: `${div}_Final`, stage: 'Grand Final', title: `${title} · Grand Final`, team1Id: '', team1Name: 'Winner SF 1', team2Id: '', team2Name: 'Winner SF 2', score1: 0, score2: 0, status: 'Scheduled', nextMatchKey: '', nextSlot: '' }
-    ];
+    publishBtn.textContent = 'PUBLISHING...';
 
     try {
-      await TournamentOps.saveBracketData(div, matches, title);
-      alert(`Bracket "${title}" published successfully!\n\nMatches are now available in the Live Arena for match officiating.`);
+      await TournamentOps.saveBracketData(div, dept, tree.matches, title);
+      alert('Bracket "' + title + '" published successfully!\n\n' +
+        seeds.length + ' teams, ' + tree.rounds + ' rounds' +
+        (tree.byes ? ', ' + tree.byes + ' first-round bye(s)' : '') + '.\n' +
+        'Matches are now available in the Live Arena for match officiating.');
     } catch (err) {
       alert('Could not publish bracket: ' + err.message);
     } finally {
@@ -693,6 +958,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  renderScopeSelect('');
+  renderAll();
   loadApprovedTeams();
 });
 </script>

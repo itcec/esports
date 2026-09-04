@@ -1674,6 +1674,7 @@
 
             const streamCheck = window.CECLiveManager.validateStreamUrl(document.getElementById('setting-stream-url').value);
             if (!streamCheck.ok) { alert(streamCheck.message); return; }
+            if (streamCheck.warning) alert(streamCheck.warning);
 
             const updated = {
               ...existing,

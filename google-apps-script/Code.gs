@@ -23,7 +23,14 @@ const DOCS_HEADERS = ['DocID', 'PlayerID', 'TeamID', 'DocType', 'DriveFileId', '
 const MATCHES_HEADERS = ['MatchID', 'Court', 'Division', 'Stage', 'Team1ID', 'Team1Name', 'Team1Score', 'Team2ID', 'Team2Name', 'Team2Score', 'WinnerID', 'WinnerName', 'Status', 'StreamUrl', 'OfficiatedBy', 'SubmittedAt', 'ScheduledAt', 'StreamPublished'];
 const DISPUTES_HEADERS = ['DisputeID', 'MatchID', 'TeamID', 'FiledBy', 'Category', 'Reason', 'EvidenceUrl', 'Status', 'Resolution', 'ResolvedBy', 'CreatedAt', 'ResolvedAt'];
 const AUDIT_HEADERS = ['LogID', 'Actor', 'Action', 'TargetID', 'Details', 'Timestamp'];
-const BRACKET_HEADERS = ['Division', 'Stage', 'MatchKey', 'Team1ID', 'Team1Name', 'Team2ID', 'Team2Name', 'Score1', 'Score2', 'WinnerID', 'UpdatedAt'];
+// Department: '' for a division-wide bracket (Faculty, SHS, Grand Finals), or the
+// department code (IT/HTM/...) for a department's own bracket.
+// Format: per-match series length, e.g. 'BO1' | 'BO3' | 'BO5'.
+// getSheet() appends any header missing from an existing sheet, so adding these
+// columns migrates the live BRACKETS sheet on the next call.
+const BRACKET_HEADERS = ['Division', 'Department', 'Stage', 'Round', 'MatchKey', 'Title', 'Format',
+  'Team1ID', 'Team1Name', 'Team2ID', 'Team2Name', 'Score1', 'Score2', 'WinnerID',
+  'Status', 'NextMatchKey', 'NextSlot', 'UpdatedAt'];
 
 const VALID_TEAM_STATUSES = ['Pending', 'UnderReview', 'Approved', 'Rejected'];
 const VALID_VERIFICATION_STATUSES = ['Pending', 'Verified', 'Rejected'];
@@ -50,7 +57,10 @@ function route(e, method) {
       return json({ success: true, data: listPublicTeams(), message: 'OK' });
     }
     if (action === 'getBracketData') {
-      return json({ success: true, data: getBracketData(params.division), message: 'OK' });
+      return json({ success: true,
+        data: getBracketData(params.division,
+          Object.prototype.hasOwnProperty.call(params, 'department') ? params.department : undefined),
+        message: 'OK' });
     }
     if (method === 'POST' && action === 'uploadVerificationFile') {
       return json({ success: true, data: uploadVerificationFile(params), message: 'File uploaded securely.' });
@@ -822,7 +832,9 @@ function publishMatch(params, user) {
   const validStatuses = ['Scheduled', 'LIVE', 'Completed', 'Cancelled'];
   const status = validStatuses.indexOf(String(params.status || 'Scheduled')) >= 0 ? String(params.status || 'Scheduled') : 'Scheduled';
   const streamUrl = String(params.streamUrl || '').trim();
-  if (streamUrl && !/twitch\.tv\//i.test(streamUrl)) throw new Error('Only Twitch stream links can be published.');
+  if (streamUrl && !/(twitch\.tv\/|youtube\.com\/|youtu\.be\/|tiktok\.com\/)/i.test(streamUrl)) {
+    throw new Error('Only Twitch, YouTube or TikTok LIVE stream links can be published.');
+  }
   
   const sheet = getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS);
   const existing = findRow(sheet, 'MatchID', params.matchId);
@@ -875,7 +887,7 @@ function publishMatch(params, user) {
     });
   }
 
-  logAudit(user.email, 'PUBLISH_MATCH', params.matchId, 'Status: ' + status + (streamUrl ? ' | Twitch stream published' : ''));
+  logAudit(user.email, 'PUBLISH_MATCH', params.matchId, 'Status: ' + status + (streamUrl ? ' | Stream published: ' + streamUrl : ''));
   return { matchId: params.matchId, status: status, streamUrl: streamUrl };
 }
 
@@ -1025,21 +1037,38 @@ function resolveDispute(params, user) {
   return { disputeId: params.disputeId, status: params.status, resolution: params.resolution };
 }
 
-function getBracketData(division) {
+function divisionMatches(target, value) {
+  var d = String(value || '').toLowerCase();
+  if (d === target) return true;
+  if (target.indexOf('shs') !== -1 || target.indexOf('senior high') !== -1) {
+    return d.indexOf('shs') !== -1 || d.indexOf('senior high') !== -1;
+  }
+  if (target.indexOf('women') !== -1) return d.indexOf('women') !== -1;
+  if (target.indexOf('faculty') !== -1 || target.indexOf('exhibition') !== -1) {
+    return d.indexOf('faculty') !== -1 || d.indexOf('exhibition') !== -1;
+  }
+  if (target.indexOf('men') !== -1) return d.indexOf('men') !== -1 && d.indexOf('women') === -1;
+  return false;
+}
+
+/**
+ * Rows for one bracket scope.
+ *  department omitted  -> every bracket in the division (all departments + finals)
+ *  department given    -> just that department's bracket ('' selects the
+ *                         division-wide bracket used by Faculty / SHS / Grand Finals)
+ */
+function getBracketData(division, department) {
   const sheet = getSheet(BRACKETS_SHEET_NAME, BRACKET_HEADERS);
   const all = sheetObjects(sheet);
-  if (division) {
-    var target = String(division).toLowerCase();
-    return all.filter(function (b) {
-      var d = String(b.Division || '').toLowerCase();
-      if (d === target) return true;
-      if (target.indexOf('women') !== -1 && d.indexOf('women') !== -1) return true;
-      if ((target.indexOf('faculty') !== -1 || target.indexOf('exhibition') !== -1) && (d.indexOf('faculty') !== -1 || d.indexOf('exhibition') !== -1)) return true;
-      if (target.indexOf('men') !== -1 && target.indexOf('women') === -1 && d.indexOf('men') !== -1 && d.indexOf('women') === -1) return true;
-      return false;
-    });
-  }
-  return all;
+  const scoped = division
+    ? all.filter(function (b) { return divisionMatches(String(division).toLowerCase(), b.Division); })
+    : all;
+
+  if (department === undefined || department === null) return scoped;
+  const dept = String(department).trim().toUpperCase();
+  return scoped.filter(function (b) {
+    return String(b.Department || '').trim().toUpperCase() === dept;
+  });
 }
 
 function saveBracketData(params, user) {
@@ -1048,37 +1077,64 @@ function saveBracketData(params, user) {
   let matches = [];
   try { matches = JSON.parse(params.matches || '[]'); } catch (e) { throw new Error('matches must be valid JSON.'); }
 
+  const division = String(params.division);
+  const department = String(params.department || '').trim().toUpperCase();
+
   const values = sheet.getDataRange().getValues();
   const headers = values.length > 0 ? values[0].map(String) : BRACKET_HEADERS;
-  const matchKeyIdx = headers.indexOf('MatchKey');
-  const divIdx = headers.indexOf('Division');
+  const col = function (name) {
+    const i = headers.indexOf(name);
+    if (i === -1) throw new Error('BRACKETS sheet is missing the "' + name + '" column.');
+    return i;
+  };
+  const matchKeyIdx = col('MatchKey');
+  const divIdx = col('Division');
+  const deptIdx = col('Department');
   const now = new Date();
 
-  matches.forEach(function (m) {
-    let rowIndex = -1;
-    for (let i = 1; i < values.length; i++) {
-      const rowDiv = String(values[i][divIdx] || '').toLowerCase();
-      const rowKey = String(values[i][matchKeyIdx] || '');
-      if (rowKey === m.matchKey && (rowDiv === String(params.division).toLowerCase() || !values[i][divIdx])) {
-        rowIndex = i + 1;
-        break;
-      }
-    }
+  // Rows belonging to exactly this bracket scope (division + department).
+  const scopeRows = {};        // matchKey -> sheet row number
+  for (let i = 1; i < values.length; i++) {
+    const rowDiv = String(values[i][divIdx] || '').toLowerCase();
+    const rowDept = String(values[i][deptIdx] || '').trim().toUpperCase();
+    if (rowDiv !== division.toLowerCase() || rowDept !== department) continue;
+    scopeRows[String(values[i][matchKeyIdx] || '')] = i + 1;
+  }
 
-    if (rowIndex > 0) {
-      sheet.getRange(rowIndex, headers.indexOf('Team1ID') + 1).setValue(m.team1Id || '');
-      sheet.getRange(rowIndex, headers.indexOf('Team1Name') + 1).setValue(m.team1Name || '');
-      sheet.getRange(rowIndex, headers.indexOf('Team2ID') + 1).setValue(m.team2Id || '');
-      sheet.getRange(rowIndex, headers.indexOf('Team2Name') + 1).setValue(m.team2Name || '');
-      sheet.getRange(rowIndex, headers.indexOf('Score1') + 1).setValue(m.score1 || 0);
-      sheet.getRange(rowIndex, headers.indexOf('Score2') + 1).setValue(m.score2 || 0);
-      sheet.getRange(rowIndex, headers.indexOf('WinnerID') + 1).setValue(m.winnerId || '');
-      sheet.getRange(rowIndex, headers.indexOf('UpdatedAt') + 1).setValue(now);
+  const incoming = {};
+  matches.forEach(function (m) { incoming[String(m.matchKey)] = true; });
+
+  const setCell = function (rowIndex, name, value) {
+    sheet.getRange(rowIndex, col(name) + 1).setValue(value);
+  };
+
+  matches.forEach(function (m) {
+    const rowIndex = scopeRows[String(m.matchKey)];
+    if (rowIndex) {
+      setCell(rowIndex, 'Stage', m.stage || 'Round 1');
+      setCell(rowIndex, 'Round', m.round || 1);
+      setCell(rowIndex, 'Title', m.title || '');
+      setCell(rowIndex, 'Format', m.format || '');
+      setCell(rowIndex, 'Team1ID', m.team1Id || '');
+      setCell(rowIndex, 'Team1Name', m.team1Name || '');
+      setCell(rowIndex, 'Team2ID', m.team2Id || '');
+      setCell(rowIndex, 'Team2Name', m.team2Name || '');
+      setCell(rowIndex, 'Score1', m.score1 || 0);
+      setCell(rowIndex, 'Score2', m.score2 || 0);
+      setCell(rowIndex, 'WinnerID', m.winnerId || '');
+      setCell(rowIndex, 'Status', m.status || 'Scheduled');
+      setCell(rowIndex, 'NextMatchKey', m.nextMatchKey || '');
+      setCell(rowIndex, 'NextSlot', m.nextSlot || '');
+      setCell(rowIndex, 'UpdatedAt', now);
     } else {
       appendRowObject(sheet, BRACKET_HEADERS, {
-        Division: params.division,
+        Division: division,
+        Department: department,
         Stage: m.stage || 'Round 1',
+        Round: m.round || 1,
         MatchKey: m.matchKey,
+        Title: m.title || '',
+        Format: m.format || '',
         Team1ID: m.team1Id || '',
         Team1Name: m.team1Name || '',
         Team2ID: m.team2Id || '',
@@ -1086,13 +1142,27 @@ function saveBracketData(params, user) {
         Score1: m.score1 || 0,
         Score2: m.score2 || 0,
         WinnerID: m.winnerId || '',
+        Status: m.status || 'Scheduled',
+        NextMatchKey: m.nextMatchKey || '',
+        NextSlot: m.nextSlot || '',
         UpdatedAt: now
       });
     }
   });
 
-  logAudit(user.email, 'SAVE_BRACKET', params.division, 'Updated ' + matches.length + ' bracket matches');
-  return { division: params.division, matchCount: matches.length };
+  // Republishing a smaller bracket (16 teams down to 8) must not leave the
+  // rounds that no longer exist behind. Delete bottom-up so indices stay valid.
+  const stale = [];
+  Object.keys(scopeRows).forEach(function (key) {
+    if (!incoming[key]) stale.push(scopeRows[key]);
+  });
+  stale.sort(function (a, b) { return b - a; });
+  stale.forEach(function (rowIndex) { sheet.deleteRow(rowIndex); });
+
+  const scopeLabel = department ? (division + ' / ' + department) : division;
+  logAudit(user.email, 'SAVE_BRACKET', scopeLabel,
+    'Published ' + matches.length + ' matches' + (stale.length ? ', removed ' + stale.length + ' stale' : ''));
+  return { division: division, department: department, matchCount: matches.length, removed: stale.length };
 }
 
 function getAuditLogs() {

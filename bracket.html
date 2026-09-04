@@ -211,51 +211,110 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   // Published bracket rows per division, keyed by the MatchKey suffix the bracket builder writes.
   var bracketCache = {};
 
-  function keyOf(row, division){
-    var raw = String(row.MatchKey || '').toUpperCase();
-    var prefix = String(division || '').toUpperCase() + '_';
-    if (raw.indexOf(prefix) === 0) raw = raw.slice(prefix.length);
-    return raw;
+  // Published match rows arrive either from Firebase (camelCase) or the Sheets
+  // fallback (PascalCase); read both.
+  function fieldOf(m, camel, pascal) {
+    var v = m[camel];
+    if (v === undefined || v === null || v === '') v = m[pascal];
+    return v === undefined || v === null ? '' : v;
   }
 
-  function applyRows(divData, rows, division){
-    var byKey = {};
-    (rows || []).forEach(function(r){ byKey[keyOf(r, division)] = r; });
+  function roundOf(m) {
+    var r = Number(fieldOf(m, 'round', 'Round'));
+    if (r) return r;
+    var st = String(fieldOf(m, 'stage', 'Stage')).toUpperCase();
+    if (st.indexOf('FINAL') !== -1 && st.indexOf('SEMI') === -1) return 99;
+    if (st.indexOf('SEMI') !== -1) return 98;
+    if (st.indexOf('QUARTER') !== -1) return 97;
+    return 1;
+  }
 
-    function fill(slot){
-      if (!slot) return;
-      var r = byKey[slot.key];
-      if (!r) { slot.a = null; slot.b = null; return; }
-      var s1 = Number(r.Score1 || 0), s2 = Number(r.Score2 || 0);
-      var played = s1 || s2;
-      var w1 = r.WinnerID ? String(r.WinnerID) === String(r.Team1ID) : !!(played && s1 > s2);
-      var w2 = r.WinnerID ? String(r.WinnerID) === String(r.Team2ID) : !!(played && s2 > s1);
-      slot.a = side(r.Team1Name, s1, w1, '#1264ff');
-      slot.b = side(r.Team2Name, s2, w2, '#ff4b4b');
+  /** Winner of a bracket's last match, or null while it is still being played. */
+  function championOf(matches) {
+    if (!matches || !matches.length) return null;
+    var maxRound = 0;
+    matches.forEach(function(m){ maxRound = Math.max(maxRound, roundOf(m)); });
+    var finals = matches.filter(function(m){ return roundOf(m) === maxRound; });
+    var f = finals.filter(function(m){ return !fieldOf(m, 'nextMatchKey', 'NextMatchKey'); })[0] || finals[0];
+    if (!f) return null;
+    var wn = fieldOf(f, 'winnerName', 'WinnerName');
+    if (wn) return wn;
+    var t1 = fieldOf(f, 'team1Name', 'Team1Name');
+    var t2 = fieldOf(f, 'team2Name', 'Team2Name');
+    var wid = fieldOf(f, 'winnerId', 'WinnerID');
+    if (wid) {
+      return String(wid) === String(fieldOf(f, 'team1Id', 'Team1ID')) ? t1 : t2;
     }
+    var s1 = Number(fieldOf(f, 'score1', 'Score1') || 0);
+    var s2 = Number(fieldOf(f, 'score2', 'Score2') || 0);
+    if (s1 === s2) return null;
+    return s1 > s2 ? t1 : t2;
+  }
 
-    if (divData.playoff) { fill(divData.playoff.sf1); fill(divData.playoff.sf2); fill(divData.playoff.grand); }
-    if (divData.qfList) divData.qfList.forEach(fill);
+  /** Published row -> the shape renderMatchCard expects. */
+  function toCard(m) {
+    var t1 = fieldOf(m, 'team1Name', 'Team1Name') || '';
+    var t2 = fieldOf(m, 'team2Name', 'Team2Name') || '';
+    var s1 = Number(fieldOf(m, 'score1', 'Score1') || 0);
+    var s2 = Number(fieldOf(m, 'score2', 'Score2') || 0);
+    var wn = fieldOf(m, 'winnerName', 'WinnerName');
+    var wid = fieldOf(m, 'winnerId', 'WinnerID');
+    var id1 = fieldOf(m, 'team1Id', 'Team1ID');
+    var id2 = fieldOf(m, 'team2Id', 'Team2ID');
+    var played = s1 || s2;
+    var w1, w2;
+    if (wn) { w1 = wn === t1; w2 = wn === t2; }
+    else if (wid) { w1 = String(wid) === String(id1); w2 = String(wid) === String(id2); }
+    else { w1 = !!(played && s1 > s2); w2 = !!(played && s2 > s1); }
+    var fmt = fieldOf(m, 'format', 'Format');
+    var key = String(fieldOf(m, 'matchKey', 'MatchKey'));
+    return {
+      match: String(fieldOf(m, 'stage', 'Stage') || 'Match') + ' ' + (key.split('M').pop() || ''),
+      fmt: fmt && fmt !== '-' ? fmt : (String(t2).toUpperCase() === 'BYE' ? 'BYE' : ''),
+      a: side(t1, s1, w1, '#1264ff'),
+      b: side(t2, s2, w2, '#ff4b4b')
+    };
+  }
+
+  /** Renders a whole published bracket as one column per round. */
+  function publishedBracketHtml(matches, heading) {
+    var rounds = {};
+    matches.forEach(function(m){
+      var r = roundOf(m);
+      (rounds[r] = rounds[r] || []).push(m);
+    });
+    var keys = Object.keys(rounds).map(Number).sort(function(a,b){ return a - b; });
+
+    var cols = keys.map(function(r, idx){
+      var list = rounds[r];
+      var isLast = idx === keys.length - 1;
+      var label = String(fieldOf(list[0], 'stage', 'Stage') || ('Round ' + r));
+      var colour = isLast ? 'text-[#ffb020]' : (idx === keys.length - 2 ? 'text-secondary' : 'text-primary');
+      return '<div class="flex flex-col gap-3 min-w-[260px] shrink-0">' +
+          '<span class="text-xs font-label-caps ' + colour + ' uppercase font-bold tracking-widest">' + esc(label) + '</span>' +
+          list.map(function(m){ return renderMatchCard(toCard(m), isLast); }).join('') +
+        '</div>';
+    }).join('');
+
+    return '<section class="flex flex-col gap-md">' +
+        '<div class="flex items-center justify-between border-b border-white/10 pb-3">' +
+          '<h2 class="font-headline-lg text-headline-lg text-on-surface cyber-title">' + esc(heading) + '</h2>' +
+          '<span class="px-3 py-1 rounded bg-primary/20 text-primary text-xs font-bold font-label-caps">PUBLISHED</span>' +
+        '</div>' +
+        '<div class="flex gap-6 items-start overflow-x-auto pb-2">' + cols + '</div>' +
+      '</section>';
+  }
+
+  /**
+   * Each department now publishes its own bracket, so the champion on a
+   * department card comes from that department's own final rather than from
+   * guessing at match-key names in one shared division bracket.
+   */
+  function applyScoped(divData, byDept, division){
+    divData.published = (byDept && byDept['']) ? byDept[''] : [];
+    divData.deptMatches = byDept || {};
     if (divData.depts) divData.depts.forEach(function(d){
-      var deptKey = String(d.key).toUpperCase();
-      var r = byKey[deptKey + '_FINAL'] || byKey['DEPT_' + deptKey + '_FINAL'];
-      if (!r) {
-        // Match only on a whole department segment. A bare endsWith would let
-        // "HTM_FINAL" satisfy department "TM", which is a real faculty key.
-        var matchingKey = Object.keys(byKey).find(function(k) {
-          return k.endsWith('_' + deptKey + '_FINAL');
-        });
-        if (matchingKey) r = byKey[matchingKey];
-      }
-      if (!r) { d.champ = null; return; }
-      if (r.WinnerName) {
-        d.champ = r.WinnerName;
-      } else {
-        var s1 = Number(r.Score1 || 0), s2 = Number(r.Score2 || 0);
-        d.champ = r.WinnerID
-          ? (String(r.WinnerID) === String(r.Team1ID) ? r.Team1Name : r.Team2Name)
-          : (s1 === s2 ? null : (s1 > s2 ? r.Team1Name : r.Team2Name));
-      }
+      d.champ = championOf((byDept || {})[String(d.key).toUpperCase()]);
     });
   }
 
@@ -363,7 +422,19 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     var data = DIVS[active];
     var html = '';
 
-    if (data.qfList) {
+    // A published bracket always wins over the placeholder layout, because it
+    // is the real draw with the real number of rounds and series lengths.
+    if (data.published && data.published.length) {
+      html += publishedBracketHtml(data.published, data.title);
+      if (data.depts) {
+        html += '<div class="h-px bg-white/10 my-6"></div>';
+      } else {
+        body.innerHTML = html;
+        return;
+      }
+    }
+
+    if (data.qfList && !(data.published && data.published.length)) {
       // Single-bracket divisions (Faculty Exhibition, SHS Showdown): one
       // elimination round feeding straight into the playoff stage.
       html += '<section class="flex flex-col gap-md">' +
@@ -439,24 +510,41 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   }
 
   function loadDivision(division){
-    if (bracketCache[division]) { applyRows(DIVS[division], bracketCache[division], division); render(); return; }
-    if (!window.PublicTournamentApi || typeof PublicTournamentApi.listBracket !== 'function') { render(); return; }
-    PublicTournamentApi.listBracket(division).then(function(rows){
-      bracketCache[division] = rows || [];
-      applyRows(DIVS[division], bracketCache[division], division);
+    if (bracketCache[division]) { applyScoped(DIVS[division], bracketCache[division], division); render(); return; }
+    if (!window.PublicTournamentApi || typeof PublicTournamentApi.listDivisionBrackets !== 'function') { render(); return; }
+    PublicTournamentApi.listDivisionBrackets(division).then(function(byDept){
+      bracketCache[division] = byDept || {};
+      applyScoped(DIVS[division], bracketCache[division], division);
       render();
     }).catch(function(){
-      applyRows(DIVS[division], [], division);
+      applyScoped(DIVS[division], {}, division);
       render();
     });
   }
 
   // Realtime Department Bracket Modal Logic
-  var deptModal = document.getElementById('dept-bracket-modal');
-  var closeDeptModalBtn = document.getElementById('close-dept-modal');
-  var closeDeptModalBottom = document.getElementById('btn-close-dept-modal-bottom');
-  var deptModalContent = document.getElementById('dept-modal-content');
+  // This script runs while the document is still parsing and the modal markup
+  // sits further down the page, so the elements are looked up on first use
+  // rather than now (when they do not exist yet).
+  var deptModal = null;
+  var deptModalContent = null;
   var currentDeptListener = null;
+  var modalWired = false;
+
+  function ensureModalEls() {
+    if (!deptModal) deptModal = document.getElementById('dept-bracket-modal');
+    if (!deptModalContent) deptModalContent = document.getElementById('dept-modal-content');
+    if (deptModal && !modalWired) {
+      modalWired = true;
+      var closeBtn = document.getElementById('close-dept-modal');
+      var closeBottom = document.getElementById('btn-close-dept-modal-bottom');
+      if (closeBtn) closeBtn.addEventListener('click', closeDeptModal);
+      if (closeBottom) closeBottom.addEventListener('click', closeDeptModal);
+      deptModal.addEventListener('click', function(e){ if (e.target === deptModal) closeDeptModal(); });
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDeptModal(); });
+    }
+    return !!deptModal;
+  }
 
   function closeDeptModal() {
     if (deptModal) deptModal.classList.add('hidden');
@@ -466,13 +554,14 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     }
   }
 
-  if (closeDeptModalBtn) closeDeptModalBtn.addEventListener('click', closeDeptModal);
-  if (closeDeptModalBottom) closeDeptModalBottom.addEventListener('click', closeDeptModal);
-
   window.openDeptBracketModal = function(deptKey, deptName, deptColor, deptIcon) {
-    if (!deptModal) return;
+    if (!ensureModalEls()) return;
     document.getElementById('dept-modal-title').textContent = deptName + ' — Tournament Bracket';
-    document.getElementById('dept-modal-subtitle').textContent = (active === 'womens' ? "Women's Division" : (active === 'faculty' ? "Faculty Exhibition" : "Men's Division")) + ' · Realtime Knockout Stage';
+    var divName = active === 'womens' ? "Women's Division"
+      : active === 'faculty' ? 'Faculty Exhibition'
+      : active === 'shs' ? 'SHS Showdown'
+      : "Men's Division";
+    document.getElementById('dept-modal-subtitle').textContent = divName + ' · Realtime Knockout Stage';
     document.getElementById('dept-modal-logo').src = deptIcon || 'assets/IT.png';
 
     deptModalContent.innerHTML = '<div class="py-12 flex flex-col items-center justify-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[32px] text-primary animate-spin">sync</span><span>Loading live bracket matches…</span></div>';
@@ -480,77 +569,85 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
 
     function renderDeptModalMatches(matches) {
       if (!matches || !matches.length) {
-        deptModalContent.innerHTML = '<div class="p-8 text-center bg-surface-container-lowest rounded-xl border border-dashed border-white/10 text-xs text-on-surface-variant">No published knockout bracket found for this division yet. Tournament administrators publish the bracket during stage draw.</div>';
+        deptModalContent.innerHTML = '<div class="p-8 text-center bg-surface-container-lowest rounded-xl border border-dashed border-white/10 text-xs text-on-surface-variant">No published bracket for this yet. Tournament administrators publish it during the stage draw.</div>';
         return;
       }
 
-      // Group matches into QF, SF, Final
-      var qfs = matches.filter(function(m){ return String(m.stage || '').toUpperCase().indexOf('QUARTER') !== -1 || String(m.matchKey || '').indexOf('QF') !== -1; });
-      var sfs = matches.filter(function(m){ return String(m.stage || '').toUpperCase().indexOf('SEMI') !== -1 || String(m.matchKey || '').indexOf('SF') !== -1; });
-      var finals = matches.filter(function(m){ return String(m.stage || '').toUpperCase().indexOf('FINAL') !== -1 || String(m.matchKey || '').indexOf('Final') !== -1; });
+      // Group by the round the builder recorded. Older rows without a round are
+      // placed from their stage name so previously published brackets still show.
+      function roundOf(m) {
+        if (m.round) return Number(m.round);
+        var st = String(m.stage || '').toUpperCase();
+        if (st.indexOf('FINAL') !== -1 && st.indexOf('SEMI') === -1) return 99;
+        if (st.indexOf('SEMI') !== -1) return 98;
+        if (st.indexOf('QUARTER') !== -1) return 97;
+        return 1;
+      }
+
+      var rounds = {};
+      matches.forEach(function(m){
+        var r = roundOf(m);
+        (rounds[r] = rounds[r] || []).push(m);
+      });
+      var roundKeys = Object.keys(rounds).map(Number).sort(function(a,b){ return a - b; });
 
       var cardHtml = function(m, highlight) {
         var t1 = m.team1Name || 'TBD';
         var t2 = m.team2Name || 'TBD';
         var s1 = m.score1 !== undefined ? m.score1 : 0;
         var s2 = m.score2 !== undefined ? m.score2 : 0;
+        var isBye = String(t2).toUpperCase() === 'BYE' || String(t1).toUpperCase() === 'BYE';
         var isDone = m.status === 'Completed' || m.status === 'COMPLETED';
         var isLive = m.status === 'LIVE' || m.status === 'Live';
         var w = isDone ? (m.winnerName || (s1 > s2 ? t1 : (s2 > s1 ? t2 : ''))) : '';
+        var fmt = m.format && m.format !== '-' ? m.format : '';
+
+        var badge = isBye ? '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/15 text-emerald-300">BYE</span>'
+          : '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold ' + (isDone ? 'bg-emerald-500/20 text-emerald-300' : (isLive ? 'bg-red-500/20 text-red-300 animate-pulse' : 'bg-white/5 text-outline')) + '">' +
+              (isDone ? 'COMPLETED' : (isLive ? 'LIVE' : 'SCHEDULED')) + '</span>';
 
         return '<div class="bg-surface-container-high rounded-xl p-3 border ' + (highlight ? 'border-[#ffb020]/40' : (isLive ? 'border-primary/50 ring-1 ring-primary/40' : 'border-white/10')) + ' shadow flex flex-col gap-2">' +
-          '<div class="flex items-center justify-between text-[11px] border-b border-white/5 pb-1">' +
-            '<span class="font-bold ' + (highlight ? 'text-[#ffb020]' : 'text-primary') + ' font-mono">' + (m.stage || m.title || 'Knockout') + '</span>' +
-            '<span class="px-1.5 py-0.5 rounded text-[9px] font-bold ' + (isDone ? 'bg-emerald-500/20 text-emerald-300' : (isLive ? 'bg-red-500/20 text-red-300 animate-pulse' : 'bg-white/5 text-outline')) + '">' +
-              (isDone ? 'COMPLETED' : (isLive ? '🔴 LIVE' : 'SCHEDULED')) +
-            '</span>' +
+          '<div class="flex items-center justify-between text-[11px] border-b border-white/5 pb-1 gap-2">' +
+            '<span class="font-bold ' + (highlight ? 'text-[#ffb020]' : 'text-primary') + ' font-mono truncate">' + esc(m.stage || m.title || 'Knockout') + (fmt ? ' \u00b7 ' + esc(fmt) : '') + '</span>' +
+            badge +
           '</div>' +
           '<div class="flex flex-col gap-1 text-xs">' +
             '<div class="flex items-center justify-between p-1.5 rounded ' + (w && w === t1 ? 'bg-emerald-500/15 font-bold text-emerald-300' : 'bg-surface-container-lowest text-on-surface') + '">' +
               '<span class="truncate flex items-center gap-1">' + (w && w === t1 ? '<span class="material-symbols-outlined text-[14px] text-emerald-400">trophy</span>' : '') + esc(t1) + '</span>' +
-              '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface">' + s1 + '</span>' +
+              '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface">' + esc(s1) + '</span>' +
             '</div>' +
             '<div class="flex items-center justify-between p-1.5 rounded ' + (w && w === t2 ? 'bg-emerald-500/15 font-bold text-emerald-300' : 'bg-surface-container-lowest text-on-surface') + '">' +
               '<span class="truncate flex items-center gap-1">' + (w && w === t2 ? '<span class="material-symbols-outlined text-[14px] text-emerald-400">trophy</span>' : '') + esc(t2) + '</span>' +
-              '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface">' + s2 + '</span>' +
+              '<span class="font-mono font-bold px-1.5 py-0.5 rounded bg-surface-container text-on-surface">' + esc(s2) + '</span>' +
             '</div>' +
           '</div>' +
         '</div>';
       };
 
-      deptModalContent.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-          <!-- Quarterfinals -->
-          <div class="flex flex-col gap-3">
-            <span class="text-xs font-label-caps text-primary uppercase font-bold tracking-wider flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">sports_esports</span> QUARTERFINALS (BO1)
-            </span>
-            ${(qfs.length ? qfs : matches.slice(0, 4)).map(function(m){ return cardHtml(m, false); }).join('')}
-          </div>
+      var cols = roundKeys.map(function(r, idx){
+        var list = rounds[r];
+        var isLast = idx === roundKeys.length - 1;
+        var label = list[0] && list[0].stage ? list[0].stage : ('Round ' + r);
+        var icon = isLast ? 'emoji_events' : (idx === roundKeys.length - 2 ? 'swords' : 'sports_esports');
+        var colour = isLast ? 'text-[#ffb020]' : (idx === roundKeys.length - 2 ? 'text-secondary' : 'text-primary');
+        return '<div class="flex flex-col gap-3 min-w-[220px]">' +
+            '<span class="text-xs font-label-caps ' + colour + ' uppercase font-bold tracking-wider flex items-center gap-1">' +
+              '<span class="material-symbols-outlined text-[16px]">' + icon + '</span> ' + esc(label) +
+            '</span>' +
+            list.map(function(m){ return cardHtml(m, isLast); }).join('') +
+          '</div>';
+      }).join('');
 
-          <!-- Semifinals -->
-          <div class="flex flex-col gap-3">
-            <span class="text-xs font-label-caps text-secondary uppercase font-bold tracking-wider flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">swords</span> SEMIFINALS (BO3)
-            </span>
-            ${(sfs.length ? sfs : matches.slice(4, 6)).map(function(m){ return cardHtml(m, false); }).join('')}
-          </div>
-
-          <!-- Grand Final -->
-          <div class="flex flex-col gap-3">
-            <span class="text-xs font-label-caps text-[#ffb020] uppercase font-bold tracking-wider flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">emoji_events</span> GRAND FINALS (BO5)
-            </span>
-            ${(finals.length ? finals : matches.slice(6, 7)).map(function(m){ return cardHtml(m, true); }).join('')}
-          </div>
-        </div>
-      `;
+      deptModalContent.innerHTML =
+        '<div class="flex gap-6 items-start overflow-x-auto pb-2">' + cols + '</div>';
     }
 
+    // Each department publishes its own bracket, so the modal subscribes to that
+    // department's scope. deptKey '' is the division-wide bracket.
     if (window.PublicTournamentApi && typeof PublicTournamentApi.listenBracket === 'function') {
-      currentDeptListener = PublicTournamentApi.listenBracket(active, renderDeptModalMatches);
+      currentDeptListener = PublicTournamentApi.listenBracket(active, deptKey || '', renderDeptModalMatches);
     } else if (window.PublicTournamentApi && typeof PublicTournamentApi.listBracket === 'function') {
-      PublicTournamentApi.listBracket(active).then(renderDeptModalMatches).catch(function(){ renderDeptModalMatches([]); });
+      PublicTournamentApi.listBracket(active, deptKey || '').then(renderDeptModalMatches).catch(function(){ renderDeptModalMatches([]); });
     }
   };
 

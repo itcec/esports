@@ -81,9 +81,24 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
 </button>
 <button class="flex-1 md:flex-none px-md py-sm rounded-lg font-label-caps text-label-caps transition-all font-bold text-[#ff80ea]" data-division="shs" type="button">SHS SHOWDOWN</button>
 </div>
-<div class="relative w-full md:w-80">
+<div class="flex flex-col sm:flex-row gap-xs w-full md:w-auto">
+<div class="relative w-full sm:w-72">
 <span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
 <input class="w-full bg-surface-container border border-white/10 rounded-xl py-sm pl-xl pr-md text-on-surface font-body-md focus:outline-none focus:border-primary/50 shadow-sm" id="team-search" placeholder="Search team or department…" type="text" aria-label="Search teams by name or department"/>
+</div>
+<div class="relative w-full sm:w-44">
+<select class="w-full bg-surface-container border border-white/10 rounded-xl py-sm px-md pr-9 text-on-surface font-body-md focus:outline-none focus:border-primary/50 shadow-sm appearance-none cursor-pointer" id="dept-filter" aria-label="Filter teams by department">
+<option value="ALL">All departments</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+</div>
+<div class="relative w-full sm:w-44">
+<select class="w-full bg-surface-container border border-white/10 rounded-xl py-sm px-md pr-9 text-on-surface font-body-md focus:outline-none focus:border-primary/50 shadow-sm appearance-none cursor-pointer" id="team-sort" aria-label="Sort teams">
+<option value="dept">Sort: Department</option>
+<option value="name">Sort: Team name</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[20px]">expand_more</span>
+</div>
 </div>
 </div>
 <div class="bg-surface-container border border-white/10 rounded-xl p-lg flex flex-col gap-xs shadow-lg" id="division-summary"></div>
@@ -170,6 +185,10 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   var statusEl = document.getElementById('teams-status');
   var gridEl = document.getElementById('team-grid');
   var searchEl = document.getElementById('team-search');
+  var deptFilterEl = document.getElementById('dept-filter');
+  var sortEl = document.getElementById('team-sort');
+  var activeDept = 'ALL';
+  var sortMode = 'dept';
   var rejectedSection = document.getElementById('rejected-section');
   var rejectedGrid = document.getElementById('rejected-grid');
   var DEPT_LOGOS = {
@@ -237,8 +256,19 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     });
   }
 
+  function syncDeptFilter(){
+    if(!deptFilterEl) return;
+    var depts=(DIVS[active].depts||[]).map(function(x){ return x[0]; });
+    if(depts.indexOf(activeDept)===-1) activeDept='ALL';
+    deptFilterEl.innerHTML='<option value="ALL">All departments</option>'+
+      depts.map(function(dp){
+        return '<option value="'+esc(dp)+'"'+(dp===activeDept?' selected':'')+'>'+esc(dp)+'</option>';
+      }).join('');
+  }
+
   function render(){
     var d=DIVS[active];
+    syncDeptFilter();
     summaryEl.innerHTML='';
     if(active==='faculty'){
       summaryEl.className='bg-surface-container border border-amber-400/40 rounded-xl p-lg flex flex-col gap-xs shadow-2xl relative overflow-hidden bg-gradient-to-r from-amber-500/15 via-surface-container to-purple-500/10';
@@ -272,8 +302,24 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     var rows=approved.filter(function(t){
       var p=parseCourse(t.Course);
       if(p.div!==active) return false;
+      if(activeDept!=='ALL' && p.dept!==activeDept) return false;
       if(!q) return true;
       return (t.TeamName||'').toLowerCase().indexOf(q)>-1||(p.dept||'').toLowerCase().indexOf(q)>-1;
+    });
+
+    // Group by department (in the division's own department order) or sort by
+    // team name; either way ties break on team name so the order is stable.
+    var deptOrder = (DIVS[active].depts||[]).map(function(x){ return x[0]; });
+    rows.sort(function(a,b){
+      var pa=parseCourse(a.Course), pb=parseCourse(b.Course);
+      if(sortMode==='dept'){
+        var ia=deptOrder.indexOf(pa.dept), ib=deptOrder.indexOf(pb.dept);
+        if(ia===-1) ia=deptOrder.length;
+        if(ib===-1) ib=deptOrder.length;
+        if(ia!==ib) return ia-ib;
+        if(pa.dept!==pb.dept) return pa.dept.localeCompare(pb.dept);
+      }
+      return String(a.TeamName||'').localeCompare(String(b.TeamName||''));
     });
 
     gridEl.innerHTML='';
@@ -354,6 +400,15 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       }
     }
   }
+
+  if(deptFilterEl) deptFilterEl.addEventListener('change', function(e){
+    activeDept=e.target.value;
+    render();
+  });
+  if(sortEl) sortEl.addEventListener('change', function(e){
+    sortMode=e.target.value;
+    render();
+  });
 
   tabs.addEventListener('click',function(e){
     var btn=e.target.closest('button[data-division]');
