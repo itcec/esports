@@ -347,12 +347,15 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
           ?'<img src="'+esc(logo)+'" alt="'+esc(t.TeamName)+' logo" class="'+(isSvg?'w-8 h-8 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]':'w-full h-full object-cover')+'" loading="lazy" onerror="this.remove()" />'
           :initials(t.TeamName);
         var dL=DEPT_LOGOS[p.dept]?'<img src="'+DEPT_LOGOS[p.dept]+'" alt="'+p.dept+' Logo" class="w-5 h-5 object-contain rounded-full bg-surface-container-lowest p-0.5 border border-white/15 shrink-0" />':'';
-        var photoHtml=t.teamPhotoUrl?'<div class="-mx-md -mt-md mb-md h-28 overflow-hidden rounded-t-xl border-b border-white/10"><img src="'+esc(t.teamPhotoUrl)+'" alt="'+esc(t.TeamName)+' team photo" class="w-full h-full object-cover" loading="lazy" onerror="this.parentNode.remove()" /></div>':'';
+        // Uploaded team and player imagery is confidential and is not shown publicly.
+        var photoHtml='';
         var descHtml=t.description?'<p class="font-body-md text-[13px] leading-snug text-on-surface-variant mt-sm line-clamp-2">'+esc(t.description)+'</p>':'';
-        var faces=(t.roster||[]).filter(function(pl){return pl.profileImageUrl;}).slice(0,5);
-        var rosterHtml=faces.length?'<div class="flex items-center mt-sm" aria-label="Players with public profile images">'+faces.map(function(pl){
-            return '<img src="'+esc(pl.profileImageUrl)+'" alt="'+esc(pl.ign||pl.realName||'Player')+'" title="'+esc(pl.ign||pl.realName||'Player')+'" class="w-7 h-7 rounded-full object-cover border-2 border-surface-container -mr-2 bg-surface-container-lowest" loading="lazy" onerror="this.remove()" />';
-          }).join('')+'<span class="ml-3 font-label-caps text-[10px] text-on-surface-variant">ROSTER</span></div>':'';
+        // The roster is summarised by size rather than by player photographs.
+        var rosterCount=(t.roster||[]).length;
+        var rosterHtml=rosterCount?'<div class="flex items-center gap-1.5 mt-sm text-on-surface-variant">'+
+            '<span class="material-symbols-outlined text-[16px]">group</span>'+
+            '<span class="font-label-caps text-[10px]">'+rosterCount+' PLAYER'+(rosterCount===1?'':'S')+' ON ROSTER</span>'+
+          '</div>':'';
         card.innerHTML=photoHtml+
           '<div class="flex items-center gap-md">'+
             '<div class="w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white font-bold cyber-mono border-2 shadow-sm overflow-hidden" style="background:radial-gradient(circle at center,'+bc+'20 0%,rgba(10,16,30,0.95) 75%);border-color:'+bc+';box-shadow:0 0 12px '+bc+'40;">'+iconHtml+'</div>'+
@@ -427,7 +430,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
           TeamID:t.teamId, TeamName:t.teamName, Course:t.course||t.division||'',
           CaptainName:t.captainName, Status:t.approvalStatus||'Approved',
           description:t.description||'', logoUrl:t.logoUrl||'',
-          teamPhotoUrl:t.teamPhotoUrl||'', roster:t.roster||[],
+          roster:t.roster||[],
           rejectionReason:t.rejectionReason||''
         };
       });

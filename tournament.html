@@ -256,7 +256,7 @@
       <div class="max-w-container-max mx-auto px-lg flex flex-col gap-md">
 
         <!-- Multi-Match Broadcaster & Switcher Bar (Up to 12 Concurrent Games) -->
-        <div
+        <div id="live-switcher-bar"
           class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 p-3 rounded-2xl bg-surface-container-high/90 border border-primary/30 shadow-xl cyber-panel">
           <div class="flex items-center gap-2.5">
             <div
@@ -438,7 +438,7 @@
             class="relative w-full rounded-2xl overflow-hidden bg-black border-2 border-primary/30 shadow-[0_0_35px_rgba(18,100,255,0.25)] aspect-video">
 
             <!-- Live Stream Frame Iframe (Dynamic YouTube / Discord / FB Live / Twitch Embed) -->
-            <iframe id="live-stream-frame" class="w-full h-full border-0 hidden" src=""
+            <iframe id="live-stream-frame" class="w-full h-full border-0 hidden" src="about:blank"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen></iframe>
 
@@ -488,14 +488,14 @@
               <h3 class="font-headline-md text-base sm:text-lg text-on-surface uppercase cyber-title">Rosters &amp;
                 Player Spotlight</h3>
             </div>
-            <div
+            <div id="spotlight-view-tabs"
               class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-lg border border-white/10 text-xs">
               <button type="button" id="tab-spotlight-btn"
-                class="px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1">
+                class="px-3 py-2 min-h-[36px] rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">movie</span> Broadcast Spotlight
               </button>
               <button type="button" id="tab-lineup-btn"
-                class="px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1">
+                class="px-3 py-2 min-h-[36px] rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">table_rows</span> Full Lineups
               </button>
             </div>
@@ -514,15 +514,15 @@
               </div>
               <div class="flex items-center gap-1.5">
                 <button type="button" id="carousel-prev-btn"
-                  class="w-7 h-7 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
+                  class="w-9 h-9 shrink-0 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
                   title="Previous Player">
-                  <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                  <span class="material-symbols-outlined text-[20px]">chevron_left</span>
                 </button>
                 <span class="text-[11px] font-mono px-2" id="carousel-player-index">1 / 5</span>
                 <button type="button" id="carousel-next-btn"
-                  class="w-7 h-7 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
+                  class="w-9 h-9 shrink-0 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
                   title="Next Player">
-                  <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                  <span class="material-symbols-outlined text-[20px]">chevron_right</span>
                 </button>
               </div>
             </div>
@@ -1061,7 +1061,6 @@
                 </div>
               </div>
             </div>
-          </div>
 
             <!-- SHS Showdown — separate one-day, in-person event -->
             <div class="bg-surface-container border border-white/10 border-l-4 border-l-[#ff2fd8] rounded-xl flex flex-col scroll-mt-24 cyber-panel"
@@ -1169,20 +1168,14 @@
   <script>
       (function () {
         const escHtml = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-        const profileImageUrl = (value) => {
-          const url = String(value || '').trim();
-          return /^https:\/\/drive\.google\.com\/uc\?export=view&id=[A-Za-z0-9_-]+$/.test(url) ? url : '';
-        };
         const playerInitials = (player) => {
           const name = String(player.real || player.realName || player.ign || '?').trim();
           return name.split(/\s+/).map((part) => part.charAt(0)).join('').slice(0, 2).toUpperCase() || '?';
         };
-        const playerAvatar = (player, accent) => {
-          const url = profileImageUrl(player.profileImageUrl);
-          return url
-            ? `<img src="${escHtml(url)}" alt="" class="w-8 h-8 rounded-full object-cover border border-white/20 shrink-0" />`
-            : `<span class="w-8 h-8 rounded-full ${accent} flex items-center justify-center text-[10px] font-bold shrink-0">${escHtml(playerInitials(player))}</span>`;
-        };
+        // Players are represented by their initials. Uploaded profile photos are
+        // confidential and are never rendered on the public broadcast view.
+        const playerAvatar = (player, accent) =>
+          `<span class="w-8 h-8 rounded-full ${accent} flex items-center justify-center text-[10px] font-bold shrink-0">${escHtml(playerInitials(player))}</span>`;
         // Mobile Nav Toggle
         var t = document.getElementById('nav-toggle'), n = document.getElementById('mobile-nav'), i = document.getElementById('nav-toggle-icon');
         if (t && n) {
@@ -1266,17 +1259,28 @@
           const versusCard = document.getElementById('match-versus-card');
           const rostersGrid = document.getElementById('team-rosters-grid');
 
+          const spotlightView = document.getElementById('broadcast-spotlight-view');
+          const viewTabs = document.getElementById('spotlight-view-tabs');
+          const switcherBar = document.getElementById('live-switcher-bar');
+          const matchChips = document.getElementById('live-match-chips');
+
           if (!active) {
             // No published match: the observer feed keeps playing — only the match
             // data (scoreboard + rosters) is withheld, so the arena still reads live.
             if (standby) standby.classList.remove('hidden');
             if (versusCard) versusCard.classList.add('hidden');
             if (rostersGrid) rostersGrid.classList.add('hidden');
+            // These would otherwise render placeholder players and an empty
+            // match dropdown to the public.
+            if (spotlightView) spotlightView.classList.add('hidden');
+            if (viewTabs) viewTabs.classList.add('hidden');
+            if (switcherBar) switcherBar.classList.add('hidden');
+            if (matchChips) matchChips.classList.add('hidden');
 
             const idleFrame = document.getElementById('live-stream-frame');
             const idleFallback = document.getElementById('fallback-video-container');
             const idleLabel = document.getElementById('stream-source-label');
-            if (idleFrame) { idleFrame.src = ''; idleFrame.classList.add('hidden'); }
+            if (idleFrame) { idleFrame.src = 'about:blank'; idleFrame.classList.add('hidden'); }
             if (idleFallback) idleFallback.classList.remove('hidden');
             if (idleLabel) idleLabel.textContent = 'Computer Laboratory Annex Building · Official Observer Feed';
             return;
@@ -1284,7 +1288,13 @@
 
           if (standby) standby.classList.add('hidden');
           if (versusCard) versusCard.classList.remove('hidden');
-          if (rostersGrid) rostersGrid.classList.remove('hidden');
+          if (switcherBar) switcherBar.classList.remove('hidden');
+          if (matchChips) matchChips.classList.remove('hidden');
+          if (viewTabs) viewTabs.classList.remove('hidden');
+          // Restore whichever of the two views the viewer last chose.
+          const showLineups = window.__cecSpotlightTab === 'lineups';
+          if (spotlightView) spotlightView.classList.toggle('hidden', showLineups);
+          if (rostersGrid) rostersGrid.classList.toggle('hidden', !showLineups);
 
           // Title and status
           setText('live-stage-title', (active.court || 'ARENA') + ' · ' + (active.stageTitle || 'OFFICIAL MATCH'));
@@ -1390,7 +1400,7 @@
             fallback.classList.add('hidden');
             sourceLabel.textContent = (active.court || 'Live Feed') + ' · External Broadcast';
           } else {
-            iframe.src = '';
+            iframe.src = 'about:blank';
             iframe.classList.add('hidden');
             fallback.classList.remove('hidden');
             sourceLabel.textContent = (active.court || 'Computer Laboratory Annex Building') + ' · Official Local Loop';
@@ -1411,17 +1421,23 @@
         const spotlightView = document.getElementById('broadcast-spotlight-view');
         const lineupsView = document.getElementById('team-rosters-grid');
 
+        const TAB_BASE = 'px-3 py-2 min-h-[36px] rounded font-label-caps font-bold transition-all flex items-center gap-1';
+        const TAB_ON = TAB_BASE + ' bg-primary text-on-primary';
+        const TAB_OFF = TAB_BASE + ' text-on-surface-variant hover:text-on-surface';
+
         if (tabSpotlightBtn && tabLineupBtn) {
           tabSpotlightBtn.addEventListener('click', () => {
-            tabSpotlightBtn.className = 'px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1';
-            tabLineupBtn.className = 'px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1';
+            window.__cecSpotlightTab = 'spotlight';
+            tabSpotlightBtn.className = TAB_ON;
+            tabLineupBtn.className = TAB_OFF;
             spotlightView.classList.remove('hidden');
             lineupsView.classList.add('hidden');
           });
 
           tabLineupBtn.addEventListener('click', () => {
-            tabLineupBtn.className = 'px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1';
-            tabSpotlightBtn.className = 'px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1';
+            window.__cecSpotlightTab = 'lineups';
+            tabLineupBtn.className = TAB_ON;
+            tabSpotlightBtn.className = TAB_OFF;
             lineupsView.classList.remove('hidden');
             spotlightView.classList.add('hidden');
           });

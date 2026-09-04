@@ -724,7 +724,9 @@ function listPublicTeams() {
         ign: player.IGN || '',
         role: player.Role || '',
         verificationStatus: player.VerificationStatus || 'Pending',
-        profileImageUrl: isApproved && String(player.ProfileImageVisible).toLowerCase() === 'yes' ? (player.ProfileImageUrl || '') : ''
+        // Player photos are personal data and are never returned on the public
+        // endpoint. Staff read them through the authenticated verification APIs.
+        profileImageUrl: ''
       };
     });
     return {
@@ -736,7 +738,7 @@ function listPublicTeams() {
       captainName: team.CaptainName || '',
       description: team.Description || '',
       logoUrl: team.LogoUrl || '',
-      teamPhotoUrl: isApproved ? (team.TeamPhotoUrl || '') : '',
+      teamPhotoUrl: '',   // uploaded team imagery is not published either
       approvalStatus: team.Status || 'Approved',
       rejectionReason: isApproved ? '' : (team.RejectionReason || ''),
       roster: roster

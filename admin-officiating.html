@@ -256,7 +256,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 
         <!-- Interactive Preview Box -->
         <div class="relative w-full aspect-video rounded-xl overflow-hidden bg-black border border-primary/30 shadow-lg flex items-center justify-center">
-          <iframe id="wizard-live-preview-frame" class="w-full h-full border-0 hidden" src="" allowfullscreen></iframe>
+          <iframe id="wizard-live-preview-frame" class="w-full h-full border-0 hidden" src="about:blank" allowfullscreen></iframe>
           <div id="wizard-fallback-preview" class="w-full h-full flex flex-col items-center justify-center bg-black relative">
             <video class="w-full h-full object-cover" src="assets/VideoIntro.mp4" autoplay loop muted playsinline></video>
             <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2">
@@ -597,7 +597,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       modeBadge.className = 'text-[10px] font-mono text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30 font-bold';
       urlText.textContent = 'Channel Feed: ' + rawUrl;
     } else {
-      frame.src = '';
+      frame.src = 'about:blank';
       frame.classList.add('hidden');
       fallback.classList.remove('hidden');
       signalDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
