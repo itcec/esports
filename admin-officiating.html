@@ -1229,6 +1229,18 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     match.team2.icon = document.getElementById('edit-team2-icon').value;
     match.team1.score = readScore('edit-team1-score');
     match.team2.score = readScore('edit-team2-score');
+
+    // The registration id has to follow the team, not linger from whoever was on
+    // this court before. saveMatch re-enriches each side from the registry by id
+    // first, so a stale id silently overwrites the team that was just chosen.
+    [1, 2].forEach((n) => {
+      const picked = (document.getElementById('select-team' + n + '-approved') || {}).value || '';
+      const isRegistered = picked && picked !== '__custom__';
+      const side = n === 1 ? match.team1 : match.team2;
+      side.id = isRegistered ? picked : '';
+      side.registrationTeamId = isRegistered ? picked : '';
+      if (!isRegistered) delete side.teamId;
+    });
     match.streamUrl = document.getElementById('edit-stream-url').value;
     match.formatBadge = document.getElementById('edit-format-badge').value;
     match.status = document.getElementById('edit-status').value;
