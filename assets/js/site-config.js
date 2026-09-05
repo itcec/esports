@@ -528,11 +528,168 @@
     }
   };
 
+  /* ------------------------------------------------------------------ *
+   * Global Cyberpunk Scrollbar & OBS Studio Integration
+   * Ensures scrolls are active & styled on all pages, while providing
+   * seamless 1080p / transparent overlay support for OBS Studio.
+   * ------------------------------------------------------------------ */
+  function initScrollAndObs() {
+    var params = new URLSearchParams(window.location.search);
+    var isObs = params.has('obs') || params.has('overlay') || params.has('stream') ||
+      typeof window.obsstudio !== 'undefined' ||
+      (navigator.userAgent && /OBS\/|obs-browser/i.test(navigator.userAgent));
+
+    var docEl = document.documentElement;
+
+    if (isObs) {
+      docEl.classList.add('obs-mode');
+      var transparent = params.has('transparent') || params.has('alpha') || params.get('bg') === 'transparent';
+      if (transparent) docEl.classList.add('obs-transparent');
+      var view = params.get('view');
+      if (view) docEl.classList.add('obs-view-' + view);
+    }
+
+    // Inject high-priority global scrollbar & OBS styles
+    if (!document.getElementById('cec-global-scroll-obs')) {
+      var style = document.createElement('style');
+      style.id = 'cec-global-scroll-obs';
+      style.textContent = [
+        '/* CEC Esports Cyberpunk Scrollbars (Visible & Draggable for All Browsers) */',
+        'html, body {',
+        '  scrollbar-width: thin !important;',
+        '  scrollbar-color: #1e3a5f #050B14 !important;',
+        '  overscroll-behavior-y: auto !important;',
+        '}',
+        '::-webkit-scrollbar {',
+        '  width: 10px !important;',
+        '  height: 10px !important;',
+        '  display: block !important;',
+        '}',
+        '::-webkit-scrollbar-track {',
+        '  background: #050B14 !important;',
+        '}',
+        '::-webkit-scrollbar-thumb {',
+        '  background: #1e3a5f !important;',
+        '  border-radius: 5px !important;',
+        '  border: 2px solid #050B14 !important;',
+        '}',
+        '::-webkit-scrollbar-thumb:hover {',
+        '  background: #1264ff !important;',
+        '  box-shadow: 0 0 8px rgba(18, 100, 255, 0.7) !important;',
+        '}',
+        '::-webkit-scrollbar-corner {',
+        '  background: #050B14 !important;',
+        '}',
+        '/* Elements explicitly flagged to hide scrollbars (horizontal chip bars, etc.) */',
+        '.no-scrollbar::-webkit-scrollbar {',
+        '  display: none !important;',
+        '  width: 0 !important;',
+        '  height: 0 !important;',
+        '}',
+        '.no-scrollbar {',
+        '  -ms-overflow-style: none !important;',
+        '  scrollbar-width: none !important;',
+        '}',
+        '',
+        '/* ========================================================================== */',
+        '/* OBS Studio Browser Source Mode (Active when in OBS or ?obs=1)               */',
+        '/* ========================================================================== */',
+        '.obs-mode header,',
+        '.obs-mode footer,',
+        '.obs-mode #cms-announcement-banner,',
+        '.obs-mode #nav-toggle,',
+        '.obs-mode #mobile-nav,',
+        '.obs-mode #obs-overlay-launcher-btn,',
+        '.obs-mode #schedule-section,',
+        '.obs-mode .obs-hide {',
+        '  display: none !important;',
+        '}',
+        '.obs-mode main {',
+        '  padding-top: 0 !important;',
+        '  margin-top: 0 !important;',
+        '}',
+        '.obs-mode, .obs-mode body, .obs-mode * {',
+        '  scrollbar-width: none !important;',
+        '  -ms-overflow-style: none !important;',
+        '}',
+        '.obs-mode ::-webkit-scrollbar {',
+        '  display: none !important;',
+        '  width: 0 !important;',
+        '  height: 0 !important;',
+        '}',
+        '.obs-mode.obs-transparent,',
+        '.obs-mode.obs-transparent body {',
+        '  background: transparent !important;',
+        '  background-color: transparent !important;',
+        '}',
+        '.obs-mode.obs-transparent .site-bg,',
+        '.obs-mode.obs-transparent .site-overlay {',
+        '  display: none !important;',
+        '  opacity: 0 !important;',
+        '}',
+        '',
+        '/* OBS View: Scoreboard Only Overlay */',
+        '.obs-mode.obs-view-scoreboard #live-switcher-bar,',
+        '.obs-mode.obs-view-scoreboard #live-match-chips,',
+        '.obs-mode.obs-view-scoreboard #live-standby,',
+        '.obs-mode.obs-view-scoreboard #live-stream-player-wrapper,',
+        '.obs-mode.obs-view-scoreboard #roster-section-wrap,',
+        '.obs-mode.obs-view-scoreboard #schedule-section,',
+        '.obs-mode.obs-view-scoreboard section:not(:first-child) {',
+        '  display: none !important;',
+        '}',
+        '.obs-mode.obs-view-scoreboard section:first-child {',
+        '  padding: 8px 12px !important;',
+        '  background: transparent !important;',
+        '  border: none !important;',
+        '}',
+        '.obs-mode.obs-view-scoreboard #match-versus-card {',
+        '  max-width: 1400px;',
+        '  margin: 0 auto;',
+        '}',
+        '',
+        '/* OBS View: Roster Spotlight Only */',
+        '.obs-mode.obs-view-spotlight #live-switcher-bar,',
+        '.obs-mode.obs-view-spotlight #live-match-chips,',
+        '.obs-mode.obs-view-spotlight #live-standby,',
+        '.obs-mode.obs-view-spotlight #match-versus-card,',
+        '.obs-mode.obs-view-spotlight #live-stream-player-wrapper,',
+        '.obs-mode.obs-view-spotlight #schedule-section,',
+        '.obs-mode.obs-view-spotlight section:not(:first-child) {',
+        '  display: none !important;',
+        '}',
+        '.obs-mode.obs-view-spotlight section:first-child {',
+        '  padding: 12px !important;',
+        '  background: transparent !important;',
+        '  border: none !important;',
+        '}',
+        '',
+        '/* OBS View: Video Stream / Observer Feed Only */',
+        '.obs-mode.obs-view-feed #live-switcher-bar,',
+        '.obs-mode.obs-view-feed #live-match-chips,',
+        '.obs-mode.obs-view-feed #live-standby,',
+        '.obs-mode.obs-view-feed #match-versus-card,',
+        '.obs-mode.obs-view-feed #roster-section-wrap,',
+        '.obs-mode.obs-view-feed #schedule-section,',
+        '.obs-mode.obs-view-feed section:not(:first-child) {',
+        '  display: none !important;',
+        '}'
+      ].join('\n');
+      (document.head || document.documentElement).appendChild(style);
+    }
+  }
+
+  initScrollAndObs();
+
   window.CECSite = CECSite;
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { CECSite.init(); });
+    document.addEventListener('DOMContentLoaded', function () {
+      initScrollAndObs();
+      CECSite.init();
+    });
   } else {
+    initScrollAndObs();
     CECSite.init();
   }
 })(window);

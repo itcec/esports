@@ -15,7 +15,7 @@
       }
 
       body {
-        overscroll-behavior: none;
+        overscroll-behavior-y: auto;
       }
 
       main>:first-child {
@@ -27,10 +27,133 @@
       }
     }
 
+    /* Custom Cyberpunk Scrollbar (Visible on browsers, hidden in OBS mode) */
+    html, body {
+      scrollbar-width: thin;
+      scrollbar-color: #1e3a5f #050B14;
+    }
     ::-webkit-scrollbar {
-      display: none;
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050B14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e3a5f;
+      border-radius: 5px;
+      border: 2px solid #050B14;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #1264ff;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none !important;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    /* OBS Studio Broadcast Overlay Mode */
+    .obs-mode header,
+    .obs-mode footer,
+    .obs-mode #cms-announcement-banner,
+    .obs-mode #nav-toggle,
+    .obs-mode #mobile-nav,
+    .obs-mode #obs-overlay-launcher-btn,
+    .obs-mode #schedule-section,
+    .obs-mode .obs-hide {
+      display: none !important;
+    }
+    .obs-mode main {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
+    .obs-mode, .obs-mode body, .obs-mode * {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+    .obs-mode ::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    .obs-mode.obs-transparent,
+    .obs-mode.obs-transparent body {
+      background: transparent !important;
+      background-color: transparent !important;
+    }
+    .obs-mode.obs-transparent .site-bg,
+    .obs-mode.obs-transparent .site-overlay {
+      display: none !important;
+      opacity: 0 !important;
+    }
+    /* View: Scoreboard Only */
+    .obs-view-scoreboard #live-switcher-bar,
+    .obs-view-scoreboard #live-match-chips,
+    .obs-view-scoreboard #live-standby,
+    .obs-view-scoreboard #live-stream-player-wrapper,
+    .obs-view-scoreboard #roster-section-wrap,
+    .obs-view-scoreboard #schedule-section,
+    .obs-view-scoreboard section:not(:first-child) {
+      display: none !important;
+    }
+    .obs-view-scoreboard #live-arena-section {
+      padding: 8px 12px !important;
+      background: transparent !important;
+      border: none !important;
+    }
+    .obs-view-scoreboard #match-versus-card {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    /* View: Spotlight Only */
+    .obs-view-spotlight #live-switcher-bar,
+    .obs-view-spotlight #live-match-chips,
+    .obs-view-spotlight #live-standby,
+    .obs-view-spotlight #match-versus-card,
+    .obs-view-spotlight #live-stream-player-wrapper,
+    .obs-view-spotlight #schedule-section,
+    .obs-view-spotlight section:not(:first-child) {
+      display: none !important;
+    }
+    .obs-view-spotlight #live-arena-section {
+      padding: 12px !important;
+      background: transparent !important;
+      border: none !important;
+    }
+    /* View: Feed Only */
+    .obs-view-feed #live-switcher-bar,
+    .obs-view-feed #live-match-chips,
+    .obs-view-feed #live-standby,
+    .obs-view-feed #match-versus-card,
+    .obs-view-feed #roster-section-wrap,
+    .obs-view-feed #schedule-section,
+    .obs-view-feed section:not(:first-child) {
+      display: none !important;
     }
   </style>
+  <script>
+    (function() {
+      var p = new URLSearchParams(window.location.search);
+      var isObs = p.has('obs') || p.has('overlay') || p.has('stream') ||
+        typeof window.obsstudio !== 'undefined' ||
+        (navigator.userAgent && /OBS\/|obs-browser/i.test(navigator.userAgent));
+      if (isObs) {
+        document.documentElement.classList.add('obs-mode');
+        var isTrans = p.has('transparent') || p.has('alpha') || p.get('bg') === 'transparent';
+        if (isTrans) document.documentElement.classList.add('obs-transparent');
+        var v = p.get('view');
+        if (v) document.documentElement.classList.add('obs-view-' + v);
+        document.addEventListener('DOMContentLoaded', function() {
+          document.body.classList.add('obs-mode');
+          if (isTrans) document.body.classList.add('obs-transparent');
+          if (v) document.body.classList.add('obs-view-' + v);
+        });
+      }
+    })();
+  </script>
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap"
     rel="stylesheet" />
@@ -251,7 +374,7 @@
 
   <main class="w-full pt-16 relative z-10">
     <!-- LIVE BROADCAST ARENA (TOP HERO) -->
-    <section
+    <section id="live-arena-section"
       class="w-full bg-gradient-to-b from-[#050e1c] via-surface-container-lowest to-[#081422] border-b border-white/10 py-6 md:py-10">
       <div class="max-w-container-max mx-auto px-lg flex flex-col gap-md">
 
@@ -280,6 +403,12 @@
           <div class="flex items-center gap-2 shrink-0">
             <span class="text-[11px] font-label-caps text-on-surface-variant hidden md:inline"
               id="concurrent-count-badge">4 CONCURRENT GAMES</span>
+            <button id="obs-overlay-launcher-btn" type="button"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-secondary-container/20 border border-secondary/40 hover:bg-secondary-container/40 text-secondary text-xs font-label-caps font-bold transition-all shadow-sm cursor-pointer"
+              title="OBS Studio Browser Source Overlays & Stream Tools">
+              <span class="material-symbols-outlined text-[16px]">podcasts</span>
+              <span>OBS OVERLAYS</span>
+            </button>
             <button id="quick-edit-btn" type="button"
               class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/20 border border-primary/40 hover:bg-primary/30 text-primary text-xs font-label-caps font-bold transition-colors">
               <span class="material-symbols-outlined text-[16px]">videocam</span>
@@ -433,7 +562,7 @@
         </div>
 
         <!-- LIVE STREAM EMBED PLAYER FRAME -->
-        <div class="flex flex-col gap-3">
+        <div id="live-stream-player-wrapper" class="flex flex-col gap-3">
           <div
             class="relative w-full rounded-2xl overflow-hidden bg-black border-2 border-primary/30 shadow-[0_0_35px_rgba(18,100,255,0.25)] aspect-video">
 
@@ -881,8 +1010,136 @@
       </div>
     </div>
 
+    <!-- OBS STUDIO BROWSER SOURCE OVERLAYS MODAL -->
+    <div id="obs-modal"
+      class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+      <div
+        class="bg-surface-container/95 border border-white/15 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden cyber-panel">
+
+        <!-- Modal Header -->
+        <div class="p-lg bg-surface-container-high/90 border-b border-white/10 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-secondary-container/20 border border-secondary/40 text-secondary">
+              <span class="material-symbols-outlined text-[20px]">podcasts</span>
+            </span>
+            <div>
+              <h3 class="font-headline-md text-headline-md text-on-surface cyber-title text-base sm:text-lg">OBS Studio Broadcast Overlays</h3>
+              <p class="text-xs font-body-md text-on-surface-variant">Live streaming Browser Source URLs configured for 1080p stream production.</p>
+            </div>
+          </div>
+          <button type="button" id="close-obs-modal-btn"
+            class="text-on-surface-variant hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-lg overflow-y-auto flex-1 flex flex-col gap-md">
+          <div class="p-3.5 rounded-xl bg-surface-container-lowest/80 border border-primary/20 flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">info</span>
+            <div class="text-xs font-body-md text-on-surface-variant space-y-1">
+              <p><strong class="text-on-surface">OBS Setup Tip:</strong> In OBS Studio, add a new <strong class="text-primary">Browser Source</strong>, paste one of the URLs below, set resolution to <strong class="text-on-surface">1920 &times; 1080</strong> (or 1920 &times; 250 for scoreboard), and check <strong class="text-on-surface">"Shutdown source when not visible"</strong>.</p>
+              <p class="text-[11px] text-primary">All overlays automatically synchronize in real time via Firebase as officials update matches.</p>
+            </div>
+          </div>
+
+          <!-- Overlay Option 1: Full Arena View -->
+          <div class="p-4 rounded-xl bg-surface-container-low border border-white/10 hover:border-primary/40 transition-colors flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-on-surface flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-primary text-[18px]">desktop_windows</span>
+                Full Broadcast Arena (1080p Full-Screen)
+              </span>
+              <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30">1920 &times; 1080</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Includes scoreboard, stream feed, roster spotlight, and match switcher with zero website headers or footers.</p>
+            <div class="flex items-center gap-2 mt-1">
+              <input type="text" readonly value="tournament.html?obs=1" data-obs-path="tournament.html?obs=1" class="obs-url-input flex-1 bg-[#050B14] text-primary px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono select-all" />
+              <button type="button" class="copy-obs-btn px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary text-xs font-label-caps font-bold transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+              </button>
+              <a href="tournament.html?obs=1" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-label-caps transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">open_in_new</span> Test
+              </a>
+            </div>
+          </div>
+
+          <!-- Overlay Option 2: Transparent Scoreboard Lower-Third -->
+          <div class="p-4 rounded-xl bg-surface-container-low border border-white/10 hover:border-secondary/40 transition-colors flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-on-surface flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-secondary text-[18px]">scoreboard</span>
+                Transparent Match Scoreboard (In-Game Overlay)
+              </span>
+              <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded bg-secondary/20 text-secondary border border-secondary/30">1920 &times; 250</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Transparent background showing only the active versus card, series score, and format badge. Perfect for overlaying directly on gameplay.</p>
+            <div class="flex items-center gap-2 mt-1">
+              <input type="text" readonly value="tournament.html?obs=1&view=scoreboard&transparent=1" data-obs-path="tournament.html?obs=1&view=scoreboard&transparent=1" class="obs-url-input flex-1 bg-[#050B14] text-secondary px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono select-all" />
+              <button type="button" class="copy-obs-btn px-3 py-1.5 rounded-lg bg-secondary hover:bg-secondary-fixed-dim text-on-secondary text-xs font-label-caps font-bold transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+              </button>
+              <a href="tournament.html?obs=1&view=scoreboard&transparent=1" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-label-caps transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">open_in_new</span> Test
+              </a>
+            </div>
+          </div>
+
+          <!-- Overlay Option 3: Transparent Roster Spotlight -->
+          <div class="p-4 rounded-xl bg-surface-container-low border border-white/10 hover:border-[#00e676]/40 transition-colors flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-on-surface flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[#00e676] text-[18px]">groups</span>
+                Roster Spotlight &amp; Player Intros
+              </span>
+              <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded bg-[#00e676]/20 text-[#00e676] border border-[#00e676]/30">1920 &times; 1080</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Player carousel and team lineups card with transparent background for pre-match talent breakdown.</p>
+            <div class="flex items-center gap-2 mt-1">
+              <input type="text" readonly value="tournament.html?obs=1&view=spotlight&transparent=1" data-obs-path="tournament.html?obs=1&view=spotlight&transparent=1" class="obs-url-input flex-1 bg-[#050B14] text-[#00e676] px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono select-all" />
+              <button type="button" class="copy-obs-btn px-3 py-1.5 rounded-lg bg-[#00e676] hover:brightness-110 text-[#00391b] text-xs font-label-caps font-bold transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+              </button>
+              <a href="tournament.html?obs=1&view=spotlight&transparent=1" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-label-caps transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">open_in_new</span> Test
+              </a>
+            </div>
+          </div>
+
+          <!-- Overlay Option 4: Full Tournament Bracket View -->
+          <div class="p-4 rounded-xl bg-surface-container-low border border-white/10 hover:border-[#ffb020]/40 transition-colors flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-on-surface flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[#ffb020] text-[18px]">account_tree</span>
+                Clean Tournament Bracket Overlay
+              </span>
+              <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded bg-[#ffb020]/20 text-[#ffb020] border border-[#ffb020]/30">1920 &times; 1080</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Live brackets without navigation menus for intermission and broadcast desk presentation.</p>
+            <div class="flex items-center gap-2 mt-1">
+              <input type="text" readonly value="bracket.html?obs=1" data-obs-path="bracket.html?obs=1" class="obs-url-input flex-1 bg-[#050B14] text-[#ffb020] px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono select-all" />
+              <button type="button" class="copy-obs-btn px-3 py-1.5 rounded-lg bg-[#ffb020] hover:brightness-110 text-[#442b00] text-xs font-label-caps font-bold transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+              </button>
+              <a href="bracket.html?obs=1" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-label-caps transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">open_in_new</span> Test
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-md bg-surface-container-high/90 border-t border-white/10 flex items-center justify-between">
+          <span class="text-[11px] text-on-surface-variant">Tip: Append <code class="font-mono text-primary">&amp;transparent=1</code> for alpha transparency.</span>
+          <button type="button" id="close-obs-modal-btn2" class="px-4 py-1.5 rounded bg-surface-container-highest text-on-surface text-xs font-label-caps hover:bg-white/10 transition-colors">
+            CLOSE
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- TOURNAMENT DETAILS & FULL SCHEDULE (ORIGINAL CONTENT) -->
-    <section class="w-full py-xl">
+    <section id="schedule-section" class="w-full py-xl">
       <div class="max-w-container-max mx-auto px-lg flex flex-col gap-xl">
 
         <!-- Section Header -->
@@ -1791,6 +2048,67 @@
       });
       if (window.CECAuth) window.CECAuth.onAuthChange(syncLiveControls);
     }());
+  </script>
+  <script>
+    // OBS Overlays Modal & URL Resolver
+    (function() {
+      const obsBtn = document.getElementById('obs-overlay-launcher-btn');
+      const obsModal = document.getElementById('obs-modal');
+      const closeBtn1 = document.getElementById('close-obs-modal-btn');
+      const closeBtn2 = document.getElementById('close-obs-modal-btn2');
+
+      function populateAbsoluteObsUrls() {
+        const origin = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        document.querySelectorAll('.obs-url-input').forEach(input => {
+          const rel = input.getAttribute('data-obs-path') || input.value;
+          input.value = origin + rel;
+        });
+        document.querySelectorAll('#obs-modal a[href]').forEach(link => {
+          const rel = link.getAttribute('href');
+          if (rel && !rel.startsWith('http')) link.href = origin + rel;
+        });
+      }
+
+      if (obsBtn && obsModal) {
+        obsBtn.addEventListener('click', () => {
+          populateAbsoluteObsUrls();
+          obsModal.classList.remove('hidden');
+          obsModal.classList.add('flex');
+        });
+        const closeObs = () => {
+          obsModal.classList.add('hidden');
+          obsModal.classList.remove('flex');
+        };
+        if (closeBtn1) closeBtn1.addEventListener('click', closeObs);
+        if (closeBtn2) closeBtn2.addEventListener('click', closeObs);
+        obsModal.addEventListener('click', (e) => {
+          if (e.target === obsModal) closeObs();
+        });
+
+        // Copy buttons
+        document.querySelectorAll('.copy-obs-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const row = btn.closest('div');
+            const input = row ? row.querySelector('.obs-url-input') : null;
+            if (!input) return;
+            const val = input.value;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(val).then(() => {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span> Copied!';
+                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+              }).catch(() => {
+                input.select();
+                document.execCommand('copy');
+              });
+            } else {
+              input.select();
+              document.execCommand('copy');
+            }
+          });
+        });
+      }
+    })();
   </script>
 </body>
 
