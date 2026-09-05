@@ -1721,7 +1721,8 @@
             };
 
             try {
-              await window.CECLiveManager.saveMatch(updated);
+              const saveResult = await window.CECLiveManager.saveMatch(updated);
+              if (saveResult && saveResult.warning) alert(saveResult.warning);
             } catch (err) {
               alert('Could not publish this match: ' + (err && err.message ? err.message : 'request failed'));
               return;

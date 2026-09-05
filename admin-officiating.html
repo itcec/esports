@@ -1186,8 +1186,9 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     match.streamUrl = streamCheck.url;
 
     try {
-      await window.CECLiveManager.saveMatch(match);
+      const result = await window.CECLiveManager.saveMatch(match);
       closeModal();
+      if (result && result.warning) alert(result.warning);
     } catch (err) {
       alert('Could not save match: ' + (err && err.message ? err.message : err));
     }

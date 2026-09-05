@@ -163,14 +163,16 @@ window.CECLiveManager = {
             isCap: index === 0
           };
         });
+        // Every fallback ends in a concrete value: an `undefined` property here
+        // makes the Firebase write throw, which is what blocked saving a broadcast.
         match[sideKey] = Object.assign({}, side, {
-          id: team.teamId || side.id,
-          registrationTeamId: team.teamId || side.registrationTeamId,
-          name: team.teamName || side.name,
-          dept: team.department || side.dept,
-          sub: team.course || side.sub,
-          captain: team.captainName || side.captain,
-          roster: roster.length ? roster : side.roster
+          id: team.teamId || side.id || '',
+          registrationTeamId: team.teamId || side.registrationTeamId || '',
+          name: team.teamName || side.name || '',
+          dept: team.department || side.dept || '',
+          sub: team.course || side.sub || '',
+          captain: team.captainName || side.captain || '',
+          roster: roster.length ? roster : (side.roster || [])
         });
       });
     });
@@ -209,6 +211,35 @@ window.CECLiveManager = {
   /**
    * Save or Update Match (Staff & Admin Only)
    */
+  /**
+   * Firebase rejects any payload containing `undefined`, and one such property
+   * anywhere in the object aborts the whole write. Drop them (and functions)
+   * before saving.
+   */
+  _clean: function(value) {
+    if (Array.isArray(value)) {
+      return value.map(this._clean, this).filter(function(v) { return v !== undefined; });
+    }
+    if (value && typeof value === 'object') {
+      const out = {};
+      Object.keys(value).forEach(function(key) {
+        const cleaned = this._clean(value[key]);
+        if (cleaned !== undefined) out[key] = cleaned;
+      }, this);
+      return out;
+    }
+    return typeof value === 'function' || value === undefined ? undefined : value;
+  },
+
+  /**
+   * Saves a broadcast. The public tournament page reads live matches from
+   * Firebase, so once that write lands the broadcast IS live; mirroring it into
+   * the spreadsheet is bookkeeping. A spreadsheet failure is therefore reported
+   * but does not fail the save, which previously left staff unable to publish at
+   * all whenever the Apps Script deployment lagged behind the front end.
+   *
+   * Returns { match, live, mirrored, warning }.
+   */
   saveMatch: async function(matchData) {
     if (!matchData.id) {
       matchData.id = 'MATCH-' + String(Date.now()).slice(-4);
@@ -217,22 +248,42 @@ window.CECLiveManager = {
     this._enrichMatchesWithPublicTeams();
     this._saveLocalMatches();
 
-    if (window.CECFirebase.db) {
-      await window.CECFirebase.db.ref('liveMatches/' + matchData.id).set(matchData);
+    const stored = this.matches[matchData.id];
+    let live = false;
+    let warning = '';
+
+    if (window.CECFirebase && window.CECFirebase.db) {
+      try {
+        await window.CECFirebase.db.ref('liveMatches/' + matchData.id).set(this._clean(stored));
+        live = true;
+      } catch (err) {
+        this._notify();
+        throw new Error('Could not put the match on air: ' + (err && err.message ? err.message : err));
+      }
     }
+
+    let mirrored = false;
     if (window.TournamentOps && window.CECAuth && window.CECAuth.isApprovedStaff()) {
-      await window.TournamentOps.publishMatch({
-        matchId: matchData.id,
-        court: matchData.court || '', division: matchData.division || '', stage: matchData.stageTitle || matchData.stage || '',
-        team1Id: matchData.team1 && (matchData.team1.registrationTeamId || matchData.team1.id) || '',
-        team1Name: matchData.team1 && matchData.team1.name || '', score1: matchData.team1 && matchData.team1.score || 0,
-        team2Id: matchData.team2 && (matchData.team2.registrationTeamId || matchData.team2.id) || '',
-        team2Name: matchData.team2 && matchData.team2.name || '', score2: matchData.team2 && matchData.team2.score || 0,
-        status: matchData.status || 'Scheduled', streamUrl: matchData.streamUrl || '', winnerId: matchData.winnerId || '', winnerName: matchData.winnerName || ''
-      });
+      try {
+        await window.TournamentOps.publishMatch({
+          matchId: matchData.id,
+          court: stored.court || '', division: stored.division || '', stage: stored.stageTitle || stored.stage || '',
+          team1Id: stored.team1 && (stored.team1.registrationTeamId || stored.team1.id) || '',
+          team1Name: stored.team1 && stored.team1.name || '', score1: stored.team1 && stored.team1.score || 0,
+          team2Id: stored.team2 && (stored.team2.registrationTeamId || stored.team2.id) || '',
+          team2Name: stored.team2 && stored.team2.name || '', score2: stored.team2 && stored.team2.score || 0,
+          status: stored.status || 'Scheduled', streamUrl: stored.streamUrl || '', winnerId: stored.winnerId || '', winnerName: stored.winnerName || ''
+        });
+        mirrored = true;
+      } catch (err) {
+        warning = 'The broadcast is live, but it could not be recorded in the tournament spreadsheet: ' +
+          (err && err.message ? err.message : err);
+        console.warn('publishMatch mirror failed:', err);
+      }
     }
+
     this._notify();
-    return matchData;
+    return { match: stored, live: live, mirrored: mirrored, warning: warning };
   },
 
   deleteMatch: async function(matchId) {
