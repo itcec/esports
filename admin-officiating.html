@@ -766,7 +766,16 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 
   async function loadApprovedTeams() {
     try {
-      let list = await callRegistrationApi('listRegistrations', {}, 'GET');
+      // The staff endpoint carries the richer record, but it needs a valid ID
+      // token. If it errors the public list still gives us every approved team,
+      // so failing over must not be skipped -- an empty list here forces every
+      // bracket team into "Custom / Manual Entry".
+      let list = null;
+      try {
+        list = await callRegistrationApi('listRegistrations', {}, 'GET');
+      } catch (staffErr) {
+        console.warn('Staff registration list unavailable, using the public list:', staffErr);
+      }
       if (!list || !list.length) {
         list = await callRegistrationApi('listPublicTeams', {}, 'GET');
       }
@@ -816,6 +825,16 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 
     sel1.innerHTML = buildOptions();
     sel2.innerHTML = buildOptions();
+
+    // Re-apply the current teams now that real options exist, so the dropdown
+    // shows the registered team instead of sitting on Custom.
+    const modal = document.getElementById('edit-match-modal');
+    if (approvedTeamsList.length && modal && !modal.classList.contains('hidden')) {
+      [1, 2].forEach(n => {
+        const name = (document.getElementById('edit-team' + n + '-name') || {}).value;
+        if (name) syncDropdownToMatchTeam(n, { name: name });
+      });
+    }
   }
 
   function updateTeamCardPreview(teamNum, team) {
@@ -889,30 +908,48 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     });
   });
 
+  /** Writes the fields the save handler reads. Setting a <select> from code does
+   *  not fire `change`, so these have to be filled explicitly. */
+  function applyTeamToFields(teamNum, team) {
+    const nameEl = document.getElementById('edit-team' + teamNum + '-name');
+    const deptEl = document.getElementById('edit-team' + teamNum + '-dept');
+    const iconEl = document.getElementById('edit-team' + teamNum + '-icon');
+    if (nameEl) nameEl.value = team.name || '';
+    if (deptEl && team.dept) deptEl.value = team.dept;
+    if (iconEl && team.icon) iconEl.value = team.icon;
+  }
+
   function syncDropdownToMatchTeam(teamNum, teamObj) {
     const sel = document.getElementById('select-team' + teamNum + '-approved');
     const customArea = document.getElementById('team' + teamNum + '-custom-inputs');
     if (!sel) return;
 
-    const norm = s => String(s || '').trim().toLowerCase();
-    const matched = approvedTeamsList.find(t => (teamObj.id && t.id === teamObj.id) || (teamObj.name && norm(t.name) === norm(teamObj.name)));
+    // Team names coming from a bracket may carry stray whitespace.
+    const wanted = String(teamObj.name || '').trim().toLowerCase();
+    const matched = approvedTeamsList.find(t =>
+      (teamObj.id && t.id === teamObj.id) ||
+      (wanted && String(t.name || '').trim().toLowerCase() === wanted));
 
     if (matched) {
       sel.value = matched.id;
       if (customArea) customArea.classList.add('hidden');
+      applyTeamToFields(teamNum, matched);
       updateTeamCardPreview(teamNum, matched);
     } else if (teamObj.name) {
-      sel.value = '__custom__';
-      if (customArea) customArea.classList.remove('hidden');
-      updateTeamCardPreview(teamNum, {
-        name: teamObj.name,
+      const custom = {
+        name: String(teamObj.name).trim(),
         dept: teamObj.dept || 'IT',
         icon: teamObj.icon || 'assets/icons/dragon-head.svg',
         color: teamNum === 1 ? '#1264ff' : '#ff4b4b'
-      });
+      };
+      sel.value = '__custom__';
+      if (customArea) customArea.classList.remove('hidden');
+      applyTeamToFields(teamNum, custom);
+      updateTeamCardPreview(teamNum, custom);
     } else {
       sel.selectedIndex = 0;
       if (customArea) customArea.classList.add('hidden');
+      applyTeamToFields(teamNum, { name: '' });
     }
   }
 
@@ -920,6 +957,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 
   // Published Bracket Matches Loader
   let publishedBracketMatches = [];
+  let pendingBracketSelection = null;
   const bracketMatchSelect = document.getElementById('select-bracket-match');
 
   const DIVISION_LABELS = {
@@ -1024,7 +1062,16 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       syncDropdownToMatchTeam(1, t1);
       syncDropdownToMatchTeam(2, t2);
 
-      // Store bracket match key on current editing match
+      // Applied on save, so the link survives even when the live match record
+      // has not been created yet.
+      pendingBracketSelection = {
+        matchKey: b.matchKey,
+        division: b.divKey,
+        department: b.dept || '',
+        stage: b.stage || '',
+        scopeLabel: b.scopeLabel || ''
+      };
+
       const matchId = document.getElementById('edit-match-id').value;
       if (matchId && window.CECLiveManager.matches[matchId]) {
         window.CECLiveManager.matches[matchId].bracketMatchKey = b.matchKey;
@@ -1038,6 +1085,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   window.openMatchEdit = function(matchId) {
     const match = window.CECLiveManager.matches[matchId];
     if (!match) return;
+    pendingBracketSelection = null;
     loadBracketMatches();
     document.getElementById('edit-match-id').value = match.id;
     document.getElementById('edit-court-title').value = match.court || match.title || '';
@@ -1170,15 +1218,36 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     match.division = document.getElementById('edit-division').value;
     if (!match.team1) match.team1 = { dept: 'IT' };
     if (!match.team2) match.team2 = { dept: 'CRIM' };
-    match.team1.name = document.getElementById('edit-team1-name').value;
-    match.team2.name = document.getElementById('edit-team2-name').value;
+    const readScore = (id) => {
+      const raw = parseInt(document.getElementById(id).value, 10);
+      return String(Number.isFinite(raw) && raw >= 0 ? raw : 0);
+    };
+
+    match.team1.name = document.getElementById('edit-team1-name').value.trim();
+    match.team2.name = document.getElementById('edit-team2-name').value.trim();
     match.team1.dept = document.getElementById('edit-team1-dept').value;
     match.team2.dept = document.getElementById('edit-team2-dept').value;
     match.team1.icon = document.getElementById('edit-team1-icon').value;
     match.team2.icon = document.getElementById('edit-team2-icon').value;
+    match.team1.score = readScore('edit-team1-score');
+    match.team2.score = readScore('edit-team2-score');
     match.streamUrl = document.getElementById('edit-stream-url').value;
     match.formatBadge = document.getElementById('edit-format-badge').value;
     match.status = document.getElementById('edit-status').value;
+
+    // Carry the chosen bracket match onto the broadcast: its stage drives the
+    // on-air header, and its scope decides which bracket the result returns to.
+    if (pendingBracketSelection) {
+      match.bracketMatchKey = pendingBracketSelection.matchKey;
+      match.bracketDivision = pendingBracketSelection.division;
+      match.bracketDepartment = pendingBracketSelection.department;
+      if (pendingBracketSelection.stage) match.stageTitle = pendingBracketSelection.stage;
+    }
+
+    if (!match.team1.name || !match.team2.name) {
+      alert('Both teams need a name before this broadcast can go on air.');
+      return;
+    }
 
     const streamCheck = window.CECLiveManager.validateStreamUrl(match.streamUrl);
     if (!streamCheck.ok) {
