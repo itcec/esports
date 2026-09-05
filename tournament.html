@@ -62,7 +62,6 @@
     .obs-mode #nav-toggle,
     .obs-mode #mobile-nav,
     .obs-mode #obs-overlay-launcher-btn,
-    .obs-mode #schedule-section,
     .obs-mode .obs-hide {
       display: none !important;
     }
@@ -70,19 +69,20 @@
       padding-top: 0 !important;
       margin-top: 0 !important;
     }
-    .obs-mode, .obs-mode body, .obs-mode * {
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
-    }
-    .obs-mode ::-webkit-scrollbar {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
+    .obs-mode html, .obs-mode body {
+      overflow-y: auto !important;
+      height: auto !important;
     }
     .obs-mode.obs-transparent,
     .obs-mode.obs-transparent body {
       background: transparent !important;
       background-color: transparent !important;
+      scrollbar-width: none !important;
+    }
+    .obs-mode.obs-transparent ::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
     }
     .obs-mode.obs-transparent .site-bg,
     .obs-mode.obs-transparent .site-overlay {
@@ -137,16 +137,18 @@
   <script>
     (function() {
       var p = new URLSearchParams(window.location.search);
-      var isObs = p.has('obs') || p.has('overlay') || p.has('stream') ||
-        typeof window.obsstudio !== 'undefined' ||
+      var isOverlayRequested = p.has('obs') || p.has('overlay') || p.has('stream') || p.has('view');
+      var isObsHost = typeof window.obsstudio !== 'undefined' ||
         (navigator.userAgent && /OBS\/|obs-browser/i.test(navigator.userAgent));
-      if (isObs) {
+      if (isObsHost) document.documentElement.classList.add('obs-host');
+      if (isOverlayRequested) {
         document.documentElement.classList.add('obs-mode');
         var isTrans = p.has('transparent') || p.has('alpha') || p.get('bg') === 'transparent';
         if (isTrans) document.documentElement.classList.add('obs-transparent');
         var v = p.get('view');
         if (v) document.documentElement.classList.add('obs-view-' + v);
         document.addEventListener('DOMContentLoaded', function() {
+          if (isObsHost) document.body.classList.add('obs-host');
           document.body.classList.add('obs-mode');
           if (isTrans) document.body.classList.add('obs-transparent');
           if (v) document.body.classList.add('obs-view-' + v);

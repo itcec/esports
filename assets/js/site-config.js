@@ -535,13 +535,15 @@
    * ------------------------------------------------------------------ */
   function initScrollAndObs() {
     var params = new URLSearchParams(window.location.search);
-    var isObs = params.has('obs') || params.has('overlay') || params.has('stream') ||
-      typeof window.obsstudio !== 'undefined' ||
+    // Overlay mode is only triggered when explicitly requested via URL params (e.g. ?obs=1, ?overlay=1, ?view=scoreboard)
+    var isOverlayRequested = params.has('obs') || params.has('overlay') || params.has('stream') || params.has('view');
+    var isObsHost = typeof window.obsstudio !== 'undefined' ||
       (navigator.userAgent && /OBS\/|obs-browser/i.test(navigator.userAgent));
 
     var docEl = document.documentElement;
+    if (isObsHost) docEl.classList.add('obs-host');
 
-    if (isObs) {
+    if (isOverlayRequested) {
       docEl.classList.add('obs-mode');
       var transparent = params.has('transparent') || params.has('alpha') || params.get('bg') === 'transparent';
       if (transparent) docEl.classList.add('obs-transparent');
@@ -554,11 +556,13 @@
       var style = document.createElement('style');
       style.id = 'cec-global-scroll-obs';
       style.textContent = [
-        '/* CEC Esports Cyberpunk Scrollbars (Visible & Draggable for All Browsers) */',
+        '/* CEC Esports Cyberpunk Scrollbars (Visible & Draggable for All Browsers & OBS Interact) */',
         'html, body {',
         '  scrollbar-width: thin !important;',
         '  scrollbar-color: #1e3a5f #050B14 !important;',
         '  overscroll-behavior-y: auto !important;',
+        '  overflow-y: auto !important;',
+        '  height: auto !important;',
         '}',
         '::-webkit-scrollbar {',
         '  width: 10px !important;',
@@ -592,7 +596,7 @@
         '}',
         '',
         '/* ========================================================================== */',
-        '/* OBS Studio Browser Source Mode (Active when in OBS or ?obs=1)               */',
+        '/* OBS Studio Browser Source Mode (Active when explicitly requested: ?obs=1)   */',
         '/* ========================================================================== */',
         '.obs-mode header,',
         '.obs-mode footer,',
@@ -600,7 +604,6 @@
         '.obs-mode #nav-toggle,',
         '.obs-mode #mobile-nav,',
         '.obs-mode #obs-overlay-launcher-btn,',
-        '.obs-mode #schedule-section,',
         '.obs-mode .obs-hide {',
         '  display: none !important;',
         '}',
@@ -608,19 +611,22 @@
         '  padding-top: 0 !important;',
         '  margin-top: 0 !important;',
         '}',
-        '.obs-mode, .obs-mode body, .obs-mode * {',
-        '  scrollbar-width: none !important;',
-        '  -ms-overflow-style: none !important;',
+        '/* Ensure page remains scrollable inside OBS Interact window */',
+        '.obs-mode html, .obs-mode body {',
+        '  overflow-y: auto !important;',
+        '  height: auto !important;',
         '}',
-        '.obs-mode ::-webkit-scrollbar {',
-        '  display: none !important;',
-        '  width: 0 !important;',
-        '  height: 0 !important;',
-        '}',
+        '/* Hide scrollbar ONLY if explicitly transparent or minimal scoreboard HUD */',
         '.obs-mode.obs-transparent,',
         '.obs-mode.obs-transparent body {',
         '  background: transparent !important;',
         '  background-color: transparent !important;',
+        '  scrollbar-width: none !important;',
+        '}',
+        '.obs-mode.obs-transparent ::-webkit-scrollbar {',
+        '  display: none !important;',
+        '  width: 0 !important;',
+        '  height: 0 !important;',
         '}',
         '.obs-mode.obs-transparent .site-bg,',
         '.obs-mode.obs-transparent .site-overlay {',
