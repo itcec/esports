@@ -790,7 +790,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
           const teamId = t.TeamID || t.teamId || '';
           return {
             id: teamId,
-            name: t.TeamName || t.teamName || 'Team',
+            name: String(t.TeamName || t.teamName || 'Team').trim(),
             dept: rawDept,
             course: t.Course || t.course || '',
             captain: t.CaptainName || t.captainName || '',
@@ -872,7 +872,8 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 
     if (!sel.value) return;
 
-    const team = approvedTeamsList.find(t => t.id === sel.value || t.name === sel.value);
+    const norm = s => String(s || '').trim().toLowerCase();
+    const team = approvedTeamsList.find(t => t.id === sel.value || norm(t.name) === norm(sel.value));
     if (!team) return;
 
     // Auto-populate hidden fields
@@ -1053,9 +1054,10 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       document.getElementById('edit-status').value = 'LIVE';
 
       // Find matching approved teams
-      const findTeam = (name) => approvedTeamsList.find(t => t.name.toLowerCase() === (name || '').toLowerCase());
-      const t1 = findTeam(b.t1) || { name: b.t1, dept: parseDept(b.t1), icon: 'assets/icons/dragon-head.svg' };
-      const t2 = findTeam(b.t2) || { name: b.t2, dept: parseDept(b.t2), icon: 'assets/icons/werewolf.svg' };
+      const norm = s => String(s || '').trim().toLowerCase();
+      const findTeam = (name) => approvedTeamsList.find(t => norm(t.name) === norm(name));
+      const t1 = findTeam(b.t1) || { name: (b.t1 || '').trim(), dept: parseDept(b.t1), icon: 'assets/icons/dragon-head.svg' };
+      const t2 = findTeam(b.t2) || { name: (b.t2 || '').trim(), dept: parseDept(b.t2), icon: 'assets/icons/werewolf.svg' };
 
       syncDropdownToMatchTeam(1, t1);
       syncDropdownToMatchTeam(2, t2);
