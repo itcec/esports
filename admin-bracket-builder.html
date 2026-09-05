@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bucket && allApprovedTeams[bucket]) {
           allApprovedTeams[bucket].push({
             id: t.teamId || t.TeamID || '',
-            name: t.teamName || t.TeamName || 'Team',
+            name: String(t.teamName || t.TeamName || 'Team').trim(),
             dept: parseDept(t.course || t.Course || t.division),
             captain: t.captainName || t.CaptainName || '',
             logoUrl: t.logoUrl || t.LogoUrl || ''
@@ -735,7 +735,10 @@ document.addEventListener('DOMContentLoaded', () => {
       department: currentDepartment(),
       title: flightTitleInput.value.trim() || getDefaultTitle(div, currentDepartment()),
       results: matchResults[scope] || {},
-      lookup: (name) => pool.find(t => t.name === name) || {}
+      lookup: (name) => {
+        const target = String(name || '').trim().toLowerCase();
+        return pool.find(t => String(t.name || '').trim().toLowerCase() === target) || {};
+      }
     });
   }
 
