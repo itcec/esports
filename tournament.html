@@ -1168,6 +1168,11 @@
   <script>
       (function () {
         const escHtml = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        // Shared by renderLiveArena and renderRosterSpotlight. Tolerate a missing
+        // node: never let one absent element blank the whole board.
+        const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+        const setSrc = (id, value) => { const el = document.getElementById(id); if (el) el.src = value; };
+
         const playerInitials = (player) => {
           const name = String(player.real || player.realName || player.ign || '?').trim();
           return name.split(/\s+/).map((part) => part.charAt(0)).join('').slice(0, 2).toUpperCase() || '?';
@@ -1252,9 +1257,6 @@
 
         // Render Current Match UI
         function renderLiveArena(active) {
-          // Tolerate a missing node: never let one absent element blank the whole board.
-          const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
-          const setSrc = (id, value) => { const el = document.getElementById(id); if (el) el.src = value; };
           const standby = document.getElementById('live-standby');
           const versusCard = document.getElementById('match-versus-card');
           const rostersGrid = document.getElementById('team-rosters-grid');

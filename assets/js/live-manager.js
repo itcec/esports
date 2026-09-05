@@ -23,6 +23,16 @@ window.CECLiveManager = {
     /^https?:\/\/(vt|vm)\.tiktok\.com\/[A-Za-z0-9_-]+/i
   ],
 
+  /** Human name of the platform a stream URL points at, or '' if unrecognised. */
+  streamPlatform: function (url) {
+    const raw = String(url || '').trim();
+    if (!raw) return '';
+    if (/twitch\.tv\//i.test(raw)) return 'Twitch';
+    if (/youtube\.com\/|youtu\.be\//i.test(raw)) return 'YouTube';
+    if (/tiktok\.com\//i.test(raw)) return 'TikTok';
+    return '';
+  },
+
   validateStreamUrl: function (url) {
     const raw = String(url || '').trim();
     if (!raw) return { ok: true, url: '' };

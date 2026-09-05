@@ -585,26 +585,53 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     const modeBadge = document.getElementById('wizard-preview-mode');
     const urlText = document.getElementById('wizard-preview-url-text');
 
-    const embedUrl = window.CECLiveManager.formatStreamEmbedUrl(rawUrl);
+    const LM = window.CECLiveManager;
+    const check = LM.validateStreamUrl(rawUrl);
+    const platform = LM.streamPlatform(rawUrl);
+    const embedUrl = check.ok ? LM.formatStreamEmbedUrl(rawUrl) : '';
+
+    const setBadge = (text, cls) => {
+      modeBadge.textContent = text;
+      modeBadge.className = 'text-[10px] font-mono px-2 py-0.5 rounded border font-bold ' + cls;
+    };
 
     if (embedUrl) {
       frame.src = embedUrl;
       frame.classList.remove('hidden');
       fallback.classList.add('hidden');
       signalDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse';
-      signalLabel.textContent = 'TWITCH LIVE STREAM FEED (SYNCHRONIZED)';
-      modeBadge.textContent = 'ON-AIR STREAM';
-      modeBadge.className = 'text-[10px] font-mono text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded border border-emerald-500/30 font-bold';
-      urlText.textContent = 'Channel Feed: ' + rawUrl;
-    } else {
-      frame.src = 'about:blank';
-      frame.classList.add('hidden');
-      fallback.classList.remove('hidden');
+      signalLabel.textContent = (platform || 'EXTERNAL').toUpperCase() + ' LIVE STREAM FEED (SYNCHRONIZED)';
+      setBadge('ON-AIR STREAM', 'text-emerald-300 bg-emerald-500/15 border-emerald-500/30');
+      urlText.textContent = (platform ? platform + ' feed: ' : 'Channel feed: ') + rawUrl;
+      return;
+    }
+
+    frame.src = 'about:blank';
+    frame.classList.add('hidden');
+    fallback.classList.remove('hidden');
+
+    if (!rawUrl) {
+      // Nothing entered: the observer loop is the intended broadcast.
       signalDot.className = 'w-2.5 h-2.5 rounded-full bg-amber-400';
       signalLabel.textContent = 'CEC OBSERVER FEED (STANDBY LOOP)';
-      modeBadge.textContent = 'STANDBY LOOP';
-      modeBadge.className = 'text-[10px] font-mono text-primary bg-primary/10 px-2 py-0.5 rounded border border-primary/20 font-bold';
-      urlText.textContent = 'Standby Video: assets/VideoIntro.mp4';
+      setBadge('STANDBY LOOP', 'text-primary bg-primary/10 border-primary/20');
+      urlText.textContent = 'Standby video: assets/VideoIntro.mp4';
+      return;
+    }
+
+    // A URL was entered but cannot be shown. Say why, instead of quietly
+    // falling back to standby and leaving the operator guessing.
+    signalDot.className = 'w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse';
+    if (!check.ok) {
+      signalLabel.textContent = 'LINK NOT ACCEPTED';
+      setBadge('INVALID LINK', 'text-red-300 bg-red-500/15 border-red-500/30');
+      urlText.textContent = check.message;
+    } else {
+      // Valid but not embeddable, e.g. a vt.tiktok.com share link.
+      signalLabel.textContent = 'LINK CANNOT BE EMBEDDED';
+      setBadge('NOT EMBEDDABLE', 'text-amber-300 bg-amber-500/15 border-amber-500/30');
+      urlText.textContent = check.warning ||
+        'This link is valid but cannot play inside the page; viewers will see the standby loop.';
     }
   }
 
@@ -893,46 +920,76 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   let publishedBracketMatches = [];
   const bracketMatchSelect = document.getElementById('select-bracket-match');
 
+  const DIVISION_LABELS = {
+    mens: "Student Men's",
+    womens: "Student Women's",
+    faculty: 'Faculty Exhibition',
+    shs: 'SHS Showdown'
+  };
+
   async function loadBracketMatches() {
     if (!bracketMatchSelect) return;
     try {
-      const [mens, womens, faculty, shs] = await Promise.all([
-        PublicTournamentApi.listBracket('mens').catch(() => []),
-        PublicTournamentApi.listBracket('womens').catch(() => []),
-        PublicTournamentApi.listBracket('faculty').catch(() => []),
-        PublicTournamentApi.listBracket('shs').catch(() => [])
-      ]);
+      // Men's and Women's publish one bracket per department plus a division-wide
+      // Grand Finals, so every scope in the division has to be collected -- asking
+      // for the division alone only returns its Grand Finals bracket.
+      const divisions = ['mens', 'womens', 'faculty', 'shs'];
+      const perDivision = await Promise.all(
+        divisions.map(d => PublicTournamentApi.listDivisionBrackets(d).catch(() => ({})))
+      );
 
       const all = [];
-      const addMatches = (list, divName, divKey) => {
-        (list || []).forEach(m => {
-          if (!m.matchKey || m.status === 'Completed') return;
-          all.push({
-            ...m,
-            divName: divName,
-            divKey: divKey,
-            t1: m.team1Name || m.Team1Name || 'TBD',
-            t2: m.team2Name || m.Team2Name || 'TBD',
-            stage: m.stage || m.Stage || 'Round'
+      divisions.forEach((divKey, i) => {
+        const byDept = perDivision[i] || {};
+        Object.keys(byDept).forEach(dept => {
+          (byDept[dept] || []).forEach(m => {
+            const key = m.matchKey || m.MatchKey;
+            const status = m.status || m.Status || 'Scheduled';
+            if (!key || String(status).toLowerCase() === 'completed') return;
+            const t1 = m.team1Name || m.Team1Name || 'TBD';
+            const t2 = m.team2Name || m.Team2Name || 'TBD';
+            // A bye is already settled and never needs officiating.
+            if (String(t1).toUpperCase() === 'BYE' || String(t2).toUpperCase() === 'BYE') return;
+            all.push({
+              ...m,
+              matchKey: key,
+              status: status,
+              divName: DIVISION_LABELS[divKey] || divKey,
+              divKey: divKey,
+              dept: dept,
+              scopeLabel: dept ? (DIVISION_LABELS[divKey] + ' · ' + dept) : DIVISION_LABELS[divKey],
+              format: m.format || m.Format || '',
+              round: Number(m.round || m.Round || 0),
+              t1: t1,
+              t2: t2,
+              stage: m.stage || m.Stage || 'Round'
+            });
           });
         });
-      };
+      });
 
-      addMatches(mens, "Student Men's", 'mens');
-      addMatches(womens, "Student Women's", 'womens');
-      addMatches(faculty, "Faculty Exhibition", 'faculty');
-      addMatches(shs, "SHS Showdown", 'shs');
+      // Group by bracket, then run in playing order.
+      all.sort((a, b) =>
+        a.scopeLabel.localeCompare(b.scopeLabel) ||
+        a.round - b.round ||
+        String(a.matchKey).localeCompare(String(b.matchKey)));
+
       publishedBracketMatches = all;
 
-      bracketMatchSelect.innerHTML = '<option value="">-- Choose from Scheduled Bracket Matches --</option>';
+      bracketMatchSelect.innerHTML = all.length
+        ? '<option value="">-- Choose from Scheduled Bracket Matches --</option>'
+        : '<option value="">No scheduled bracket matches found — publish a bracket first</option>';
+
       all.forEach((m, idx) => {
         const opt = document.createElement('option');
         opt.value = idx;
-        opt.textContent = `[${m.divName} · ${m.stage}] ${m.t1} vs ${m.t2} (${m.status || 'Scheduled'})`;
+        const fmt = m.format && m.format !== '-' ? ' · ' + m.format : '';
+        opt.textContent = `[${m.scopeLabel} · ${m.stage}${fmt}] ${m.t1} vs ${m.t2}`;
         bracketMatchSelect.appendChild(opt);
       });
     } catch (err) {
       console.warn('Could not load published bracket matches:', err);
+      bracketMatchSelect.innerHTML = '<option value="">Could not load bracket matches</option>';
     }
   }
 
@@ -950,7 +1007,10 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         courtField.value = `Court 1 (${b.divName} ${b.stage})`;
       }
       document.getElementById('edit-division').value = b.divName;
-      document.getElementById('edit-format-badge').value = b.stage.toUpperCase().includes('FINAL') ? 'BO5 · GRAND FINAL' : b.stage.toUpperCase().includes('SEMI') ? 'BO3 · SEMIFINALS' : 'BO1 · QUARTERFINALS';
+      // The series length now comes from the bracket itself rather than being
+      // guessed from the stage name.
+      const seriesFmt = b.format && b.format !== '-' ? b.format : 'BO1';
+      document.getElementById('edit-format-badge').value = seriesFmt + ' · ' + b.stage.toUpperCase();
       document.getElementById('edit-status').value = 'LIVE';
 
       // Find matching approved teams
@@ -966,6 +1026,8 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       if (matchId && window.CECLiveManager.matches[matchId]) {
         window.CECLiveManager.matches[matchId].bracketMatchKey = b.matchKey;
         window.CECLiveManager.matches[matchId].bracketDivision = b.divKey;
+        // Needed so the result is written back into the right department bracket.
+        window.CECLiveManager.matches[matchId].bracketDepartment = b.dept || '';
       }
     });
   }
@@ -973,6 +1035,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   window.openMatchEdit = function(matchId) {
     const match = window.CECLiveManager.matches[matchId];
     if (!match) return;
+    loadBracketMatches();
     document.getElementById('edit-match-id').value = match.id;
     document.getElementById('edit-court-title').value = match.court || match.title || '';
     document.getElementById('edit-division').value = match.division || "Student Men's";
@@ -1283,7 +1346,8 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         matchId: match.id,
         matchKey: match.bracketMatchKey || match.id,
         court: match.court || match.title,
-        division: match.division,
+        division: match.bracketDivision || match.division,
+        department: match.bracketDepartment || '',
         team1Id: t1.id || '',
         team1Name: t1.name,
         score1: s1,
