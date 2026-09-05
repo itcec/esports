@@ -597,6 +597,25 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     return !!deptModal;
   }
 
+  /** Bracket deletion is a staff action, so spectators never see the control. */
+  function canManageBrackets() {
+    return !!(window.CECAuth && typeof window.CECAuth.canPublishBracket === 'function'
+      && window.CECAuth.canPublishBracket());
+  }
+
+  function updateDeleteBracketVisibility() {
+    var delBtn = document.getElementById('btn-delete-dept-bracket');
+    if (!delBtn) return;
+    var show = canManageBrackets() && currentModalMatches && currentModalMatches.length > 0;
+    delBtn.classList.toggle('hidden', !show);
+  }
+
+  // Sign-in resolves after the page loads, so re-check once it settles -- an
+  // approved official who opens the modal early still gets the control.
+  if (window.CECAuth && typeof window.CECAuth.onAuthChange === 'function') {
+    window.CECAuth.onAuthChange(function () { updateDeleteBracketVisibility(); });
+  }
+
   function closeDeptModal() {
     if (deptModal) deptModal.classList.add('hidden');
     if (currentDeptListener && typeof currentDeptListener === 'function') {
@@ -625,14 +644,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
 
     function renderDeptModalMatches(matches) {
       currentModalMatches = matches || [];
-      var delBtn = document.getElementById('btn-delete-dept-bracket');
-      if (delBtn) {
-        if (currentModalMatches.length > 0) {
-          delBtn.classList.remove('hidden');
-        } else {
-          delBtn.classList.add('hidden');
-        }
-      }
+      updateDeleteBracketVisibility();
 
       if (!matches || !matches.length) {
         deptModalContent.innerHTML = '<div class="p-8 text-center bg-surface-container-lowest rounded-xl border border-dashed border-white/10 text-xs text-on-surface-variant">No published bracket for this yet. Tournament administrators publish it during the stage draw.</div>';
