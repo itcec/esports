@@ -1041,11 +1041,11 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       if (idx === '' || !publishedBracketMatches[idx]) return;
       const b = publishedBracketMatches[idx];
 
-      // Auto-populate form
+      // Auto-populate form while preserving active court number
       const courtField = document.getElementById('edit-court-title');
-      if (!courtField.value || courtField.value.startsWith('Court')) {
-        courtField.value = `Court 1 (${b.divName} ${b.stage})`;
-      }
+      const currentCourtMatch = (courtField.value || '').match(/Court\s*(\d+)/i);
+      const courtNumStr = currentCourtMatch ? currentCourtMatch[1] : '1';
+      courtField.value = `Court ${courtNumStr} (${b.divName} ${b.stage})`;
       document.getElementById('edit-division').value = b.divName;
       // The series length now comes from the bracket itself rather than being
       // guessed from the stage name.
@@ -1115,8 +1115,20 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   };
 
   document.getElementById('add-lobby-btn').addEventListener('click', async () => {
-    const count = Object.keys(window.CECLiveManager.matches || {}).length + 1;
-    const newId = 'MATCH-00' + count;
+    const matches = window.CECLiveManager.matches || {};
+    const existingKeys = Object.keys(matches);
+    let maxCourtNum = 0;
+    existingKeys.forEach(k => {
+      const m = matches[k];
+      const courtStr = (m && m.court) || (m && m.title) || '';
+      const matchNum = courtStr.match(/Court\s*(\d+)/i);
+      if (matchNum) {
+        const n = parseInt(matchNum[1], 10);
+        if (n > maxCourtNum) maxCourtNum = n;
+      }
+    });
+    const nextCourtNum = Math.max(maxCourtNum + 1, existingKeys.length + 1);
+    const newId = 'MATCH-' + String(nextCourtNum).padStart(3, '0') + '-' + Date.now().toString(36).slice(-3);
     
     // Pick actual approved registered teams or bracket match
     const t1Data = approvedTeamsList.length > 0 ? approvedTeamsList[0] : null;
@@ -1124,8 +1136,8 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 
     const newMatch = {
       id: newId,
-      title: 'Court ' + count,
-      court: 'Court ' + count + ' (Main Arena)',
+      title: 'Court ' + nextCourtNum,
+      court: 'Court ' + nextCourtNum + ' (Main Arena)',
       division: "Student Men's",
       formatBadge: 'BO1 · QUARTERFINALS',
       status: 'LIVE',
@@ -1146,12 +1158,10 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
       } : { name: 'Select Team 2', dept: 'HTM', score: '0', icon: 'assets/HTM.png' }
     };
 
-    try {
-      await window.CECLiveManager.saveMatch(newMatch);
-      openMatchEdit(newId);
-    } catch (err) {
-      alert('Could not initialize match lobby: ' + (err && err.message ? err.message : err));
-    }
+    window.CECLiveManager.matches[newId] = newMatch;
+    window.CECLiveManager._saveLocalMatches();
+    window.CECLiveManager._notify();
+    openMatchEdit(newId);
   });
 
   window.deleteMatch = async function(matchId) {

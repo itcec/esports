@@ -258,7 +258,12 @@ window.CECLiveManager = {
         live = true;
       } catch (err) {
         this._notify();
-        throw new Error('Could not put the match on air: ' + (err && err.message ? err.message : err));
+        console.warn('Firebase liveMatches set notice:', err);
+        if (err && String(err.message || err).includes('PERMISSION_DENIED')) {
+          warning = (warning ? warning + '; ' : '') + 'Realtime Database: Staff login required to publish changes live to spectators. Saved locally in current session.';
+        } else {
+          throw new Error('Could not put the match on air: ' + (err && err.message ? err.message : err));
+        }
       }
     }
 

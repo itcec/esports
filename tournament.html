@@ -852,17 +852,52 @@
           </button>
         </div>
 
+        <!-- Auth / Sync Status Alert -->
+        <div id="modal-auth-alert" class="px-lg py-2.5 bg-amber-500/15 border-b border-amber-500/30 flex items-center justify-between text-xs text-amber-300">
+          <span id="modal-auth-status-text">Staff login required to publish changes to Realtime Database.</span>
+          <a href="staff.html" id="modal-login-btn" class="underline font-bold hover:text-white">Sign In</a>
+        </div>
+
         <!-- Modal Body -->
         <form id="live-settings-form" class="p-lg overflow-y-auto flex-1 flex flex-col gap-md">
+
+          <!-- Select Court Lobby / Add New Court -->
+          <div class="p-md rounded-xl bg-surface-container-lowest border border-primary/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+            <div class="flex-1">
+              <label for="setting-match-id-select" class="block text-[10px] font-label-caps uppercase text-primary font-bold mb-1">
+                Select Active Court Lobby
+              </label>
+              <select id="setting-match-id-select" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-primary/40 focus:border-primary focus:outline-none text-xs font-bold shadow-inner cursor-pointer">
+                <!-- Populated dynamically with all concurrent courts -->
+              </select>
+            </div>
+            <button type="button" id="btn-create-new-match" class="px-3.5 py-2.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0 shadow">
+              <span class="material-symbols-outlined text-[16px]">add_circle</span>
+              <span>ADD NEW COURT</span>
+            </button>
+          </div>
+
+          <!-- Court Name & Status Banner Note -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+            <div class="flex flex-col gap-1">
+              <label for="setting-court-name" class="font-label-caps text-xs text-primary uppercase font-bold">Court / Arena Name</label>
+              <input id="setting-court-name" type="text" placeholder="e.g. Court 1 (Main Arena)"
+                class="w-full bg-surface-container-lowest text-sm text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:border-primary" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label for="setting-status-note" class="font-label-caps text-xs text-on-surface-variant uppercase">Status Banner Note</label>
+              <input id="setting-status-note" type="text" placeholder="e.g. LIVE ON AIR or UPCOMING"
+                class="w-full bg-surface-container-lowest text-sm text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:border-primary" />
+            </div>
+          </div>
 
           <!-- Stream URL Setting -->
           <div class="flex flex-col gap-1">
             <label for="setting-stream-url" class="font-label-caps text-xs text-primary uppercase font-bold">Live Stream
               Link / Embed URL</label>
-            <input id="setting-stream-url" type="text" placeholder="https://twitch.tv/yourchannel (Twitch links only)"
+            <input id="setting-stream-url" type="text" placeholder="https://twitch.tv/yourchannel, youtube.com/live/..., or tiktok.com/@handle/live"
               class="w-full bg-surface-container-lowest text-sm text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:border-primary" />
-            <span class="text-[11px] text-on-surface-variant">Leave blank to loop the official CEC Video Intro. YouTube
-              links are automatically converted to live embeds.</span>
+            <span class="text-[11px] text-on-surface-variant">Supports Twitch, YouTube Live, and TikTok LIVE streams. Leave blank to loop the official CEC Video Intro.</span>
           </div>
 
           <!-- Match Stage & Format -->
@@ -997,9 +1032,15 @@
 
         <!-- Modal Footer -->
         <div class="p-md bg-surface-container-high/90 border-t border-white/10 flex justify-between items-center">
-          <button type="button" id="reset-live-defaults-btn"
-            class="text-xs font-label-caps text-on-surface-variant hover:text-error transition-colors">RESET TO
-            DEFAULTS</button>
+          <div class="flex items-center gap-2">
+            <button type="button" id="reset-live-defaults-btn"
+              class="text-xs font-label-caps text-on-surface-variant hover:text-error transition-colors">RESET TO
+              DEFAULTS</button>
+            <button type="button" id="delete-live-match-btn"
+              class="text-xs font-label-caps text-red-400 hover:text-red-300 hover:bg-red-500/20 px-2.5 py-1 rounded transition-colors flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">delete</span> DELETE THIS COURT
+            </button>
+          </div>
           <div class="flex gap-2">
             <button type="button" id="cancel-live-settings-btn"
               class="px-3 py-1.5 rounded text-xs font-label-caps text-on-surface hover:bg-white/10">CANCEL</button>
@@ -1848,57 +1889,75 @@
           const alertEl = document.getElementById('modal-auth-alert');
           const statusText = document.getElementById('modal-auth-status-text');
           const loginBtn = document.getElementById('modal-login-btn');
+          if (!alertEl || !statusText) return;
 
           if (!window.CECAuth || !window.CECAuth.currentUser) {
             alertEl.className = 'px-lg py-2.5 bg-amber-500/15 border-b border-amber-500/30 flex items-center justify-between text-xs text-amber-300';
             statusText.textContent = 'Staff login required to publish changes to Realtime Database.';
-            loginBtn.classList.remove('hidden');
-            saveBtn.disabled = false; // still allows local preview
+            if (loginBtn) loginBtn.classList.remove('hidden');
+            if (saveBtn) saveBtn.disabled = false; // still allows local preview
           } else if (window.CECAuth.isApprovedStaff()) {
             alertEl.className = 'px-lg py-2.5 bg-emerald-500/15 border-b border-emerald-500/30 flex items-center justify-between text-xs text-emerald-300';
-            statusText.textContent = `Logged in as ${window.CECAuth.currentUser.displayName} (${window.CECAuth.currentStaffProfile.roleLabel || 'Official'}) — Connected to Realtime Database`;
-            loginBtn.classList.add('hidden');
+            statusText.textContent = `Logged in as ${window.CECAuth.currentUser.displayName || window.CECAuth.currentUser.email} (${(window.CECAuth.currentStaffProfile && window.CECAuth.currentStaffProfile.roleLabel) || 'Official'}) — Connected to Realtime Database`;
+            if (loginBtn) loginBtn.classList.add('hidden');
           } else {
             alertEl.className = 'px-lg py-2.5 bg-amber-500/15 border-b border-amber-500/30 flex items-center justify-between text-xs text-amber-300';
-            statusText.textContent = `Logged in as ${window.CECAuth.currentUser.displayName} (Pending Approval by jlcabucos.cec@gmail.com)`;
-            loginBtn.classList.add('hidden');
+            statusText.textContent = `Logged in as ${window.CECAuth.currentUser.displayName || window.CECAuth.currentUser.email} (Pending Approval by jlcabucos.cec@gmail.com)`;
+            if (loginBtn) loginBtn.classList.add('hidden');
           }
         }
 
         function fillModalFromMatch(m) {
           if (!m) return;
-          document.getElementById('setting-stream-url').value = m.streamUrl || '';
-          document.getElementById('setting-court-name').value = m.court || '';
-          document.getElementById('setting-stage-title').value = m.stageTitle || '';
-          document.getElementById('setting-format-badge').value = m.formatBadge || '';
-          document.getElementById('setting-status-note').value = m.statusNote || '';
+          const streamInput = document.getElementById('setting-stream-url');
+          if (streamInput) streamInput.value = m.streamUrl || '';
+          const courtInput = document.getElementById('setting-court-name');
+          if (courtInput) courtInput.value = m.court || m.title || '';
+          const stageInput = document.getElementById('setting-stage-title');
+          if (stageInput) stageInput.value = m.stageTitle || '';
+          const formatInput = document.getElementById('setting-format-badge');
+          if (formatInput) formatInput.value = m.formatBadge || '';
+          const statusInput = document.getElementById('setting-status-note');
+          if (statusInput) statusInput.value = m.statusNote || '';
 
           const t1 = m.team1 || {};
-          document.getElementById('setting-team1-name').value = t1.name || '';
-          document.getElementById('setting-team1-score').value = t1.score || '0';
-          document.getElementById('setting-team1-dept').value = t1.dept || 'IT';
-          document.getElementById('setting-team1-icon').value = t1.icon || 'assets/icons/dragon-head.svg';
+          const t1Name = document.getElementById('setting-team1-name');
+          if (t1Name) t1Name.value = t1.name || '';
+          const t1Score = document.getElementById('setting-team1-score');
+          if (t1Score) t1Score.value = t1.score || '0';
+          const t1Dept = document.getElementById('setting-team1-dept');
+          if (t1Dept) t1Dept.value = t1.dept || 'IT';
+          const t1Icon = document.getElementById('setting-team1-icon');
+          if (t1Icon) t1Icon.value = t1.icon || 'assets/icons/dragon-head.svg';
 
           const t2 = m.team2 || {};
-          document.getElementById('setting-team2-name').value = t2.name || '';
-          document.getElementById('setting-team2-score').value = t2.score || '0';
-          document.getElementById('setting-team2-dept').value = t2.dept || 'CRIM';
-          document.getElementById('setting-team2-icon').value = t2.icon || 'assets/icons/werewolf.svg';
+          const t2Name = document.getElementById('setting-team2-name');
+          if (t2Name) t2Name.value = t2.name || '';
+          const t2Score = document.getElementById('setting-team2-score');
+          if (t2Score) t2Score.value = t2.score || '0';
+          const t2Dept = document.getElementById('setting-team2-dept');
+          if (t2Dept) t2Dept.value = t2.dept || 'CRIM';
+          const t2Icon = document.getElementById('setting-team2-icon');
+          if (t2Icon) t2Icon.value = t2.icon || 'assets/icons/werewolf.svg';
         }
 
         function openSettings() {
           updateModalAuthAlert();
-          const matches = window.CECLiveManager.matches;
+          const matches = window.CECLiveManager.matches || {};
           const active = window.CECLiveManager.getActiveMatch();
 
-          matchIdSelect.innerHTML = '';
-          Object.values(matches).forEach(m => {
-            const opt = document.createElement('option');
-            opt.value = m.id;
-            opt.textContent = `${m.title || m.id} (${m.team1 ? m.team1.name : 'Team 1'} vs ${m.team2 ? m.team2.name : 'Team 2'})`;
-            if (active && m.id === active.id) opt.selected = true;
-            matchIdSelect.appendChild(opt);
-          });
+          if (matchIdSelect) {
+            matchIdSelect.innerHTML = '';
+            const list = Object.values(matches);
+            if (list.length === 0 && active) list.push(active);
+            list.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m.id;
+              opt.textContent = `${m.court || m.title || m.id} (${m.team1 ? m.team1.name : 'Team 1'} vs ${m.team2 ? m.team2.name : 'Team 2'})`;
+              if (active && m.id === active.id) opt.selected = true;
+              matchIdSelect.appendChild(opt);
+            });
+          }
 
           fillModalFromMatch(active);
           modal.classList.remove('hidden');
@@ -1914,22 +1973,40 @@
 
         if (createNewBtn) {
           createNewBtn.addEventListener('click', () => {
-            const newId = 'MATCH-' + String(Date.now()).slice(-4);
+            const matches = window.CECLiveManager.matches || {};
+            const existingKeys = Object.keys(matches);
+            let maxCourtNum = 0;
+            existingKeys.forEach(k => {
+              const m = matches[k];
+              const courtStr = (m && m.court) || (m && m.title) || '';
+              const matchNum = courtStr.match(/Court\s*(\d+)/i);
+              if (matchNum) {
+                const n = parseInt(matchNum[1], 10);
+                if (n > maxCourtNum) maxCourtNum = n;
+              }
+            });
+            const nextCourtNum = Math.max(maxCourtNum + 1, existingKeys.length + 1);
+            const newId = 'MATCH-' + String(nextCourtNum).padStart(3, '0') + '-' + Date.now().toString(36).slice(-3);
+
             const opt = document.createElement('option');
             opt.value = newId;
-            opt.textContent = `New Game (${newId})`;
+            opt.textContent = `Court ${nextCourtNum} (${newId}) [New]`;
             opt.selected = true;
-            matchIdSelect.appendChild(opt);
+            if (matchIdSelect) {
+              matchIdSelect.appendChild(opt);
+              matchIdSelect.value = newId;
+            }
 
             fillModalFromMatch({
               id: newId,
-              title: `Court ${Object.keys(window.CECLiveManager.matches).length + 1} · Live Game`,
-              court: `Court ${Object.keys(window.CECLiveManager.matches).length + 1}`,
+              title: `Court ${nextCourtNum}`,
+              court: `Court ${nextCourtNum}`,
               stageTitle: 'DEPARTMENT MATCH',
               formatBadge: 'BO3',
-              statusNote: 'UPCOMING',
-              team1: { name: 'IT Team', dept: 'IT', score: '0' },
-              team2: { name: 'CRIM Team', dept: 'CRIM', score: '0' }
+              statusNote: 'LIVE ON AIR',
+              streamUrl: '',
+              team1: { name: 'IT Team', dept: 'IT', score: '0', icon: 'assets/icons/dragon-head.svg' },
+              team2: { name: 'CRIM Team', dept: 'CRIM', score: '0', icon: 'assets/icons/werewolf.svg' }
             });
           });
         }
@@ -1946,33 +2023,35 @@
 
         if (saveBtn) {
           saveBtn.addEventListener('click', async function () {
-            const matchId = matchIdSelect.value;
-            const existing = window.CECLiveManager.matches[matchId] || { id: matchId };
+            const matchId = (matchIdSelect && matchIdSelect.value) || (window.CECLiveManager.activeMatchId || 'MATCH-001');
+            const existing = (window.CECLiveManager.matches && window.CECLiveManager.matches[matchId]) || { id: matchId };
 
-            const streamCheck = window.CECLiveManager.validateStreamUrl(document.getElementById('setting-stream-url').value);
+            const streamVal = (document.getElementById('setting-stream-url').value || '').trim();
+            const streamCheck = window.CECLiveManager.validateStreamUrl(streamVal);
             if (!streamCheck.ok) { alert(streamCheck.message); return; }
             if (streamCheck.warning) alert(streamCheck.warning);
 
+            const courtVal = (document.getElementById('setting-court-name').value || '').trim();
             const updated = {
               ...existing,
               id: matchId,
-              title: document.getElementById('setting-court-name').value.trim() || matchId,
-              court: document.getElementById('setting-court-name').value.trim() || 'Arena',
+              title: courtVal || matchId,
+              court: courtVal || 'Arena',
               streamUrl: streamCheck.url,
-              stageTitle: document.getElementById('setting-stage-title').value.trim() || 'CEC ESPORTS ARENA',
-              formatBadge: document.getElementById('setting-format-badge').value.trim() || 'BO3',
-              statusNote: document.getElementById('setting-status-note').value.trim() || 'LIVE BROADCAST',
+              stageTitle: (document.getElementById('setting-stage-title').value || '').trim() || 'CEC ESPORTS ARENA',
+              formatBadge: (document.getElementById('setting-format-badge').value || '').trim() || 'BO3',
+              statusNote: (document.getElementById('setting-status-note').value || '').trim() || 'LIVE ON AIR',
               status: 'LIVE',
               team1: {
                 ...(existing.team1 || {}),
-                name: document.getElementById('setting-team1-name').value.trim() || 'Team 1',
+                name: (document.getElementById('setting-team1-name').value || '').trim() || 'Team 1',
                 score: document.getElementById('setting-team1-score').value || '0',
                 dept: document.getElementById('setting-team1-dept').value,
                 icon: document.getElementById('setting-team1-icon').value
               },
               team2: {
                 ...(existing.team2 || {}),
-                name: document.getElementById('setting-team2-name').value.trim() || 'Team 2',
+                name: (document.getElementById('setting-team2-name').value || '').trim() || 'Team 2',
                 score: document.getElementById('setting-team2-score').value || '0',
                 dept: document.getElementById('setting-team2-dept').value,
                 icon: document.getElementById('setting-team2-icon').value
@@ -1993,20 +2072,22 @@
 
         if (deleteBtn) {
           deleteBtn.addEventListener('click', async function () {
-            const matchId = matchIdSelect.value;
+            const matchId = matchIdSelect ? matchIdSelect.value : window.CECLiveManager.activeMatchId;
             if (!matchId) return;
-            if (confirm(`Are you sure you want to delete match lobby ${matchId}?`)) {
+            const match = window.CECLiveManager.matches && window.CECLiveManager.matches[matchId];
+            const name = match ? (match.court || match.title || matchId) : matchId;
+            if (confirm(`Are you sure you want to delete court lobby "${name}"?`)) {
               deleteBtn.disabled = true;
               deleteBtn.textContent = 'Deleting...';
               try {
                 await window.CECLiveManager.deleteMatch(matchId);
-                alert(`Match ${matchId} has been successfully deleted.`);
+                alert(`Court lobby "${name}" has been deleted.`);
                 closeSettings();
               } catch (err) {
                 alert('Could not delete match: ' + (err && err.message ? err.message : err));
               } finally {
                 deleteBtn.disabled = false;
-                deleteBtn.textContent = 'Delete Match';
+                deleteBtn.innerHTML = '<span class="material-symbols-outlined text-[14px]">delete</span> DELETE THIS COURT';
               }
             }
           });
