@@ -30,13 +30,7 @@
     ::-webkit-scrollbar {
       display: none;
     }
-  
-/* OBS Browser Source injects its own stylesheet whose default is
-   `body { ...; overflow: hidden; }`, which silently kills scrolling for a
-   captured page. That rule is not !important, so this reclaims it. Harmless in
-   a normal browser, where `auto` is already the behaviour. */
-html, body { overflow-y: auto !important; overflow-x: hidden !important; }
-</style>
+  </style>
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap"
     rel="stylesheet" />
