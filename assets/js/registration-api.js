@@ -6,7 +6,7 @@ const ADMIN_KEY = ''; // Legacy stopgap only; use Firebase ID-token auth.
 const STAFF_ACTIONS = [
   'listRegistrations', 'getRegistration', 'updateTeamStatus', 'updatePlayerVerification',
   'getPrivateVerificationFile', 'getPrivateVerificationBatch', 'recordMatchResult', 'publishMatch', 'deleteMatch',
-  'fileDispute', 'listDisputes', 'resolveDispute', 'saveBracketData', 'getAuditLogs'
+  'fileDispute', 'listDisputes', 'resolveDispute', 'saveBracketData', 'deleteBracketData', 'getAuditLogs'
 ];
 
 function waitForStaffUser() {
@@ -490,6 +490,33 @@ const TournamentOps = {
       matches: JSON.stringify(matches),
       flightTitle: flightTitle || ''
     }, 'POST');
+  },
+  /** deleteBracketData(division, department) */
+  deleteBracketData: async function (division, department) {
+    const div = normalizeDivisionKey(division);
+    const dept = String(department == null ? '' : department).trim().toUpperCase();
+    const scope = bracketScopeKey(division, dept);
+
+    // 1. Remove from Firebase Realtime Database
+    if (window.CECFirebase && window.CECFirebase.db) {
+      try {
+        await window.CECFirebase.db.ref('brackets/' + scope).remove();
+        await window.CECFirebase.db.ref('brackets/' + scope + '_meta').remove();
+      } catch (fbErr) {
+        console.warn('Firebase bracket delete notice:', fbErr);
+      }
+    }
+
+    // 2. Remove from Google Sheets
+    try {
+      return await callRegistrationApi('deleteBracketData', {
+        division: div,
+        department: dept
+      }, 'POST');
+    } catch (apiErr) {
+      console.warn('Backend sheet delete error:', apiErr);
+      return { success: true, localOnly: true };
+    }
   },
   getAuditLogs: async function () {
     return await callRegistrationApi('getAuditLogs', {}, 'POST');

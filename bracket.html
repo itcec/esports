@@ -531,6 +531,9 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   var deptModalContent = null;
   var currentDeptListener = null;
   var modalWired = false;
+  var currentModalDeptKey = '';
+  var currentModalDeptName = '';
+  var currentModalMatches = [];
 
   function ensureModalEls() {
     if (!deptModal) deptModal = document.getElementById('dept-bracket-modal');
@@ -539,10 +542,57 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       modalWired = true;
       var closeBtn = document.getElementById('close-dept-modal');
       var closeBottom = document.getElementById('btn-close-dept-modal-bottom');
+      var deleteDeptBtn = document.getElementById('btn-delete-dept-bracket');
+
       if (closeBtn) closeBtn.addEventListener('click', closeDeptModal);
       if (closeBottom) closeBottom.addEventListener('click', closeDeptModal);
       deptModal.addEventListener('click', function(e){ if (e.target === deptModal) closeDeptModal(); });
       document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDeptModal(); });
+
+      if (deleteDeptBtn) {
+        deleteDeptBtn.addEventListener('click', async function () {
+          if (!window.CECAuth || !window.CECAuth.canPublishBracket()) {
+            alert('Permission Denied: Deleting a tournament bracket requires Committee Administrator or Official credentials. Please sign in via Staff Login.');
+            return;
+          }
+          var divName = active === 'womens' ? "Women's Division"
+            : active === 'faculty' ? 'Faculty Exhibition'
+            : active === 'shs' ? 'SHS Showdown'
+            : "Men's Division";
+
+          var confirmMsg = '⚠️ Delete Department Bracket:\n\n' +
+            'Are you sure you want to permanently delete the published ' + currentModalDeptName + ' bracket (' + divName + ')?\n\n' +
+            'This will remove all matches and standings for this department from the live standings and Live Arena.';
+
+          if (!confirm(confirmMsg)) return;
+
+          deleteDeptBtn.disabled = true;
+          deleteDeptBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>DELETING...</span>';
+
+          try {
+            if (window.TournamentOps && typeof TournamentOps.deleteBracketData === 'function') {
+              await TournamentOps.deleteBracketData(active, currentModalDeptKey);
+            }
+            if (bracketCache[active]) {
+              delete bracketCache[active][currentModalDeptKey];
+            }
+            applyScoped(DIVS[active], bracketCache[active], active);
+            render();
+
+            deptModalContent.innerHTML = '<div class="p-8 text-center bg-surface-container-lowest rounded-xl border border-dashed border-white/10 text-xs text-on-surface-variant flex flex-col items-center gap-2">' +
+              '<span class="material-symbols-outlined text-[32px] text-red-400">delete</span>' +
+              '<span class="font-bold text-on-surface">Department Bracket Deleted</span>' +
+              '<span class="text-on-surface-variant">The ' + esc(currentModalDeptName) + ' bracket has been deleted from the tournament standings.</span>' +
+            '</div>';
+            deleteDeptBtn.classList.add('hidden');
+          } catch (err) {
+            alert('Could not delete bracket: ' + err.message);
+          } finally {
+            deleteDeptBtn.disabled = false;
+            deleteDeptBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] text-red-400">delete_forever</span><span>DELETE THIS BRACKET</span>';
+          }
+        });
+      }
     }
     return !!deptModal;
   }
@@ -557,6 +607,8 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
 
   window.openDeptBracketModal = function(deptKey, deptName, deptColor, deptIcon) {
     if (!ensureModalEls()) return;
+    currentModalDeptKey = deptKey;
+    currentModalDeptName = deptName;
     document.getElementById('dept-modal-title').textContent = deptName + ' — Tournament Bracket';
     var divName = active === 'womens' ? "Women's Division"
       : active === 'faculty' ? 'Faculty Exhibition'
@@ -565,10 +617,23 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     document.getElementById('dept-modal-subtitle').textContent = divName + ' · Realtime Knockout Stage';
     document.getElementById('dept-modal-logo').src = deptIcon || 'assets/IT.png';
 
+    var deleteDeptBtn = document.getElementById('btn-delete-dept-bracket');
+    if (deleteDeptBtn) deleteDeptBtn.classList.add('hidden');
+
     deptModalContent.innerHTML = '<div class="py-12 flex flex-col items-center justify-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[32px] text-primary animate-spin">sync</span><span>Loading live bracket matches…</span></div>';
     deptModal.classList.remove('hidden');
 
     function renderDeptModalMatches(matches) {
+      currentModalMatches = matches || [];
+      var delBtn = document.getElementById('btn-delete-dept-bracket');
+      if (delBtn) {
+        if (currentModalMatches.length > 0) {
+          delBtn.classList.remove('hidden');
+        } else {
+          delBtn.classList.add('hidden');
+        }
+      }
+
       if (!matches || !matches.length) {
         deptModalContent.innerHTML = '<div class="p-8 text-center bg-surface-container-lowest rounded-xl border border-dashed border-white/10 text-xs text-on-surface-variant">No published bracket for this yet. Tournament administrators publish it during the stage draw.</div>';
         return;
@@ -702,9 +767,15 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     </div>
 
     <!-- Modal Footer -->
-    <div class="px-md py-3 bg-surface-container-low border-t border-white/10 flex items-center justify-between text-xs text-on-surface-variant">
+    <div class="px-md py-3 bg-surface-container-low border-t border-white/10 flex items-center justify-between text-xs text-on-surface-variant flex-wrap gap-2">
       <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-primary">cloud_sync</span> Realtime Sync Active</span>
-      <button type="button" id="btn-close-dept-modal-bottom" class="px-4 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps font-bold text-xs">CLOSE</button>
+      <div class="flex items-center gap-2">
+        <button type="button" id="btn-delete-dept-bracket" class="hidden px-3.5 py-1.5 rounded-lg bg-red-500/15 hover:bg-red-500/25 text-red-300 border border-red-500/30 font-label-caps font-bold text-xs flex items-center gap-1.5 transition-all shadow-sm">
+          <span class="material-symbols-outlined text-[16px] text-red-400">delete_forever</span>
+          <span>DELETE THIS BRACKET</span>
+        </button>
+        <button type="button" id="btn-close-dept-modal-bottom" class="px-4 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps font-bold text-xs">CLOSE</button>
+      </div>
     </div>
   </div>
 </div>

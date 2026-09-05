@@ -42,6 +42,36 @@
 
 /* Page titles wrap on word boundaries; only break mid-word as a last resort. */
 main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
+
+/* Interactive Bracket Drag & Drop Styling */
+.bracket-drag-team {
+  user-select: none;
+  -webkit-user-select: none;
+  transition: all 0.15s ease-in-out;
+}
+.bracket-drag-team:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.bracket-drag-team.dragging-team {
+  opacity: 0.35 !important;
+  transform: scale(0.96) !important;
+  outline: 2px dashed #1264ff !important;
+  outline-offset: 2px;
+}
+.bracket-drop-target {
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bracket-drop-active {
+  background-color: rgba(18, 100, 255, 0.28) !important;
+  outline: 2px solid #6ea3ff !important;
+  outline-offset: 1px;
+  box-shadow: 0 0 18px rgba(18, 100, 255, 0.5) !important;
+  transform: scale(1.03);
+}
+.draggable-seed-item {
+  user-select: none;
+  -webkit-user-select: none;
+}
 </style></head><body class="bg-background font-body-md text-on-background"><div class="site-bg" aria-hidden="true"></div><div class="site-overlay" aria-hidden="true"></div><aside class="admin-sidebar fixed left-0 top-0 h-full w-64 bg-surface-container-low/95 backdrop-blur-md z-50 hidden lg:flex flex-col border-r border-white/10"><div class="h-16 px-md flex items-center gap-sm border-b border-white/10"><svg aria-hidden="true" class="h-6 w-6 text-primary shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.9 6.1 6.6.9-4.8 4.6 1.2 6.5L12 20.9 6.1 24.1l1.2-6.5L2.5 9l6.6-.9z"></path></svg><span class="font-headline-md text-headline-md text-primary tracking-tight uppercase">Control Center</span></div><nav class="flex-1 px-xs py-md flex flex-col gap-base overflow-y-auto"><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin.html"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="font-label-caps text-label-caps uppercase">Dashboard</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-registrations.html"><span class="material-symbols-outlined text-[20px]">app_registration</span><span class="font-label-caps text-label-caps uppercase">Registrations</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-sm rounded bg-primary-container text-on-primary-container font-bold transition-colors" href="admin-bracket-builder.html"><span class="material-symbols-outlined text-[20px]">account_tree</span><span class="font-label-caps text-label-caps uppercase">Bracket</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-officiating.html"><span class="material-symbols-outlined text-[20px]">sports_esports</span><span class="font-label-caps text-label-caps uppercase">Live Matches</span></a><a class="flex items-center gap-sm px-md py-sm rounded text-on-surface-variant hover:bg-surface-container-highest hover:text-on-surface transition-colors" href="admin-disputes.html"><span class="material-symbols-outlined text-[20px]">gavel</span><span class="font-label-caps text-label-caps uppercase">Disputes</span></a></nav><div class="p-md border-t border-white/10"><a class="flex items-center gap-sm px-md py-sm rounded text-primary hover:bg-primary/10 transition-colors" href="index.html"><span class="material-symbols-outlined text-[20px]">arrow_back</span><span class="font-label-caps text-label-caps uppercase font-bold">Public Site</span></a></div></aside><div class="admin-shell lg:pl-64"><header class="admin-topbar fixed top-0 left-0 lg:left-64 right-0 h-16 bg-surface-container/95 backdrop-blur-md border-b border-white/10 z-40 flex items-center justify-between px-lg gap-md"><span class="font-label-caps text-label-caps text-on-surface-variant uppercase truncate">CEC Esports Intramurals 2026 · Bracket Builder</span><div class="cec-auth-widget flex items-center gap-sm shrink-0"></div></header><main class="relative z-10 pt-16 min-h-screen p-lg pb-24 lg:pb-8"><div class="flex flex-col w-full h-full gap-lg max-w-[1600px] mx-auto">
 <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-md pb-md border-b border-white/10">
 <div>
@@ -49,10 +79,14 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 <h1 class="font-headline-xl text-headline-xl text-primary uppercase tracking-wide cyber-title">Bracket Builder</h1>
 <p class="font-body-lg text-body-lg text-on-surface-variant opacity-80 mt-xs">Seed registered department teams, generate knockout brackets, and publish directly to live standings.</p>
 </div>
-<div class="flex items-center gap-sm">
+<div class="flex items-center gap-sm flex-wrap">
   <button id="draw-bracket-btn" type="button" class="px-4 py-2.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-caps text-xs font-bold transition-colors flex items-center gap-1.5 border border-white/10 shadow">
     <span class="material-symbols-outlined text-[16px] text-primary">casino</span>
     <span>RANDOMIZE DRAW</span>
+  </button>
+  <button id="delete-bracket-btn" type="button" class="px-4 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 font-label-caps text-xs font-bold transition-all flex items-center gap-1.5 border border-red-500/30 shadow" title="Delete this published department/division bracket">
+    <span class="material-symbols-outlined text-[16px] text-red-400">delete_forever</span>
+    <span>DELETE BRACKET</span>
   </button>
   <button id="publish-bracket-btn" type="button" class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-all flex items-center gap-1.5 shadow-lg">
     <span class="material-symbols-outlined text-[18px]">publish</span>
@@ -168,10 +202,15 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 
 <!-- Right Panel: Visual Bracket Preview -->
 <div id="bracket-preview-panel" class="flex-1 bg-surface-container-lowest rounded-2xl border border-white/10 p-lg relative overflow-x-auto min-h-[500px] flex flex-col justify-center">
-  <div class="flex items-center justify-between mb-md border-b border-white/10 pb-2">
+  <div class="flex items-center justify-between mb-md border-b border-white/10 pb-2 flex-wrap gap-2">
     <div>
-      <span class="text-xs font-bold font-label-caps uppercase text-primary cyber-mono" id="preview-title">Bracket Stage Preview</span>
-      <p class="text-[11px] text-on-surface-variant mt-0.5" id="preview-subtitle">Live Synchronized with Realtime Standings &amp; Live Arena</p>
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-xs font-bold font-label-caps uppercase text-primary cyber-mono" id="preview-title">Bracket Stage Preview</span>
+        <span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 text-[10px] font-mono font-bold flex items-center gap-1">
+          <span class="material-symbols-outlined text-[12px]">drag_indicator</span> DRAG TEAMS TO REARRANGE
+        </span>
+      </div>
+      <p class="text-[11px] text-on-surface-variant mt-0.5" id="preview-subtitle">Drag and drop any team in Round 1 to rearrange bracket matchups &amp; byes.</p>
     </div>
     <span class="text-xs text-on-surface-variant font-mono" id="preview-format-badge">SINGLE ELIMINATION (8 TEAMS)</span>
   </div>
@@ -187,6 +226,9 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
   <button type="button" onclick="document.getElementById('draw-bracket-btn').click()" class="flex-1 py-2 rounded-xl bg-surface-container text-on-surface border border-white/10 hover:bg-surface-container-highest text-xs font-bold font-label-caps text-center transition-colors flex items-center justify-center gap-1">
     <span class="material-symbols-outlined text-[16px] text-primary">casino</span>
     DRAW
+  </button>
+  <button type="button" onclick="document.getElementById('delete-bracket-btn').click()" class="py-2 px-3 rounded-xl bg-red-500/10 text-red-300 border border-red-500/30 hover:bg-red-500/20 text-xs font-bold font-label-caps text-center transition-colors flex items-center justify-center gap-1" title="Delete bracket">
+    <span class="material-symbols-outlined text-[16px] text-red-400">delete</span>
   </button>
   <button type="button" onclick="document.getElementById('publish-bracket-btn').click()" class="flex-1 py-2 rounded-xl bg-primary text-on-primary hover:bg-primary-fixed-dim text-xs font-bold font-label-caps text-center transition-colors shadow flex items-center justify-center gap-1">
     <span class="material-symbols-outlined text-[16px]">publish</span>
@@ -209,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const visualContainer = document.getElementById('visual-bracket-container');
   const publishBtn = document.getElementById('publish-bracket-btn');
   const drawBtn = document.getElementById('draw-bracket-btn');
+  const deleteBtn = document.getElementById('delete-bracket-btn');
   const deptChips = document.querySelectorAll('.dept-filter-btn');
 
   const DEPT_LOGOS = {
@@ -641,9 +684,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     seedOrderList.innerHTML = selected.map((name, idx) => `
-      <div class="flex items-center justify-between p-2 rounded-lg bg-surface-container-high text-xs border border-white/5 shadow-sm">
-        <div class="flex items-center gap-2 min-w-0">
-          <span class="text-primary font-mono font-black text-xs w-6 shrink-0">#${idx + 1}</span>
+      <div class="draggable-seed-item flex items-center justify-between p-2 rounded-lg bg-surface-container-high text-xs border border-white/5 shadow-sm cursor-grab active:cursor-grabbing hover:border-primary/40 transition-all select-none" draggable="true" data-index="${idx}" data-team="${escHtml(name)}">
+        <div class="flex items-center gap-1.5 min-w-0">
+          <span class="material-symbols-outlined text-[15px] text-outline opacity-40 shrink-0">drag_indicator</span>
+          <span class="text-primary font-mono font-black text-xs w-5 shrink-0">#${idx + 1}</span>
           <span class="font-bold text-on-surface truncate">${escHtml(name)}</span>
           ${idx < byes ? '<span class="text-[9px] font-bold text-emerald-300 bg-emerald-500/15 rounded px-1 py-0.5 shrink-0">BYE R1</span>' : ''}
         </div>
@@ -657,6 +701,90 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
     `).join('');
+    bindSeedListDragAndDrop();
+  }
+
+  let activeSeedDragIndex = null;
+  function bindSeedListDragAndDrop() {
+    const items = seedOrderList.querySelectorAll('.draggable-seed-item');
+    items.forEach(item => {
+      item.addEventListener('dragstart', (e) => {
+        activeSeedDragIndex = Number(item.dataset.index);
+        const teamName = item.dataset.team;
+        e.dataTransfer.setData('text/plain', teamName);
+        e.dataTransfer.setData('text/seed-index', String(activeSeedDragIndex));
+        e.dataTransfer.effectAllowed = 'move';
+        item.classList.add('opacity-30', 'border-dashed', 'border-primary');
+      });
+      item.addEventListener('dragend', () => {
+        item.classList.remove('opacity-30', 'border-dashed', 'border-primary');
+        items.forEach(el => el.classList.remove('bg-primary/20', 'border-primary'));
+        activeSeedDragIndex = null;
+      });
+      item.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!item.classList.contains('bg-primary/20')) {
+          item.classList.add('bg-primary/20', 'border-primary');
+        }
+      });
+      item.addEventListener('dragleave', () => {
+        item.classList.remove('bg-primary/20', 'border-primary');
+      });
+      item.addEventListener('drop', (e) => {
+        e.preventDefault();
+        item.classList.remove('bg-primary/20', 'border-primary');
+        const fromIdx = activeSeedDragIndex !== null ? activeSeedDragIndex : Number(e.dataTransfer.getData('text/seed-index'));
+        const toIdx = Number(item.dataset.index);
+        if (fromIdx !== null && !isNaN(fromIdx) && !isNaN(toIdx) && fromIdx !== toIdx) {
+          const scope = currentScope();
+          const list = selectedTeams[scope] || [];
+          const [moved] = list.splice(fromIdx, 1);
+          list.splice(toIdx, 0, moved);
+          selectedTeams[scope] = list;
+          resetResults(scope);
+          renderAll();
+          showToast(`Moved #${fromIdx + 1} "${moved}" to seed #${toIdx + 1}`);
+        }
+      });
+    });
+  }
+
+  function showToast(msg, isError) {
+    let toast = document.getElementById('bracket-builder-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'bracket-builder-toast';
+      document.body.appendChild(toast);
+    }
+    toast.innerHTML = `<span class="material-symbols-outlined text-[18px]">${isError ? 'error' : 'swap_horiz'}</span><span>${escHtml(msg)}</span>`;
+    toast.className = `fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold shadow-2xl backdrop-blur-md transition-all transform duration-300 ${isError ? 'bg-red-500/20 text-red-200 border-red-500/40' : 'bg-[#081422]/95 text-primary border-primary/40'}`;
+    setTimeout(() => {
+      toast.classList.remove('translate-y-10', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+    }, 10);
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => {
+      toast.classList.remove('translate-y-0', 'opacity-100');
+      toast.classList.add('translate-y-10', 'opacity-0');
+    }, 3000);
+  }
+
+  function swapTeamsInBracket(teamA, teamB) {
+    if (!teamA || !teamB || teamA === teamB) return;
+    const scope = currentScope();
+    const list = selectedTeams[scope] || [];
+    const idxA = list.indexOf(teamA);
+    const idxB = list.indexOf(teamB);
+    if (idxA !== -1 && idxB !== -1) {
+      const tmp = list[idxA];
+      list[idxA] = list[idxB];
+      list[idxB] = tmp;
+      selectedTeams[scope] = list;
+      resetResults(scope);
+      renderAll();
+      showToast(`Swapped "${teamA}" and "${teamB}" in bracket matchups`);
+    }
   }
 
   window.moveSeed = function(index, delta) {
@@ -765,6 +893,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const mark = isWinner
         ? '<span class="material-symbols-outlined text-[13px] text-emerald-400 shrink-0">check_circle</span>'
         : (isLoser ? '<span class="text-[8px] font-bold text-outline shrink-0">OUT</span>' : '');
+
+      const isBye = name === 'BYE';
+      const isR1 = m.round === 1;
+      const isDraggable = isR1 && name && !isBye && name !== 'TBD';
+      const partnerName = slot === 'team1' ? m.team2Name : m.team1Name;
+
+      if (isR1) {
+        if (isDraggable) {
+          return `<div class="bracket-drag-team bracket-drop-target group/drag flex items-center gap-1.5 py-1 px-1 rounded cursor-grab active:cursor-grabbing hover:bg-white/10 transition-all select-none ${border}" draggable="true" data-team="${escHtml(name)}" data-match="${escHtml(m.matchKey)}" data-slot="${slot}" data-round="${m.round}" data-partner="${escHtml(partnerName)}" title="Drag to rearrange matchup">
+              <span class="material-symbols-outlined text-[14px] text-outline opacity-40 group-hover/drag:opacity-100 group-hover/drag:text-primary shrink-0 transition-opacity">drag_indicator</span>
+              <span class="font-bold ${tone} truncate flex-1">${escHtml(name)}</span>
+              ${mark}${arrow}
+            </div>`;
+        } else if (isBye) {
+          return `<div class="bracket-drop-target group/bye flex items-center gap-1.5 py-1 px-1 rounded bg-emerald-500/5 hover:bg-emerald-500/10 border border-dashed border-emerald-500/25 transition-all select-none ${border}" data-team="BYE" data-match="${escHtml(m.matchKey)}" data-slot="${slot}" data-round="${m.round}" data-partner="${escHtml(partnerName)}" title="Drop team here to assign first-round bye">
+              <span class="text-[9px] font-mono font-bold text-emerald-300 bg-emerald-500/20 px-1 py-0.5 rounded shrink-0">BYE</span>
+              <span class="text-[10px] text-outline italic truncate flex-1">(Drop here for bye)</span>
+            </div>`;
+        }
+      }
+
       return `<div class="flex items-center gap-1 py-0.5 ${border}">
           <span class="font-bold ${tone} truncate flex-1">${escHtml(name || 'TBD')}</span>
           ${mark}${arrow}
@@ -792,6 +941,64 @@ document.addEventListener('DOMContentLoaded', () => {
           ? `<div class="text-center text-[10px] ${m.winnerName ? 'text-emerald-300' : 'text-[#ffb020]'} font-bold mt-1 font-label-caps flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[14px]">emoji_events</span> ${m.winnerName ? escHtml(m.winnerName) : 'CHAMPION'}</div>`
           : ''}
       </div>`;
+  }
+
+  let activeDragTeam = null;
+
+  function bindBracketDragAndDrop(root) {
+    if (!root) return;
+
+    // Draggable team rows in Round 1
+    const draggables = root.querySelectorAll('.bracket-drag-team');
+    draggables.forEach(el => {
+      el.addEventListener('dragstart', (e) => {
+        const team = el.dataset.team;
+        if (!team || team === 'BYE') return e.preventDefault();
+        activeDragTeam = team;
+        e.dataTransfer.setData('text/plain', team);
+        e.dataTransfer.effectAllowed = 'move';
+        el.classList.add('dragging-team');
+      });
+
+      el.addEventListener('dragend', () => {
+        el.classList.remove('dragging-team');
+        document.querySelectorAll('.bracket-drop-active').forEach(target => target.classList.remove('bracket-drop-active'));
+        activeDragTeam = null;
+      });
+    });
+
+    // Drop targets (team rows and BYE rows in Round 1)
+    const dropTargets = root.querySelectorAll('.bracket-drop-target');
+    dropTargets.forEach(target => {
+      target.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!target.classList.contains('bracket-drop-active')) {
+          target.classList.add('bracket-drop-active');
+        }
+      });
+
+      target.addEventListener('dragleave', () => {
+        target.classList.remove('bracket-drop-active');
+      });
+
+      target.addEventListener('drop', (e) => {
+        e.preventDefault();
+        target.classList.remove('bracket-drop-active');
+        const sourceTeam = e.dataTransfer.getData('text/plain') || activeDragTeam;
+        if (!sourceTeam) return;
+
+        let targetTeam = target.dataset.team;
+        // If dropped onto a BYE slot, target the partner team in that match
+        if (!targetTeam || targetTeam === 'BYE') {
+          targetTeam = target.dataset.partner;
+        }
+
+        if (targetTeam && targetTeam !== sourceTeam) {
+          swapTeamsInBracket(sourceTeam, targetTeam);
+        }
+      });
+    });
   }
 
   function bindMatchFormatSelects(root) {
@@ -822,6 +1029,8 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAll();
       });
     });
+
+    bindBracketDragAndDrop(root);
   }
 
   function renderBracketPreview() {
@@ -893,6 +1102,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const row = (slot, name) => {
           const isWinner = decided && m.winnerName === name;
           const isLoser = decided && m.winnerName !== name;
+          const isR1 = m.round === 1;
+          const isBye = name === 'BYE';
+          const isDraggable = isR1 && name && !isBye && name !== 'TBD';
+          const partnerName = slot === 'team1' ? m.team2Name : m.team1Name;
+
+          if (isR1 && isDraggable) {
+            return `
+            <div class="bracket-drag-team bracket-drop-target flex items-center justify-between gap-2 p-2 rounded-lg ${isWinner ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-surface-container-lowest border-white/5'} border cursor-grab active:cursor-grabbing hover:border-primary/40 transition-all select-none" draggable="true" data-team="${escHtml(name)}" data-match="${escHtml(m.matchKey)}" data-slot="${slot}" data-round="${m.round}" data-partner="${escHtml(partnerName)}" title="Drag to rearrange matchup">
+              <div class="flex items-center gap-1.5 min-w-0 flex-1">
+                <span class="material-symbols-outlined text-[16px] text-outline opacity-40 shrink-0">drag_indicator</span>
+                <span class="font-bold ${isWinner ? 'text-emerald-300' : isLoser ? 'text-outline line-through' : 'text-on-surface'} text-xs truncate">${escHtml(name)}</span>
+              </div>
+              ${isLoser ? '<span class="text-[9px] font-bold text-outline shrink-0">ELIMINATED</span>' : ''}
+              ${ready && !decided
+                ? `<button type="button" class="advance-btn shrink-0 w-7 h-7 rounded-lg flex items-center justify-center text-outline hover:text-primary hover:bg-primary/15 transition-colors" data-key="${escHtml(m.matchKey)}" data-slot="${slot}" aria-label="Advance ${escHtml(name)}"><span class="material-symbols-outlined text-[18px]">arrow_forward</span></button>`
+                : ''}
+            </div>`;
+          }
+
+          if (isR1 && isBye) {
+            return `
+            <div class="bracket-drop-target flex items-center justify-between gap-2 p-2 rounded-lg bg-emerald-500/5 border border-dashed border-emerald-500/30 transition-all select-none" data-team="BYE" data-match="${escHtml(m.matchKey)}" data-slot="${slot}" data-round="${m.round}" data-partner="${escHtml(partnerName)}">
+              <span class="font-mono text-emerald-300 font-bold text-xs">BYE</span>
+              <span class="text-[10px] text-outline italic">(Drop here for bye)</span>
+            </div>`;
+          }
+
           return `
           <div class="flex items-center justify-between gap-2 p-2 rounded-lg ${isWinner ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-surface-container-lowest border-white/5'} border">
             <span class="font-bold ${isWinner ? 'text-emerald-300' : isLoser ? 'text-outline line-through' : (bye && slot === 'team2' ? 'text-outline' : 'text-on-surface')} text-xs truncate flex-1">${escHtml(name || 'TBD')}</span>
@@ -1082,6 +1318,41 @@ document.addEventListener('DOMContentLoaded', () => {
       publishBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">publish</span><span>SAVE &amp; PUBLISH BRACKET</span>';
     }
   });
+
+  // Delete Bracket
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', async () => {
+      if (!window.CECAuth || !window.CECAuth.canPublishBracket()) {
+        alert('Permission Denied: Deleting tournament brackets is reserved for Committee Administrators.');
+        return;
+      }
+      const div = divisionSelect.value;
+      const dept = currentDepartment();
+      const label = scopeLabel();
+
+      const confirmMsg = `⚠️ Delete Bracket Confirmation:\n\n` +
+        `Are you sure you want to permanently delete the published bracket for:\n"${label}"?\n\n` +
+        `This will remove all matches and standings for this bracket from the Live Arena, standings, and database.`;
+
+      if (!confirm(confirmMsg)) return;
+
+      deleteBtn.disabled = true;
+      deleteBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>DELETING...</span>';
+
+      try {
+        await TournamentOps.deleteBracketData(div, dept);
+        selectedTeams[currentScope()] = [];
+        resetResults(currentScope());
+        renderAll();
+        showToast(`Bracket "${label}" deleted successfully.`);
+      } catch (err) {
+        alert('Could not delete bracket: ' + err.message);
+      } finally {
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] text-red-400">delete_forever</span><span>DELETE BRACKET</span>';
+      }
+    });
+  }
 
   renderScopeSelect('');
   renderAll();

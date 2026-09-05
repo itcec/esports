@@ -76,7 +76,7 @@ function route(e, method) {
     const staffActions = [
       'listRegistrations', 'getRegistration', 'getPrivateVerificationFile', 'getPrivateVerificationBatch',
       'updateTeamStatus', 'updatePlayerVerification', 'recordMatchResult', 'publishMatch', 'deleteMatch',
-      'fileDispute', 'listDisputes', 'resolveDispute', 'saveBracketData', 'getAuditLogs'
+      'fileDispute', 'listDisputes', 'resolveDispute', 'saveBracketData', 'deleteBracketData', 'getAuditLogs'
     ];
 
     if (staffActions.indexOf(action) !== -1) {
@@ -123,6 +123,9 @@ function route(e, method) {
       }
       if (method === 'POST' && action === 'saveBracketData') {
         return json({ success: true, data: saveBracketData(params, user), message: 'Bracket updated.' });
+      }
+      if (method === 'POST' && action === 'deleteBracketData') {
+        return json({ success: true, data: deleteBracketData(params, user), message: 'Bracket deleted.' });
       }
     }
 
@@ -1165,6 +1168,40 @@ function saveBracketData(params, user) {
   logAudit(user.email, 'SAVE_BRACKET', scopeLabel,
     'Published ' + matches.length + ' matches' + (stale.length ? ', removed ' + stale.length + ' stale' : ''));
   return { division: division, department: department, matchCount: matches.length, removed: stale.length };
+}
+
+function deleteBracketData(params, user) {
+  if (!params.division) throw new Error('division is required.');
+  const sheet = getSheet(BRACKETS_SHEET_NAME, BRACKET_HEADERS);
+  const division = String(params.division);
+  const department = String(params.department || '').trim().toUpperCase();
+
+  const values = sheet.getDataRange().getValues();
+  const headers = values.length > 0 ? values[0].map(String) : BRACKET_HEADERS;
+  const col = function (name) {
+    const i = headers.indexOf(name);
+    if (i === -1) throw new Error('BRACKETS sheet is missing the "' + name + '" column.');
+    return i;
+  };
+  const divIdx = col('Division');
+  const deptIdx = col('Department');
+
+  const rowsToDelete = [];
+  for (let i = 1; i < values.length; i++) {
+    const rowDiv = String(values[i][divIdx] || '').toLowerCase();
+    const rowDept = String(values[i][deptIdx] || '').trim().toUpperCase();
+    if (rowDiv === division.toLowerCase() && rowDept === department) {
+      rowsToDelete.push(i + 1);
+    }
+  }
+
+  // Delete bottom-up so row indices stay valid
+  rowsToDelete.sort(function (a, b) { return b - a; });
+  rowsToDelete.forEach(function (rowIndex) { sheet.deleteRow(rowIndex); });
+
+  const scopeLabel = department ? (division + ' / ' + department) : division;
+  logAudit(user.email, 'DELETE_BRACKET', scopeLabel, 'Deleted ' + rowsToDelete.length + ' matches');
+  return { division: division, department: department, deletedCount: rowsToDelete.length };
 }
 
 function getAuditLogs() {
