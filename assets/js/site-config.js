@@ -149,7 +149,29 @@
     "Men's": ['IT', 'HTM', 'CTE', 'CRIM'],
     "Women's": ['IT', 'HTM', 'CTE', 'CRIM'],
     'Faculty': ['IT', 'CTE-A', 'CTE-B', 'HM', 'TM', 'CRIM', 'SHS', 'JHS'],
-    'SHS': ['STEM', 'ABM', 'HUMSS', 'GAS', 'TVL-ICT', 'TVL-HE']
+    // SHS competes as four combined teams, not one per strand.
+    'SHS': ['TECHPRO', 'ABM-GAS-TVL', 'HUMSS-ASSH', 'STEM-ACAD']
+  };
+
+  // Short codes are what get stored in `Course`; these are what people read.
+  var DEPARTMENT_LABELS = {
+    'TECHPRO': 'TECHPRO HTM',
+    'ABM-GAS-TVL': 'ABM, ACAD BUSINESS ENTREP, GAS, TVL F&B, & HKP',
+    'HUMSS-ASSH': 'HUMSS & ACAD ASSH',
+    'STEM-ACAD': 'STEM & ACAD STEM'
+  };
+
+  // The SHS options were briefly one-per-strand. Anything registered under the
+  // old values still resolves to the team it now belongs to, so no stored record
+  // has to be rewritten.
+  var SHS_LEGACY_DEPARTMENTS = {
+    'STEM': 'STEM-ACAD',
+    'ABM': 'ABM-GAS-TVL',
+    'GAS': 'ABM-GAS-TVL',
+    'TVL-HE': 'ABM-GAS-TVL',
+    'HUMSS': 'HUMSS-ASSH'
+    // TVL-ICT is deliberately absent: it maps to none of the four teams and
+    // needs a coordinator to place it.
   };
 
   /* ------------------------------------------------------------------ *
@@ -403,8 +425,22 @@
     /** Department half of a stored `Course` value, upper-cased. */
     departmentFromCourse: function (course) {
       var parts = String(course || '').split(this.COURSE_SEPARATOR);
-      return parts.length > 1 ? parts[parts.length - 1].trim().toUpperCase() : '';
+      var dept = parts.length > 1 ? parts[parts.length - 1].trim().toUpperCase() : '';
+      // Fold a retired SHS strand onto the team that now covers it.
+      if (this.divisionKeyFromCourse(course) === 'shs' && SHS_LEGACY_DEPARTMENTS[dept]) {
+        return SHS_LEGACY_DEPARTMENTS[dept];
+      }
+      return dept;
     },
+
+    /** Full display name for a department code. */
+    departmentLabel: function (code) {
+      var key = String(code || '').trim().toUpperCase();
+      return DEPARTMENT_LABELS[key] || code || '';
+    },
+
+    /** The retired SHS strand -> current team map, for reporting on old records. */
+    legacyShsDepartments: SHS_LEGACY_DEPARTMENTS,
 
     /** Event key that owns a division value — used when reading stored records back. */
     eventForDivision: function (division) {

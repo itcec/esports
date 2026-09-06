@@ -172,7 +172,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     shs: {
       title: "SHS Showdown — Senior High School",
       sub: "A separate one-day, in-person tournament for Senior High School departments, held at the Auditorium Hall.",
-      total: 0, depts: [["STEM",0],["ABM",0],["HUMSS",0],["GAS",0],["TVL-ICT",0],["TVL-HE",0]]
+      total: 0, depts: [["TECHPRO",0],["ABM-GAS-TVL",0],["HUMSS-ASSH",0],["STEM-ACAD",0]]
     }
   };
   var PALETTE = ['#1264ff','#00e5ff','#7c5cff','#ff2fd8','#00e676','#ffb020'];
@@ -262,7 +262,8 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     if(depts.indexOf(activeDept)===-1) activeDept='ALL';
     deptFilterEl.innerHTML='<option value="ALL">All departments</option>'+
       depts.map(function(dp){
-        return '<option value="'+esc(dp)+'"'+(dp===activeDept?' selected':'')+'>'+esc(dp)+'</option>';
+        var label = window.CECSite && window.CECSite.departmentLabel ? window.CECSite.departmentLabel(dp) : dp;
+        return '<option value="'+esc(dp)+'"'+(dp===activeDept?' selected':'')+'>'+esc(label)+'</option>';
       }).join('');
   }
 
@@ -294,7 +295,8 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
         '<div class="font-body-md text-body-md text-on-surface-variant">'+d.sub+'</div>'+
         '<div class="flex flex-wrap gap-xs mt-sm">'+d.depts.map(function(x){
           var count = x[1] ? (' · '+x[1]+' team'+(x[1]>1?'s':'')) : '';
-          return '<span class="font-label-caps text-label-caps text-on-surface bg-surface-container-high border border-white/10 rounded-full px-sm py-xs">'+x[0]+count+'</span>';
+          var label = window.CECSite && window.CECSite.departmentLabel ? window.CECSite.departmentLabel(x[0]) : x[0];
+          return '<span class="font-label-caps text-label-caps text-on-surface bg-surface-container-high border border-white/10 rounded-full px-sm py-xs">'+esc(label)+count+'</span>';
         }).join('')+'</div>';
     }
 

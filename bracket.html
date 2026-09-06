@@ -118,13 +118,18 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     'TM':   { color:'#00e5ff', icon:'assets/icons/kraken-tentacle.svg' },
     'SHS':  { color:'#ff2fd8', icon:'assets/icons/oni.svg' },
     'JHS':  { color:'#ffd700', icon:'assets/icons/ice-golem.svg' },
-    // SHS Showdown strands
-    'STEM':    { color:'#00e5ff', icon:'assets/icons/hydra.svg' },
+    // SHS Showdown teams (plus the retired per-strand codes, so a bracket
+    // published before the teams were combined still renders with a crest).
+    'TECHPRO':     { color:'#00e5ff', icon:'assets/icons/hydra.svg' },
+    'ABM-GAS-TVL': { color:'#ffb020', icon:'assets/icons/griffin-symbol.svg' },
+    'HUMSS-ASSH':  { color:'#7c5cff', icon:'assets/icons/anubis.svg' },
+    'STEM-ACAD':   { color:'#00e676', icon:'assets/icons/centaur.svg' },
+    'STEM':    { color:'#00e676', icon:'assets/icons/centaur.svg' },
     'ABM':     { color:'#ffb020', icon:'assets/icons/griffin-symbol.svg' },
     'HUMSS':   { color:'#7c5cff', icon:'assets/icons/anubis.svg' },
-    'GAS':     { color:'#00e676', icon:'assets/icons/centaur.svg' },
+    'GAS':     { color:'#ffb020', icon:'assets/icons/griffin-symbol.svg' },
     'TVL-ICT': { color:'#1264ff', icon:'assets/icons/cyclops.svg' },
-    'TVL-HE':  { color:'#ff4b4b', icon:'assets/icons/minotaur.svg' }
+    'TVL-HE':  { color:'#ffb020', icon:'assets/icons/griffin-symbol.svg' }
   };
 
   function esc(v){ return String(v == null ? '' : v).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
@@ -132,7 +137,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   // Turn one published bracket side into the shape renderMatchCard expects.
   function side(name, score, isWinner, fallbackColor, isLoser){
     if (!name) return null;
-    var m = String(name).toUpperCase().match(/STEM|HUMSS|TVL-ICT|TVL-HE|ABM|GAS|IT|HTM|CTE|CRIM|HM|TM|SHS|JHS/);
+    var m = String(name).toUpperCase().match(/TECHPRO|ABM-GAS-TVL|HUMSS-ASSH|STEM-ACAD|STEM|HUMSS|TVL-ICT|TVL-HE|ABM|GAS|IT|HTM|CTE|CRIM|HM|TM|SHS|JHS/);
     var style = (m && DEPT_STYLE[m[0]]) || { color: fallbackColor || '#1264ff', icon: 'assets/icons/dragon-head.svg' };
     return {
       name: esc(name), dept: m ? m[0] : '', icon: style.icon, color: style.color,

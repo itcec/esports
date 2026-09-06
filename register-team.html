@@ -641,8 +641,9 @@
         '<option disabled ' + (opts.length ? '' : 'selected') + ' value="">' +
         (opts.length ? 'Select department' : 'Select division first') + '</option>' +
         opts.map(function (d) {
+          var label = (Site && Site.departmentLabel) ? Site.departmentLabel(d) : d;
           return '<option value="' + escAttr(d) + '"' +
-            (d === selected ? ' selected' : '') + '>' + escAttr(d) + '</option>';
+            (d === selected ? ' selected' : '') + '>' + escAttr(label) + '</option>';
         }).join('');
       if (opts.indexOf(selected) === -1) departmentSel.value = '';
     }
