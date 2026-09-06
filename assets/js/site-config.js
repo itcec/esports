@@ -169,9 +169,8 @@
     'ABM': 'ABM-GAS-TVL',
     'GAS': 'ABM-GAS-TVL',
     'TVL-HE': 'ABM-GAS-TVL',
+    'TVL-ICT': 'TECHPRO',
     'HUMSS': 'HUMSS-ASSH'
-    // TVL-ICT is deliberately absent: it maps to none of the four teams and
-    // needs a coordinator to place it.
   };
 
   /* ------------------------------------------------------------------ *
