@@ -29,8 +29,8 @@ const AUDIT_HEADERS = ['LogID', 'Actor', 'Action', 'TargetID', 'Details', 'Times
 // getSheet() appends any header missing from an existing sheet, so adding these
 // columns migrates the live BRACKETS sheet on the next call.
 const BRACKET_HEADERS = ['Division', 'Department', 'Stage', 'Round', 'MatchKey', 'Title', 'Format',
-  'Team1ID', 'Team1Name', 'Team2ID', 'Team2Name', 'Score1', 'Score2', 'WinnerID',
-  'Status', 'NextMatchKey', 'NextSlot', 'UpdatedAt'];
+   'Team1ID', 'Team1Name', 'Team2ID', 'Team2Name', 'Score1', 'Score2', 'WinnerID',
+   'Status', 'ScheduledAt', 'NextMatchKey', 'NextSlot', 'UpdatedAt'];
 
 const VALID_TEAM_STATUSES = ['Pending', 'UnderReview', 'Approved', 'Rejected'];
 const VALID_VERIFICATION_STATUSES = ['Pending', 'Verified', 'Rejected'];
@@ -1127,8 +1127,9 @@ function saveBracketData(params, user) {
       setCell(rowIndex, 'Score1', m.score1 || 0);
       setCell(rowIndex, 'Score2', m.score2 || 0);
       setCell(rowIndex, 'WinnerID', m.winnerId || '');
-      setCell(rowIndex, 'Status', m.status || 'Scheduled');
-      setCell(rowIndex, 'NextMatchKey', m.nextMatchKey || '');
+       setCell(rowIndex, 'Status', m.status || 'Scheduled');
+       setCell(rowIndex, 'ScheduledAt', m.scheduledAt || '');
+       setCell(rowIndex, 'NextMatchKey', m.nextMatchKey || '');
       setCell(rowIndex, 'NextSlot', m.nextSlot || '');
       setCell(rowIndex, 'UpdatedAt', now);
     } else {
@@ -1146,9 +1147,10 @@ function saveBracketData(params, user) {
         Team2Name: m.team2Name || '',
         Score1: m.score1 || 0,
         Score2: m.score2 || 0,
-        WinnerID: m.winnerId || '',
-        Status: m.status || 'Scheduled',
-        NextMatchKey: m.nextMatchKey || '',
+         WinnerID: m.winnerId || '',
+         Status: m.status || 'Scheduled',
+         ScheduledAt: m.scheduledAt || '',
+         NextMatchKey: m.nextMatchKey || '',
         NextSlot: m.nextSlot || '',
         UpdatedAt: now
       });
