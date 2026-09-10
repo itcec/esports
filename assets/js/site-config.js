@@ -91,7 +91,7 @@
       shortName: 'SHS Showdown',
       tagline: 'One-day, in-person MLBB tournament for Senior High School departments',
       date: 'September 11, 2026',
-      time: '8:00 AM – 2:00 PM',
+      time: '8:00 AM - 12:00 NN',
       callTime: '8:00 AM',
       venue: 'Auditorium Hall, CEC, Inc. Jakosalem Campus',
       venueShort: 'Auditorium Hall',
@@ -101,23 +101,19 @@
         desc: 'Register in advance and coordinate requirements with your Esports Head Manager.'
       },
       format: {
-        elims: 'Single Elimination (Best-of-1)',
-        semis: 'Best-of-3',
-        finals: 'Best-of-3'
+        elims: 'Round Robin (Best-of-1)',
+        semis: 'Not applicable',
+        finals: 'Standings determine the champion'
       },
       // Official program flow from the SHS Showdown event form. Rendered on both
       // the schedule and the rules page from this one list.
       program: [
         ['8:00 – 8:50 AM', 'Registration and Team Check-In', 'All registered teams must be at the venue by 8:00 AM.'],
-        ['8:50 – 9:00 AM', 'Bracket Draw and Mechanics Briefing', 'Official tournament brackets posted live on-site.'],
-        ['9:00 – 11:00 AM', 'Elimination Round', 'Single Elimination (Best-of-1) — all SHS department teams.'],
-        ['11:00 – 11:15 AM', 'Short Break', ''],
-        ['11:15 AM – 12:15 PM', 'Semifinals', 'Best-of-3 (BO3).'],
-        ['12:15 – 12:30 PM', 'Break / Finals Stage Set-Up', ''],
-        ['12:30 – 1:30 PM', 'Finals', 'Best-of-3 (BO3) — Championship Match.'],
-        ['1:30 – 2:00 PM', 'Closing Remarks / End of Program', '']
+        ['8:50 - 9:00 AM', 'Match Schedule and Mechanics Briefing', 'The official round-robin match schedule is posted live on-site and online.'],
+        ['9:00 AM - 12:00 NN', 'Round Robin Matches', 'Four grouped teams play every opponent once; all matches are Best-of-1.'],
+        ['12:00 NN', 'Champion Confirmation', 'The team with the best round-robin record is the SHS Showdown champion. Ties follow the published tournament tiebreak rules.']
       ],
-      programNote: 'Round format and timing may be adjusted by the organizers based on the final number of registered teams.'
+      programNote: 'Each match time is published by the organizers in the live round-robin schedule. The champion is determined by standings after all six matches.'
     }
   };
 
