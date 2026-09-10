@@ -89,7 +89,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     mens:    { depts:[["IT","September 5"],["HTM","September 12"],["CTE","September 19"],["CRIM","September 19"]], exhibition:false },
     womens:  { depts:[["IT","September 5"],["HTM","September 12"],["CTE","September 19"],["CRIM","September 19"]], exhibition:false },
     faculty: { exhibition:true },
-    shs:     { depts:[["STEM",""],["ABM",""],["HUMSS",""],["GAS",""],["TVL-ICT",""],["TVL-HE",""]], exhibition:false, isShs:true }
+    shs:     { depts:[["TECHPRO HTM",""],["ABM · ACAD BUSINESS ENTREP · GAS · TVL F&B · HKP",""],["HUMSS · ACAD ASSH",""],["STEM · ACAD STEM",""]], exhibition:false, isShs:true }
   };
   var active = 'mens';
   var tabs = document.getElementById('division-tabs');
@@ -173,10 +173,10 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       html += panel('Exhibition Result', 'Decided ' + window.CECSite.get('faculty.finalDateDayMonth'),
         row('Champion','To be decided') + row('Runner-up','To be decided') + row('3rd place','To be decided') + row('4th place','To be decided'));
     } else if (d.isShs){
-      html += panel('SHS Departments', 'One-day event · ' + window.CECSite.get('shs.dateDayMonth'),
+      html += panel('SHS Round Robin', 'Six Best-of-1 matches · ' + window.CECSite.get('shs.dateDayMonth'),
         d.depts.map(function(x){ return row(x[0], 'To be decided'); }).join(''));
-      html += panel('Final Placement', window.CECSite.get('shs.venueShort') + ' · ' + window.CECSite.get('shs.dateDayMonth'),
-        row('1st — Champion','To be decided') + row('2nd — Runner-up','To be decided') + row('3rd place','To be decided') + row('4th place','To be decided'));
+      html += panel('Champion', 'Best round-robin record · ' + window.CECSite.get('shs.venueShort'),
+        row('SHS Showdown Champion','To be decided'));
     } else {
       html += panel('Department Champions', 'Sessions September 5 – 19',
         d.depts.map(function(x){ return row(x[0] + ' Department', 'To be decided · ' + x[1], x[0]); }).join(''));

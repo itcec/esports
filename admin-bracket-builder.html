@@ -273,6 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let roundFormats = {};      // scopeKey -> { roundNumber: 'BO1' }
   let matchFormats = {};      // scopeKey -> { matchKey: 'BO3' }  per-match override
   let matchResults = {};      // scopeKey -> { matchKey: 'team1' | 'team2' }  who advanced
+  let matchTimes = {};        // scopeKey -> { matchKey: 'YYYY-MM-DDTHH:mm' }
   let currentActiveDept = 'ALL';
   let searchQuery = '';
   let seedsLoaded = false;
@@ -505,6 +506,49 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  /** Four-team round robin: three matchdays, two matches per matchday. */
+  function buildRoundRobin(seedNames, opts) {
+    const div = opts.division || divisionSelect.value;
+    const dept = opts.department === undefined ? currentDepartment() : opts.department;
+    const scope = scopeKey(div, dept);
+    const teams = seedNames.slice();
+    if (teams.length !== 4) return null;
+    const rounds = [
+      [[0, 1], [2, 3]],
+      [[0, 2], [1, 3]],
+      [[0, 3], [1, 2]]
+    ];
+    const lookup = opts.lookup || function () { return {}; };
+    const results = opts.results || {};
+    const times = opts.times || {};
+    const matches = [];
+    rounds.forEach(function (pairings, roundIndex) {
+      pairings.forEach(function (pair, matchIndex) {
+        const key = scope + '_RR' + (roundIndex + 1) + 'M' + (matchIndex + 1);
+        const team1Name = teams[pair[0]];
+        const team2Name = teams[pair[1]];
+        const pick = results[key];
+        const winnerName = pick === 'team1' ? team1Name : (pick === 'team2' ? team2Name : '');
+        matches.push({
+          matchKey: key,
+          round: roundIndex + 1,
+          stage: 'Round Robin · Matchday ' + (roundIndex + 1),
+          title: (opts.title ? opts.title + ' - ' : '') + 'Matchday ' + (roundIndex + 1) + ' Match ' + (matchIndex + 1),
+          format: (matchFormats[scope] || {})[key] || 'BO1',
+          team1Id: (lookup(team1Name).id || ''), team1Name: team1Name,
+          team2Id: (lookup(team2Name).id || ''), team2Name: team2Name,
+          team1Ready: true, team2Ready: true,
+          score1: pick === 'team1' ? 1 : 0, score2: pick === 'team2' ? 1 : 0,
+          winnerId: winnerName ? (lookup(winnerName).id || '') : '', winnerName: winnerName,
+          status: winnerName ? 'Completed' : 'Scheduled',
+          scheduledAt: times[key] || '',
+          department: dept, division: div, nextMatchKey: '', nextSlot: ''
+        });
+      });
+    });
+    return { matches: matches, rounds: 3, size: 4, byes: 0, scope: scope, roundRobin: true, champion: '' };
+  }
+
   function escHtml(str) {
     return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
@@ -527,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getDefaultTitle(div, dept) {
     if (div === 'faculty') return "Faculty & Staff Exhibition Showcase Bracket";
-    if (div === 'shs') return "SHS Showdown Championship Bracket";
+    if (div === 'shs') return "SHS Showdown Round Robin";
     const divisionName = div === 'womens' ? "Women's" : "Men's";
     return dept
       ? "Student " + divisionName + " - " + dept + " Department Bracket"
@@ -846,7 +890,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateButtonStates() {
     const count = (selectedTeams[currentScope()] || []).length;
-    const isValid = count >= 2 && count <= 32;
+    const isValid = divisionSelect.value === 'shs' ? count === 4 : (count >= 2 && count <= 32);
     if (publishBtn) publishBtn.disabled = !isValid;
     if (drawBtn) drawBtn.disabled = count < 2;
   }
@@ -858,16 +902,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const seeds = selectedTeams[scope] || [];
     if (seeds.length < 2) return null;
     const pool = allApprovedTeams[div] || [];
-    return buildBracket(seeds, {
+    const options = {
       division: div,
       department: currentDepartment(),
       title: flightTitleInput.value.trim() || getDefaultTitle(div, currentDepartment()),
       results: matchResults[scope] || {},
+      times: matchTimes[scope] || {},
       lookup: (name) => {
         const target = String(name || '').trim().toLowerCase();
         return pool.find(t => String(t.name || '').trim().toLowerCase() === target) || {};
       }
-    });
+    };
+    return div === 'shs' ? buildRoundRobin(seeds, options) : buildBracket(seeds, options);
   }
 
   /**
@@ -928,14 +974,15 @@ document.addEventListener('DOMContentLoaded', () => {
             ${decided
               ? `<button type="button" class="undo-btn w-5 h-5 rounded flex items-center justify-center text-amber-300 hover:text-amber-200 hover:bg-amber-400/15 transition-colors" data-key="${escHtml(m.matchKey)}" title="Undo this result" aria-label="Undo this result"><span class="material-symbols-outlined text-[14px]">arrow_back</span></button>`
               : ''}
-            ${bye
+           ${bye
               ? '<span class="text-[9px] font-bold text-emerald-300">BYE</span>'
               : `<select data-key="${escHtml(m.matchKey)}" class="match-format-select bg-[#050B14] text-primary text-[9px] font-mono font-bold px-1 py-0.5 rounded border border-white/10 focus:border-primary focus:outline-none">
                   ${SERIES_OPTIONS.map(o => `<option value="${o}"${o === m.format ? ' selected' : ''}>${o}</option>`).join('')}
-                </select>`}
-          </div>
-        </div>
-        ${teamRow('team1', m.team1Name, 'border-b border-white/5')}
+                 </select>`}
+           </div>
+         </div>
+         ${!bye ? `<label class="flex items-center gap-1 text-[9px] text-outline pt-1"><span class="material-symbols-outlined text-[13px]">schedule</span><span class="shrink-0">MATCH TIME</span><input type="datetime-local" data-key="${escHtml(m.matchKey)}" value="${escHtml(m.scheduledAt || '')}" class="match-time-input min-w-0 flex-1 bg-[#050B14] text-on-surface text-[10px] px-1 py-0.5 rounded border border-white/10 focus:border-primary focus:outline-none" /></label>` : ''}
+         ${teamRow('team1', m.team1Name, 'border-b border-white/5')}
         ${teamRow('team2', bye ? 'BYE' : m.team2Name, '')}
         ${isFinal
           ? `<div class="text-center text-[10px] ${m.winnerName ? 'text-emerald-300' : 'text-[#ffb020]'} font-bold mt-1 font-label-caps flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[14px]">emoji_events</span> ${m.winnerName ? escHtml(m.winnerName) : 'CHAMPION'}</div>`
@@ -1011,6 +1058,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    root.querySelectorAll('.match-time-input').forEach(input => {
+      input.addEventListener('change', (e) => {
+        matchTimes[scope] = matchTimes[scope] || {};
+        matchTimes[scope][e.target.dataset.key] = e.target.value;
+      });
+    });
+
     root.querySelectorAll('.advance-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const el = e.currentTarget;
@@ -1051,7 +1105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (badgeEl) {
-      badgeEl.textContent = `SINGLE ELIMINATION (${(selectedTeams[currentScope()] || []).length} TEAMS` +
+      badgeEl.textContent = `${tree.roundRobin ? 'ROUND ROBIN' : 'SINGLE ELIMINATION'} (${(selectedTeams[currentScope()] || []).length} TEAMS` +
         (tree.byes ? ` · ${tree.byes} BYE${tree.byes > 1 ? 'S' : ''}` : '') + ')';
     }
 
@@ -1063,7 +1117,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (r > 1) html += '<span class="material-symbols-outlined text-primary text-[24px] shrink-0">arrow_forward</span>';
       html += `
         <div class="flex flex-col gap-3 justify-center shrink-0">
-          <span class="text-[10px] uppercase font-bold text-center ${colour} cyber-mono">${escHtml(stageNameFor(r, tree.rounds))}</span>
+          <span class="text-[10px] uppercase font-bold text-center ${colour} cyber-mono">${escHtml(tree.roundRobin ? 'Round Robin · Matchday ' + r : stageNameFor(r, tree.rounds))}</span>
           ${roundMatches.map(m => matchCardHtml(m, isFinalRound)).join('')}
         </div>`;
     }
@@ -1091,7 +1145,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const roundMatches = tree.matches.filter(m => m.round === r);
       html += `
         <div class="flex items-center justify-between px-1 pt-2">
-          <span class="text-xs font-bold font-label-caps text-primary uppercase">${escHtml(stageNameFor(r, tree.rounds))}</span>
+          <span class="text-xs font-bold font-label-caps text-primary uppercase">${escHtml(tree.roundRobin ? 'Round Robin · Matchday ' + r : stageNameFor(r, tree.rounds))}</span>
           <span class="text-[10px] text-outline font-mono">${roundMatches.length} match${roundMatches.length > 1 ? 'es' : ''}</span>
         </div>`;
       html += roundMatches.map(m => {
@@ -1154,6 +1208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   </select>`}
             </div>
           </div>
+          ${!bye ? `<label class="flex items-center gap-1 text-[10px] text-outline"><span class="material-symbols-outlined text-[14px]">schedule</span><span>MATCH TIME</span><input type="datetime-local" data-key="${escHtml(m.matchKey)}" value="${escHtml(m.scheduledAt || '')}" class="match-time-input min-w-0 flex-1 bg-[#050B14] text-on-surface text-[10px] px-1.5 py-1 rounded border border-white/10 focus:border-primary focus:outline-none" /></label>` : ''}
           ${row('team1', m.team1Name)}
           ${row('team2', bye ? 'BYE' : m.team2Name)}
         </div>`;
@@ -1290,6 +1345,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const seeds = selectedTeams[scope] || [];
     if (seeds.length < 2) {
       alert('Select at least 2 teams for this bracket. Currently ' + seeds.length + ' selected.');
+      return;
+    }
+    if (div === 'shs' && seeds.length !== 4) {
+      alert('The SHS Showdown round robin requires exactly 4 grouped teams. Currently ' + seeds.length + ' selected.');
       return;
     }
     if (seeds.length > 32) {

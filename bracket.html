@@ -194,22 +194,16 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     },
     shs: {
       title: "SHS Showdown \u00b7 Senior High School",
-      elimTitle: "Elimination Round (SHS Departments)",
-      elimBadge: "SEP 11 \u00b7 BEST-OF-1",
-      playoffTitle: "Semifinals &amp; Championship Final",
-      playoffBadge: "SEP 11 \u00b7 BEST-OF-3",
-      qfList: [
-        { match:"ELIMINATION 1", fmt:"BO1", key:"QF1", date:"SEP 11" },
-        { match:"ELIMINATION 2", fmt:"BO1", key:"QF2", date:"SEP 11" },
-        { match:"ELIMINATION 3", fmt:"BO1", key:"QF3", date:"SEP 11" },
-        { match:"ELIMINATION 4", fmt:"BO1", key:"QF4", date:"SEP 11" }
-      ],
-      playoff: {
-        sf1:   { match:"SHS SEMIFINAL 1", fmt:"BO3", key:"SF1" },
-        sf2:   { match:"SHS SEMIFINAL 2", fmt:"BO3", key:"SF2" },
-        grandLabel: "CHAMPIONSHIP FINAL",
-        grand: { match:"SHS CHAMPIONSHIP FINAL", fmt:"BO3", key:"FINAL", date:"SEP 11 \u00b7 AUDITORIUM HALL" }
-      }
+      roundRobinTitle: "Round Robin · All Teams Play Each Opponent Once",
+      roundRobinBadge: "SEP 11 · BEST-OF-1 · AUDITORIUM HALL",
+      roundRobinList: [
+        { match:"MATCHDAY 1 · MATCH 1", fmt:"BO1", date:"TIME TBA", a:{name:"TECHPRO HTM", dept:"SHS"}, b:{name:"ABM · ACAD BUSINESS ENTREP · GAS · TVL F&B · HKP", dept:"SHS"} },
+        { match:"MATCHDAY 1 · MATCH 2", fmt:"BO1", date:"TIME TBA", a:{name:"HUMSS · ACAD ASSH", dept:"SHS"}, b:{name:"STEM · ACAD STEM", dept:"SHS"} },
+        { match:"MATCHDAY 2 · MATCH 1", fmt:"BO1", date:"TIME TBA", a:{name:"TECHPRO HTM", dept:"SHS"}, b:{name:"HUMSS · ACAD ASSH", dept:"SHS"} },
+        { match:"MATCHDAY 2 · MATCH 2", fmt:"BO1", date:"TIME TBA", a:{name:"ABM · ACAD BUSINESS ENTREP · GAS · TVL F&B · HKP", dept:"SHS"}, b:{name:"STEM · ACAD STEM", dept:"SHS"} },
+        { match:"MATCHDAY 3 · MATCH 1", fmt:"BO1", date:"TIME TBA", a:{name:"TECHPRO HTM", dept:"SHS"}, b:{name:"STEM · ACAD STEM", dept:"SHS"} },
+        { match:"MATCHDAY 3 · MATCH 2", fmt:"BO1", date:"TIME TBA", a:{name:"ABM · ACAD BUSINESS ENTREP · GAS · TVL F&B · HKP", dept:"SHS"}, b:{name:"HUMSS · ACAD ASSH", dept:"SHS"} }
+      ]
     }
   };
 
@@ -278,8 +272,16 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       match: String(fieldOf(m, 'stage', 'Stage') || 'Match') + ' ' + (key.split('M').pop() || ''),
       fmt: fmt && fmt !== '-' ? fmt : (String(t2).toUpperCase() === 'BYE' ? 'BYE' : ''),
       a: side(t1, s1, w1, '#1264ff', settled && !w1),
-      b: side(t2, s2, w2, '#ff4b4b', settled && !w2)
+      b: side(t2, s2, w2, '#ff4b4b', settled && !w2),
+      date: formatMatchTime(fieldOf(m, 'scheduledAt', 'ScheduledAt'))
     };
+  }
+
+  function formatMatchTime(value) {
+    if (!value) return '';
+    var date = new Date(value);
+    if (isNaN(date.getTime())) return String(value);
+    return date.toLocaleString([], { month:'short', day:'numeric', hour:'numeric', minute:'2-digit' }).toUpperCase();
   }
 
   /** Renders a whole published bracket as one column per round. */
@@ -438,6 +440,20 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
         body.innerHTML = html;
         return;
       }
+    }
+
+    if (data.roundRobinList && !(data.published && data.published.length)) {
+      html += '<section class="flex flex-col gap-md">' +
+        '<div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">' +
+          '<div><h2 class="font-headline-lg text-headline-lg text-on-surface cyber-title flex items-center gap-2"><span class="material-symbols-outlined text-[#ff80ea]">groups</span>' + data.roundRobinTitle + '</h2>' +
+          '<p class="mt-1 text-sm text-on-surface-variant">Six Best-of-1 matches. The best record after all matches wins the SHS Showdown.</p></div>' +
+          '<span class="px-3 py-1 rounded bg-[#ff2fd8]/20 text-[#ff80ea] text-xs font-bold font-label-caps">' + data.roundRobinBadge + '</span>' +
+        '</div>' +
+        '<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">' + data.roundRobinList.map(function(m){ return renderMatchCard(m); }).join('') + '</div>' +
+        '<p class="text-xs text-on-surface-variant">Match times are published by the tournament administrators. For tie-breaking, refer to the official rules.</p>' +
+      '</section>';
+      body.innerHTML = html;
+      return;
     }
 
     if (data.qfList && !(data.published && data.published.length)) {
