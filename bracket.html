@@ -95,7 +95,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
 </button>
 <button class="px-md py-sm rounded-lg font-label-caps text-label-caps transition-all font-bold text-on-surface-variant flex items-center gap-2" data-division="faculty" type="button">
   <span class="material-symbols-outlined text-[16px] text-amber-400">stars</span>
-  FACULTY EXHIBITION (8 TEAMS)
+  FACULTY ROUND ROBIN (5 TEAMS)
 </button>
 <button class="px-md py-sm rounded-lg font-label-caps text-label-caps transition-all font-bold text-on-surface-variant flex items-center gap-2" data-division="shs" type="button">
   <span class="material-symbols-outlined text-[16px] text-[#ff80ea]">school</span>
@@ -175,22 +175,11 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       }
     },
     faculty: {
-      title: "Faculty & Staff Exhibition \u00b7 8 Teams",
-      elimTitle: "Quarterfinals (8 Faculty Teams)",
-      elimBadge: "SEP 11 \u00b7 BEST-OF-1",
-      playoffTitle: "Semifinals &amp; Finals Showcase",
-      playoffBadge: "SEP 18 \u00b7 BEST-OF-3",
-      qfList: [
-        { match:"QUARTERFINAL 1", fmt:"BO1", key:"QF1", date:"SEP 11" },
-        { match:"QUARTERFINAL 2", fmt:"BO1", key:"QF2", date:"SEP 11" },
-        { match:"QUARTERFINAL 3", fmt:"BO1", key:"QF3", date:"SEP 11" },
-        { match:"QUARTERFINAL 4", fmt:"BO1", key:"QF4", date:"SEP 11" }
-      ],
-      playoff: {
-        sf1:   { match:"FACULTY SEMIFINAL 1", fmt:"BO3", key:"SF1" },
-        sf2:   { match:"FACULTY SEMIFINAL 2", fmt:"BO3", key:"SF2" },
-        grand: { match:"FACULTY EXHIBITION FINAL", fmt:"BO3", key:"FINAL", date:"SEP 18 \u00b7 SHOWCASE" }
-      }
+      title: "Faculty & Staff Round Robin \u00b7 5 Teams",
+      roundRobinTitle: "Faculty Round Robin · Five Teams",
+      roundRobinBadge: "10 MATCHES · 5 ROUNDS",
+      roundRobinDescription: "Every team plays all four opponents once, with one bye per team. Fixtures appear after administrators publish the draw.",
+      roundRobinList: []
     },
     shs: {
       title: "SHS Showdown \u00b7 Senior High School",
@@ -446,7 +435,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
       html += '<section class="flex flex-col gap-md">' +
         '<div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">' +
           '<div><h2 class="font-headline-lg text-headline-lg text-on-surface cyber-title flex items-center gap-2"><span class="material-symbols-outlined text-[#ff80ea]">groups</span>' + data.roundRobinTitle + '</h2>' +
-          '<p class="mt-1 text-sm text-on-surface-variant">Six Best-of-1 matches. The best record after all matches wins the SHS Showdown.</p></div>' +
+          '<p class="mt-1 text-sm text-on-surface-variant">' + (data.roundRobinDescription || 'Six Best-of-1 matches. The best record after all matches wins the SHS Showdown.') + '</p></div>' +
           '<span class="px-3 py-1 rounded bg-[#ff2fd8]/20 text-[#ff80ea] text-xs font-bold font-label-caps">' + data.roundRobinBadge + '</span>' +
         '</div>' +
         '<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">' + data.roundRobinList.map(function(m){ return renderMatchCard(m); }).join('') + '</div>' +

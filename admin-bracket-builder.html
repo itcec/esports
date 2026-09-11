@@ -125,7 +125,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     <select id="bracket-division-select" class="w-full bg-[#050B14] p-2.5 rounded-lg border border-white/10 text-on-surface font-bold text-sm focus:border-primary focus:outline-none">
       <option value="mens">Student Men's Division (24 Teams)</option>
       <option value="womens">Student Women's Division (16 Teams)</option>
-      <option value="faculty">Faculty &amp; Staff Exhibition (8 Teams)</option>
+      <option value="faculty">Faculty &amp; Staff — Round Robin (5 Teams)</option>
       <option value="shs">SHS Showdown (Senior High School)</option>
     </select>
     <div>
@@ -512,12 +512,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const dept = opts.department === undefined ? currentDepartment() : opts.department;
     const scope = scopeKey(div, dept);
     const teams = seedNames.slice();
-    if (teams.length !== 4) return null;
-    const rounds = [
-      [[0, 1], [2, 3]],
-      [[0, 2], [1, 3]],
-      [[0, 3], [1, 2]]
-    ];
+    if (teams.length < 2 || teams.length > 32) return null;
+    // Preserve the published four-team SHS ordering. Odd draws rotate a bye.
+    const rounds = teams.length === 4 ? [
+      [[0, 1], [2, 3]], [[0, 2], [1, 3]], [[0, 3], [1, 2]]
+    ] : [];
+    if (teams.length !== 4) {
+      const rotation = teams.map((_, i) => i);
+      if (rotation.length % 2) rotation.push(null);
+      for (let r = 0; r < rotation.length - 1; r++) {
+        const pairs = [];
+        for (let i = 0; i < rotation.length / 2; i++) {
+          const a = rotation[i], b = rotation[rotation.length - 1 - i];
+          if (a !== null && b !== null) pairs.push([a, b]);
+        }
+        rounds.push(pairs);
+        rotation.splice(1, 0, rotation.pop());
+      }
+    }
     const lookup = opts.lookup || function () { return {}; };
     const results = opts.results || {};
     const times = opts.times || {};
@@ -534,7 +546,7 @@ document.addEventListener('DOMContentLoaded', () => {
           round: roundIndex + 1,
           stage: 'Round Robin · Matchday ' + (roundIndex + 1),
           title: (opts.title ? opts.title + ' - ' : '') + 'Matchday ' + (roundIndex + 1) + ' Match ' + (matchIndex + 1),
-          format: (matchFormats[scope] || {})[key] || 'BO1',
+          format: (matchFormats[scope] || {})[key] || (roundFormats[scope] || {})[roundIndex + 1] || 'BO1',
           team1Id: (lookup(team1Name).id || ''), team1Name: team1Name,
           team2Id: (lookup(team2Name).id || ''), team2Name: team2Name,
           team1Ready: true, team2Ready: true,
@@ -546,7 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
     });
-    return { matches: matches, rounds: 3, size: 4, byes: 0, scope: scope, roundRobin: true, champion: '' };
+    return { matches: matches, rounds: rounds.length, size: teams.length, byes: 0, scope: scope, roundRobin: true, champion: '' };
   }
 
   function escHtml(str) {
@@ -570,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getDefaultTitle(div, dept) {
-    if (div === 'faculty') return "Faculty & Staff Exhibition Showcase Bracket";
+    if (div === 'faculty') return "Faculty & Staff Round Robin";
     if (div === 'shs') return "SHS Showdown Round Robin";
     const divisionName = div === 'womens' ? "Women's" : "Men's";
     return dept
@@ -717,7 +729,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     poolCountBadge.textContent = count < 2
       ? `${count} Selected`
-      : `${count} Teams · ${size}-slot bracket${byes ? ` · ${byes} bye${byes > 1 ? 's' : ''}` : ''}`;
+      : (divisionSelect.value === 'shs' || divisionSelect.value === 'faculty') ? `${count} Teams · ${count * (count - 1) / 2} round-robin matches${count % 2 ? ' · one bye per team' : ''}` : `${count} Teams · ${size}-slot bracket${byes ? ` · ${byes} bye${byes > 1 ? 's' : ''}` : ''}`;
     poolCountBadge.className = count >= 2
       ? 'px-2 py-0.5 rounded text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
       : 'px-2 py-0.5 rounded text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30';
@@ -854,13 +866,14 @@ document.addEventListener('DOMContentLoaded', () => {
       roundFormatList.innerHTML = `<div class="p-3 text-center text-xs text-on-surface-variant bg-surface-container-lowest rounded-lg border border-dashed border-white/10">Select at least 2 teams.</div>`;
       return;
     }
-    const rounds = Math.round(Math.log(bracketSizeFor(selected.length)) / Math.log(2));
+    const isRR = div === 'shs' || div === 'faculty';
+    const rounds = isRR ? (selected.length % 2 ? selected.length : selected.length - 1) : Math.round(Math.log(bracketSizeFor(selected.length)) / Math.log(2));
     let html = '';
     for (let r = 1; r <= rounds; r++) {
-      const value = (roundFormats[scope] || {})[r] || defaultFormatFor(r, rounds, div);
+      const value = (roundFormats[scope] || {})[r] || (isRR ? 'BO1' : defaultFormatFor(r, rounds, div));
       html += `
         <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-surface-container-lowest border border-white/5">
-          <span class="text-[11px] font-bold text-on-surface truncate">${escHtml(stageNameFor(r, rounds))}</span>
+          <span class="text-[11px] font-bold text-on-surface truncate">${escHtml(isRR ? 'Round Robin · Matchday ' + r : stageNameFor(r, rounds))}</span>
           <select data-round="${r}" class="round-format-select bg-[#050B14] text-on-surface text-[11px] font-mono font-bold px-2 py-1 rounded border border-white/10 focus:border-primary focus:outline-none">
             ${SERIES_OPTIONS.map(o => `<option value="${o}"${o === value ? ' selected' : ''}>${o}</option>`).join('')}
           </select>
@@ -876,7 +889,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // A round-wide change clears the per-match overrides for that round.
         const perMatch = matchFormats[scope] || {};
         Object.keys(perMatch).forEach(function (k) {
-          if (k.indexOf('_R' + r + 'M') !== -1) delete perMatch[k];
+          if (k.indexOf('_R' + r + 'M') !== -1 || k.indexOf('_RR' + r + 'M') !== -1) delete perMatch[k];
         });
         renderAll();
       });
@@ -913,7 +926,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return pool.find(t => String(t.name || '').trim().toLowerCase() === target) || {};
       }
     };
-    return div === 'shs' ? buildRoundRobin(seeds, options) : buildBracket(seeds, options);
+    return (div === 'shs' || div === 'faculty') ? buildRoundRobin(seeds, options) : buildBracket(seeds, options);
   }
 
   /**
