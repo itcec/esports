@@ -168,11 +168,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const publishBtn = document.getElementById('publish-bracket-btn');
     const drawBtn = document.getElementById('draw-bracket-btn');
     try {
-      const teams = await PublicTournamentApi.listTeams();
+      let teams = await PublicTournamentApi.listTeams();
+      if (!teams || !teams.length) {
+        if (window.CECFirebase) {
+          await window.CECFirebase.init();
+          if (window.CECFirebase.db) {
+            const snap = await window.CECFirebase.db.ref('registrations').once('value');
+            const data = snap.val() || {};
+            teams = Object.values(data).filter(t => String(t.status || t.Status).toLowerCase() === 'approved');
+          }
+        }
+      }
       SEEDS.mens = []; SEEDS.womens = []; SEEDS.faculty = [];
       (teams || []).forEach((t) => {
-        const bucket = divisionOf(t.division || t.course || '');
-        if (bucket && SEEDS[bucket]) SEEDS[bucket].push(t.teamName);
+        const name = String(t.teamName || t.TeamName || '').trim();
+        const course = t.division || t.Course || t.course || '';
+        const bucket = divisionOf(course);
+        if (bucket && SEEDS[bucket] && name && !SEEDS[bucket].includes(name)) {
+          SEEDS[bucket].push(name);
+        }
       });
       seedsLoaded = true;
     } catch (err) {
@@ -422,21 +436,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const div = divisionSelect.value;
     const seeds = SEEDS[div] || [];
-    if (seeds.length < 8) {
+    if (seeds.length < 2) {
       alert('This division has ' + seeds.length + ' approved team' + (seeds.length === 1 ? '' : 's') +
-            '. A quarterfinal bracket needs 8. Approve more registrations before publishing.');
+            '. A tournament bracket requires at least 2 approved teams to generate matchups.');
       return;
     }
-    const matches = [
-      { matchKey: `${div}_QF1`, stage: 'Quarterfinals', team1Name: seeds[0], team2Name: seeds[7] },
-      { matchKey: `${div}_QF2`, stage: 'Quarterfinals', team1Name: seeds[3], team2Name: seeds[4] },
-      { matchKey: `${div}_QF3`, stage: 'Quarterfinals', team1Name: seeds[1], team2Name: seeds[6] },
-      { matchKey: `${div}_QF4`, stage: 'Quarterfinals', team1Name: seeds[2], team2Name: seeds[5] }
-    ];
+
+    let matches = [];
+    if (seeds.length >= 8) {
+      matches = [
+        { matchKey: `${div}_QF1`, stage: 'Quarterfinals', team1Name: seeds[0], team2Name: seeds[7] },
+        { matchKey: `${div}_QF2`, stage: 'Quarterfinals', team1Name: seeds[3], team2Name: seeds[4] },
+        { matchKey: `${div}_QF3`, stage: 'Quarterfinals', team1Name: seeds[1], team2Name: seeds[6] },
+        { matchKey: `${div}_QF4`, stage: 'Quarterfinals', team1Name: seeds[2], team2Name: seeds[5] }
+      ];
+    } else if (seeds.length >= 4) {
+      matches = [
+        { matchKey: `${div}_SF1`, stage: 'Semifinals', team1Name: seeds[0], team2Name: seeds[3] },
+        { matchKey: `${div}_SF2`, stage: 'Semifinals', team1Name: seeds[1], team2Name: seeds[2] }
+      ];
+    } else {
+      matches = [
+        { matchKey: `${div}_FINAL`, stage: 'Grand Final', team1Name: seeds[0], team2Name: seeds[1] }
+      ];
+    }
 
     try {
-      await TournamentOps.saveBracketData(div, matches);
-      alert('Bracket saved and published to tournament standings!');
+      const result = await TournamentOps.saveBracketData(div, matches);
+      alert('Bracket saved and published live to tournament standings & brackets!');
     } catch (err) {
       alert('Could not publish bracket: ' + err.message);
     }

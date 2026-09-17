@@ -63,21 +63,53 @@ window.CECLiveManager = {
   },
 
   _loadPublicTeams: async function() {
-    if (!window.PublicTournamentApi || typeof window.PublicTournamentApi.listTeams !== 'function') return;
-    try {
-      const teams = await window.PublicTournamentApi.listTeams();
-      this.publicTeams = {};
-      (teams || []).forEach((team) => {
-        const id = String(team.teamId || '').trim();
-        const name = String(team.teamName || '').trim().toLowerCase();
-        if (id) this.publicTeams[id] = team;
-        if (name) this.publicTeams['name:' + name] = team;
-      });
-      this._enrichMatchesWithPublicTeams();
-      this._notify();
-    } catch (error) {
-      console.warn('Public registered team profiles are unavailable:', error);
+    this.publicTeams = {};
+    let loaded = false;
+    if (window.PublicTournamentApi && typeof window.PublicTournamentApi.listTeams === 'function') {
+      try {
+        const teams = await window.PublicTournamentApi.listTeams();
+        if (Array.isArray(teams) && teams.length > 0) {
+          teams.forEach((team) => {
+            const id = String(team.teamId || '').trim();
+            const name = String(team.teamName || '').trim().toLowerCase();
+            if (id) this.publicTeams[id] = team;
+            if (name) this.publicTeams['name:' + name] = team;
+          });
+          loaded = true;
+        }
+      } catch (error) {
+        console.warn('Public registered team profiles from API notice:', error);
+      }
     }
+
+    // Fallback: load approved teams from Firebase Realtime Database registrations node
+    if (!loaded && window.CECFirebase && window.CECFirebase.db) {
+      try {
+        const snap = await window.CECFirebase.db.ref('registrations').once('value');
+        const regData = snap.val() || {};
+        Object.keys(regData).forEach((k) => {
+          const t = regData[k];
+          if (t && (String(t.status || t.Status).toLowerCase() === 'approved')) {
+            const id = String(t.teamId || t.TeamID || k).trim();
+            const name = String(t.teamName || t.TeamName || '').trim().toLowerCase();
+            const teamObj = {
+              teamId: id,
+              teamName: t.teamName || t.TeamName || '',
+              department: t.department || t.Course || '',
+              captainName: t.captainName || t.CaptainName || '',
+              roster: t.roster || []
+            };
+            if (id) this.publicTeams[id] = teamObj;
+            if (name) this.publicTeams['name:' + name] = teamObj;
+          }
+        });
+      } catch (e) {
+        console.warn('Firebase registrations fallback notice:', e);
+      }
+    }
+
+    this._enrichMatchesWithPublicTeams();
+    this._notify();
   },
 
   _loadPublicMatches: async function() {
@@ -184,19 +216,23 @@ window.CECLiveManager = {
     this._enrichMatchesWithPublicTeams();
     this._saveLocalMatches();
 
-    if (window.CECFirebase.db) {
+    if (window.CECFirebase && window.CECFirebase.db) {
       await window.CECFirebase.db.ref('liveMatches/' + matchData.id).set(matchData);
     }
     if (window.TournamentOps && window.CECAuth && window.CECAuth.isApprovedStaff()) {
-      await window.TournamentOps.publishMatch({
-        matchId: matchData.id,
-        court: matchData.court || '', division: matchData.division || '', stage: matchData.stageTitle || matchData.stage || '',
-        team1Id: matchData.team1 && (matchData.team1.registrationTeamId || matchData.team1.id) || '',
-        team1Name: matchData.team1 && matchData.team1.name || '', score1: matchData.team1 && matchData.team1.score || 0,
-        team2Id: matchData.team2 && (matchData.team2.registrationTeamId || matchData.team2.id) || '',
-        team2Name: matchData.team2 && matchData.team2.name || '', score2: matchData.team2 && matchData.team2.score || 0,
-        status: matchData.status || 'Scheduled', streamUrl: matchData.streamUrl || '', winnerId: matchData.winnerId || '', winnerName: matchData.winnerName || ''
-      });
+      try {
+        await window.TournamentOps.publishMatch({
+          matchId: matchData.id,
+          court: matchData.court || '', division: matchData.division || '', stage: matchData.stageTitle || matchData.stage || '',
+          team1Id: matchData.team1 && (matchData.team1.registrationTeamId || matchData.team1.id) || '',
+          team1Name: matchData.team1 && matchData.team1.name || '', score1: matchData.team1 && matchData.team1.score || 0,
+          team2Id: matchData.team2 && (matchData.team2.registrationTeamId || matchData.team2.id) || '',
+          team2Name: matchData.team2 && matchData.team2.name || '', score2: matchData.team2 && matchData.team2.score || 0,
+          status: matchData.status || 'Scheduled', streamUrl: matchData.streamUrl || '', winnerId: matchData.winnerId || '', winnerName: matchData.winnerName || ''
+        });
+      } catch (mirrorErr) {
+        console.warn('publishMatch Sheets mirror notice (non-fatal, match is live in Firebase):', mirrorErr);
+      }
     }
     this._notify();
     return matchData;

@@ -400,6 +400,27 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
     });
   }
 
+  function listenToFirebaseBrackets() {
+    if (window.CECFirebase) {
+      window.CECFirebase.init().then(function() {
+        if (window.CECFirebase.db) {
+          ['mens', 'womens', 'faculty'].forEach(function(div) {
+            window.CECFirebase.db.ref('brackets/' + div).on('value', function(snapshot) {
+              var val = snapshot.val();
+              if (val && val.matches && Array.isArray(val.matches)) {
+                bracketCache[div] = val.matches;
+                if (div === active) {
+                  applyRows(DIVS[div], val.matches, div);
+                  render();
+                }
+              }
+            });
+          });
+        }
+      });
+    }
+  }
+
   tabs.addEventListener('click', function(e){
     var btn = e.target.closest('button[data-division]');
     if (!btn) return;
@@ -409,6 +430,7 @@ h2.cyber-title{font-size:28px;line-height:1.2;}
   });
   render();
   loadDivision(active);
+  listenToFirebaseBrackets();
 })();
 </script><script>(function(){var t=document.getElementById('nav-toggle'),n=document.getElementById('mobile-nav'),i=document.getElementById('nav-toggle-icon');if(!t||!n)return;t.addEventListener('click',function(){var open=n.classList.contains('hidden');n.classList.toggle('hidden',!open);n.classList.toggle('flex',open);t.setAttribute('aria-expanded',String(open));if(i)i.textContent=open?'close':'menu';});})();</script>
 <!-- Firebase SDK & Bridge Scripts -->

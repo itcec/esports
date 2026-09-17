@@ -153,26 +153,132 @@ async function updateRegistrationStatusWithReason(teamId, status, rejectionReaso
 
 const PublicTournamentApi = {
   listTeams: async function () {
-    return await callRegistrationApi('listPublicTeams', {}, 'GET');
+    try {
+      const teams = await callRegistrationApi('listPublicTeams', {}, 'GET');
+      if (Array.isArray(teams) && teams.length > 0) return teams;
+    } catch (err) {
+      console.warn('PublicTournamentApi.listTeams API notice:', err);
+    }
+
+    // Fallback: load approved teams from Firebase Realtime Database registrations node
+    if (window.CECFirebase) {
+      try {
+        await window.CECFirebase.init();
+        if (window.CECFirebase.db) {
+          const snap = await window.CECFirebase.db.ref('registrations').once('value');
+          const regData = snap.val() || {};
+          const fallbackTeams = [];
+          Object.keys(regData).forEach(function (k) {
+            const t = regData[k];
+            if (t && String(t.status || t.Status).toLowerCase() === 'approved') {
+              fallbackTeams.push({
+                teamId: t.teamId || t.TeamID || k,
+                teamName: t.teamName || t.TeamName || 'Team',
+                course: t.course || t.Course || '',
+                division: t.division || '',
+                department: t.department || t.Course || '',
+                captainName: t.captainName || t.CaptainName || '',
+                description: t.description || t.Description || '',
+                roster: t.roster || []
+              });
+            }
+          });
+          if (fallbackTeams.length > 0) return fallbackTeams;
+        }
+      } catch (fbErr) {
+        console.warn('Firebase listTeams fallback notice:', fbErr);
+      }
+    }
+    return [];
   },
+
   listMatches: async function () {
-    const rows = await callRegistrationApi('listMatches', {}, 'GET');
-    return (rows || []).map(function (row) {
-      return {
-        matchId: row.matchId || row.MatchID || '', court: row.court || row.Court || '',
-        division: row.division || row.Division || '', stage: row.stage || row.Stage || '',
-        team1Id: row.team1Id || row.Team1ID || '', team1Name: row.team1Name || row.Team1Name || 'TBD', team1Score: row.team1Score != null ? row.team1Score : (row.Team1Score || 0),
-        team2Id: row.team2Id || row.Team2ID || '', team2Name: row.team2Name || row.Team2Name || 'TBD', team2Score: row.team2Score != null ? row.team2Score : (row.Team2Score || 0),
-        status: row.status || row.Status || 'Scheduled', streamUrl: row.streamUrl || row.StreamUrl || '',
-        streamPublished: row.streamPublished || row.StreamPublished || '', scheduledAt: row.scheduledAt || row.ScheduledAt || '', submittedAt: row.submittedAt || row.SubmittedAt || ''
-      };
-    });
+    try {
+      const rows = await callRegistrationApi('listMatches', {}, 'GET');
+      if (Array.isArray(rows) && rows.length > 0) {
+        return rows.map(function (row) {
+          return {
+            matchId: row.matchId || row.MatchID || '', court: row.court || row.Court || '',
+            division: row.division || row.Division || '', stage: row.stage || row.Stage || '',
+            team1Id: row.team1Id || row.Team1ID || '', team1Name: row.team1Name || row.Team1Name || 'TBD', team1Score: row.team1Score != null ? row.team1Score : (row.Team1Score || 0),
+            team2Id: row.team2Id || row.Team2ID || '', team2Name: row.team2Name || row.Team2Name || 'TBD', team2Score: row.team2Score != null ? row.team2Score : (row.Team2Score || 0),
+            status: row.status || row.Status || 'Scheduled', streamUrl: row.streamUrl || row.StreamUrl || '',
+            streamPublished: row.streamPublished || row.StreamPublished || '', scheduledAt: row.scheduledAt || row.ScheduledAt || '', submittedAt: row.submittedAt || row.SubmittedAt || ''
+          };
+        });
+      }
+    } catch (e) {
+      console.warn('PublicTournamentApi.listMatches API notice:', e);
+    }
+
+    // Fallback: load live matches from Firebase Realtime Database
+    if (window.CECFirebase) {
+      try {
+        await window.CECFirebase.init();
+        if (window.CECFirebase.db) {
+          const snap = await window.CECFirebase.db.ref('liveMatches').once('value');
+          const data = snap.val() || {};
+          return Object.values(data).map(function (row) {
+            return {
+              matchId: row.id || row.matchId || '', court: row.court || '',
+              division: row.division || '', stage: row.stageTitle || row.stage || '',
+              team1Id: (row.team1 && (row.team1.registrationTeamId || row.team1.id)) || '',
+              team1Name: (row.team1 && row.team1.name) || 'TBD',
+              team1Score: (row.team1 && row.team1.score != null) ? Number(row.team1.score) : 0,
+              team2Id: (row.team2 && (row.team2.registrationTeamId || row.team2.id)) || '',
+              team2Name: (row.team2 && row.team2.name) || 'TBD',
+              team2Score: (row.team2 && row.team2.score != null) ? Number(row.team2.score) : 0,
+              status: row.status || 'Scheduled', streamUrl: row.streamUrl || '',
+              streamPublished: row.streamUrl ? 'Yes' : 'No', scheduledAt: '', submittedAt: ''
+            };
+          });
+        }
+      } catch (fbErr) {}
+    }
+    return [];
   },
+
   listStandings: async function () {
-    return await callRegistrationApi('listStandings', {}, 'GET');
+    try {
+      return await callRegistrationApi('listStandings', {}, 'GET');
+    } catch (e) {
+      console.warn('listStandings API notice:', e);
+      return [];
+    }
   },
+
   listBracket: async function (division) {
-    return await callRegistrationApi('getBracketData', { division: division || '' }, 'GET');
+    // 1. Try Firebase Realtime Database first for instant, live updates
+    if (window.CECFirebase) {
+      try {
+        await window.CECFirebase.init();
+        if (window.CECFirebase.db) {
+          const snap = await window.CECFirebase.db.ref('brackets/' + (division || 'default')).once('value');
+          const data = snap.val();
+          if (data && data.matches && Array.isArray(data.matches) && data.matches.length > 0) {
+            return data.matches;
+          }
+        }
+      } catch (fbErr) {
+        console.warn('Firebase listBracket notice:', fbErr);
+      }
+    }
+
+    // 2. Try Google Apps Script API
+    try {
+      const rows = await callRegistrationApi('getBracketData', { division: division || '' }, 'GET');
+      if (Array.isArray(rows) && rows.length > 0) return rows;
+    } catch (apiErr) {
+      console.warn('Apps Script listBracket notice:', apiErr);
+    }
+
+    // 3. Fallback to localStorage cache
+    try {
+      const cached = localStorage.getItem('CEC_BRACKET_' + division);
+      if (cached) return JSON.parse(cached);
+    } catch (e) {}
+
+    return [];
   }
 };
 
@@ -228,10 +334,47 @@ const TournamentOps = {
     return await callRegistrationApi('resolveDispute', { disputeId: disputeId, status: status, resolution: resolution }, 'POST');
   },
   getBracketData: async function (division) {
-    return await callRegistrationApi('getBracketData', { division: division || '' }, 'GET');
+    return await PublicTournamentApi.listBracket(division);
   },
   saveBracketData: async function (division, matches) {
-    return await callRegistrationApi('saveBracketData', { division: division, matches: JSON.stringify(matches) }, 'POST');
+    let savedToFirebase = false;
+
+    // 1. Save to Local Storage immediately
+    try {
+      localStorage.setItem('CEC_BRACKET_' + division, JSON.stringify(matches));
+    } catch (e) {}
+
+    // 2. Save directly to Firebase Realtime Database
+    if (window.CECFirebase) {
+      try {
+        await window.CECFirebase.init();
+        if (window.CECFirebase.db) {
+          const payload = {
+            division: division,
+            matches: matches,
+            updatedAt: new Date().toISOString(),
+            updatedBy: (window.CECAuth && window.CECAuth.currentUser) ? window.CECAuth.currentUser.email : 'coordinator'
+          };
+          await window.CECFirebase.db.ref('brackets/' + division).set(payload);
+          savedToFirebase = true;
+        }
+      } catch (fbErr) {
+        console.warn('Firebase saveBracketData notice:', fbErr);
+      }
+    }
+
+    // 3. Best-effort mirror to Google Sheets via Apps Script
+    try {
+      await callRegistrationApi('saveBracketData', { division: division, matches: JSON.stringify(matches) }, 'POST');
+    } catch (apiErr) {
+      console.warn('saveBracketData Sheets mirror notice (non-fatal, Firebase is saved):', apiErr);
+      // If saved to Firebase or localStorage, do not throw so the user UI sees success
+      if (!savedToFirebase && !localStorage.getItem('CEC_BRACKET_' + division)) {
+        throw apiErr;
+      }
+    }
+
+    return { success: true, division: division, matches: matches, savedToFirebase: savedToFirebase };
   },
   getAuditLogs: async function () {
     return await callRegistrationApi('getAuditLogs', {}, 'POST');

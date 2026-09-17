@@ -653,9 +653,26 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
 
   async function loadApprovedTeams() {
     try {
-      let list = await callRegistrationApi('listRegistrations', {}, 'GET');
+      let list = null;
+      try {
+        list = await callRegistrationApi('listRegistrations', {}, 'GET');
+      } catch (e1) {
+        // Staff action might not be available or permitted; fall back to public list
+      }
       if (!list || !list.length) {
-        list = await callRegistrationApi('listPublicTeams', {}, 'GET');
+        try {
+          list = await PublicTournamentApi.listTeams();
+        } catch (e2) {}
+      }
+      if (!list || !list.length) {
+        if (window.CECFirebase) {
+          await window.CECFirebase.init();
+          if (window.CECFirebase.db) {
+            const snap = await window.CECFirebase.db.ref('registrations').once('value');
+            const regData = snap.val() || {};
+            list = Object.values(regData).filter(t => String(t.status || t.Status).toLowerCase() === 'approved');
+          }
+        }
       }
       if (Array.isArray(list)) {
         approvedTeamsList = list.map(t => {
@@ -675,7 +692,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
         populateTeamDropdowns();
       }
     } catch (err) {
-      console.warn('Could not load approved teams from registry:', err);
+      console.warn('Could not load approved teams from registry (notice):', err);
     }
   }
 
