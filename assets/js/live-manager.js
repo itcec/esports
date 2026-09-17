@@ -10,14 +10,46 @@ window.CECLiveManager = {
   STREAM_PARENT_HOSTS: ['cec-esports.vercel.app'],
 
   /**
-   * Officials may only publish Twitch links; this mirrors the Apps Script
-   * `publishMatch` rule so the UI fails early instead of at save time.
+   * Officials may publish Twitch, YouTube or TikTok LIVE links; this mirrors the
+   * Apps Script `publishMatch` rule so the UI fails early instead of at save time.
    */
+  STREAM_URL_PATTERNS: [
+    /^https?:\/\/(www\.)?twitch\.tv\/[A-Za-z0-9_]/i,
+    /^https?:\/\/(www\.)?youtube\.com\/(watch\?|live\/|embed\/)/i,
+    /^https?:\/\/youtu\.be\/[A-Za-z0-9_-]/i,
+    /^https?:\/\/(www\.)?tiktok\.com\/@[A-Za-z0-9._-]+/i,
+    // Short share links (vt./vm.tiktok.com) resolve to a profile only in the
+    // browser that opens them, so they are accepted but cannot be embedded.
+    /^https?:\/\/(vt|vm)\.tiktok\.com\/[A-Za-z0-9_-]+/i
+  ],
+
+  /** Human name of the platform a stream URL points at, or '' if unrecognised. */
+  streamPlatform: function (url) {
+    const raw = String(url || '').trim();
+    if (!raw) return '';
+    if (/twitch\.tv\//i.test(raw)) return 'Twitch';
+    if (/youtube\.com\/|youtu\.be\//i.test(raw)) return 'YouTube';
+    if (/tiktok\.com\//i.test(raw)) return 'TikTok';
+    return '';
+  },
+
   validateStreamUrl: function (url) {
     const raw = String(url || '').trim();
     if (!raw) return { ok: true, url: '' };
-    if (!/^https?:\/\/(www\.)?twitch\.tv\/[A-Za-z0-9_]/i.test(raw)) {
-      return { ok: false, url: raw, message: 'Only Twitch links can be published — e.g. https://twitch.tv/yourchannel or a twitch.tv/videos/... VOD.' };
+    const matched = this.STREAM_URL_PATTERNS.some(function (re) { return re.test(raw); });
+    if (!matched) {
+      return {
+        ok: false,
+        url: raw,
+        message: 'Use a Twitch, YouTube or TikTok LIVE link — e.g. https://twitch.tv/yourchannel, https://youtube.com/live/..., or https://www.tiktok.com/@yourhandle/live.'
+      };
+    }
+    if (/^https?:\/\/(vt|vm)\.tiktok\.com\//i.test(raw)) {
+      return {
+        ok: true,
+        url: raw,
+        warning: 'This is a TikTok share link, which cannot be embedded. Open it once and paste the full https://www.tiktok.com/@handle/live address so the stream plays inside the page.'
+      };
     }
     return { ok: true, url: raw };
   },
@@ -70,6 +102,7 @@ window.CECLiveManager = {
         const teams = await window.PublicTournamentApi.listTeams();
         if (Array.isArray(teams) && teams.length > 0) {
           teams.forEach((team) => {
+            if (String(team.approvalStatus || team.Status || 'Approved').toLowerCase() !== 'approved') return;
             const id = String(team.teamId || '').trim();
             const name = String(team.teamName || '').trim().toLowerCase();
             if (id) this.publicTeams[id] = team;
@@ -162,6 +195,8 @@ window.CECLiveManager = {
             isCap: index === 0
           };
         });
+        // Every fallback ends in a concrete value: an `undefined` property here
+        // makes the Firebase write throw, which is what blocked saving a broadcast.
         match[sideKey] = Object.assign({}, side, {
           id: team.teamId || side.id,
           registrationTeamId: team.teamId || side.registrationTeamId,
@@ -206,7 +241,30 @@ window.CECLiveManager = {
   },
 
   /**
-   * Save or Update Match (Staff & Admin Only)
+   * Drops non-serializable fields (like DOM callbacks) and undefined entries
+   * before sending an object to Realtime Database, which throws if an undefined
+   * value is present anywhere in the tree.
+   */
+  _clean: function(obj) {
+    try {
+      return JSON.parse(JSON.stringify(obj, this._jsonReplacer));
+    } catch (e) {
+      return obj;
+    }
+  },
+
+  _jsonReplacer: function(key, value) {
+    return typeof value === 'function' || value === undefined ? undefined : value;
+  },
+
+  /**
+   * Saves a broadcast. The public tournament page reads live matches from
+   * Firebase, so once that write lands the broadcast IS live; mirroring it into
+   * the spreadsheet is bookkeeping. A spreadsheet failure is therefore reported
+   * but does not fail the save, which previously left staff unable to publish at
+   * all whenever the Apps Script deployment lagged behind the front end.
+   *
+   * Returns { match, live, mirrored, warning }.
    */
   saveMatch: async function(matchData) {
     if (!matchData.id) {
@@ -216,26 +274,47 @@ window.CECLiveManager = {
     this._enrichMatchesWithPublicTeams();
     this._saveLocalMatches();
 
+    const stored = this.matches[matchData.id];
+    let live = false;
+    let warning = '';
+
     if (window.CECFirebase && window.CECFirebase.db) {
-      await window.CECFirebase.db.ref('liveMatches/' + matchData.id).set(matchData);
+      try {
+        await window.CECFirebase.db.ref('liveMatches/' + matchData.id).set(this._clean(stored));
+        live = true;
+      } catch (err) {
+        this._notify();
+        console.warn('Firebase liveMatches set notice:', err);
+        if (err && String(err.message || err).includes('PERMISSION_DENIED')) {
+          warning = (warning ? warning + '; ' : '') + 'Realtime Database: Staff login required to publish changes live to spectators. Saved locally in current session.';
+        } else {
+          throw new Error('Could not put the match on air: ' + (err && err.message ? err.message : err));
+        }
+      }
     }
+
+    let mirrored = false;
     if (window.TournamentOps && window.CECAuth && window.CECAuth.isApprovedStaff()) {
       try {
         await window.TournamentOps.publishMatch({
-          matchId: matchData.id,
-          court: matchData.court || '', division: matchData.division || '', stage: matchData.stageTitle || matchData.stage || '',
-          team1Id: matchData.team1 && (matchData.team1.registrationTeamId || matchData.team1.id) || '',
-          team1Name: matchData.team1 && matchData.team1.name || '', score1: matchData.team1 && matchData.team1.score || 0,
-          team2Id: matchData.team2 && (matchData.team2.registrationTeamId || matchData.team2.id) || '',
-          team2Name: matchData.team2 && matchData.team2.name || '', score2: matchData.team2 && matchData.team2.score || 0,
-          status: matchData.status || 'Scheduled', streamUrl: matchData.streamUrl || '', winnerId: matchData.winnerId || '', winnerName: matchData.winnerName || ''
+          matchId: stored.id || matchData.id,
+          court: stored.court || '', division: stored.division || '', stage: stored.stageTitle || stored.stage || '',
+          team1Id: stored.team1 && (stored.team1.registrationTeamId || stored.team1.id) || '',
+          team1Name: stored.team1 && stored.team1.name || '', score1: stored.team1 && stored.team1.score || 0,
+          team2Id: stored.team2 && (stored.team2.registrationTeamId || stored.team2.id) || '',
+          team2Name: stored.team2 && stored.team2.name || '', score2: stored.team2 && stored.team2.score || 0,
+          status: stored.status || 'Scheduled', streamUrl: stored.streamUrl || '', winnerId: stored.winnerId || '', winnerName: stored.winnerName || ''
         });
-      } catch (mirrorErr) {
-        console.warn('publishMatch Sheets mirror notice (non-fatal, match is live in Firebase):', mirrorErr);
+        mirrored = true;
+      } catch (err) {
+        warning = 'The broadcast is live, but it could not be recorded in the tournament spreadsheet: ' +
+          (err && err.message ? err.message : err);
+        console.warn('publishMatch mirror failed:', err);
       }
     }
+
     this._notify();
-    return matchData;
+    return { match: stored, live: live, mirrored: mirrored, warning: warning };
   },
 
   deleteMatch: async function(matchId) {
@@ -325,6 +404,16 @@ window.CECLiveManager = {
 
       const channel = url.split('twitch.tv/')[1].split(/[?&/]/)[0];
       if (channel) return `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${parentQuery}&autoplay=true`;
+      return '';
+    }
+
+    // TikTok LIVE. The embeddable player is /embed/live/@handle; a plain profile
+    // or /live URL is normalised to it. vt./vm. share links carry no handle, so
+    // they cannot be embedded and fall through to the local loop.
+    if (/tiktok\.com/i.test(url)) {
+      if (/^https?:\/\/(vt|vm)\.tiktok\.com\//i.test(url)) return '';
+      const handle = url.match(/tiktok\.com\/@([A-Za-z0-9._-]+)/i);
+      if (handle) return `https://www.tiktok.com/embed/live/@${encodeURIComponent(handle[1])}`;
       return '';
     }
 

@@ -12,10 +12,14 @@
     },
     "cms": {
       ".read": true,
-      ".write": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('role').val() === 'super_admin' || root.child('staff').child(auth.uid).child('status').val() === 'approved')"
+      ".write": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('role').val() === 'super_admin' || root.child('staff').child(auth.uid).child('role').val() === 'admin')"
     },
     "registrations": {
-      ".read": true,
+      ".read": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('status').val() === 'approved')",
+      ".write": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('status').val() === 'approved')"
+    },
+    "staffNotes": {
+      ".read": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('status').val() === 'approved')",
       ".write": "auth != null && (auth.token.email === 'jlcabucos.cec@gmail.com' || root.child('staff').child(auth.uid).child('status').val() === 'approved')"
     },
     "liveMatches": {

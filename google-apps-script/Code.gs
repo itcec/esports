@@ -1,10 +1,11 @@
 /**
  * CEC Esports 2026 registration, officiating, bracket, and tournament operations API.
  * Bind this script to the tournament spreadsheet and deploy it as a Web App.
- * Public: createRegistration, listRegistrations, listPublicTeams, listMatches, listStandings, fileDispute,
+ * Public: listMatches, listStandings, listPublicTeams, getBracketData, createRegistration,
  * uploadVerificationFile, uploadProfileImage.
- * Staff (requires Firebase ID token): getRegistration, getPrivateVerificationFile, updateTeamStatus,
- * updatePlayerVerification, recordMatchResult, listDisputes, resolveDispute, saveBracketData, getAuditLogs.
+ * Staff (requires Firebase ID token): listRegistrations, getRegistration, getPrivateVerificationFile,
+ * getPrivateVerificationBatch, updateTeamStatus, updatePlayerVerification, recordMatchResult,
+ * publishMatch, deleteMatch, fileDispute, listDisputes, resolveDispute, saveBracketData, getAuditLogs.
  */
 const TEAMS_SHEET_NAME = 'TEAMS';
 const PLAYERS_SHEET_NAME = 'PLAYERS';
@@ -22,7 +23,14 @@ const DOCS_HEADERS = ['DocID', 'PlayerID', 'TeamID', 'DocType', 'DriveFileId', '
 const MATCHES_HEADERS = ['MatchID', 'Court', 'Division', 'Stage', 'Team1ID', 'Team1Name', 'Team1Score', 'Team2ID', 'Team2Name', 'Team2Score', 'WinnerID', 'WinnerName', 'Status', 'StreamUrl', 'OfficiatedBy', 'SubmittedAt', 'ScheduledAt', 'StreamPublished'];
 const DISPUTES_HEADERS = ['DisputeID', 'MatchID', 'TeamID', 'FiledBy', 'Category', 'Reason', 'EvidenceUrl', 'Status', 'Resolution', 'ResolvedBy', 'CreatedAt', 'ResolvedAt'];
 const AUDIT_HEADERS = ['LogID', 'Actor', 'Action', 'TargetID', 'Details', 'Timestamp'];
-const BRACKET_HEADERS = ['Division', 'Stage', 'MatchKey', 'Team1ID', 'Team1Name', 'Team2ID', 'Team2Name', 'Score1', 'Score2', 'WinnerID', 'UpdatedAt'];
+// Department: '' for a division-wide bracket (Faculty, SHS, Grand Finals), or the
+// department code (IT/HTM/...) for a department's own bracket.
+// Format: per-match series length, e.g. 'BO1' | 'BO3' | 'BO5'.
+// getSheet() appends any header missing from an existing sheet, so adding these
+// columns migrates the live BRACKETS sheet on the next call.
+const BRACKET_HEADERS = ['Division', 'Department', 'Stage', 'Round', 'MatchKey', 'Title', 'Format',
+   'Team1ID', 'Team1Name', 'Team2ID', 'Team2Name', 'Score1', 'Score2', 'WinnerID',
+   'Status', 'ScheduledAt', 'NextMatchKey', 'NextSlot', 'UpdatedAt'];
 
 const VALID_TEAM_STATUSES = ['Pending', 'UnderReview', 'Approved', 'Rejected'];
 const VALID_VERIFICATION_STATUSES = ['Pending', 'Verified', 'Rejected'];
@@ -39,9 +47,6 @@ function route(e, method) {
   const action = params.action || '';
   try {
     // Public Endpoints
-    if (action === 'listRegistrations') {
-      return json({ success: true, data: listRegistrations(), message: 'OK' });
-    }
     if (action === 'listMatches') {
       return json({ success: true, data: listMatches(), message: 'OK' });
     }
@@ -52,7 +57,10 @@ function route(e, method) {
       return json({ success: true, data: listPublicTeams(), message: 'OK' });
     }
     if (action === 'getBracketData') {
-      return json({ success: true, data: getBracketData(params.division), message: 'OK' });
+      return json({ success: true,
+        data: getBracketData(params.division,
+          Object.prototype.hasOwnProperty.call(params, 'department') ? params.department : undefined),
+        message: 'OK' });
     }
     if (method === 'POST' && action === 'uploadVerificationFile') {
       return json({ success: true, data: uploadVerificationFile(params), message: 'File uploaded securely.' });
@@ -63,20 +71,20 @@ function route(e, method) {
     if (method === 'POST' && action === 'createRegistration') {
       return json({ success: true, data: createRegistration(params), message: 'Registration submitted.' });
     }
-    if (method === 'POST' && action === 'fileDispute') {
-      return json({ success: true, data: fileDispute(params), message: 'Dispute filed successfully.' });
-    }
 
     // Authenticated Staff Endpoints
     const staffActions = [
-      'getRegistration', 'getPrivateVerificationFile', 'getPrivateVerificationBatch', 'updateTeamStatus',
-      'updatePlayerVerification', 'recordMatchResult', 'publishMatch', 'deleteMatch', 'listDisputes',
-      'resolveDispute', 'saveBracketData', 'getAuditLogs'
+      'listRegistrations', 'getRegistration', 'getPrivateVerificationFile', 'getPrivateVerificationBatch',
+      'updateTeamStatus', 'updatePlayerVerification', 'recordMatchResult', 'publishMatch', 'deleteMatch',
+      'fileDispute', 'listDisputes', 'resolveDispute', 'saveBracketData', 'deleteBracketData', 'getAuditLogs'
     ];
 
     if (staffActions.indexOf(action) !== -1) {
       const user = requireStaff(params);
 
+      if ((method === 'GET' || method === 'POST') && action === 'listRegistrations') {
+        return json({ success: true, data: listRegistrations(), message: 'OK' });
+      }
       if ((method === 'GET' || method === 'POST') && action === 'getRegistration') {
         return json({ success: true, data: getRegistration(params.teamId) });
       }
@@ -107,11 +115,17 @@ function route(e, method) {
       if (method === 'POST' && action === 'deleteMatch') {
         return json({ success: true, data: deleteMatch(params, user), message: 'Match deleted.' });
       }
+      if (method === 'POST' && action === 'fileDispute') {
+        return json({ success: true, data: fileDispute(params, user), message: 'Dispute filed successfully.' });
+      }
       if (method === 'POST' && action === 'resolveDispute') {
         return json({ success: true, data: resolveDispute(params, user), message: 'Dispute resolved.' });
       }
       if (method === 'POST' && action === 'saveBracketData') {
         return json({ success: true, data: saveBracketData(params, user), message: 'Bracket updated.' });
+      }
+      if (method === 'POST' && action === 'deleteBracketData') {
+        return json({ success: true, data: deleteBracketData(params, user), message: 'Bracket deleted.' });
       }
     }
 
@@ -125,7 +139,63 @@ function json(value) {
   return ContentService.createTextOutput(JSON.stringify(value)).setMimeType(ContentService.MimeType.JSON);
 }
 
-/** Firebase ID tokens are verified server-side */
+// CacheService silently clamps any TTL above 21600s (6 hours), so that is the
+// real window length. The counters below reset every 6 hours, not every 24.
+const QUOTA_CACHE_TTL_SECONDS = 21600;
+const QUOTA_UPLOADS_PER_WINDOW = 600;
+const QUOTA_UPLOADS_PER_DRAFT = 30;
+
+/**
+ * Rate limits the public upload endpoints, which have to stay unauthenticated
+ * because registration happens before anyone has an account.
+ *
+ * A cache outage must not open the gate silently, but it also must not block a
+ * legitimate registration, so cache errors are logged and allowed through while
+ * a real quota breach is always rethrown. The breach is flagged with a property
+ * on the error rather than by matching words in its message.
+ */
+function quotaError(message) {
+  const err = new Error(message);
+  err.isQuotaBreach = true;
+  return err;
+}
+
+function enforceUploadQuota(draftKey) {
+  try {
+    const cache = CacheService.getScriptCache();
+    const windowStamp = Utilities.formatDate(new Date(), 'GMT', 'yyyy-MM-dd-') +
+      Math.floor(new Date().getUTCHours() / 6);
+
+    // Global cap across all registrations in the current window.
+    const windowKey = 'quota_uploads_' + windowStamp;
+    const windowCount = Number(cache.get(windowKey) || '0');
+    if (windowCount >= QUOTA_UPLOADS_PER_WINDOW) {
+      throw quotaError('Upload limit reached for the tournament right now. Please try again later or contact tournament officials.');
+    }
+    cache.put(windowKey, String(windowCount + 1), QUOTA_CACHE_TTL_SECONDS);
+
+    // Per-registration cap.
+    if (draftKey) {
+      const draftCountKey = 'quota_draft_' + draftKey;
+      const draftCount = Number(cache.get(draftCountKey) || '0');
+      if (draftCount >= QUOTA_UPLOADS_PER_DRAFT) {
+        throw quotaError('Upload limit of ' + QUOTA_UPLOADS_PER_DRAFT + ' files exceeded for this registration.');
+      }
+      cache.put(draftCountKey, String(draftCount + 1), QUOTA_CACHE_TTL_SECONDS);
+    }
+  } catch (e) {
+    if (e && e.isQuotaBreach) throw e;
+    console.warn('Quota cache notice:', e);
+  }
+}
+
+/** Shared slot-key helper preventing Starter 1 / Substitute 1 collisions */
+function rosterSlotKey(rosterType, slotNum) {
+  const type = rosterType || 'Starter';
+  return type + '_' + (slotNum || '1');
+}
+
+/** Firebase ID tokens are verified server-side (Fail-Closed) */
 function requireStaff(params) {
   const props = PropertiesService.getScriptProperties();
   const legacyKey = props.getProperty('ADMIN_KEY');
@@ -134,6 +204,8 @@ function requireStaff(params) {
   if (!token) throw new Error('A Firebase staff token is required.');
   const apiKey = props.getProperty('FIREBASE_WEB_API_KEY');
   if (!apiKey) throw new Error('FIREBASE_WEB_API_KEY is not configured in Script Properties.');
+
+  // Step 1: Verify the ID token is valid and get the user's UID + email
   const lookup = UrlFetchApp.fetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + encodeURIComponent(apiKey), {
     method: 'post', contentType: 'application/json', payload: JSON.stringify({ idToken: token }), muteHttpExceptions: true
   });
@@ -142,14 +214,26 @@ function requireStaff(params) {
   const user = body.users && body.users[0];
   if (!user || user.emailVerified !== true) throw new Error('Verified staff account required.');
   const email = String(user.email || '').toLowerCase();
+  
+  // Super-admin email short-circuits before the DB read to prevent lockout
   if (email === SUPER_ADMIN_EMAIL) return user;
 
+  // Step 2: Check that the user is approved staff in Firebase RTDB
   const dbUrl = props.getProperty('FIREBASE_DATABASE_URL');
   if (!dbUrl) throw new Error('FIREBASE_DATABASE_URL is not configured in Script Properties.');
-  const staffResponse = UrlFetchApp.fetch(dbUrl.replace(/\/$/, '') + '/staff/' + encodeURIComponent(user.localId) + '.json?access_token=' + encodeURIComponent(token), { muteHttpExceptions: true });
-  if (staffResponse.getResponseCode() !== 200) throw new Error('Could not verify staff approval.');
-  const staff = JSON.parse(staffResponse.getContentText());
-  if (!staff || staff.status !== 'approved') throw new Error('Approved staff account required.');
+  const staffResponse = UrlFetchApp.fetch(
+    dbUrl.replace(/\/$/, '') + '/staff/' + encodeURIComponent(user.localId) + '.json?auth=' + encodeURIComponent(token),
+    { muteHttpExceptions: true }
+  );
+  if (staffResponse.getResponseCode() !== 200) {
+    throw new Error('Staff authorization lookup failed (HTTP ' + staffResponse.getResponseCode() + '). Access denied.');
+  }
+  const staffText = staffResponse.getContentText();
+  if (!staffText || staffText.trim() === 'null') {
+    throw new Error('Staff profile not found. Please contact the tournament coordinator to approve your account.');
+  }
+  const staff = JSON.parse(staffText);
+  if (!staff || staff.status !== 'approved') throw new Error('Approved staff account required. Contact the coordinator to get your account approved.');
   return user;
 }
 
@@ -157,7 +241,6 @@ function getSheet(name, headers) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(name) || SpreadsheetApp.getActiveSpreadsheet().insertSheet(name);
   if (sheet.getLastRow() === 0) { sheet.appendRow(headers); sheet.setFrozenRows(1); }
   else {
-    // Add newly introduced columns without breaking an existing production sheet.
     const existing = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0].map(String);
     headers.forEach(function (header) {
       if (existing.indexOf(header) === -1) {
@@ -221,7 +304,6 @@ function normalizeTeamRow(team) {
   const submittedVal = String(t.SubmittedAt || '').trim();
   const photoVal = String(t.TeamPhotoUrl || '').trim();
 
-  // Find the real logo:
   let realLogo = '';
   if (isEmblemOrImageUrl(logoVal)) {
     realLogo = logoVal;
@@ -229,7 +311,6 @@ function normalizeTeamRow(team) {
     realLogo = statusVal;
   }
 
-  // Find the real status:
   let realStatus = 'Pending';
   if (VALID_TEAM_STATUSES.indexOf(statusVal) !== -1) {
     realStatus = statusVal;
@@ -239,7 +320,6 @@ function normalizeTeamRow(team) {
     realStatus = photoVal;
   }
 
-  // Find the real photo:
   let realPhoto = '';
   if (isEmblemOrImageUrl(photoVal) && photoVal.toLowerCase().indexOf('assets/icons/') === -1) {
     realPhoto = photoVal;
@@ -247,7 +327,6 @@ function normalizeTeamRow(team) {
     realPhoto = submittedVal;
   }
 
-  // Find the real submitted date:
   let realSubmitted = t.SubmittedAt;
   if (isEmblemOrImageUrl(String(realSubmitted))) {
     realSubmitted = isEmblemOrImageUrl(logoVal) ? t.UpdatedAt : (t.LogoUrl || t.UpdatedAt || '');
@@ -281,14 +360,33 @@ function sheetObjects(sheet) {
   });
 }
 
+/** Computes max numeric ID suffix to guarantee non-destructive, non-colliding ID generation */
+function getMaxIdNumber(sheet, prefix) {
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) return 0;
+  let maxNum = 0;
+  const regex = new RegExp('^' + prefix + '-(\\d+)$', 'i');
+  for (let i = 1; i < values.length; i++) {
+    const val = String(values[i][0] || '').trim();
+    const m = val.match(regex);
+    if (m) {
+      const num = parseInt(m[1], 10);
+      if (num > maxNum) maxNum = num;
+    }
+  }
+  return maxNum;
+}
+
 function nextId(sheet, prefix) {
-  return prefix + '-' + String(sheet.getLastRow()).padStart(4, '0');
+  const nextNum = getMaxIdNumber(sheet, prefix) + 1;
+  return prefix + '-' + String(nextNum).padStart(4, '0');
 }
 
 function findRow(sheet, column, id) {
   const values = sheet.getDataRange().getValues();
   if (!values.length) return null;
   const index = values[0].indexOf(column);
+  if (index === -1) return null;
   for (let i = 1; i < values.length; i++) {
     if (String(values[i][index]) === String(id)) return { rowIndex: i + 1, headers: values[0], row: values[i] };
   }
@@ -345,6 +443,23 @@ function getPublicProfileFolder() {
   return currentFolder;
 }
 
+/** Confirms a file exists within the private verification folder hierarchy */
+function assertVerificationFile(fileId) {
+  if (!fileId) throw new Error('fileId is required.');
+  const file = DriveApp.getFileById(fileId);
+  const parents = file.getParents();
+  const verificationFolderId = getVerificationFolder().getId();
+  let belongs = false;
+  while (parents.hasNext()) {
+    if (parents.next().getId() === verificationFolderId) {
+      belongs = true;
+      break;
+    }
+  }
+  if (!belongs) throw new Error('Access denied: file is not located in the private verification storage.');
+  return file;
+}
+
 function uploadVerificationFile(params) {
   if (!params.fileBase64 || !params.docType) throw new Error('fileBase64 and docType are required.');
   const mimeType = params.mimeType || 'image/jpeg';
@@ -352,18 +467,26 @@ function uploadVerificationFile(params) {
   const bytes = Utilities.base64Decode(params.fileBase64);
   if (bytes.length > MAX_FILE_SIZE_BYTES) throw new Error('File exceeds the 5MB limit.');
 
+  enforceUploadQuota(params.draftKey);
+
   const folder = getVerificationFolder();
   const ext = mimeType === 'application/pdf' ? '.pdf' : (mimeType === 'image/png' ? '.png' : (mimeType === 'image/webp' ? '.webp' : '.jpg'));
   const safeName = 'DOC_' + Date.now() + '_' + (params.docType || 'id') + ext;
   const blob = Utilities.newBlob(bytes, mimeType, safeName);
   const file = folder.createFile(blob);
 
-  const docsSheet = getSheet(DOCS_SHEET_NAME, DOCS_HEADERS);
-  const docId = nextId(docsSheet, 'DOC');
-  const now = new Date();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const docsSheet = getSheet(DOCS_SHEET_NAME, DOCS_HEADERS);
+    const docId = nextId(docsSheet, 'DOC');
+    const now = new Date();
 
-  docsSheet.appendRow([docId, params.playerId || '', params.teamId || '', params.docType || 'id_card', file.getId(), mimeType, params.fileName || safeName, now, 'Pending']);
-  return { docId: docId, driveFileId: file.getId(), fileName: params.fileName || safeName, docType: params.docType, mimeType: mimeType, status: 'Pending' };
+    docsSheet.appendRow([docId, params.playerId || '', params.teamId || '', params.docType || 'id_card', file.getId(), mimeType, params.fileName || safeName, now, 'Pending']);
+    return { docId: docId, driveFileId: file.getId(), fileName: params.fileName || safeName, docType: params.docType, mimeType: mimeType, status: 'Pending' };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 /**
@@ -377,6 +500,8 @@ function uploadProfileImage(params) {
   if (PROFILE_IMAGE_MIME_TYPES.indexOf(mimeType) === -1) throw new Error('Profile images must be JPG, PNG, or WEBP.');
   const bytes = Utilities.base64Decode(params.fileBase64);
   if (bytes.length > PROFILE_IMAGE_MAX_SIZE_BYTES) throw new Error('Profile image exceeds the 1MB limit.');
+
+  enforceUploadQuota(params.draftKey);
 
   const ext = mimeType === 'image/png' ? '.png' : (mimeType === 'image/webp' ? '.webp' : '.jpg');
   const safeName = 'PROFILE_' + Date.now() + '_' + Math.floor(Math.random() * 100000) + ext;
@@ -392,26 +517,29 @@ function uploadProfileImage(params) {
 
 function resolvePublicProfileImage(fileId) {
   if (!fileId) return { fileId: '', url: '' };
-  const file = DriveApp.getFileById(fileId);
-  const parents = file.getParents();
-  const publicFolderId = getPublicProfileFolder().getId();
-  let belongsToPublicFolder = false;
-  while (parents.hasNext()) {
-    if (parents.next().getId() === publicFolderId) {
-      belongsToPublicFolder = true;
-      break;
+  try {
+    const file = DriveApp.getFileById(fileId);
+    const parents = file.getParents();
+    const publicFolderId = getPublicProfileFolder().getId();
+    let belongsToPublicFolder = false;
+    while (parents.hasNext()) {
+      if (parents.next().getId() === publicFolderId) {
+        belongsToPublicFolder = true;
+        break;
+      }
     }
+    if (!belongsToPublicFolder) return { fileId: '', url: '' };
+    return {
+      fileId: file.getId(),
+      url: 'https://drive.google.com/uc?export=view&id=' + encodeURIComponent(file.getId())
+    };
+  } catch (e) {
+    return { fileId: '', url: '' };
   }
-  if (!belongsToPublicFolder) throw new Error('Invalid profile image reference.');
-  return {
-    fileId: file.getId(),
-    url: 'https://drive.google.com/uc?export=view&id=' + encodeURIComponent(file.getId())
-  };
 }
 
 function getPrivateVerificationFile(fileId) {
-  if (!fileId) throw new Error('fileId is required.');
-  const file = DriveApp.getFileById(fileId);
+  const file = assertVerificationFile(fileId);
   const blob = file.getBlob();
   return {
     fileId: file.getId(),
@@ -437,7 +565,7 @@ function getPrivateVerificationBatch(params) {
   fileIds.forEach(function (fileId) {
     if (!fileId) return;
     try {
-      const file = DriveApp.getFileById(fileId);
+      const file = assertVerificationFile(fileId);
       const blob = file.getBlob();
       results[fileId] = {
         fileId: file.getId(),
@@ -484,9 +612,20 @@ function createRegistration(params) {
     try { attachedDocIds = JSON.parse(params.docIds || '[]'); } catch (e) { attachedDocIds = []; }
 
     const playerMap = {};
+    let maxPlayerNum = getMaxIdNumber(playersSheet, 'PLAYER');
+
     players.forEach(function (p) {
-      const pid = nextId(playersSheet, 'PLAYER');
-      playerMap[p.slot || p.ign] = pid;
+      maxPlayerNum++;
+      const pid = 'PLAYER-' + String(maxPlayerNum).padStart(4, '0');
+      const rosterType = p.rosterType || 'Starter';
+      const slot = p.slot || 1;
+      
+      // Index by roster-type + slot, and by IGN. A raw-slot index is deliberately
+      // NOT kept: substitute slots restart at 1, so it would let Substitute 1
+      // overwrite Starter 1 and reattach that starter's ID document to the sub.
+      playerMap[rosterSlotKey(rosterType, slot)] = pid;
+      if (p.ign) playerMap[String(p.ign).trim()] = pid;
+
       const profile = resolvePublicProfileImage(p.profileImageFileId || '');
       appendRowObject(playersSheet, PLAYERS_HEADERS, {
         PlayerID: pid,
@@ -497,7 +636,7 @@ function createRegistration(params) {
         ServerId: p.serverId || '',
         StudentId: p.studentId || '',
         Role: p.role || '',
-        RosterType: p.rosterType || 'Starter',
+        RosterType: rosterType,
         VerificationStatus: 'Pending',
         SubmittedAt: now,
         ProfileImageFileId: profile.fileId || '',
@@ -519,10 +658,18 @@ function createRegistration(params) {
         });
         if (match) {
           docsSheet.getRange(i + 1, teamIdIndex + 1).setValue(teamId);
-          if (match.slot && playerMap[match.slot]) {
-            docsSheet.getRange(i + 1, playerIdIndex + 1).setValue(playerMap[match.slot]);
+          // Only attach when the roster position is unambiguous. Documents saved
+          // before rosterType was recorded carry no type, and guessing "Starter"
+          // for those would silently file a substitute's ID under a starter.
+          const slotKey = match.rosterType || match.type
+            ? rosterSlotKey(match.rosterType || match.type, match.slot)
+            : '';
+          if (slotKey && playerMap[slotKey]) {
+            docsSheet.getRange(i + 1, playerIdIndex + 1).setValue(playerMap[slotKey]);
           } else if (match.playerId) {
             docsSheet.getRange(i + 1, playerIdIndex + 1).setValue(match.playerId);
+          } else if (match.ign && playerMap[String(match.ign).trim()]) {
+            docsSheet.getRange(i + 1, playerIdIndex + 1).setValue(playerMap[String(match.ign).trim()]);
           }
         }
       }
@@ -561,9 +708,14 @@ function listRegistrations() {
 function listPublicTeams() {
   const teams = sheetObjects(getSheet(TEAMS_SHEET_NAME, TEAMS_HEADERS));
   const players = sheetObjects(getSheet(PLAYERS_SHEET_NAME, PLAYERS_HEADERS));
-  return teams.map(normalizeTeamRow).filter(function (team) { return String(team.Status).toLowerCase() === 'approved'; }).map(function (team) {
+  const publishable = teams.map(normalizeTeamRow).filter(function (team) {
+    const s = String(team.Status || '').toLowerCase();
+    return s === 'approved' || s === 'rejected';
+  });
+  return publishable.map(function (team) {
     const course = String(team.Course || '');
     const courseParts = course.split(String.fromCharCode(0x2014));
+    const isApproved = String(team.Status || '').toLowerCase() === 'approved';
     const roster = players.filter(function (player) {
       return String(player.TeamID) === String(team.TeamID);
     }).map(function (player, index) {
@@ -574,7 +726,10 @@ function listPublicTeams() {
         realName: player.RealName || '',
         ign: player.IGN || '',
         role: player.Role || '',
-        profileImageUrl: String(player.ProfileImageVisible).toLowerCase() === 'yes' ? (player.ProfileImageUrl || '') : ''
+        verificationStatus: player.VerificationStatus || 'Pending',
+        // Player photos are personal data and are never returned on the public
+        // endpoint. Staff read them through the authenticated verification APIs.
+        profileImageUrl: ''
       };
     });
     return {
@@ -586,8 +741,9 @@ function listPublicTeams() {
       captainName: team.CaptainName || '',
       description: team.Description || '',
       logoUrl: team.LogoUrl || '',
-      teamPhotoUrl: team.TeamPhotoUrl || '',
+      teamPhotoUrl: '',   // uploaded team imagery is not published either
       approvalStatus: team.Status || 'Approved',
+      rejectionReason: isApproved ? '' : (team.RejectionReason || ''),
       roster: roster
     };
   });
@@ -618,7 +774,20 @@ function updateTeamStatus(params, user) {
   if (!found) throw new Error('Team not found.');
   sheet.getRange(found.rowIndex, found.headers.indexOf('Status') + 1).setValue(params.status);
   sheet.getRange(found.rowIndex, found.headers.indexOf('UpdatedAt') + 1).setValue(new Date());
-  logAudit(user.email, 'UPDATE_TEAM_STATUS', params.teamId, 'Status set to ' + params.status);
+
+  const rejectionReason = String(params.rejectionReason || params.auditNote || '').trim();
+  if (rejectionReason) {
+    const rrIdx = found.headers.indexOf('RejectionReason');
+    if (rrIdx >= 0) {
+      sheet.getRange(found.rowIndex, rrIdx + 1).setValue(rejectionReason);
+    } else {
+      const lastCol = sheet.getLastColumn() + 1;
+      sheet.getRange(1, lastCol).setValue('RejectionReason');
+      sheet.getRange(found.rowIndex, lastCol).setValue(rejectionReason);
+    }
+  }
+  const auditDetails = 'Status set to ' + params.status + (rejectionReason ? ' | Reason: ' + rejectionReason : '');
+  logAudit(user.email, 'UPDATE_TEAM_STATUS', params.teamId, auditDetails);
   return { teamId: params.teamId, status: params.status };
 }
 
@@ -668,13 +837,62 @@ function publishMatch(params, user) {
   const validStatuses = ['Scheduled', 'LIVE', 'Completed', 'Cancelled'];
   const status = validStatuses.indexOf(String(params.status || 'Scheduled')) >= 0 ? String(params.status || 'Scheduled') : 'Scheduled';
   const streamUrl = String(params.streamUrl || '').trim();
-  if (streamUrl && !/twitch\.tv\//i.test(streamUrl)) throw new Error('Only Twitch stream links can be published.');
+  if (streamUrl && !/(twitch\.tv\/|youtube\.com\/|youtu\.be\/|tiktok\.com\/)/i.test(streamUrl)) {
+    throw new Error('Only Twitch, YouTube or TikTok LIVE stream links can be published.');
+  }
+  
   const sheet = getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS);
   const existing = findRow(sheet, 'MatchID', params.matchId);
-  const values = [params.matchId, params.court || 'Court 1', params.division || '', params.stage || '', params.team1Id || '', params.team1Name || '', Number(params.score1 || 0), params.team2Id || '', params.team2Name || '', Number(params.score2 || 0), params.winnerId || '', params.winnerName || '', status, streamUrl, user.email, new Date(), params.scheduledAt || '', params.streamPublished === 'true' || params.streamPublished === 'yes' ? 'Yes' : (streamUrl && status === 'LIVE' ? 'Yes' : 'No')];
-  if (existing) sheet.getRange(existing.rowIndex, 1, 1, MATCHES_HEADERS.length).setValues([values]);
-  else sheet.appendRow(values);
-  logAudit(user.email, 'PUBLISH_MATCH', params.matchId, 'Status: ' + status + (streamUrl ? ' | Twitch stream published' : ''));
+  const isStreamPublished = params.streamPublished === 'true' || params.streamPublished === 'yes' ? 'Yes' : (streamUrl && status === 'LIVE' ? 'Yes' : 'No');
+
+  if (existing) {
+    const headers = existing.headers;
+    const rIdx = existing.rowIndex;
+    const setCol = function(name, val) {
+      const idx = headers.indexOf(name);
+      if (idx !== -1) sheet.getRange(rIdx, idx + 1).setValue(val);
+    };
+    if (params.court) setCol('Court', params.court);
+    if (params.division) setCol('Division', params.division);
+    if (params.stage) setCol('Stage', params.stage);
+    if (params.team1Id !== undefined) setCol('Team1ID', params.team1Id);
+    if (params.team1Name !== undefined) setCol('Team1Name', params.team1Name);
+    if (params.score1 !== undefined) setCol('Team1Score', Number(params.score1 || 0));
+    if (params.team2Id !== undefined) setCol('Team2ID', params.team2Id);
+    if (params.team2Name !== undefined) setCol('Team2Name', params.team2Name);
+    if (params.score2 !== undefined) setCol('Team2Score', Number(params.score2 || 0));
+    if (params.winnerId !== undefined) setCol('WinnerID', params.winnerId);
+    if (params.winnerName !== undefined) setCol('WinnerName', params.winnerName);
+    setCol('Status', status);
+    setCol('StreamUrl', streamUrl);
+    setCol('OfficiatedBy', user.email);
+    setCol('SubmittedAt', new Date());
+    if (params.scheduledAt) setCol('ScheduledAt', params.scheduledAt);
+    setCol('StreamPublished', isStreamPublished);
+  } else {
+    appendRowObject(sheet, MATCHES_HEADERS, {
+      MatchID: params.matchId,
+      Court: params.court || 'Court 1',
+      Division: params.division || '',
+      Stage: params.stage || '',
+      Team1ID: params.team1Id || '',
+      Team1Name: params.team1Name || '',
+      Team1Score: Number(params.score1 || 0),
+      Team2ID: params.team2Id || '',
+      Team2Name: params.team2Name || '',
+      Team2Score: Number(params.score2 || 0),
+      WinnerID: params.winnerId || '',
+      WinnerName: params.winnerName || '',
+      Status: status,
+      StreamUrl: streamUrl,
+      OfficiatedBy: user.email,
+      SubmittedAt: new Date(),
+      ScheduledAt: params.scheduledAt || '',
+      StreamPublished: isStreamPublished
+    });
+  }
+
+  logAudit(user.email, 'PUBLISH_MATCH', params.matchId, 'Status: ' + status + (streamUrl ? ' | Stream published: ' + streamUrl : ''));
   return { matchId: params.matchId, status: status, streamUrl: streamUrl };
 }
 
@@ -690,7 +908,9 @@ function deleteMatch(params, user) {
 }
 
 function listStandings() {
-  const teams = listPublicTeams();
+  const teams = listPublicTeams().filter(function (team) {
+    return String(team.approvalStatus || team.Status || '').toLowerCase() === 'approved';
+  });
   const matches = sheetObjects(getSheet(MATCHES_SHEET_NAME, MATCHES_HEADERS));
   const table = {};
   teams.forEach(function (team) {
@@ -720,62 +940,82 @@ function recordMatchResult(params, user) {
   
   const existing = findRow(sheet, 'MatchID', params.matchId);
   if (existing) {
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('Team1Score') + 1).setValue(params.score1 || 0);
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('Team2Score') + 1).setValue(params.score2 || 0);
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('WinnerID') + 1).setValue(params.winnerId);
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('WinnerName') + 1).setValue(params.winnerName || '');
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('Status') + 1).setValue(params.status || 'Completed');
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('StreamUrl') + 1).setValue(params.streamUrl || '');
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('OfficiatedBy') + 1).setValue(user.email);
-    sheet.getRange(existing.rowIndex, existing.headers.indexOf('SubmittedAt') + 1).setValue(now);
+    const headers = existing.headers;
+    const rIdx = existing.rowIndex;
+    const setCol = function(name, val) {
+      const idx = headers.indexOf(name);
+      if (idx !== -1) sheet.getRange(rIdx, idx + 1).setValue(val);
+    };
+    if (params.score1 !== undefined) setCol('Team1Score', params.score1);
+    if (params.score2 !== undefined) setCol('Team2Score', params.score2);
+    if (params.winnerId) setCol('WinnerID', params.winnerId);
+    if (params.winnerName) setCol('WinnerName', params.winnerName);
+    if (params.team1Id) setCol('Team1ID', params.team1Id);
+    if (params.team1Name) setCol('Team1Name', params.team1Name);
+    if (params.team2Id) setCol('Team2ID', params.team2Id);
+    if (params.team2Name) setCol('Team2Name', params.team2Name);
+    if (params.court) setCol('Court', params.court);
+    if (params.division) setCol('Division', params.division);
+    if (params.stage) setCol('Stage', params.stage);
+    setCol('Status', params.status || 'Completed');
+    if (params.streamUrl !== undefined) setCol('StreamUrl', params.streamUrl);
+    setCol('OfficiatedBy', user.email);
+    setCol('SubmittedAt', now);
   } else {
-    sheet.appendRow([
-      params.matchId,
-      params.court || 'Court 1',
-      params.division || "Men's",
-      params.stage || 'Round 1',
-      params.team1Id || '',
-      params.team1Name || '',
-      params.score1 || 0,
-      params.team2Id || '',
-      params.team2Name || '',
-      params.score2 || 0,
-      params.winnerId,
-      params.winnerName || '',
-      params.status || 'Completed',
-      params.streamUrl || '',
-      user.email,
-      now
-    ]);
+    appendRowObject(sheet, MATCHES_HEADERS, {
+      MatchID: params.matchId,
+      Court: params.court || 'Court 1',
+      Division: params.division || "Men's",
+      Stage: params.stage || 'Round 1',
+      Team1ID: params.team1Id || '',
+      Team1Name: params.team1Name || '',
+      Team1Score: params.score1 || 0,
+      Team2ID: params.team2Id || '',
+      Team2Name: params.team2Name || '',
+      Team2Score: params.score2 || 0,
+      WinnerID: params.winnerId,
+      WinnerName: params.winnerName || '',
+      Status: params.status || 'Completed',
+      StreamUrl: params.streamUrl || '',
+      OfficiatedBy: user.email,
+      SubmittedAt: now
+    });
   }
 
   logAudit(user.email, 'RECORD_MATCH_RESULT', params.matchId, 'Winner: ' + params.winnerName + ' (' + params.score1 + '-' + params.score2 + ')');
   return { matchId: params.matchId, winnerId: params.winnerId, status: params.status || 'Completed' };
 }
 
-function fileDispute(params) {
+function fileDispute(params, user) {
   if (!params.reason || !params.category) throw new Error('reason and category are required.');
-  const sheet = getSheet(DISPUTES_SHEET_NAME, DISPUTES_HEADERS);
-  const disputeId = nextId(sheet, 'DISPUTE');
-  const now = new Date();
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    const sheet = getSheet(DISPUTES_SHEET_NAME, DISPUTES_HEADERS);
+    const disputeId = nextId(sheet, 'DISPUTE');
+    const now = new Date();
+    const filedBy = (user && user.email) || params.filedBy || 'Staff';
 
-  sheet.appendRow([
-    disputeId,
-    params.matchId || '',
-    params.teamId || '',
-    params.filedBy || 'Anonymous',
-    params.category,
-    params.reason,
-    params.evidenceUrl || '',
-    'Open',
-    '',
-    '',
-    now,
-    ''
-  ]);
+    sheet.appendRow([
+      disputeId,
+      params.matchId || '',
+      params.teamId || '',
+      filedBy,
+      params.category,
+      params.reason,
+      params.evidenceUrl || '',
+      'Open',
+      '',
+      '',
+      now,
+      ''
+    ]);
 
-  logAudit(params.filedBy || 'Public', 'FILE_DISPUTE', disputeId, 'Category: ' + params.category + ' | Reason: ' + params.reason);
-  return { disputeId: disputeId, status: 'Open' };
+    logAudit(filedBy, 'FILE_DISPUTE', disputeId, 'Category: ' + params.category + ' | Reason: ' + params.reason);
+    return { disputeId: disputeId, status: 'Open' };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function listDisputes(statusFilter) {
@@ -802,13 +1042,38 @@ function resolveDispute(params, user) {
   return { disputeId: params.disputeId, status: params.status, resolution: params.resolution };
 }
 
-function getBracketData(division) {
+function divisionMatches(target, value) {
+  var d = String(value || '').toLowerCase();
+  if (d === target) return true;
+  if (target.indexOf('shs') !== -1 || target.indexOf('senior high') !== -1) {
+    return d.indexOf('shs') !== -1 || d.indexOf('senior high') !== -1;
+  }
+  if (target.indexOf('women') !== -1) return d.indexOf('women') !== -1;
+  if (target.indexOf('faculty') !== -1 || target.indexOf('exhibition') !== -1) {
+    return d.indexOf('faculty') !== -1 || d.indexOf('exhibition') !== -1;
+  }
+  if (target.indexOf('men') !== -1) return d.indexOf('men') !== -1 && d.indexOf('women') === -1;
+  return false;
+}
+
+/**
+ * Rows for one bracket scope.
+ *  department omitted  -> every bracket in the division (all departments + finals)
+ *  department given    -> just that department's bracket ('' selects the
+ *                         division-wide bracket used by Faculty / SHS / Grand Finals)
+ */
+function getBracketData(division, department) {
   const sheet = getSheet(BRACKETS_SHEET_NAME, BRACKET_HEADERS);
   const all = sheetObjects(sheet);
-  if (division) {
-    return all.filter(function (b) { return String(b.Division).toLowerCase() === String(division).toLowerCase(); });
-  }
-  return all;
+  const scoped = division
+    ? all.filter(function (b) { return divisionMatches(String(division).toLowerCase(), b.Division); })
+    : all;
+
+  if (department === undefined || department === null) return scoped;
+  const dept = String(department).trim().toUpperCase();
+  return scoped.filter(function (b) {
+    return String(b.Department || '').trim().toUpperCase() === dept;
+  });
 }
 
 function saveBracketData(params, user) {
@@ -817,37 +1082,128 @@ function saveBracketData(params, user) {
   let matches = [];
   try { matches = JSON.parse(params.matches || '[]'); } catch (e) { throw new Error('matches must be valid JSON.'); }
 
+  const division = String(params.division);
+  const department = String(params.department || '').trim().toUpperCase();
+
+  const values = sheet.getDataRange().getValues();
+  const headers = values.length > 0 ? values[0].map(String) : BRACKET_HEADERS;
+  const col = function (name) {
+    const i = headers.indexOf(name);
+    if (i === -1) throw new Error('BRACKETS sheet is missing the "' + name + '" column.');
+    return i;
+  };
+  const matchKeyIdx = col('MatchKey');
+  const divIdx = col('Division');
+  const deptIdx = col('Department');
   const now = new Date();
+
+  // Rows belonging to exactly this bracket scope (division + department).
+  const scopeRows = {};        // matchKey -> sheet row number
+  for (let i = 1; i < values.length; i++) {
+    const rowDiv = String(values[i][divIdx] || '').toLowerCase();
+    const rowDept = String(values[i][deptIdx] || '').trim().toUpperCase();
+    if (rowDiv !== division.toLowerCase() || rowDept !== department) continue;
+    scopeRows[String(values[i][matchKeyIdx] || '')] = i + 1;
+  }
+
+  const incoming = {};
+  matches.forEach(function (m) { incoming[String(m.matchKey)] = true; });
+
+  const setCell = function (rowIndex, name, value) {
+    sheet.getRange(rowIndex, col(name) + 1).setValue(value);
+  };
+
   matches.forEach(function (m) {
-    const found = findRow(sheet, 'MatchKey', m.matchKey);
-    if (found) {
-      sheet.getRange(found.rowIndex, found.headers.indexOf('Team1ID') + 1).setValue(m.team1Id || '');
-      sheet.getRange(found.rowIndex, found.headers.indexOf('Team1Name') + 1).setValue(m.team1Name || '');
-      sheet.getRange(found.rowIndex, found.headers.indexOf('Team2ID') + 1).setValue(m.team2Id || '');
-      sheet.getRange(found.rowIndex, found.headers.indexOf('Team2Name') + 1).setValue(m.team2Name || '');
-      sheet.getRange(found.rowIndex, found.headers.indexOf('Score1') + 1).setValue(m.score1 || 0);
-      sheet.getRange(found.rowIndex, found.headers.indexOf('Score2') + 1).setValue(m.score2 || 0);
-      sheet.getRange(found.rowIndex, found.headers.indexOf('WinnerID') + 1).setValue(m.winnerId || '');
-      sheet.getRange(found.rowIndex, found.headers.indexOf('UpdatedAt') + 1).setValue(now);
+    const rowIndex = scopeRows[String(m.matchKey)];
+    if (rowIndex) {
+      setCell(rowIndex, 'Stage', m.stage || 'Round 1');
+      setCell(rowIndex, 'Round', m.round || 1);
+      setCell(rowIndex, 'Title', m.title || '');
+      setCell(rowIndex, 'Format', m.format || '');
+      setCell(rowIndex, 'Team1ID', m.team1Id || '');
+      setCell(rowIndex, 'Team1Name', m.team1Name || '');
+      setCell(rowIndex, 'Team2ID', m.team2Id || '');
+      setCell(rowIndex, 'Team2Name', m.team2Name || '');
+      setCell(rowIndex, 'Score1', m.score1 || 0);
+      setCell(rowIndex, 'Score2', m.score2 || 0);
+      setCell(rowIndex, 'WinnerID', m.winnerId || '');
+       setCell(rowIndex, 'Status', m.status || 'Scheduled');
+       setCell(rowIndex, 'ScheduledAt', m.scheduledAt || '');
+       setCell(rowIndex, 'NextMatchKey', m.nextMatchKey || '');
+      setCell(rowIndex, 'NextSlot', m.nextSlot || '');
+      setCell(rowIndex, 'UpdatedAt', now);
     } else {
-      sheet.appendRow([
-        params.division,
-        m.stage || 'Round 1',
-        m.matchKey,
-        m.team1Id || '',
-        m.team1Name || '',
-        m.team2Id || '',
-        m.team2Name || '',
-        m.score1 || 0,
-        m.score2 || 0,
-        m.winnerId || '',
-        now
-      ]);
+      appendRowObject(sheet, BRACKET_HEADERS, {
+        Division: division,
+        Department: department,
+        Stage: m.stage || 'Round 1',
+        Round: m.round || 1,
+        MatchKey: m.matchKey,
+        Title: m.title || '',
+        Format: m.format || '',
+        Team1ID: m.team1Id || '',
+        Team1Name: m.team1Name || '',
+        Team2ID: m.team2Id || '',
+        Team2Name: m.team2Name || '',
+        Score1: m.score1 || 0,
+        Score2: m.score2 || 0,
+         WinnerID: m.winnerId || '',
+         Status: m.status || 'Scheduled',
+         ScheduledAt: m.scheduledAt || '',
+         NextMatchKey: m.nextMatchKey || '',
+        NextSlot: m.nextSlot || '',
+        UpdatedAt: now
+      });
     }
   });
 
-  logAudit(user.email, 'SAVE_BRACKET', params.division, 'Updated ' + matches.length + ' bracket matches');
-  return { division: params.division, matchCount: matches.length };
+  // Republishing a smaller bracket (16 teams down to 8) must not leave the
+  // rounds that no longer exist behind. Delete bottom-up so indices stay valid.
+  const stale = [];
+  Object.keys(scopeRows).forEach(function (key) {
+    if (!incoming[key]) stale.push(scopeRows[key]);
+  });
+  stale.sort(function (a, b) { return b - a; });
+  stale.forEach(function (rowIndex) { sheet.deleteRow(rowIndex); });
+
+  const scopeLabel = department ? (division + ' / ' + department) : division;
+  logAudit(user.email, 'SAVE_BRACKET', scopeLabel,
+    'Published ' + matches.length + ' matches' + (stale.length ? ', removed ' + stale.length + ' stale' : ''));
+  return { division: division, department: department, matchCount: matches.length, removed: stale.length };
+}
+
+function deleteBracketData(params, user) {
+  if (!params.division) throw new Error('division is required.');
+  const sheet = getSheet(BRACKETS_SHEET_NAME, BRACKET_HEADERS);
+  const division = String(params.division);
+  const department = String(params.department || '').trim().toUpperCase();
+
+  const values = sheet.getDataRange().getValues();
+  const headers = values.length > 0 ? values[0].map(String) : BRACKET_HEADERS;
+  const col = function (name) {
+    const i = headers.indexOf(name);
+    if (i === -1) throw new Error('BRACKETS sheet is missing the "' + name + '" column.');
+    return i;
+  };
+  const divIdx = col('Division');
+  const deptIdx = col('Department');
+
+  const rowsToDelete = [];
+  for (let i = 1; i < values.length; i++) {
+    const rowDiv = String(values[i][divIdx] || '').toLowerCase();
+    const rowDept = String(values[i][deptIdx] || '').trim().toUpperCase();
+    if (rowDiv === division.toLowerCase() && rowDept === department) {
+      rowsToDelete.push(i + 1);
+    }
+  }
+
+  // Delete bottom-up so row indices stay valid
+  rowsToDelete.sort(function (a, b) { return b - a; });
+  rowsToDelete.forEach(function (rowIndex) { sheet.deleteRow(rowIndex); });
+
+  const scopeLabel = department ? (division + ' / ' + department) : division;
+  logAudit(user.email, 'DELETE_BRACKET', scopeLabel, 'Deleted ' + rowsToDelete.length + ' matches');
+  return { division: division, department: department, deletedCount: rowsToDelete.length };
 }
 
 function getAuditLogs() {

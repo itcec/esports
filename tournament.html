@@ -15,7 +15,7 @@
       }
 
       body {
-        overscroll-behavior: none;
+        overscroll-behavior-y: auto;
       }
 
       main>:first-child {
@@ -27,10 +27,135 @@
       }
     }
 
+    /* Custom Cyberpunk Scrollbar (Visible on browsers, hidden in OBS mode) */
+    html, body {
+      scrollbar-width: thin;
+      scrollbar-color: #1e3a5f #050B14;
+    }
     ::-webkit-scrollbar {
-      display: none;
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050B14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e3a5f;
+      border-radius: 5px;
+      border: 2px solid #050B14;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #1264ff;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none !important;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+
+    /* OBS Studio Broadcast Overlay Mode */
+    .obs-mode header,
+    .obs-mode footer,
+    .obs-mode #cms-announcement-banner,
+    .obs-mode #nav-toggle,
+    .obs-mode #mobile-nav,
+    .obs-mode #obs-overlay-launcher-btn,
+    .obs-mode .obs-hide {
+      display: none !important;
+    }
+    .obs-mode main {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
+    .obs-mode html, .obs-mode body {
+      overflow-y: auto !important;
+      height: auto !important;
+    }
+    .obs-mode.obs-transparent,
+    .obs-mode.obs-transparent body {
+      background: transparent !important;
+      background-color: transparent !important;
+      scrollbar-width: none !important;
+    }
+    .obs-mode.obs-transparent ::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    .obs-mode.obs-transparent .site-bg,
+    .obs-mode.obs-transparent .site-overlay {
+      display: none !important;
+      opacity: 0 !important;
+    }
+    /* View: Scoreboard Only */
+    .obs-view-scoreboard #live-switcher-bar,
+    .obs-view-scoreboard #live-match-chips,
+    .obs-view-scoreboard #live-standby,
+    .obs-view-scoreboard #live-stream-player-wrapper,
+    .obs-view-scoreboard #roster-section-wrap,
+    .obs-view-scoreboard #schedule-section,
+    .obs-view-scoreboard section:not(:first-child) {
+      display: none !important;
+    }
+    .obs-view-scoreboard #live-arena-section {
+      padding: 8px 12px !important;
+      background: transparent !important;
+      border: none !important;
+    }
+    .obs-view-scoreboard #match-versus-card {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    /* View: Spotlight Only */
+    .obs-view-spotlight #live-switcher-bar,
+    .obs-view-spotlight #live-match-chips,
+    .obs-view-spotlight #live-standby,
+    .obs-view-spotlight #match-versus-card,
+    .obs-view-spotlight #live-stream-player-wrapper,
+    .obs-view-spotlight #schedule-section,
+    .obs-view-spotlight section:not(:first-child) {
+      display: none !important;
+    }
+    .obs-view-spotlight #live-arena-section {
+      padding: 12px !important;
+      background: transparent !important;
+      border: none !important;
+    }
+    /* View: Feed Only */
+    .obs-view-feed #live-switcher-bar,
+    .obs-view-feed #live-match-chips,
+    .obs-view-feed #live-standby,
+    .obs-view-feed #match-versus-card,
+    .obs-view-feed #roster-section-wrap,
+    .obs-view-feed #schedule-section,
+    .obs-view-feed section:not(:first-child) {
+      display: none !important;
     }
   </style>
+  <script>
+    (function() {
+      var p = new URLSearchParams(window.location.search);
+      var isOverlayRequested = p.has('obs') || p.has('overlay') || p.has('stream') || p.has('view');
+      var isObsHost = typeof window.obsstudio !== 'undefined' ||
+        (navigator.userAgent && /OBS\/|obs-browser/i.test(navigator.userAgent));
+      if (isObsHost) document.documentElement.classList.add('obs-host');
+      if (isOverlayRequested) {
+        document.documentElement.classList.add('obs-mode');
+        var isTrans = p.has('transparent') || p.has('alpha') || p.get('bg') === 'transparent';
+        if (isTrans) document.documentElement.classList.add('obs-transparent');
+        var v = p.get('view');
+        if (v) document.documentElement.classList.add('obs-view-' + v);
+        document.addEventListener('DOMContentLoaded', function() {
+          if (isObsHost) document.body.classList.add('obs-host');
+          document.body.classList.add('obs-mode');
+          if (isTrans) document.body.classList.add('obs-transparent');
+          if (v) document.body.classList.add('obs-view-' + v);
+        });
+      }
+    })();
+  </script>
   <link
     href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&amp;family=Share+Tech+Mono&amp;display=swap"
     rel="stylesheet" />
@@ -186,7 +311,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
     rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script><script src="assets/js/site-config.js"></script>
   <script
     id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-background": "#d7e3f7", "on-secondary": "#003064", "on-primary": "#002a78", "surface-container-low": "#101c2a", "tertiary": "#c0c7d4", "primary-container": "#1264ff", "on-error": "#690005", "secondary-container": "#3e90ff", "primary": "#b4c5ff", "background": "#081422", "outline-variant": "#424656", "surface-dim": "#081422", "inverse-primary": "#0052dc", "on-secondary-fixed": "#001b3e", "on-primary-fixed": "#00174b", "on-primary-fixed-variant": "#003ea8", "on-tertiary-container": "#f4f6ff", "primary-fixed": "#dbe1ff", "tertiary-fixed": "#dce3f0", "on-surface-variant": "#c2c6d8", "surface-container-highest": "#2a3645", "outline": "#8c90a2", "surface-container-high": "#1f2b39", "surface-container-lowest": "#030f1c", "inverse-on-surface": "#263140", "on-surface": "#d7e3f7", "error": "#ffb4ab", "on-error-container": "#ffdad6", "on-tertiary": "#2a313b", "on-secondary-container": "#002957", "tertiary-container": "#6a717d", "tertiary-fixed-dim": "#c0c7d4", "secondary": "#aac7ff", "secondary-fixed": "#d6e3ff", "on-tertiary-fixed-variant": "#404752", "surface-container": "#15202f", "on-secondary-fixed-variant": "#00468d", "surface-variant": "#2a3645", "surface": "#081422", "primary-fixed-dim": "#b4c5ff", "inverse-surface": "#d7e3f7", "on-tertiary-fixed": "#151c26", "surface-bright": "#2e3a49", "surface-tint": "#b4c5ff", "error-container": "#93000a", "secondary-fixed-dim": "#aac7ff", "on-primary-container": "#f6f6ff" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "xl": "40px", "gutter": "16px", "base": "4px", "sm": "12px", "xs": "8px", "lg": "24px", "md": "16px", "container-max": "1280px" }, "fontFamily": { "stats-impact": ["Hanken Grotesk"], "headline-lg-mobile": ["Hanken Grotesk"], "headline-xl": ["Hanken Grotesk"], "body-lg": ["Inter"], "headline-md": ["Hanken Grotesk"], "body-md": ["Inter"], "label-caps": ["Inter"], "headline-lg": ["Hanken Grotesk"] }, "fontSize": { "stats-impact": ["24px", { "lineHeight": "24px", "letterSpacing": "0.05em", "fontWeight": "900" }], "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "800" }], "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "500" }], "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "700" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-caps": ["12px", { "lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "700" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "800" }] } } } }</script>
 </head>
@@ -251,12 +376,12 @@
 
   <main class="w-full pt-16 relative z-10">
     <!-- LIVE BROADCAST ARENA (TOP HERO) -->
-    <section
+    <section id="live-arena-section"
       class="w-full bg-gradient-to-b from-[#050e1c] via-surface-container-lowest to-[#081422] border-b border-white/10 py-6 md:py-10">
       <div class="max-w-container-max mx-auto px-lg flex flex-col gap-md">
 
         <!-- Multi-Match Broadcaster & Switcher Bar (Up to 12 Concurrent Games) -->
-        <div
+        <div id="live-switcher-bar"
           class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 p-3 rounded-2xl bg-surface-container-high/90 border border-primary/30 shadow-xl cyber-panel">
           <div class="flex items-center gap-2.5">
             <div
@@ -280,6 +405,12 @@
           <div class="flex items-center gap-2 shrink-0">
             <span class="text-[11px] font-label-caps text-on-surface-variant hidden md:inline"
               id="concurrent-count-badge">4 CONCURRENT GAMES</span>
+            <button id="obs-overlay-launcher-btn" type="button"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-secondary-container/20 border border-secondary/40 hover:bg-secondary-container/40 text-secondary text-xs font-label-caps font-bold transition-all shadow-sm cursor-pointer"
+              title="OBS Studio Browser Source Overlays & Stream Tools">
+              <span class="material-symbols-outlined text-[16px]">podcasts</span>
+              <span>OBS OVERLAYS</span>
+            </button>
             <button id="quick-edit-btn" type="button"
               class="hidden items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/20 border border-primary/40 hover:bg-primary/30 text-primary text-xs font-label-caps font-bold transition-colors">
               <span class="material-symbols-outlined text-[16px]">videocam</span>
@@ -433,12 +564,12 @@
         </div>
 
         <!-- LIVE STREAM EMBED PLAYER FRAME -->
-        <div class="flex flex-col gap-3">
+        <div id="live-stream-player-wrapper" class="flex flex-col gap-3">
           <div
             class="relative w-full rounded-2xl overflow-hidden bg-black border-2 border-primary/30 shadow-[0_0_35px_rgba(18,100,255,0.25)] aspect-video">
 
             <!-- Live Stream Frame Iframe (Dynamic YouTube / Discord / FB Live / Twitch Embed) -->
-            <iframe id="live-stream-frame" class="w-full h-full border-0 hidden" src=""
+            <iframe id="live-stream-frame" class="w-full h-full border-0 hidden" src="about:blank"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowfullscreen></iframe>
 
@@ -488,14 +619,14 @@
               <h3 class="font-headline-md text-base sm:text-lg text-on-surface uppercase cyber-title">Rosters &amp;
                 Player Spotlight</h3>
             </div>
-            <div
+            <div id="spotlight-view-tabs"
               class="flex items-center gap-1 bg-surface-container-lowest p-1 rounded-lg border border-white/10 text-xs">
               <button type="button" id="tab-spotlight-btn"
-                class="px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1">
+                class="px-3 py-2 min-h-[36px] rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">movie</span> Broadcast Spotlight
               </button>
               <button type="button" id="tab-lineup-btn"
-                class="px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1">
+                class="px-3 py-2 min-h-[36px] rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1">
                 <span class="material-symbols-outlined text-[14px]">table_rows</span> Full Lineups
               </button>
             </div>
@@ -514,15 +645,15 @@
               </div>
               <div class="flex items-center gap-1.5">
                 <button type="button" id="carousel-prev-btn"
-                  class="w-7 h-7 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
+                  class="w-9 h-9 shrink-0 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
                   title="Previous Player">
-                  <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                  <span class="material-symbols-outlined text-[20px]">chevron_left</span>
                 </button>
                 <span class="text-[11px] font-mono px-2" id="carousel-player-index">1 / 5</span>
                 <button type="button" id="carousel-next-btn"
-                  class="w-7 h-7 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
+                  class="w-9 h-9 shrink-0 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
                   title="Next Player">
-                  <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                  <span class="material-symbols-outlined text-[20px]">chevron_right</span>
                 </button>
               </div>
             </div>
@@ -721,17 +852,52 @@
           </button>
         </div>
 
+        <!-- Auth / Sync Status Alert -->
+        <div id="modal-auth-alert" class="px-lg py-2.5 bg-amber-500/15 border-b border-amber-500/30 flex items-center justify-between text-xs text-amber-300">
+          <span id="modal-auth-status-text">Staff login required to publish changes to Realtime Database.</span>
+          <a href="staff.html" id="modal-login-btn" class="underline font-bold hover:text-white">Sign In</a>
+        </div>
+
         <!-- Modal Body -->
         <form id="live-settings-form" class="p-lg overflow-y-auto flex-1 flex flex-col gap-md">
+
+          <!-- Select Court Lobby / Add New Court -->
+          <div class="p-md rounded-xl bg-surface-container-lowest border border-primary/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-inner">
+            <div class="flex-1">
+              <label for="setting-match-id-select" class="block text-[10px] font-label-caps uppercase text-primary font-bold mb-1">
+                Select Active Court Lobby
+              </label>
+              <select id="setting-match-id-select" class="w-full bg-[#050B14] text-on-surface px-3 py-2 rounded-lg border border-primary/40 focus:border-primary focus:outline-none text-xs font-bold shadow-inner cursor-pointer">
+                <!-- Populated dynamically with all concurrent courts -->
+              </select>
+            </div>
+            <button type="button" id="btn-create-new-match" class="px-3.5 py-2.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-all flex items-center justify-center gap-1.5 shrink-0 shadow">
+              <span class="material-symbols-outlined text-[16px]">add_circle</span>
+              <span>ADD NEW COURT</span>
+            </button>
+          </div>
+
+          <!-- Court Name & Status Banner Note -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+            <div class="flex flex-col gap-1">
+              <label for="setting-court-name" class="font-label-caps text-xs text-primary uppercase font-bold">Court / Arena Name</label>
+              <input id="setting-court-name" type="text" placeholder="e.g. Court 1 (Main Arena)"
+                class="w-full bg-surface-container-lowest text-sm text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:border-primary" />
+            </div>
+            <div class="flex flex-col gap-1">
+              <label for="setting-status-note" class="font-label-caps text-xs text-on-surface-variant uppercase">Status Banner Note</label>
+              <input id="setting-status-note" type="text" placeholder="e.g. LIVE ON AIR or UPCOMING"
+                class="w-full bg-surface-container-lowest text-sm text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:border-primary" />
+            </div>
+          </div>
 
           <!-- Stream URL Setting -->
           <div class="flex flex-col gap-1">
             <label for="setting-stream-url" class="font-label-caps text-xs text-primary uppercase font-bold">Live Stream
               Link / Embed URL</label>
-            <input id="setting-stream-url" type="text" placeholder="https://twitch.tv/yourchannel (Twitch links only)"
+            <input id="setting-stream-url" type="text" placeholder="https://twitch.tv/yourchannel, youtube.com/live/..., or tiktok.com/@handle/live"
               class="w-full bg-surface-container-lowest text-sm text-on-surface px-3 py-2 rounded-lg border border-white/10 focus:outline-none focus:border-primary" />
-            <span class="text-[11px] text-on-surface-variant">Leave blank to loop the official CEC Video Intro. YouTube
-              links are automatically converted to live embeds.</span>
+            <span class="text-[11px] text-on-surface-variant">Supports Twitch, YouTube Live, and TikTok LIVE streams. Leave blank to loop the official CEC Video Intro.</span>
           </div>
 
           <!-- Match Stage & Format -->
@@ -843,33 +1009,38 @@
             </div>
           </div>
 
-          <!-- Registration & Event Dates -->
+          <!-- Registration & Event Dates (read-only) -->
           <div class="p-md rounded-xl bg-surface-container-lowest/80 border border-white/10 flex flex-col gap-sm">
             <span class="font-label-caps text-xs text-on-surface-variant font-bold uppercase">Dates &amp; Registration
               Deadline</span>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
               <div class="flex flex-col gap-1">
-                <label for="setting-reg-deadline"
-                  class="text-[11px] font-label-caps text-on-surface-variant">Registration Deadline</label>
-                <input id="setting-reg-deadline" type="text" placeholder="September 1, 2026"
-                  class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10" />
+                <span class="text-[11px] font-label-caps text-on-surface-variant">Registration Deadline</span>
+                <span class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-dashed border-white/10 font-mono" data-cec="reg.deadline">September 1, 2026</span>
               </div>
               <div class="flex flex-col gap-1">
-                <label for="setting-finals-date" class="text-[11px] font-label-caps text-on-surface-variant">Grand
-                  Finals Date</label>
-                <input id="setting-finals-date" type="text" placeholder="October 2, 2026"
-                  class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-white/10" />
+                <span class="text-[11px] font-label-caps text-on-surface-variant">Grand Finals Date</span>
+                <span class="w-full bg-surface-container text-xs text-on-surface px-3 py-2 rounded border border-dashed border-white/10 font-mono" data-cec="finals.date">October 2, 2026</span>
               </div>
             </div>
+            <span class="text-[10px] text-on-surface-variant">These dates are site-wide content. Change them once in
+              <a href="admin.html" class="text-primary hover:underline">Admin &rsaquo; Site Content &rsaquo; Key Dates</a>
+              and every page updates.</span>
           </div>
 
         </form>
 
         <!-- Modal Footer -->
         <div class="p-md bg-surface-container-high/90 border-t border-white/10 flex justify-between items-center">
-          <button type="button" id="reset-live-defaults-btn"
-            class="text-xs font-label-caps text-on-surface-variant hover:text-error transition-colors">RESET TO
-            DEFAULTS</button>
+          <div class="flex items-center gap-2">
+            <button type="button" id="reset-live-defaults-btn"
+              class="text-xs font-label-caps text-on-surface-variant hover:text-error transition-colors">RESET TO
+              DEFAULTS</button>
+            <button type="button" id="delete-live-match-btn"
+              class="text-xs font-label-caps text-red-400 hover:text-red-300 hover:bg-red-500/20 px-2.5 py-1 rounded transition-colors flex items-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">delete</span> DELETE THIS COURT
+            </button>
+          </div>
           <div class="flex gap-2">
             <button type="button" id="cancel-live-settings-btn"
               class="px-3 py-1.5 rounded text-xs font-label-caps text-on-surface hover:bg-white/10">CANCEL</button>
@@ -882,8 +1053,136 @@
       </div>
     </div>
 
+    <!-- OBS STUDIO BROWSER SOURCE OVERLAYS MODAL -->
+    <div id="obs-modal"
+      class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+      <div
+        class="bg-surface-container/95 border border-white/15 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden cyber-panel">
+
+        <!-- Modal Header -->
+        <div class="p-lg bg-surface-container-high/90 border-b border-white/10 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-secondary-container/20 border border-secondary/40 text-secondary">
+              <span class="material-symbols-outlined text-[20px]">podcasts</span>
+            </span>
+            <div>
+              <h3 class="font-headline-md text-headline-md text-on-surface cyber-title text-base sm:text-lg">OBS Studio Broadcast Overlays</h3>
+              <p class="text-xs font-body-md text-on-surface-variant">Live streaming Browser Source URLs configured for 1080p stream production.</p>
+            </div>
+          </div>
+          <button type="button" id="close-obs-modal-btn"
+            class="text-on-surface-variant hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-lg overflow-y-auto flex-1 flex flex-col gap-md">
+          <div class="p-3.5 rounded-xl bg-surface-container-lowest/80 border border-primary/20 flex items-start gap-3">
+            <span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">info</span>
+            <div class="text-xs font-body-md text-on-surface-variant space-y-1">
+              <p><strong class="text-on-surface">OBS Setup Tip:</strong> In OBS Studio, add a new <strong class="text-primary">Browser Source</strong>, paste one of the URLs below, set resolution to <strong class="text-on-surface">1920 &times; 1080</strong> (or 1920 &times; 250 for scoreboard), and check <strong class="text-on-surface">"Shutdown source when not visible"</strong>.</p>
+              <p class="text-[11px] text-primary">All overlays automatically synchronize in real time via Firebase as officials update matches.</p>
+            </div>
+          </div>
+
+          <!-- Overlay Option 1: Full Arena View -->
+          <div class="p-4 rounded-xl bg-surface-container-low border border-white/10 hover:border-primary/40 transition-colors flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-on-surface flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-primary text-[18px]">desktop_windows</span>
+                Full Broadcast Arena (1080p Full-Screen)
+              </span>
+              <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded bg-primary/20 text-primary border border-primary/30">1920 &times; 1080</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Includes scoreboard, stream feed, roster spotlight, and match switcher with zero website headers or footers.</p>
+            <div class="flex items-center gap-2 mt-1">
+              <input type="text" readonly value="tournament.html?obs=1" data-obs-path="tournament.html?obs=1" class="obs-url-input flex-1 bg-[#050B14] text-primary px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono select-all" />
+              <button type="button" class="copy-obs-btn px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary text-xs font-label-caps font-bold transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+              </button>
+              <a href="tournament.html?obs=1" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-label-caps transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">open_in_new</span> Test
+              </a>
+            </div>
+          </div>
+
+          <!-- Overlay Option 2: Transparent Scoreboard Lower-Third -->
+          <div class="p-4 rounded-xl bg-surface-container-low border border-white/10 hover:border-secondary/40 transition-colors flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-on-surface flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-secondary text-[18px]">scoreboard</span>
+                Transparent Match Scoreboard (In-Game Overlay)
+              </span>
+              <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded bg-secondary/20 text-secondary border border-secondary/30">1920 &times; 250</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Transparent background showing only the active versus card, series score, and format badge. Perfect for overlaying directly on gameplay.</p>
+            <div class="flex items-center gap-2 mt-1">
+              <input type="text" readonly value="tournament.html?obs=1&view=scoreboard&transparent=1" data-obs-path="tournament.html?obs=1&view=scoreboard&transparent=1" class="obs-url-input flex-1 bg-[#050B14] text-secondary px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono select-all" />
+              <button type="button" class="copy-obs-btn px-3 py-1.5 rounded-lg bg-secondary hover:bg-secondary-fixed-dim text-on-secondary text-xs font-label-caps font-bold transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+              </button>
+              <a href="tournament.html?obs=1&view=scoreboard&transparent=1" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-label-caps transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">open_in_new</span> Test
+              </a>
+            </div>
+          </div>
+
+          <!-- Overlay Option 3: Transparent Roster Spotlight -->
+          <div class="p-4 rounded-xl bg-surface-container-low border border-white/10 hover:border-[#00e676]/40 transition-colors flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-on-surface flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[#00e676] text-[18px]">groups</span>
+                Roster Spotlight &amp; Player Intros
+              </span>
+              <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded bg-[#00e676]/20 text-[#00e676] border border-[#00e676]/30">1920 &times; 1080</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Player carousel and team lineups card with transparent background for pre-match talent breakdown.</p>
+            <div class="flex items-center gap-2 mt-1">
+              <input type="text" readonly value="tournament.html?obs=1&view=spotlight&transparent=1" data-obs-path="tournament.html?obs=1&view=spotlight&transparent=1" class="obs-url-input flex-1 bg-[#050B14] text-[#00e676] px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono select-all" />
+              <button type="button" class="copy-obs-btn px-3 py-1.5 rounded-lg bg-[#00e676] hover:brightness-110 text-[#00391b] text-xs font-label-caps font-bold transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+              </button>
+              <a href="tournament.html?obs=1&view=spotlight&transparent=1" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-label-caps transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">open_in_new</span> Test
+              </a>
+            </div>
+          </div>
+
+          <!-- Overlay Option 4: Full Tournament Bracket View -->
+          <div class="p-4 rounded-xl bg-surface-container-low border border-white/10 hover:border-[#ffb020]/40 transition-colors flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-sm text-on-surface flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-[#ffb020] text-[18px]">account_tree</span>
+                Clean Tournament Bracket Overlay
+              </span>
+              <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded bg-[#ffb020]/20 text-[#ffb020] border border-[#ffb020]/30">1920 &times; 1080</span>
+            </div>
+            <p class="text-xs text-on-surface-variant">Live brackets without navigation menus for intermission and broadcast desk presentation.</p>
+            <div class="flex items-center gap-2 mt-1">
+              <input type="text" readonly value="bracket.html?obs=1" data-obs-path="bracket.html?obs=1" class="obs-url-input flex-1 bg-[#050B14] text-[#ffb020] px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono select-all" />
+              <button type="button" class="copy-obs-btn px-3 py-1.5 rounded-lg bg-[#ffb020] hover:brightness-110 text-[#442b00] text-xs font-label-caps font-bold transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">content_copy</span> Copy
+              </button>
+              <a href="bracket.html?obs=1" target="_blank" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-on-surface text-xs font-label-caps transition-all shrink-0 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">open_in_new</span> Test
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="p-md bg-surface-container-high/90 border-t border-white/10 flex items-center justify-between">
+          <span class="text-[11px] text-on-surface-variant">Tip: Append <code class="font-mono text-primary">&amp;transparent=1</code> for alpha transparency.</span>
+          <button type="button" id="close-obs-modal-btn2" class="px-4 py-1.5 rounded bg-surface-container-highest text-on-surface text-xs font-label-caps hover:bg-white/10 transition-colors">
+            CLOSE
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- TOURNAMENT DETAILS & FULL SCHEDULE (ORIGINAL CONTENT) -->
-    <section class="w-full py-xl">
+    <section id="schedule-section" class="w-full py-xl">
       <div class="max-w-container-max mx-auto px-lg flex flex-col gap-xl">
 
         <!-- Section Header -->
@@ -893,15 +1192,17 @@
             <div
               class="inline-flex items-center gap-xs px-sm py-base rounded-full bg-surface-container-high w-fit border border-primary/20">
               <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <span class="font-label-caps text-label-caps text-on-surface" id="reg-status-badge">REGISTRATION CLOSES
-                SEPTEMBER 4, 2026</span>
+              <span class="font-label-caps text-label-caps text-on-surface" id="reg-status-badge" data-cec="reg.closesLine">REGISTRATION CLOSES
+                SEPTEMBER 1, 2026</span>
             </div>
             <h2 class="font-headline-xl text-headline-xl text-on-background tracking-tight cyber-title">
               TOURNAMENT SCHEDULE &amp; STRUCTURE
             </h2>
             <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-              How the CEC Esports Intramurals 2026 is structured, and when every division plays. All matches are online
-              and streamed from the Computer Laboratory Annex Building.
+              How the <span data-cec="event.name">CEC Esports Intramurals 2026</span> is structured, and when every
+              division plays. College and Faculty matches are online and streamed from the
+              <span data-cec="event.venue">Computer Laboratory Annex Building</span>; the SHS Showdown is played
+              in person at the <span data-cec="shs.venue">Auditorium Hall, CEC, Inc. Jakosalem Campus</span>.
             </p>
           </div>
           <div class="flex flex-wrap gap-xs">
@@ -1060,6 +1361,22 @@
                 </div>
               </div>
             </div>
+
+            <!-- SHS Showdown — separate one-day, in-person event -->
+            <div class="bg-surface-container border border-white/10 border-l-4 border-l-[#ff2fd8] rounded-xl flex flex-col scroll-mt-24 cyber-panel"
+              id="shs-schedule">
+              <div class="p-md border-b border-white/10 flex flex-wrap justify-between items-center gap-xs">
+                <div class="flex flex-col">
+                  <h3 class="font-headline-md text-headline-md text-on-surface">SHS SHOWDOWN — PROGRAM FLOW</h3>
+                  <span class="font-body-md text-body-md text-on-surface-variant"><span data-cec="shs.date">September 11, 2026</span> · <span data-cec="shs.venue">Auditorium Hall, CEC, Inc. Jakosalem Campus</span></span>
+                </div>
+                <span class="font-label-caps text-label-caps text-[#ff80ea]" data-cec="shs.time">8:00 AM – 2:00 PM</span>
+              </div>
+              <div class="divide-y divide-white/10" id="shs-program-rows" data-cec-program="shs.program"></div>
+              <div class="p-md border-t border-white/10">
+                <p class="font-body-md text-body-md text-on-surface-variant" data-cec="shs.programNote">Round format and timing may be adjusted by the organizers based on the final number of registered teams.</p>
+              </div>
+            </div>
           </div>
 
           <!-- Sidebar -->
@@ -1075,8 +1392,8 @@
                   </div>
                   <div class="flex flex-col -mt-1"><span
                       class="font-body-md text-body-md text-on-surface font-bold">Registration</span><span
-                      class="font-body-md text-body-md text-primary font-bold" id="sidebar-deadline-text">Closes
-                      September 4, 2026</span></div>
+                      class="font-body-md text-body-md text-primary font-bold" id="sidebar-deadline-text" data-cec-text="Closes {reg.deadline}">Closes
+                      September 1, 2026</span></div>
                 </div>
                 <div class="flex gap-md items-start py-sm opacity-70 relative">
                   <div
@@ -1151,20 +1468,19 @@
   <script>
       (function () {
         const escHtml = (value) => String(value == null ? '' : value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-        const profileImageUrl = (value) => {
-          const url = String(value || '').trim();
-          return /^https:\/\/drive\.google\.com\/uc\?export=view&id=[A-Za-z0-9_-]+$/.test(url) ? url : '';
-        };
+        // Shared by renderLiveArena and renderRosterSpotlight. Tolerate a missing
+        // node: never let one absent element blank the whole board.
+        const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
+        const setSrc = (id, value) => { const el = document.getElementById(id); if (el) el.src = value; };
+
         const playerInitials = (player) => {
           const name = String(player.real || player.realName || player.ign || '?').trim();
           return name.split(/\s+/).map((part) => part.charAt(0)).join('').slice(0, 2).toUpperCase() || '?';
         };
-        const playerAvatar = (player, accent) => {
-          const url = profileImageUrl(player.profileImageUrl);
-          return url
-            ? `<img src="${escHtml(url)}" alt="" class="w-8 h-8 rounded-full object-cover border border-white/20 shrink-0" />`
-            : `<span class="w-8 h-8 rounded-full ${accent} flex items-center justify-center text-[10px] font-bold shrink-0">${escHtml(playerInitials(player))}</span>`;
-        };
+        // Players are represented by their initials. Uploaded profile photos are
+        // confidential and are never rendered on the public broadcast view.
+        const playerAvatar = (player, accent) =>
+          `<span class="w-8 h-8 rounded-full ${accent} flex items-center justify-center text-[10px] font-bold shrink-0">${escHtml(playerInitials(player))}</span>`;
         // Mobile Nav Toggle
         var t = document.getElementById('nav-toggle'), n = document.getElementById('mobile-nav'), i = document.getElementById('nav-toggle-icon');
         if (t && n) {
@@ -1241,12 +1557,14 @@
 
         // Render Current Match UI
         function renderLiveArena(active) {
-          // Tolerate a missing node: never let one absent element blank the whole board.
-          const setText = (id, value) => { const el = document.getElementById(id); if (el) el.textContent = value; };
-          const setSrc = (id, value) => { const el = document.getElementById(id); if (el) el.src = value; };
           const standby = document.getElementById('live-standby');
           const versusCard = document.getElementById('match-versus-card');
           const rostersGrid = document.getElementById('team-rosters-grid');
+
+          const spotlightView = document.getElementById('broadcast-spotlight-view');
+          const viewTabs = document.getElementById('spotlight-view-tabs');
+          const switcherBar = document.getElementById('live-switcher-bar');
+          const matchChips = document.getElementById('live-match-chips');
 
           if (!active) {
             // No published match: the observer feed keeps playing — only the match
@@ -1254,11 +1572,17 @@
             if (standby) standby.classList.remove('hidden');
             if (versusCard) versusCard.classList.add('hidden');
             if (rostersGrid) rostersGrid.classList.add('hidden');
+            // These would otherwise render placeholder players and an empty
+            // match dropdown to the public.
+            if (spotlightView) spotlightView.classList.add('hidden');
+            if (viewTabs) viewTabs.classList.add('hidden');
+            if (switcherBar) switcherBar.classList.add('hidden');
+            if (matchChips) matchChips.classList.add('hidden');
 
             const idleFrame = document.getElementById('live-stream-frame');
             const idleFallback = document.getElementById('fallback-video-container');
             const idleLabel = document.getElementById('stream-source-label');
-            if (idleFrame) { idleFrame.src = ''; idleFrame.classList.add('hidden'); }
+            if (idleFrame) { idleFrame.src = 'about:blank'; idleFrame.classList.add('hidden'); }
             if (idleFallback) idleFallback.classList.remove('hidden');
             if (idleLabel) idleLabel.textContent = 'Computer Laboratory Annex Building · Official Observer Feed';
             return;
@@ -1266,7 +1590,13 @@
 
           if (standby) standby.classList.add('hidden');
           if (versusCard) versusCard.classList.remove('hidden');
-          if (rostersGrid) rostersGrid.classList.remove('hidden');
+          if (switcherBar) switcherBar.classList.remove('hidden');
+          if (matchChips) matchChips.classList.remove('hidden');
+          if (viewTabs) viewTabs.classList.remove('hidden');
+          // Restore whichever of the two views the viewer last chose.
+          const showLineups = window.__cecSpotlightTab === 'lineups';
+          if (spotlightView) spotlightView.classList.toggle('hidden', showLineups);
+          if (rostersGrid) rostersGrid.classList.toggle('hidden', !showLineups);
 
           // Title and status
           setText('live-stage-title', (active.court || 'ARENA') + ' · ' + (active.stageTitle || 'OFFICIAL MATCH'));
@@ -1372,7 +1702,7 @@
             fallback.classList.add('hidden');
             sourceLabel.textContent = (active.court || 'Live Feed') + ' · External Broadcast';
           } else {
-            iframe.src = '';
+            iframe.src = 'about:blank';
             iframe.classList.add('hidden');
             fallback.classList.remove('hidden');
             sourceLabel.textContent = (active.court || 'Computer Laboratory Annex Building') + ' · Official Local Loop';
@@ -1393,17 +1723,23 @@
         const spotlightView = document.getElementById('broadcast-spotlight-view');
         const lineupsView = document.getElementById('team-rosters-grid');
 
+        const TAB_BASE = 'px-3 py-2 min-h-[36px] rounded font-label-caps font-bold transition-all flex items-center gap-1';
+        const TAB_ON = TAB_BASE + ' bg-primary text-on-primary';
+        const TAB_OFF = TAB_BASE + ' text-on-surface-variant hover:text-on-surface';
+
         if (tabSpotlightBtn && tabLineupBtn) {
           tabSpotlightBtn.addEventListener('click', () => {
-            tabSpotlightBtn.className = 'px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1';
-            tabLineupBtn.className = 'px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1';
+            window.__cecSpotlightTab = 'spotlight';
+            tabSpotlightBtn.className = TAB_ON;
+            tabLineupBtn.className = TAB_OFF;
             spotlightView.classList.remove('hidden');
             lineupsView.classList.add('hidden');
           });
 
           tabLineupBtn.addEventListener('click', () => {
-            tabLineupBtn.className = 'px-3 py-1 rounded font-label-caps font-bold bg-primary text-on-primary transition-all flex items-center gap-1';
-            tabSpotlightBtn.className = 'px-3 py-1 rounded font-label-caps font-bold text-on-surface-variant hover:text-on-surface transition-all flex items-center gap-1';
+            window.__cecSpotlightTab = 'lineups';
+            tabLineupBtn.className = TAB_ON;
+            tabSpotlightBtn.className = TAB_OFF;
             lineupsView.classList.remove('hidden');
             spotlightView.classList.add('hidden');
           });
@@ -1553,57 +1889,75 @@
           const alertEl = document.getElementById('modal-auth-alert');
           const statusText = document.getElementById('modal-auth-status-text');
           const loginBtn = document.getElementById('modal-login-btn');
+          if (!alertEl || !statusText) return;
 
           if (!window.CECAuth || !window.CECAuth.currentUser) {
             alertEl.className = 'px-lg py-2.5 bg-amber-500/15 border-b border-amber-500/30 flex items-center justify-between text-xs text-amber-300';
             statusText.textContent = 'Staff login required to publish changes to Realtime Database.';
-            loginBtn.classList.remove('hidden');
-            saveBtn.disabled = false; // still allows local preview
+            if (loginBtn) loginBtn.classList.remove('hidden');
+            if (saveBtn) saveBtn.disabled = false; // still allows local preview
           } else if (window.CECAuth.isApprovedStaff()) {
             alertEl.className = 'px-lg py-2.5 bg-emerald-500/15 border-b border-emerald-500/30 flex items-center justify-between text-xs text-emerald-300';
-            statusText.textContent = `Logged in as ${window.CECAuth.currentUser.displayName} (${window.CECAuth.currentStaffProfile.roleLabel || 'Official'}) — Connected to Realtime Database`;
-            loginBtn.classList.add('hidden');
+            statusText.textContent = `Logged in as ${window.CECAuth.currentUser.displayName || window.CECAuth.currentUser.email} (${(window.CECAuth.currentStaffProfile && window.CECAuth.currentStaffProfile.roleLabel) || 'Official'}) — Connected to Realtime Database`;
+            if (loginBtn) loginBtn.classList.add('hidden');
           } else {
             alertEl.className = 'px-lg py-2.5 bg-amber-500/15 border-b border-amber-500/30 flex items-center justify-between text-xs text-amber-300';
-            statusText.textContent = `Logged in as ${window.CECAuth.currentUser.displayName} (Pending Approval by jlcabucos.cec@gmail.com)`;
-            loginBtn.classList.add('hidden');
+            statusText.textContent = `Logged in as ${window.CECAuth.currentUser.displayName || window.CECAuth.currentUser.email} (Pending Approval by jlcabucos.cec@gmail.com)`;
+            if (loginBtn) loginBtn.classList.add('hidden');
           }
         }
 
         function fillModalFromMatch(m) {
           if (!m) return;
-          document.getElementById('setting-stream-url').value = m.streamUrl || '';
-          document.getElementById('setting-court-name').value = m.court || '';
-          document.getElementById('setting-stage-title').value = m.stageTitle || '';
-          document.getElementById('setting-format-badge').value = m.formatBadge || '';
-          document.getElementById('setting-status-note').value = m.statusNote || '';
+          const streamInput = document.getElementById('setting-stream-url');
+          if (streamInput) streamInput.value = m.streamUrl || '';
+          const courtInput = document.getElementById('setting-court-name');
+          if (courtInput) courtInput.value = m.court || m.title || '';
+          const stageInput = document.getElementById('setting-stage-title');
+          if (stageInput) stageInput.value = m.stageTitle || '';
+          const formatInput = document.getElementById('setting-format-badge');
+          if (formatInput) formatInput.value = m.formatBadge || '';
+          const statusInput = document.getElementById('setting-status-note');
+          if (statusInput) statusInput.value = m.statusNote || '';
 
           const t1 = m.team1 || {};
-          document.getElementById('setting-team1-name').value = t1.name || '';
-          document.getElementById('setting-team1-score').value = t1.score || '0';
-          document.getElementById('setting-team1-dept').value = t1.dept || 'IT';
-          document.getElementById('setting-team1-icon').value = t1.icon || 'assets/icons/dragon-head.svg';
+          const t1Name = document.getElementById('setting-team1-name');
+          if (t1Name) t1Name.value = t1.name || '';
+          const t1Score = document.getElementById('setting-team1-score');
+          if (t1Score) t1Score.value = t1.score || '0';
+          const t1Dept = document.getElementById('setting-team1-dept');
+          if (t1Dept) t1Dept.value = t1.dept || 'IT';
+          const t1Icon = document.getElementById('setting-team1-icon');
+          if (t1Icon) t1Icon.value = t1.icon || 'assets/icons/dragon-head.svg';
 
           const t2 = m.team2 || {};
-          document.getElementById('setting-team2-name').value = t2.name || '';
-          document.getElementById('setting-team2-score').value = t2.score || '0';
-          document.getElementById('setting-team2-dept').value = t2.dept || 'CRIM';
-          document.getElementById('setting-team2-icon').value = t2.icon || 'assets/icons/werewolf.svg';
+          const t2Name = document.getElementById('setting-team2-name');
+          if (t2Name) t2Name.value = t2.name || '';
+          const t2Score = document.getElementById('setting-team2-score');
+          if (t2Score) t2Score.value = t2.score || '0';
+          const t2Dept = document.getElementById('setting-team2-dept');
+          if (t2Dept) t2Dept.value = t2.dept || 'CRIM';
+          const t2Icon = document.getElementById('setting-team2-icon');
+          if (t2Icon) t2Icon.value = t2.icon || 'assets/icons/werewolf.svg';
         }
 
         function openSettings() {
           updateModalAuthAlert();
-          const matches = window.CECLiveManager.matches;
+          const matches = window.CECLiveManager.matches || {};
           const active = window.CECLiveManager.getActiveMatch();
 
-          matchIdSelect.innerHTML = '';
-          Object.values(matches).forEach(m => {
-            const opt = document.createElement('option');
-            opt.value = m.id;
-            opt.textContent = `${m.title || m.id} (${m.team1 ? m.team1.name : 'Team 1'} vs ${m.team2 ? m.team2.name : 'Team 2'})`;
-            if (active && m.id === active.id) opt.selected = true;
-            matchIdSelect.appendChild(opt);
-          });
+          if (matchIdSelect) {
+            matchIdSelect.innerHTML = '';
+            const list = Object.values(matches);
+            if (list.length === 0 && active) list.push(active);
+            list.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m.id;
+              opt.textContent = `${m.court || m.title || m.id} (${m.team1 ? m.team1.name : 'Team 1'} vs ${m.team2 ? m.team2.name : 'Team 2'})`;
+              if (active && m.id === active.id) opt.selected = true;
+              matchIdSelect.appendChild(opt);
+            });
+          }
 
           fillModalFromMatch(active);
           modal.classList.remove('hidden');
@@ -1619,22 +1973,40 @@
 
         if (createNewBtn) {
           createNewBtn.addEventListener('click', () => {
-            const newId = 'MATCH-' + String(Date.now()).slice(-4);
+            const matches = window.CECLiveManager.matches || {};
+            const existingKeys = Object.keys(matches);
+            let maxCourtNum = 0;
+            existingKeys.forEach(k => {
+              const m = matches[k];
+              const courtStr = (m && m.court) || (m && m.title) || '';
+              const matchNum = courtStr.match(/Court\s*(\d+)/i);
+              if (matchNum) {
+                const n = parseInt(matchNum[1], 10);
+                if (n > maxCourtNum) maxCourtNum = n;
+              }
+            });
+            const nextCourtNum = Math.max(maxCourtNum + 1, existingKeys.length + 1);
+            const newId = 'MATCH-' + String(nextCourtNum).padStart(3, '0') + '-' + Date.now().toString(36).slice(-3);
+
             const opt = document.createElement('option');
             opt.value = newId;
-            opt.textContent = `New Game (${newId})`;
+            opt.textContent = `Court ${nextCourtNum} (${newId}) [New]`;
             opt.selected = true;
-            matchIdSelect.appendChild(opt);
+            if (matchIdSelect) {
+              matchIdSelect.appendChild(opt);
+              matchIdSelect.value = newId;
+            }
 
             fillModalFromMatch({
               id: newId,
-              title: `Court ${Object.keys(window.CECLiveManager.matches).length + 1} · Live Game`,
-              court: `Court ${Object.keys(window.CECLiveManager.matches).length + 1}`,
+              title: `Court ${nextCourtNum}`,
+              court: `Court ${nextCourtNum}`,
               stageTitle: 'DEPARTMENT MATCH',
               formatBadge: 'BO3',
-              statusNote: 'UPCOMING',
-              team1: { name: 'IT Team', dept: 'IT', score: '0' },
-              team2: { name: 'CRIM Team', dept: 'CRIM', score: '0' }
+              statusNote: 'LIVE ON AIR',
+              streamUrl: '',
+              team1: { name: 'IT Team', dept: 'IT', score: '0', icon: 'assets/icons/dragon-head.svg' },
+              team2: { name: 'CRIM Team', dept: 'CRIM', score: '0', icon: 'assets/icons/werewolf.svg' }
             });
           });
         }
@@ -1651,32 +2023,35 @@
 
         if (saveBtn) {
           saveBtn.addEventListener('click', async function () {
-            const matchId = matchIdSelect.value;
-            const existing = window.CECLiveManager.matches[matchId] || { id: matchId };
+            const matchId = (matchIdSelect && matchIdSelect.value) || (window.CECLiveManager.activeMatchId || 'MATCH-001');
+            const existing = (window.CECLiveManager.matches && window.CECLiveManager.matches[matchId]) || { id: matchId };
 
-            const streamCheck = window.CECLiveManager.validateStreamUrl(document.getElementById('setting-stream-url').value);
+            const streamVal = (document.getElementById('setting-stream-url').value || '').trim();
+            const streamCheck = window.CECLiveManager.validateStreamUrl(streamVal);
             if (!streamCheck.ok) { alert(streamCheck.message); return; }
+            if (streamCheck.warning) alert(streamCheck.warning);
 
+            const courtVal = (document.getElementById('setting-court-name').value || '').trim();
             const updated = {
               ...existing,
               id: matchId,
-              title: document.getElementById('setting-court-name').value.trim() || matchId,
-              court: document.getElementById('setting-court-name').value.trim() || 'Arena',
+              title: courtVal || matchId,
+              court: courtVal || 'Arena',
               streamUrl: streamCheck.url,
-              stageTitle: document.getElementById('setting-stage-title').value.trim() || 'CEC ESPORTS ARENA',
-              formatBadge: document.getElementById('setting-format-badge').value.trim() || 'BO3',
-              statusNote: document.getElementById('setting-status-note').value.trim() || 'LIVE BROADCAST',
+              stageTitle: (document.getElementById('setting-stage-title').value || '').trim() || 'CEC ESPORTS ARENA',
+              formatBadge: (document.getElementById('setting-format-badge').value || '').trim() || 'BO3',
+              statusNote: (document.getElementById('setting-status-note').value || '').trim() || 'LIVE ON AIR',
               status: 'LIVE',
               team1: {
                 ...(existing.team1 || {}),
-                name: document.getElementById('setting-team1-name').value.trim() || 'Team 1',
+                name: (document.getElementById('setting-team1-name').value || '').trim() || 'Team 1',
                 score: document.getElementById('setting-team1-score').value || '0',
                 dept: document.getElementById('setting-team1-dept').value,
                 icon: document.getElementById('setting-team1-icon').value
               },
               team2: {
                 ...(existing.team2 || {}),
-                name: document.getElementById('setting-team2-name').value.trim() || 'Team 2',
+                name: (document.getElementById('setting-team2-name').value || '').trim() || 'Team 2',
                 score: document.getElementById('setting-team2-score').value || '0',
                 dept: document.getElementById('setting-team2-dept').value,
                 icon: document.getElementById('setting-team2-icon').value
@@ -1684,7 +2059,8 @@
             };
 
             try {
-              await window.CECLiveManager.saveMatch(updated);
+              const saveResult = await window.CECLiveManager.saveMatch(updated);
+              if (saveResult && saveResult.warning) alert(saveResult.warning);
             } catch (err) {
               alert('Could not publish this match: ' + (err && err.message ? err.message : 'request failed'));
               return;
@@ -1696,20 +2072,22 @@
 
         if (deleteBtn) {
           deleteBtn.addEventListener('click', async function () {
-            const matchId = matchIdSelect.value;
+            const matchId = matchIdSelect ? matchIdSelect.value : window.CECLiveManager.activeMatchId;
             if (!matchId) return;
-            if (confirm(`Are you sure you want to delete match lobby ${matchId}?`)) {
+            const match = window.CECLiveManager.matches && window.CECLiveManager.matches[matchId];
+            const name = match ? (match.court || match.title || matchId) : matchId;
+            if (confirm(`Are you sure you want to delete court lobby "${name}"?`)) {
               deleteBtn.disabled = true;
               deleteBtn.textContent = 'Deleting...';
               try {
                 await window.CECLiveManager.deleteMatch(matchId);
-                alert(`Match ${matchId} has been successfully deleted.`);
+                alert(`Court lobby "${name}" has been deleted.`);
                 closeSettings();
               } catch (err) {
                 alert('Could not delete match: ' + (err && err.message ? err.message : err));
               } finally {
                 deleteBtn.disabled = false;
-                deleteBtn.textContent = 'Delete Match';
+                deleteBtn.innerHTML = '<span class="material-symbols-outlined text-[14px]">delete</span> DELETE THIS COURT';
               }
             }
           });
@@ -1753,6 +2131,67 @@
       });
       if (window.CECAuth) window.CECAuth.onAuthChange(syncLiveControls);
     }());
+  </script>
+  <script>
+    // OBS Overlays Modal & URL Resolver
+    (function() {
+      const obsBtn = document.getElementById('obs-overlay-launcher-btn');
+      const obsModal = document.getElementById('obs-modal');
+      const closeBtn1 = document.getElementById('close-obs-modal-btn');
+      const closeBtn2 = document.getElementById('close-obs-modal-btn2');
+
+      function populateAbsoluteObsUrls() {
+        const origin = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+        document.querySelectorAll('.obs-url-input').forEach(input => {
+          const rel = input.getAttribute('data-obs-path') || input.value;
+          input.value = origin + rel;
+        });
+        document.querySelectorAll('#obs-modal a[href]').forEach(link => {
+          const rel = link.getAttribute('href');
+          if (rel && !rel.startsWith('http')) link.href = origin + rel;
+        });
+      }
+
+      if (obsBtn && obsModal) {
+        obsBtn.addEventListener('click', () => {
+          populateAbsoluteObsUrls();
+          obsModal.classList.remove('hidden');
+          obsModal.classList.add('flex');
+        });
+        const closeObs = () => {
+          obsModal.classList.add('hidden');
+          obsModal.classList.remove('flex');
+        };
+        if (closeBtn1) closeBtn1.addEventListener('click', closeObs);
+        if (closeBtn2) closeBtn2.addEventListener('click', closeObs);
+        obsModal.addEventListener('click', (e) => {
+          if (e.target === obsModal) closeObs();
+        });
+
+        // Copy buttons
+        document.querySelectorAll('.copy-obs-btn').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const row = btn.closest('div');
+            const input = row ? row.querySelector('.obs-url-input') : null;
+            if (!input) return;
+            const val = input.value;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(val).then(() => {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<span class="material-symbols-outlined text-[14px]">check</span> Copied!';
+                setTimeout(() => { btn.innerHTML = orig; }, 2000);
+              }).catch(() => {
+                input.select();
+                document.execCommand('copy');
+              });
+            } else {
+              input.select();
+              document.execCommand('copy');
+            }
+          });
+        });
+      }
+    })();
   </script>
 </body>
 
