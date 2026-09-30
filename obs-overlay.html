@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <link rel="icon" type="image/png" href="assets/e-sportslogo.png" />
+  <title>CEC Esports Broadcast • OBS Studio Overlays &amp; Live Preview Hub</title>
+
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&family=Share+Tech+Mono&family=Hanken+Grotesk:wght@700;800;900&display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-dim": "#050B14",
+            "surface-dark": "#070F1E",
+            "surface-card": "rgba(10, 20, 36, 0.88)",
+            "primary": "#38bdf8",
+            "primary-glow": "rgba(56, 189, 248, 0.35)",
+            "secondary": "#facc15",
+            "team-blue": "#0284c7",
+            "team-blue-light": "#38bdf8",
+            "team-red": "#e11d48",
+            "team-red-light": "#fb7185",
+            "accent-gold": "#ffd36c"
+          },
+          fontFamily: {
+            orbitron: ["Orbitron", "sans-serif"],
+            mono: ["Share Tech Mono", "monospace"],
+            inter: ["Inter", "sans-serif"],
+            display: ["Hanken Grotesk", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Base resets & custom scrollbar */
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #050B14;
+      color: #e2e8f0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #050B14;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #1e3a5f;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
+    }
+
+    .font-orbitron {
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    .font-mono-cyber {
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Cyber cut-out card borders */
+    .cyber-panel {
+      position: relative;
+      background: rgba(8, 17, 31, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .cyber-panel::before,
+    .cyber-panel::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+    }
+
+    .cyber-panel::before {
+      top: 0;
+      left: 0;
+      border-top: 2px solid #38bdf8;
+      border-left: 2px solid #38bdf8;
+    }
+
+    .cyber-panel::after {
+      bottom: 0;
+      right: 0;
+      border-bottom: 2px solid #38bdf8;
+      border-right: 2px solid #38bdf8;
+    }
+
+    /* Glowing badge effects */
+    .blue-glow {
+      box-shadow: 0 0 25px -4px rgba(2, 132, 199, 0.55), inset 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+
+    .red-glow {
+      box-shadow: 0 0 25px -4px rgba(225, 29, 72, 0.55), inset 0 0 15px rgba(251, 113, 133, 0.2);
+    }
+
+    .gold-glow {
+      box-shadow: 0 0 20px -3px rgba(255, 211, 108, 0.45);
+    }
+
+    /* Checkered transparency pattern */
+    .bg-checkered {
+      background-color: #0b1320;
+      background-image: linear-gradient(45deg, #131e30 25%, transparent 25%),
+        linear-gradient(-45deg, #131e30 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #131e30 75%),
+        linear-gradient(-45deg, transparent 75%, #131e30 75%);
+      background-size: 24px 24px;
+      background-position: 0 0, 0 12px, 12px -12px, -12px 0px;
+    }
+
+    .bg-chroma-green {
+      background-color: #00b961 !important;
+    }
+
+    .bg-dark-arena {
+      background-color: #050B14 !important;
+      background-image: radial-gradient(circle at 50% 20%, rgba(2, 132, 199, 0.18) 0%, rgba(5, 11, 20, 0.95) 75%);
+    }
+
+    /* Smooth player carousel transitions */
+    .carousel-item {
+      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .carousel-item.entering {
+      opacity: 0;
+      transform: translateY(12px) scale(0.97);
+    }
+
+    .carousel-item.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .carousel-item.exiting {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.97);
+    }
+
+    /* =========================================================
+       OBS BROWSER SOURCE STANDALONE OVERLAY MODE
+       Active when loaded via ?obs=1 or in OBS Browser Source
+       ========================================================= */
+    .obs-mode html,
+    .obs-mode body {
+      background: transparent !important;
+      background-color: transparent !important;
+      overflow: hidden !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .obs-mode #hub-header,
+    .obs-mode #hub-controls-bar,
+    .obs-mode #hub-links-section,
+    .obs-mode #preview-toolbar,
+    .obs-mode #hub-footer {
+      display: none !important;
+    }
+
+    .obs-mode main {
+      padding: 0 !important;
+      margin: 0 !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .obs-mode #hub-preview-section {
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      position: absolute !important;
+      inset: 0 !important;
+    }
+
+    .obs-mode #preview-container-frame {
+      border: none !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+      background-image: none !important;
+      box-shadow: none !important;
+      width: 100% !important;
+      height: 100% !important;
+      position: absolute !important;
+      inset: 0 !important;
+    }
+
+    .obs-mode #preview-stage-scaler {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      aspect-ratio: auto !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      position: absolute !important;
+      inset: 0 !important;
+    }
+
+    .obs-mode #obs-live-stage {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      overflow: hidden !important;
+    }
+
+    .obs-mode.chroma-green body,
+    .obs-mode.chroma-green #obs-live-stage {
+      background: #00b961 !important;
+    }
+
+    /* Isolated Modular Views for OBS Browser Sources */
+    /* 1. Left Badge Only (e.g. 450x110) */
+    .obs-view-left-badge #view-dual-roster,
+    .obs-view-left-badge #view-title,
+    .obs-view-left-badge #stage-vs-divider,
+    .obs-view-left-badge #view-right-badge {
+      display: none !important;
+    }
+    .obs-view-left-badge #view-scoreboard {
+      inset: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .obs-view-left-badge #stage-scoreboard-bar {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100% !important;
+      grid-template-columns: 1fr !important;
+    }
+    .obs-view-left-badge #view-left-badge {
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: 1rem !important;
+    }
+
+    /* 2. Right Badge Only (e.g. 450x110) */
+    .obs-view-right-badge #view-dual-roster,
+    .obs-view-right-badge #view-title,
+    .obs-view-right-badge #stage-vs-divider,
+    .obs-view-right-badge #view-left-badge {
+      display: none !important;
+    }
+    .obs-view-right-badge #view-scoreboard {
+      inset: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .obs-view-right-badge #stage-scoreboard-bar {
+      display: block !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100% !important;
+      grid-template-columns: 1fr !important;
+    }
+    .obs-view-right-badge #view-right-badge {
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: 1rem !important;
+    }
+
+    /* 3. Left Roster Carousel Only (e.g. 460x220) */
+    .obs-view-left-roster #view-scoreboard,
+    .obs-view-left-roster #view-right-roster {
+      display: none !important;
+    }
+    .obs-view-left-roster #view-dual-roster {
+      inset: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      justify-content: flex-start !important;
+    }
+    .obs-view-left-roster #view-left-roster {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+    }
+
+    /* 4. Right Roster Carousel Only (e.g. 460x220) */
+    .obs-view-right-roster #view-scoreboard,
+    .obs-view-right-roster #view-left-roster {
+      display: none !important;
+    }
+    .obs-view-right-roster #view-dual-roster {
+      inset: 0 !important;
+      bottom: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      justify-content: flex-end !important;
+    }
+    .obs-view-right-roster #view-right-roster {
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+    }
+
+    /* 5. Scoreboard Only (e.g. 1920x130) */
+    .obs-view-scoreboard #view-dual-roster {
+      display: none !important;
+    }
+
+    /* 6. Title Banner Only (e.g. 800x80) */
+    .obs-view-title #stage-scoreboard-bar,
+    .obs-view-title #view-dual-roster {
+      display: none !important;
+    }
+    .obs-view-title #view-scoreboard {
+      inset: 0 !important;
+      top: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      height: 100% !important;
+    }
+
+    /* 7. Dual Roster Lower-Third Only (e.g. 1920x240) */
+    .obs-view-dual-roster #view-scoreboard {
+      display: none !important;
+    }
+    .obs-view-title #view-left-badge,
+    .obs-view-title #view-right-badge,
+    .obs-view-title #view-left-roster,
+    .obs-view-title #view-right-roster,
+    .obs-view-title #view-dual-roster {
+      display: none !important;
+    }
+
+    .obs-view-dual-roster #view-scoreboard,
+    .obs-view-dual-roster #view-left-badge,
+    .obs-view-dual-roster #view-right-badge,
+    .obs-view-dual-roster #view-title {
+      display: none !important;
+    }
+
+    /* Center isolated elements when viewed directly */
+    .obs-isolated-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+
+  <!-- OBS URL Mode Detection -->
+  <script>
+    (function () {
+      const p = new URLSearchParams(window.location.search);
+      const isObs = p.has('obs') || p.has('overlay') || typeof window.obsstudio !== 'undefined' ||
+        (navigator.userAgent && /OBS\/|obs-browser/i.test(navigator.userAgent));
+      if (isObs) {
+        document.documentElement.classList.add('obs-mode');
+        if (p.get('bg') === 'green') document.documentElement.classList.add('chroma-green');
+        const view = p.get('view') || 'master';
+        document.documentElement.classList.add('obs-view-' + view);
+        document.addEventListener('DOMContentLoaded', () => {
+          document.body.classList.add('obs-mode');
+          if (p.get('bg') === 'green') document.body.classList.add('chroma-green');
+          document.body.classList.add('obs-view-' + view);
+        });
+      }
+    })();
+  </script>
+</head>
+
+<body class="bg-[#050B14] text-slate-100 min-h-screen flex flex-col">
+
+  <!-- ==========================================
+       HUB TOP HEADER BAR (Control Hub Mode)
+       ========================================== -->
+  <header id="hub-header" class="border-b border-sky-500/20 bg-[#070F1E]/90 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="tournament.html" class="flex items-center gap-2 group text-sky-400 hover:text-white transition-colors"
+          title="Back to Tournament Schedule">
+          <span class="material-symbols-outlined text-[20px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+          <span class="text-xs font-bold tracking-wider uppercase font-mono-cyber">Tournament</span>
+        </a>
+        <span class="text-slate-600">/</span>
+        <div class="flex items-center gap-2.5">
+          <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500/20 border border-sky-400/40 text-sky-300">
+            <span class="material-symbols-outlined text-[17px]">podcasts</span>
+          </span>
+          <div>
+            <h1 class="text-sm sm:text-base font-orbitron font-bold tracking-wide text-white flex items-center gap-2">
+              OBS Studio Overlays <span class="text-[10px] font-mono-cyber px-2 py-0.5 rounded bg-sky-500/20 text-sky-400 border border-sky-500/30">BROADCAST PRO</span>
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div id="sync-status-badge" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono-cyber">
+          <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="sync-status-text">LIVE SYNC READY</span>
+        </div>
+        <div class="cec-auth-widget flex items-center gap-2 shrink-0"></div>
+        <a href="admin-officiating.html" target="_blank"
+          class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-all border border-slate-700">
+          <span class="material-symbols-outlined text-[15px]">sports_esports</span>
+          <span>Match Officiating</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       MAIN CONTENT: CONTROLS, LINKS & LIVE PREVIEW
+       ========================================== -->
+  <main class="flex-1 w-full max-w-7xl mx-auto px-4 py-6 flex flex-col gap-6">
+
+    <!-- Staff Permission Mode Alert Banner -->
+    <div id="staff-mode-banner" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs shadow-lg">
+      <div class="flex items-center gap-2.5">
+        <span class="material-symbols-outlined text-amber-400 text-[20px] shrink-0">lock</span>
+        <span><strong>Streamer Mode (Read-Only):</strong> Overlay details (event title, scores, and swapping sides) can only be edited by authorized officiating staff logged in via the Match Officiating console.</span>
+      </div>
+      <a href="admin-officiating.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-[11px] font-bold font-mono-cyber transition-all shrink-0 flex items-center gap-1.5 self-start sm:self-center shadow">
+        <span class="material-symbols-outlined text-[15px]">login</span>
+        <span>Officiating Staff Login</span>
+      </a>
+    </div>
+
+    <!-- TOP SECTION: LIVE EDIT CONTROLS & EVENT TITLE INPUT -->
+    <section id="hub-controls-bar" class="cyber-panel rounded-2xl p-4 sm:p-5 shadow-2xl">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+
+        <!-- Title of the Event Input -->
+        <div class="lg:col-span-4 flex flex-col gap-1.5">
+          <label for="event-title-input" class="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">title</span>
+            <span>Title of the Event</span>
+            <span class="text-[10px] text-slate-400 lowercase font-normal">(live updates stream)</span>
+          </label>
+          <div class="relative">
+            <input type="text" id="event-title-input"
+              value="CEC ESPORTS INTRAMURALS 2026 • MLBB GRAND FINALS"
+              placeholder="e.g. CEC INTRAMURALS 2026 • GRAND FINALS"
+              class="w-full bg-[#050B14] text-white px-3.5 py-2.5 rounded-xl border border-sky-500/40 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400 text-xs sm:text-sm font-semibold tracking-wide placeholder-slate-600 transition-all" />
+            <button id="event-title-clear-btn" type="button" title="Clear title"
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 p-0.5">
+              <span class="material-symbols-outlined text-[16px]">backspace</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Current Live Match Selector -->
+        <div class="lg:col-span-3 flex flex-col gap-1.5">
+          <label for="live-match-select" class="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">sports_score</span>
+            <span>Current Live Match</span>
+          </label>
+          <select id="live-match-select"
+            class="w-full bg-[#050B14] text-sky-300 font-bold px-3 py-2.5 rounded-xl border border-sky-500/40 focus:border-sky-400 focus:outline-none text-xs sm:text-sm cursor-pointer">
+            <option value="">Loading live matches...</option>
+          </select>
+        </div>
+
+        <!-- Score Steppers & Swapper -->
+        <div class="lg:col-span-3 flex items-center justify-between sm:justify-start gap-3">
+          <!-- Left Score Adjust -->
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-[10px] font-mono-cyber text-sky-400 uppercase font-bold" id="label-score-left">BLUE PTS</span>
+            <div class="flex items-center rounded-lg bg-[#050B14] border border-sky-500/30 p-0.5">
+              <button id="btn-score-left-minus" type="button" class="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:bg-sky-500/20 hover:text-white transition-colors">-</button>
+              <span id="control-score-left" class="w-8 text-center text-sm font-orbitron font-bold text-sky-300">0</span>
+              <button id="btn-score-left-plus" type="button" class="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:bg-sky-500/20 hover:text-white transition-colors">+</button>
+            </div>
+          </div>
+
+          <!-- Swap / Switch Sides -->
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-[10px] font-mono-cyber text-amber-400 uppercase font-bold tracking-wider">SWITCH</span>
+            <button id="btn-swap-sides" type="button" title="Switch Team Names, Logos, Scores, and Roster Carousels (Left ⇄ Right)"
+              class="h-8 px-3 flex items-center gap-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 transition-all cursor-pointer shadow-sm active:scale-95 group">
+              <span class="material-symbols-outlined text-[18px] group-hover:rotate-180 transition-transform duration-300">swap_horiz</span>
+              <span class="text-[11px] font-bold font-mono-cyber hidden sm:inline">SWITCH SIDES</span>
+            </button>
+          </div>
+
+          <!-- Right Score Adjust -->
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-[10px] font-mono-cyber text-rose-400 uppercase font-bold" id="label-score-right">RED PTS</span>
+            <div class="flex items-center rounded-lg bg-[#050B14] border border-rose-500/30 p-0.5">
+              <button id="btn-score-right-minus" type="button" class="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:bg-rose-500/20 hover:text-white transition-colors">-</button>
+              <span id="control-score-right" class="w-8 text-center text-sm font-orbitron font-bold text-rose-300">0</span>
+              <button id="btn-score-right-plus" type="button" class="w-7 h-7 flex items-center justify-center rounded text-slate-300 hover:bg-rose-500/20 hover:text-white transition-colors">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carousel Speed & Quick Save -->
+        <div class="lg:col-span-2 flex flex-col gap-1.5">
+          <label for="carousel-speed-select" class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+            <span class="material-symbols-outlined text-[15px]">timer</span>
+            <span>Roster Cycle</span>
+          </label>
+          <div class="flex items-center gap-2">
+            <select id="carousel-speed-select"
+              class="flex-1 bg-[#050B14] text-slate-200 text-xs px-2.5 py-2.5 rounded-xl border border-slate-700 focus:outline-none cursor-pointer">
+              <option value="3500">Every 3.5s</option>
+              <option value="5000" selected>Every 5s (Default)</option>
+              <option value="8000">Every 8s</option>
+              <option value="0">Pause Auto</option>
+            </select>
+            <button id="btn-publish-firebase" type="button"
+              title="Publish state live to Firebase"
+              class="px-3 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs font-mono-cyber transition-all shadow flex items-center gap-1 shrink-0">
+              <span class="material-symbols-outlined text-[15px]">send</span>
+              <span>SYNC</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION: OBS BROWSER SOURCE LINKS (MODULAR COPY CARDS) -->
+    <section id="hub-links-section" class="flex flex-col gap-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h2 class="text-sm font-orbitron font-bold tracking-wider uppercase text-white flex items-center gap-2">
+            <span class="material-symbols-outlined text-sky-400 text-[18px]">link</span>
+            <span>OBS Browser Source Links</span>
+          </h2>
+          <p class="text-xs text-slate-400">Copy modular links into OBS Studio Browser Sources. Transparent background is pre-configured.</p>
+        </div>
+        <div class="text-[11px] font-mono-cyber text-sky-300/80 bg-sky-500/10 px-3 py-1 rounded-lg border border-sky-500/20">
+          Tip: In OBS, check "Shutdown source when not visible"
+        </div>
+      </div>
+
+      <!-- Grid of Modular Link Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3.5">
+
+        <!-- Card 1: Master Full Stream HUD -->
+        <div class="cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-sky-400/40 hover:border-sky-400 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-xs text-white flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sky-400 text-[16px]">desktop_windows</span>
+                Master Full Stream HUD
+              </span>
+              <span class="text-[10px] font-mono-cyber font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300">1920 &times; 1080</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">Complete overlay: Top Scoreboard, Event Title, and Lower-Third Duo Player Carousels.</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="master" class="obs-link-input flex-1 bg-[#050B14] text-sky-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-all shrink-0 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <a href="?view=master&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Test in new tab">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 2: Left Side Team Badge & Score -->
+        <div class="cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-sky-500/30 hover:border-sky-400 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-xs text-white flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sky-400 text-[16px]">shield</span>
+                Left Team Score Badge
+              </span>
+              <span class="text-[10px] font-mono-cyber font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300">450 &times; 110</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">Left team logo, team name, and live score only. Position anywhere on screen.</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="left-badge" class="obs-link-input flex-1 bg-[#050B14] text-sky-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-all shrink-0 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <a href="?view=left-badge&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Test in new tab">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 3: Left Team Member Carousel Showcase -->
+        <div class="cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-sky-500/30 hover:border-sky-400 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-xs text-white flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sky-400 text-[16px]">view_carousel</span>
+                Left Player Carousel
+              </span>
+              <span class="text-[10px] font-mono-cyber font-bold px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300">460 &times; 220</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">Left team members one-by-one showcase (IGN, real name, role tag, photo).</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="left-roster" class="obs-link-input flex-1 bg-[#050B14] text-sky-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition-all shrink-0 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <a href="?view=left-roster&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Test in new tab">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 4: Right Side Team Score Badge -->
+        <div class="cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-rose-500/30 hover:border-rose-400 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-xs text-white flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-rose-400 text-[16px]">shield</span>
+                Right Team Score Badge
+              </span>
+              <span class="text-[10px] font-mono-cyber font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300">450 &times; 110</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">Right team score, team name, and logo. Mirrored layout for stream symmetry.</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="right-badge" class="obs-link-input flex-1 bg-[#050B14] text-rose-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs transition-all shrink-0 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <a href="?view=right-badge&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Test in new tab">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 5: Right Team Member Carousel Showcase -->
+        <div class="cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-rose-500/30 hover:border-rose-400 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-xs text-white flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-rose-400 text-[16px]">view_carousel</span>
+                Right Player Carousel
+              </span>
+              <span class="text-[10px] font-mono-cyber font-bold px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300">460 &times; 220</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">Right team members one-by-one showcase (IGN, real name, role tag, photo).</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="right-roster" class="obs-link-input flex-1 bg-[#050B14] text-rose-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs transition-all shrink-0 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <a href="?view=right-roster&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Test in new tab">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 6: Scoreboard Top Bar -->
+        <div class="cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-amber-500/30 hover:border-amber-400 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-xs text-white flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-amber-400 text-[16px]">scoreboard</span>
+                Scoreboard Top Bar
+              </span>
+              <span class="text-[10px] font-mono-cyber font-bold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">1920 &times; 130</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">Title + Left Team (Logo, Name, Score) vs Right Team (Score, Name, Logo).</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="scoreboard" class="obs-link-input flex-1 bg-[#050B14] text-amber-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all shrink-0 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <a href="?view=scoreboard&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Test in new tab">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 7: Title of Event Floating Banner -->
+        <div class="cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-purple-500/30 hover:border-purple-400 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-xs text-white flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-purple-400 text-[16px]">subtitles</span>
+                Event Title Banner
+              </span>
+              <span class="text-[10px] font-mono-cyber font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300">800 &times; 80</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">Standalone tournament &amp; stage title banner linked directly to your title input.</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="title" class="obs-link-input flex-1 bg-[#050B14] text-purple-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-400 text-white font-bold text-xs transition-all shrink-0 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <a href="?view=title&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Test in new tab">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Card 8: Dual Lower-Third Rosters -->
+        <div class="cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-emerald-500/30 hover:border-emerald-400 transition-colors">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="font-bold text-xs text-white flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-emerald-400 text-[16px]">group</span>
+                Dual Roster Lower-Third
+              </span>
+              <span class="text-[10px] font-mono-cyber font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">1920 &times; 240</span>
+            </div>
+            <p class="text-[11px] text-slate-400 line-clamp-2">Both Left &amp; Right player carousels synchronized at bottom corners for intermission.</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="dual-roster" class="obs-link-input flex-1 bg-[#050B14] text-emerald-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all shrink-0 flex items-center gap-1">
+              <span class="material-symbols-outlined text-[13px]">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <a href="?view=dual-roster&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors" title="Test in new tab">
+              <span class="material-symbols-outlined text-[15px]">open_in_new</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION: LIVE INTERACTIVE PREVIEW (BELOW THE LINKS) -->
+    <section id="hub-preview-section" class="flex flex-col gap-3">
+
+      <!-- Preview Toolbar -->
+      <div id="preview-toolbar" class="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="flex h-3 w-3 rounded-full bg-rose-500 animate-ping"></span>
+          <h2 class="text-sm font-orbitron font-bold text-white tracking-wide flex items-center gap-2">
+            LIVE BROADCAST PREVIEW
+          </h2>
+          <span class="text-[11px] font-mono-cyber text-slate-400 hidden sm:inline">(Interactive 16:9 Canvas)</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- View filter switcher in preview -->
+          <div class="flex items-center rounded-lg bg-[#050B14] p-1 border border-slate-800 text-xs">
+            <span class="text-[10px] font-mono-cyber text-slate-400 px-1.5">VIEW:</span>
+            <button type="button" data-preview-filter="master" class="btn-preview-filter px-2 py-0.5 rounded bg-sky-500 text-slate-950 font-bold text-[11px] transition-colors">All</button>
+            <button type="button" data-preview-filter="scoreboard" class="btn-preview-filter px-2 py-0.5 rounded text-slate-300 hover:text-white text-[11px] transition-colors">Scoreboard</button>
+            <button type="button" data-preview-filter="left-roster" class="btn-preview-filter px-2 py-0.5 rounded text-slate-300 hover:text-white text-[11px] transition-colors">Left Carousel</button>
+            <button type="button" data-preview-filter="right-roster" class="btn-preview-filter px-2 py-0.5 rounded text-slate-300 hover:text-white text-[11px] transition-colors">Right Carousel</button>
+          </div>
+
+          <!-- Background backdrop mode -->
+          <div class="flex items-center rounded-lg bg-[#050B14] p-1 border border-slate-800 text-xs">
+            <span class="text-[10px] font-mono-cyber text-slate-400 px-1.5">BG:</span>
+            <button type="button" id="btn-bg-checkered" title="Transparent Checkered" class="px-2 py-0.5 rounded bg-slate-800 text-sky-400 font-bold text-[11px]">Checker</button>
+            <button type="button" id="btn-bg-green" title="Green Screen Chroma Key" class="px-2 py-0.5 rounded text-slate-400 hover:text-white text-[11px]">Green</button>
+            <button type="button" id="btn-bg-dark" title="Dark Arena Theme" class="px-2 py-0.5 rounded text-slate-400 hover:text-white text-[11px]">Arena</button>
+          </div>
+
+          <!-- Carousel Manual Step Buttons -->
+          <div class="flex items-center gap-1 bg-[#050B14] p-1 rounded-lg border border-slate-800">
+            <button id="btn-carousel-prev" type="button" class="p-1 rounded hover:bg-slate-800 text-slate-300 hover:text-white transition-colors" title="Previous Player">
+              <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+            </button>
+            <button id="btn-carousel-toggle" type="button" class="px-2 py-0.5 text-[11px] font-mono-cyber text-sky-400 hover:bg-slate-800 rounded transition-colors" title="Pause / Play Carousel">
+              <span id="carousel-play-text">PLAYING</span>
+            </button>
+            <button id="btn-carousel-next" type="button" class="p-1 rounded hover:bg-slate-800 text-slate-300 hover:text-white transition-colors" title="Next Player">
+              <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live 16:9 Canvas Frame Container -->
+      <div id="preview-container-frame" class="relative w-full rounded-2xl overflow-hidden border border-sky-500/30 shadow-2xl bg-checkered flex items-center justify-center p-2 sm:p-4 transition-all">
+
+        <!-- Aspect Ratio 16:9 Stage (Scales to container width) -->
+        <div id="preview-stage-scaler" class="relative w-full aspect-video max-w-[1920px] rounded-xl overflow-hidden shadow-2xl transition-all">
+
+          <!-- ========================================================
+               OBS LIVE STAGE (RENDERED OVERLAY CONTENT)
+               ======================================================== -->
+          <div id="obs-live-stage" class="absolute inset-0 w-full h-full pointer-events-none select-none font-sans overflow-hidden">
+
+            <!-- 1. TOP SCOREBOARD & TITLE COMPONENT (#view-scoreboard) -->
+            <div id="view-scoreboard" class="absolute top-4 inset-x-4 sm:top-6 sm:inset-x-8 flex flex-col items-center gap-2 pointer-events-auto">
+
+              <!-- Floating Event Title Banner (#view-title) -->
+              <div id="view-title" class="flex items-center gap-2 px-4 py-1 rounded-full bg-slate-950/90 border border-sky-400/40 shadow-lg backdrop-blur-md">
+                <span class="flex h-2 w-2 rounded-full bg-sky-400 animate-pulse"></span>
+                <span id="live-stage-title" class="font-orbitron font-bold text-[10px] sm:text-xs md:text-sm tracking-wider uppercase text-sky-300 drop-shadow">
+                  CEC ESPORTS INTRAMURALS 2026 • MLBB GRAND FINALS
+                </span>
+                <span class="text-[10px] font-mono-cyber px-2 py-0.2 rounded bg-amber-400/20 text-amber-300 border border-amber-400/30 ml-1" id="live-stage-format">
+                  BO1
+                </span>
+              </div>
+
+              <!-- Main Scoreboard Bar -->
+              <div id="stage-scoreboard-bar" class="w-full max-w-4xl grid grid-cols-12 items-stretch h-14 sm:h-18 md:h-20 rounded-2xl overflow-hidden shadow-2xl border border-white/15 bg-slate-950/95 backdrop-blur-xl">
+
+                <!-- Left Side Team Card (#view-left-badge) -->
+                <div id="view-left-badge" class="col-span-5 flex items-center justify-between px-3 sm:px-6 bg-gradient-to-r from-sky-950/90 via-sky-900/60 to-slate-950/90 border-r border-sky-400/30 blue-glow">
+                  <!-- Team Logo & Info -->
+                  <div class="flex items-center gap-2.5 sm:gap-4 min-w-0">
+                    <div class="relative shrink-0">
+                      <img id="stage-logo-left" src="assets/intrams_logo.png" alt="Left Team Logo"
+                        class="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl object-contain bg-slate-900/80 p-1 border border-sky-400/40 shadow" />
+                    </div>
+                    <div class="min-w-0">
+                      <div id="stage-name-left" class="font-orbitron font-extrabold text-xs sm:text-base md:text-lg text-white truncate drop-shadow">
+                        TECHPRO HTM
+                      </div>
+                      <div id="stage-dept-left" class="font-mono-cyber text-[9px] sm:text-xs text-sky-300/80 tracking-wider truncate">
+                        SHS SHOWDOWN
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Score -->
+                  <div id="stage-score-left" class="font-orbitron font-black text-2xl sm:text-4xl md:text-5xl text-sky-400 pl-2 shrink-0 drop-shadow-[0_0_12px_rgba(56,189,248,0.6)]">
+                    0
+                  </div>
+                </div>
+
+                <!-- Center VS Divider -->
+                <div id="stage-vs-divider" class="col-span-2 flex flex-col items-center justify-center bg-slate-950 border-x border-amber-400/40 relative">
+                  <div class="absolute inset-0 bg-gradient-to-b from-amber-500/10 via-transparent to-amber-500/10"></div>
+                  <span class="font-orbitron font-black text-xs sm:text-base md:text-lg tracking-widest text-amber-400 gold-glow">
+                    VS
+                  </span>
+                  <span id="stage-match-status" class="text-[8px] sm:text-[10px] font-mono-cyber text-slate-400 uppercase tracking-widest">
+                    LIVE
+                  </span>
+                </div>
+
+                <!-- Right Side Team Card (#view-right-badge) -->
+                <div id="view-right-badge" class="col-span-5 flex items-center justify-between px-3 sm:px-6 bg-gradient-to-l from-rose-950/90 via-rose-900/60 to-slate-950/90 border-l border-rose-400/30 red-glow">
+                  <!-- Score -->
+                  <div id="stage-score-right" class="font-orbitron font-black text-2xl sm:text-4xl md:text-5xl text-rose-400 pr-2 shrink-0 drop-shadow-[0_0_12px_rgba(244,63,94,0.6)]">
+                    0
+                  </div>
+
+                  <!-- Team Logo & Info -->
+                  <div class="flex items-center gap-2.5 sm:gap-4 min-w-0 flex-row-reverse text-right">
+                    <div class="relative shrink-0">
+                      <img id="stage-logo-right" src="assets/e-sportslogo.png" alt="Right Team Logo"
+                        class="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl object-contain bg-slate-900/80 p-1 border border-rose-400/40 shadow" />
+                    </div>
+                    <div class="min-w-0">
+                      <div id="stage-name-right" class="font-orbitron font-extrabold text-xs sm:text-base md:text-lg text-white truncate drop-shadow">
+                        ABM • GAS • TVL
+                      </div>
+                      <div id="stage-dept-right" class="font-mono-cyber text-[9px] sm:text-xs text-rose-300/80 tracking-wider truncate">
+                        SHS SHOWDOWN
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 2. LOWER-THIRD DUO ROSTER SHOWCASE CAROUSELS (#view-dual-roster) -->
+            <div id="view-dual-roster" class="absolute bottom-4 inset-x-4 sm:bottom-6 sm:inset-x-8 flex items-end justify-between pointer-events-auto">
+
+              <!-- Left Side Team Member Showcase Carousel (#view-left-roster) -->
+              <div id="view-left-roster" class="w-64 sm:w-80 md:w-96 rounded-2xl overflow-hidden bg-slate-950/95 border border-sky-400/40 shadow-2xl backdrop-blur-xl blue-glow">
+                <!-- Header: Team Label & Current Player Indicator -->
+                <div class="px-3.5 py-1.5 bg-gradient-to-r from-sky-900/80 to-slate-950 border-b border-sky-400/30 flex items-center justify-between">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[14px] text-sky-400">group</span>
+                    <span id="carousel-team-left-tag" class="text-[10px] sm:text-xs font-orbitron font-bold text-sky-300 tracking-wider truncate max-w-[150px]">
+                      TECHPRO HTM
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-1" id="carousel-dots-left">
+                    <!-- Dots generated by JS -->
+                    <span class="h-1.5 w-1.5 rounded-full bg-sky-400"></span>
+                    <span class="h-1.5 w-1.5 rounded-full bg-slate-700"></span>
+                  </div>
+                </div>
+
+                <!-- Carousel Active Player Card -->
+                <div id="carousel-card-left" class="carousel-item p-3.5 flex items-center gap-3.5">
+                  <!-- Player Avatar -->
+                  <div class="relative shrink-0">
+                    <div id="carousel-player-avatar-wrap-left" class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-900 border-2 border-sky-400/60 overflow-hidden flex items-center justify-center shadow">
+                      <img id="carousel-player-photo-left" src="assets/e-sportslogo.png" alt="Player" class="w-full h-full object-cover" />
+                    </div>
+                    <span id="carousel-player-badge-left" class="absolute -top-1.5 -right-1.5 px-1 py-0.2 rounded bg-amber-400 text-slate-950 text-[9px] font-bold font-mono-cyber flex items-center gap-0.5 shadow">
+                      <span class="material-symbols-outlined text-[10px]">star</span> CAP
+                    </span>
+                  </div>
+
+                  <!-- Player Info -->
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center gap-1.5 mb-0.5">
+                      <span id="carousel-player-role-badge-left" class="text-[9px] sm:text-[10px] font-mono-cyber font-bold px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-400/30 uppercase tracking-wide">
+                        JUNGLER
+                      </span>
+                      <span id="carousel-player-num-left" class="text-[10px] font-mono-cyber text-slate-400">#1</span>
+                    </div>
+                    <div id="carousel-player-ign-left" class="font-orbitron font-extrabold text-sm sm:text-lg text-white truncate drop-shadow">
+                      PHANTOM
+                    </div>
+                    <div id="carousel-player-real-left" class="text-[10px] sm:text-xs text-slate-300 truncate">
+                      Christian Garcia
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Side Team Member Showcase Carousel (#view-right-roster) -->
+              <div id="view-right-roster" class="w-64 sm:w-80 md:w-96 rounded-2xl overflow-hidden bg-slate-950/95 border border-rose-400/40 shadow-2xl backdrop-blur-xl red-glow">
+                <!-- Header: Team Label & Current Player Indicator -->
+                <div class="px-3.5 py-1.5 bg-gradient-to-l from-rose-900/80 to-slate-950 border-b border-rose-400/30 flex items-center justify-between flex-row-reverse">
+                  <div class="flex items-center gap-1.5 flex-row-reverse">
+                    <span class="material-symbols-outlined text-[14px] text-rose-400">group</span>
+                    <span id="carousel-team-right-tag" class="text-[10px] sm:text-xs font-orbitron font-bold text-rose-300 tracking-wider truncate max-w-[150px]">
+                      ABM • GAS • TVL
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-1" id="carousel-dots-right">
+                    <!-- Dots generated by JS -->
+                    <span class="h-1.5 w-1.5 rounded-full bg-rose-400"></span>
+                    <span class="h-1.5 w-1.5 rounded-full bg-slate-700"></span>
+                  </div>
+                </div>
+
+                <!-- Carousel Active Player Card -->
+                <div id="carousel-card-right" class="carousel-item p-3.5 flex items-center gap-3.5 flex-row-reverse text-right">
+                  <!-- Player Avatar -->
+                  <div class="relative shrink-0">
+                    <div id="carousel-player-avatar-wrap-right" class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-slate-900 border-2 border-rose-400/60 overflow-hidden flex items-center justify-center shadow">
+                      <img id="carousel-player-photo-right" src="assets/e-sportslogo.png" alt="Player" class="w-full h-full object-cover" />
+                    </div>
+                    <span id="carousel-player-badge-right" class="absolute -top-1.5 -left-1.5 px-1 py-0.2 rounded bg-amber-400 text-slate-950 text-[9px] font-bold font-mono-cyber flex items-center gap-0.5 shadow">
+                      <span class="material-symbols-outlined text-[10px]">star</span> CAP
+                    </span>
+                  </div>
+
+                  <!-- Player Info -->
+                  <div class="min-w-0 flex-1">
+                    <div class="flex items-center justify-end gap-1.5 mb-0.5">
+                      <span id="carousel-player-num-right" class="text-[10px] font-mono-cyber text-slate-400">#1</span>
+                      <span id="carousel-player-role-badge-right" class="text-[9px] sm:text-[10px] font-mono-cyber font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-400/30 uppercase tracking-wide">
+                        MID LANE
+                      </span>
+                    </div>
+                    <div id="carousel-player-ign-right" class="font-orbitron font-extrabold text-sm sm:text-lg text-white truncate drop-shadow">
+                      VIPER
+                    </div>
+                    <div id="carousel-player-real-right" class="text-[10px] sm:text-xs text-slate-300 truncate">
+                      Marc Alcantara
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+          <!-- END OBS LIVE STAGE -->
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       HUB FOOTER (Control Hub Mode)
+       ========================================== -->
+  <footer id="hub-footer" class="border-t border-slate-800 bg-[#070F1E] py-4 text-center text-xs text-slate-500 font-mono-cyber">
+    <div class="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-3">
+      <span>CEC Blue Dragon Esports &bull; Broadcast Graphics Engine 2026</span>
+      <div class="flex items-center gap-4">
+        <a href="tournament.html" class="hover:text-sky-400 transition-colors">Tournament View</a>
+        <a href="bracket.html" class="hover:text-sky-400 transition-colors">Bracket Board</a>
+        <a href="admin-officiating.html" class="hover:text-sky-400 transition-colors">Admin Officiating</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase & Live Engine Scripts -->
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/auth-guard.js"></script>
+  <script src="assets/js/live-manager.js"></script>
+
+  <!-- Broadcast Hub Controller Script -->
+  <script>
+    (function () {
+      'use strict';
+
+      // Safe DOM Helper
+      const $ = id => document.getElementById(id);
+      const urlParams = new URLSearchParams(window.location.search);
+      const isObsMode = urlParams.has('obs') || urlParams.has('overlay') ||
+        typeof window.obsstudio !== 'undefined' ||
+        (navigator.userAgent && /OBS\/|obs-browser/i.test(navigator.userAgent));
+
+      // Local State
+      let matches = {};
+      let activeMatchId = null;
+      let isSidesSwapped = false;
+      let leftScore = 0;
+      let rightScore = 0;
+      let carouselInterval = 5000;
+      let carouselTimer = null;
+      let isCarouselPlaying = true;
+      let leftRosterIndex = 0;
+      let rightRosterIndex = 0;
+      let isStaffUser = false;
+
+      /**
+       * Apply Staff Permission Boundaries
+       * Restricts Event Title, Score Adjustments, and Side Swapping to Approved Staff
+       */
+      function applyStaffPermissions(user, profile) {
+        isStaffUser = !!(window.CECAuth && window.CECAuth.isApprovedStaff && window.CECAuth.isApprovedStaff());
+
+        const titleInput = $('event-title-input');
+        const titleClearBtn = $('event-title-clear-btn');
+        const btnSwap = $('btn-swap-sides');
+        const scoreLeftPlus = $('btn-score-left-plus');
+        const scoreLeftMinus = $('btn-score-left-minus');
+        const scoreRightPlus = $('btn-score-right-plus');
+        const scoreRightMinus = $('btn-score-right-minus');
+        const syncBtn = $('btn-publish-firebase');
+        const staffNotice = $('staff-mode-banner');
+        const authStatusBadge = $('sync-status-badge');
+        const authStatusText = $('sync-status-text');
+
+        if (isStaffUser) {
+          // Officiating Staff Mode: Full Editing Unlocked
+          if (titleInput) {
+            titleInput.readOnly = false;
+            titleInput.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-900/50');
+            titleInput.title = 'Live Event Title (Editing Unlocked)';
+          }
+          if (titleClearBtn) titleClearBtn.style.display = 'block';
+          if (btnSwap) {
+            btnSwap.disabled = false;
+            btnSwap.classList.remove('opacity-40', 'cursor-not-allowed');
+            btnSwap.title = 'Switch Team Names, Logos, Scores, and Roster Carousels (Left ⇄ Right)';
+          }
+          [scoreLeftPlus, scoreLeftMinus, scoreRightPlus, scoreRightMinus].forEach(btn => {
+            if (btn) {
+              btn.disabled = false;
+              btn.classList.remove('opacity-25', 'cursor-not-allowed', 'pointer-events-none');
+            }
+          });
+          if (syncBtn) {
+            syncBtn.disabled = false;
+            syncBtn.style.display = 'inline-flex';
+          }
+          if (staffNotice) staffNotice.style.display = 'none';
+          if (authStatusBadge) {
+            authStatusBadge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono-cyber';
+          }
+          if (authStatusText) {
+            const staffName = (profile && (profile.displayName || profile.email)) || 'OFFICIAL';
+            authStatusText.textContent = `STAFF: ${String(staffName).toUpperCase()}`;
+          }
+        } else {
+          // Streamer Mode: Read-Only
+          if (titleInput) {
+            titleInput.readOnly = true;
+            titleInput.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-900/50');
+            titleInput.title = 'Read-Only (Officiating staff login required to edit)';
+          }
+          if (titleClearBtn) titleClearBtn.style.display = 'none';
+          if (btnSwap) {
+            btnSwap.disabled = true;
+            btnSwap.classList.add('opacity-40', 'cursor-not-allowed');
+            btnSwap.title = 'Read-Only (Officiating staff login required to switch sides)';
+          }
+          [scoreLeftPlus, scoreLeftMinus, scoreRightPlus, scoreRightMinus].forEach(btn => {
+            if (btn) {
+              btn.disabled = true;
+              btn.classList.add('opacity-25', 'cursor-not-allowed', 'pointer-events-none');
+            }
+          });
+          if (syncBtn) {
+            syncBtn.disabled = true;
+            syncBtn.style.display = 'none';
+          }
+          if (staffNotice) staffNotice.style.display = 'flex';
+          if (authStatusBadge) {
+            authStatusBadge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono-cyber';
+          }
+          if (authStatusText) {
+            authStatusText.textContent = 'STREAMER MODE (READ-ONLY)';
+          }
+        }
+      }
+
+      // Sample fallback rosters for offline testing / immediate wow factor
+      const fallbackRosterLeft = [
+        { ign: 'PHANTOM', real: 'Christian Garcia', role: 'Jungler', isCap: true, photo: 'assets/intrams_logo.png' },
+        { ign: 'VORTEX', real: 'Dave Mendoza', role: 'Gold Lane', isCap: false, photo: 'assets/intrams_logo.png' },
+        { ign: 'AURA', real: 'Kenji Ramos', role: 'Mid Lane', isCap: false, photo: 'assets/intrams_logo.png' },
+        { ign: 'TITAN', real: 'Angelo Santos', role: 'EXP Lane', isCap: false, photo: 'assets/intrams_logo.png' },
+        { ign: 'SOLAR', real: 'Joshua Dela Cruz', role: 'Roamer', isCap: false, photo: 'assets/intrams_logo.png' }
+      ];
+
+      const fallbackRosterRight = [
+        { ign: 'VIPER', real: 'Marc Alcantara', role: 'Mid Lane', isCap: true, photo: 'assets/e-sportslogo.png' },
+        { ign: 'SHADOW', real: 'Kyle Bernardo', role: 'Jungler', isCap: false, photo: 'assets/e-sportslogo.png' },
+        { ign: 'BLAZE', real: 'Jerome Castillo', role: 'Gold Lane', isCap: false, photo: 'assets/e-sportslogo.png' },
+        { ign: 'IRONCLAD', real: 'Patrick Rivera', role: 'EXP Lane', isCap: false, photo: 'assets/e-sportslogo.png' },
+        { ign: 'NEXUS', real: 'Brian Tolentino', role: 'Roamer', isCap: false, photo: 'assets/e-sportslogo.png' }
+      ];
+
+      // Default match placeholder
+      const defaultMatch = {
+        id: 'MATCH-LIVE-01',
+        title: 'CEC ESPORTS INTRAMURALS 2026 • MLBB GRAND FINALS',
+        stage: 'SHS SHOWDOWN • ROUND ROBIN',
+        division: 'SHS',
+        status: 'LIVE',
+        team1: {
+          id: 'T1',
+          name: 'TECHPRO HTM',
+          dept: 'SHS SHOWDOWN',
+          score: 0,
+          logoUrl: 'assets/intrams_logo.png',
+          roster: fallbackRosterLeft
+        },
+        team2: {
+          id: 'T2',
+          name: 'ABM • GAS • TVL',
+          dept: 'SHS SHOWDOWN',
+          score: 0,
+          logoUrl: 'assets/e-sportslogo.png',
+          roster: fallbackRosterRight
+        }
+      };
+
+      /**
+       * Retrieve active match object with overrides
+       */
+      function getCurrentMatch() {
+        const m = (matches && activeMatchId && matches[activeMatchId]) ? matches[activeMatchId] : defaultMatch;
+        return m;
+      }
+
+      /**
+       * Render All Live Elements to the Stage
+       */
+      function renderStage() {
+        const match = getCurrentMatch();
+        const eventTitle = ($('event-title-input') && $('event-title-input').value.trim()) ||
+          urlParams.get('title') || match.title || match.stage || 'CEC ESPORTS INTRAMURALS 2026';
+
+        // Swap assignment
+        const tBlue = isSidesSwapped ? (match.team2 || defaultMatch.team2) : (match.team1 || defaultMatch.team1);
+        const tRed = isSidesSwapped ? (match.team1 || defaultMatch.team1) : (match.team2 || defaultMatch.team2);
+
+        // 1. Title Banner
+        if ($('live-stage-title')) $('live-stage-title').textContent = eventTitle;
+        if ($('live-stage-format')) {
+          $('live-stage-format').textContent = urlParams.get('format') || (match.division ? match.division.toUpperCase() : 'BO1');
+        }
+
+        // 2. Scoreboard & Badges
+        // Blue / Left
+        if ($('stage-name-left')) $('stage-name-left').textContent = tBlue.name || tBlue.shortName || 'BLUE TEAM';
+        if ($('stage-dept-left')) $('stage-dept-left').textContent = tBlue.dept || tBlue.department || 'OFFICIAL ROSTER';
+        if ($('stage-score-left')) $('stage-score-left').textContent = leftScore;
+        if ($('stage-logo-left')) {
+          $('stage-logo-left').src = tBlue.logoUrl || tBlue.logo || tBlue.emblem || 'assets/intrams_logo.png';
+          $('stage-logo-left').onerror = () => { $('stage-logo-left').src = 'assets/intrams_logo.png'; };
+        }
+
+        // Red / Right
+        if ($('stage-name-right')) $('stage-name-right').textContent = tRed.name || tRed.shortName || 'RED TEAM';
+        if ($('stage-dept-right')) $('stage-dept-right').textContent = tRed.dept || tRed.department || 'OFFICIAL ROSTER';
+        if ($('stage-score-right')) $('stage-score-right').textContent = rightScore;
+        if ($('stage-logo-right')) {
+          $('stage-logo-right').src = tRed.logoUrl || tRed.logo || tRed.emblem || 'assets/e-sportslogo.png';
+          $('stage-logo-right').onerror = () => { $('stage-logo-right').src = 'assets/e-sportslogo.png'; };
+        }
+
+        // Center status
+        if ($('stage-match-status')) {
+          $('stage-match-status').textContent = urlParams.get('status') || (match.status || 'LIVE').toUpperCase();
+        }
+
+        // Hub Controls Sync
+        if ($('control-score-left')) $('control-score-left').textContent = leftScore;
+        if ($('control-score-right')) $('control-score-right').textContent = rightScore;
+        if ($('label-score-left')) $('label-score-left').textContent = isSidesSwapped ? 'RED PTS' : 'BLUE PTS';
+        if ($('label-score-right')) $('label-score-right').textContent = isSidesSwapped ? 'BLUE PTS' : 'RED PTS';
+
+        // 3. Render Current Player Showcase in Carousels
+        renderCarousels(tBlue, tRed);
+      }
+
+      /**
+       * Render Carousels for Left and Right Teams
+       */
+      function renderCarousels(teamLeft, teamRight) {
+        // Left Roster
+        const rosterLeft = (teamLeft.roster && teamLeft.roster.length > 0) ? teamLeft.roster : fallbackRosterLeft;
+        if (leftRosterIndex >= rosterLeft.length) leftRosterIndex = 0;
+        const playerL = rosterLeft[leftRosterIndex] || rosterLeft[0];
+
+        if ($('carousel-team-left-tag')) $('carousel-team-left-tag').textContent = teamLeft.name || 'BLUE TEAM';
+        if ($('carousel-player-ign-left')) $('carousel-player-ign-left').textContent = playerL.ign || playerL.playerName || 'PLAYER';
+        if ($('carousel-player-real-left')) $('carousel-player-real-left').textContent = playerL.real || playerL.realName || teamLeft.dept || '';
+        if ($('carousel-player-role-badge-left')) $('carousel-player-role-badge-left').textContent = playerL.role || 'STARTER';
+        if ($('carousel-player-num-left')) $('carousel-player-num-left').textContent = '#' + (leftRosterIndex + 1);
+
+        if ($('carousel-player-badge-left')) {
+          const isCap = playerL.isCap || playerL.isCaptain || (playerL.rosterType === 'Captain') || leftRosterIndex === 0;
+          $('carousel-player-badge-left').style.display = isCap ? 'inline-flex' : 'none';
+        }
+
+        if ($('carousel-player-photo-left')) {
+          const photo = playerL.photo || playerL.profileImageUrl || playerL.avatar || teamLeft.logoUrl || 'assets/intrams_logo.png';
+          $('carousel-player-photo-left').src = photo;
+          $('carousel-player-photo-left').onerror = () => { $('carousel-player-photo-left').src = 'assets/intrams_logo.png'; };
+        }
+
+        // Render Dots for Left
+        if ($('carousel-dots-left')) {
+          $('carousel-dots-left').innerHTML = rosterLeft.map((_, i) =>
+            `<span class="h-1.5 w-1.5 rounded-full transition-colors ${i === leftRosterIndex ? 'bg-sky-400 scale-125' : 'bg-slate-700'}"></span>`
+          ).join('');
+        }
+
+        // Right Roster
+        const rosterRight = (teamRight.roster && teamRight.roster.length > 0) ? teamRight.roster : fallbackRosterRight;
+        if (rightRosterIndex >= rosterRight.length) rightRosterIndex = 0;
+        const playerR = rosterRight[rightRosterIndex] || rosterRight[0];
+
+        if ($('carousel-team-right-tag')) $('carousel-team-right-tag').textContent = teamRight.name || 'RED TEAM';
+        if ($('carousel-player-ign-right')) $('carousel-player-ign-right').textContent = playerR.ign || playerR.playerName || 'PLAYER';
+        if ($('carousel-player-real-right')) $('carousel-player-real-right').textContent = playerR.real || playerR.realName || teamRight.dept || '';
+        if ($('carousel-player-role-badge-right')) $('carousel-player-role-badge-right').textContent = playerR.role || 'STARTER';
+        if ($('carousel-player-num-right')) $('carousel-player-num-right').textContent = '#' + (rightRosterIndex + 1);
+
+        if ($('carousel-player-badge-right')) {
+          const isCap = playerR.isCap || playerR.isCaptain || (playerR.rosterType === 'Captain') || rightRosterIndex === 0;
+          $('carousel-player-badge-right').style.display = isCap ? 'inline-flex' : 'none';
+        }
+
+        if ($('carousel-player-photo-right')) {
+          const photo = playerR.photo || playerR.profileImageUrl || playerR.avatar || teamRight.logoUrl || 'assets/e-sportslogo.png';
+          $('carousel-player-photo-right').src = photo;
+          $('carousel-player-photo-right').onerror = () => { $('carousel-player-photo-right').src = 'assets/e-sportslogo.png'; };
+        }
+
+        // Render Dots for Right
+        if ($('carousel-dots-right')) {
+          $('carousel-dots-right').innerHTML = rosterRight.map((_, i) =>
+            `<span class="h-1.5 w-1.5 rounded-full transition-colors ${i === rightRosterIndex ? 'bg-rose-400 scale-125' : 'bg-slate-700'}"></span>`
+          ).join('');
+        }
+      }
+
+      /**
+       * Advance Carousel Step with Smooth Animation
+       */
+      function advanceCarousel() {
+        const match = getCurrentMatch();
+        const tBlue = isSidesSwapped ? (match.team2 || defaultMatch.team2) : (match.team1 || defaultMatch.team1);
+        const tRed = isSidesSwapped ? (match.team1 || defaultMatch.team1) : (match.team2 || defaultMatch.team2);
+
+        const rL = (tBlue.roster && tBlue.roster.length > 0) ? tBlue.roster : fallbackRosterLeft;
+        const rR = (tRed.roster && tRed.roster.length > 0) ? tRed.roster : fallbackRosterRight;
+
+        const cardL = $('carousel-card-left');
+        const cardR = $('carousel-card-right');
+
+        if (cardL) cardL.classList.add('exiting');
+        if (cardR) cardR.classList.add('exiting');
+
+        setTimeout(() => {
+          leftRosterIndex = (leftRosterIndex + 1) % rL.length;
+          rightRosterIndex = (rightRosterIndex + 1) % rR.length;
+          renderStage();
+
+          if (cardL) {
+            cardL.classList.remove('exiting');
+            cardL.classList.add('entering');
+          }
+          if (cardR) {
+            cardR.classList.remove('exiting');
+            cardR.classList.add('entering');
+          }
+
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              if (cardL) cardL.classList.remove('entering');
+              if (cardR) cardR.classList.remove('entering');
+            }, 40);
+          });
+        }, 220);
+      }
+
+      /**
+       * Step Carousel Backwards
+       */
+      function prevCarousel() {
+        const match = getCurrentMatch();
+        const tBlue = isSidesSwapped ? (match.team2 || defaultMatch.team2) : (match.team1 || defaultMatch.team1);
+        const tRed = isSidesSwapped ? (match.team1 || defaultMatch.team1) : (match.team2 || defaultMatch.team2);
+        const rL = (tBlue.roster && tBlue.roster.length > 0) ? tBlue.roster : fallbackRosterLeft;
+        const rR = (tRed.roster && tRed.roster.length > 0) ? tRed.roster : fallbackRosterRight;
+
+        leftRosterIndex = (leftRosterIndex - 1 + rL.length) % rL.length;
+        rightRosterIndex = (rightRosterIndex - 1 + rR.length) % rR.length;
+        renderStage();
+      }
+
+      /**
+       * Reset & Restart Carousel Timer
+       */
+      function startCarouselTimer() {
+        if (carouselTimer) clearInterval(carouselTimer);
+        if (carouselInterval > 0 && isCarouselPlaying) {
+          carouselTimer = setInterval(advanceCarousel, carouselInterval);
+        }
+      }
+
+      /**
+       * Populate Absolute Links for OBS Studio Browser Sources
+       */
+      function updateObsLinks() {
+        const base = window.location.origin + window.location.pathname;
+        const currentMatchId = activeMatchId || '';
+        const rawTitle = ($('event-title-input') && $('event-title-input').value.trim()) || '';
+        const titleParam = rawTitle ? `&title=${encodeURIComponent(rawTitle)}` : '';
+        const matchParam = currentMatchId ? `&match=${encodeURIComponent(currentMatchId)}` : '';
+        const swapParam = isSidesSwapped ? '&swap=1' : '';
+
+        document.querySelectorAll('.obs-link-input').forEach(input => {
+          const view = input.getAttribute('data-view') || 'master';
+          const fullUrl = `${base}?view=${view}&obs=1&transparent=1${matchParam}${titleParam}${swapParam}`;
+          input.value = fullUrl;
+
+          // Update sibling test link
+          const parent = input.closest('div');
+          if (parent) {
+            const testLink = parent.querySelector('a[href]');
+            if (testLink) testLink.href = fullUrl;
+          }
+        });
+      }
+
+      /**
+       * Populate Matches Dropdown
+       */
+      function populateMatchesDropdown() {
+        const sel = $('live-match-select');
+        if (!sel) return;
+        sel.innerHTML = '';
+
+        const list = Object.values(matches);
+        if (list.length === 0) {
+          const opt = document.createElement('option');
+          opt.value = defaultMatch.id;
+          opt.textContent = `${defaultMatch.team1.name} vs ${defaultMatch.team2.name} (Live Showcase)`;
+          sel.appendChild(opt);
+          activeMatchId = defaultMatch.id;
+          return;
+        }
+
+        list.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.id;
+          const t1 = (m.team1 && m.team1.name) || 'Team 1';
+          const t2 = (m.team2 && m.team2.name) || 'Team 2';
+          opt.textContent = `${t1} vs ${t2} • [${m.id}]`;
+          if (m.id === activeMatchId) opt.selected = true;
+          sel.appendChild(opt);
+        });
+
+        if (!activeMatchId && list[0]) {
+          activeMatchId = list[0].id;
+          sel.value = activeMatchId;
+        }
+      }
+
+      /**
+       * Load Selected Match Details into Controls & Stage
+       */
+      function loadSelectedMatch() {
+        const m = getCurrentMatch();
+        leftScore = (m.team1 && typeof m.team1.score === 'number') ? m.team1.score : 0;
+        rightScore = (m.team2 && typeof m.team2.score === 'number') ? m.team2.score : 0;
+
+        if (m.obsSwap !== undefined) {
+          isSidesSwapped = !!m.obsSwap;
+        } else if (urlParams.has('swap')) {
+          isSidesSwapped = urlParams.get('swap') === '1' || urlParams.get('swap') === 'true';
+        }
+
+        if ($('event-title-input') && !urlParams.has('title')) {
+          $('event-title-input').value = m.title || m.stageTitle || m.stage || 'CEC ESPORTS INTRAMURALS 2026 • MLBB GRAND FINALS';
+        }
+
+        leftRosterIndex = 0;
+        rightRosterIndex = 0;
+        renderStage();
+        updateObsLinks();
+      }
+
+      /**
+       * Setup Event Listeners for Controls
+       */
+      function setupEventListeners() {
+        // Event Title Input
+        if ($('event-title-input')) {
+          $('event-title-input').addEventListener('input', () => {
+            if (!isStaffUser) return;
+            renderStage();
+            updateObsLinks();
+          });
+        }
+        if ($('event-title-clear-btn')) {
+          $('event-title-clear-btn').addEventListener('click', () => {
+            if (!isStaffUser) return;
+            $('event-title-input').value = '';
+            renderStage();
+            updateObsLinks();
+          });
+        }
+
+        // Match Select Dropdown
+        if ($('live-match-select')) {
+          $('live-match-select').addEventListener('change', (e) => {
+            activeMatchId = e.target.value;
+            loadSelectedMatch();
+          });
+        }
+
+        // Score Controls
+        if ($('btn-score-left-plus')) {
+          $('btn-score-left-plus').addEventListener('click', () => {
+            if (!isStaffUser) return;
+            leftScore++;
+            renderStage();
+          });
+        }
+        if ($('btn-score-left-minus')) {
+          $('btn-score-left-minus').addEventListener('click', () => {
+            if (!isStaffUser) return;
+            if (leftScore > 0) leftScore--;
+            renderStage();
+          });
+        }
+        if ($('btn-score-right-plus')) {
+          $('btn-score-right-plus').addEventListener('click', () => {
+            if (!isStaffUser) return;
+            rightScore++;
+            renderStage();
+          });
+        }
+        if ($('btn-score-right-minus')) {
+          $('btn-score-right-minus').addEventListener('click', () => {
+            if (!isStaffUser) return;
+            if (rightScore > 0) rightScore--;
+            renderStage();
+          });
+        }
+
+        // Swap Sides Button (Switch Team Names, Logos, Scores, and Rosters)
+        if ($('btn-swap-sides')) {
+          $('btn-swap-sides').addEventListener('click', () => {
+            if (!isStaffUser) return;
+            isSidesSwapped = !isSidesSwapped;
+            const tmp = leftScore;
+            leftScore = rightScore;
+            rightScore = tmp;
+            renderStage();
+            updateObsLinks();
+          });
+        }
+
+        // Carousel Speed Selector
+        if ($('carousel-speed-select')) {
+          $('carousel-speed-select').addEventListener('change', (e) => {
+            carouselInterval = parseInt(e.target.value, 10);
+            isCarouselPlaying = carouselInterval > 0;
+            if ($('carousel-play-text')) {
+              $('carousel-play-text').textContent = isCarouselPlaying ? 'PLAYING' : 'PAUSED';
+            }
+            startCarouselTimer();
+          });
+        }
+
+        // Carousel Manual Controls
+        if ($('btn-carousel-next')) {
+          $('btn-carousel-next').addEventListener('click', advanceCarousel);
+        }
+        if ($('btn-carousel-prev')) {
+          $('btn-carousel-prev').addEventListener('click', prevCarousel);
+        }
+        if ($('btn-carousel-toggle')) {
+          $('btn-carousel-toggle').addEventListener('click', () => {
+            isCarouselPlaying = !isCarouselPlaying;
+            if ($('carousel-play-text')) {
+              $('carousel-play-text').textContent = isCarouselPlaying ? 'PLAYING' : 'PAUSED';
+            }
+            if (isCarouselPlaying) {
+              advanceCarousel();
+              startCarouselTimer();
+            } else if (carouselTimer) {
+              clearInterval(carouselTimer);
+            }
+          });
+        }
+
+        // Background Backdrop Modes (Preview Area)
+        const frame = $('preview-container-frame');
+        if (frame) {
+          if ($('btn-bg-checkered')) {
+            $('btn-bg-checkered').addEventListener('click', () => {
+              frame.className = 'relative w-full rounded-2xl overflow-hidden border border-sky-500/30 shadow-2xl bg-checkered flex items-center justify-center p-2 sm:p-4 transition-all';
+            });
+          }
+          if ($('btn-bg-green')) {
+            $('btn-bg-green').addEventListener('click', () => {
+              frame.className = 'relative w-full rounded-2xl overflow-hidden border border-emerald-500/40 shadow-2xl bg-chroma-green flex items-center justify-center p-2 sm:p-4 transition-all';
+            });
+          }
+          if ($('btn-bg-dark')) {
+            $('btn-bg-dark').addEventListener('click', () => {
+              frame.className = 'relative w-full rounded-2xl overflow-hidden border border-slate-700 shadow-2xl bg-dark-arena flex items-center justify-center p-2 sm:p-4 transition-all';
+            });
+          }
+        }
+
+        // Preview Filter Tabs (All, Scoreboard, Left Carousel, Right Carousel)
+        document.querySelectorAll('.btn-preview-filter').forEach(btn => {
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.btn-preview-filter').forEach(b => {
+              b.classList.remove('bg-sky-500', 'text-slate-950', 'font-bold');
+              b.classList.add('text-slate-300');
+            });
+            btn.classList.add('bg-sky-500', 'text-slate-950', 'font-bold');
+            btn.classList.remove('text-slate-300');
+
+            const filter = btn.getAttribute('data-preview-filter');
+            const scoreView = $('view-scoreboard');
+            const leftRosterView = $('view-left-roster');
+            const rightRosterView = $('view-right-roster');
+
+            if (filter === 'scoreboard') {
+              if (scoreView) scoreView.style.display = 'flex';
+              if (leftRosterView) leftRosterView.style.display = 'none';
+              if (rightRosterView) rightRosterView.style.display = 'none';
+            } else if (filter === 'left-roster') {
+              if (scoreView) scoreView.style.display = 'none';
+              if (leftRosterView) leftRosterView.style.display = 'block';
+              if (rightRosterView) rightRosterView.style.display = 'none';
+            } else if (filter === 'right-roster') {
+              if (scoreView) scoreView.style.display = 'none';
+              if (leftRosterView) leftRosterView.style.display = 'none';
+              if (rightRosterView) rightRosterView.style.display = 'block';
+            } else {
+              // Master / All
+              if (scoreView) scoreView.style.display = 'flex';
+              if (leftRosterView) leftRosterView.style.display = 'block';
+              if (rightRosterView) rightRosterView.style.display = 'block';
+            }
+          });
+        });
+
+        // Copy OBS Link Buttons
+        document.querySelectorAll('.btn-copy-obs').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const card = btn.closest('div');
+            const input = card ? card.querySelector('.obs-link-input') : null;
+            if (!input) return;
+
+            const val = input.value;
+            const originalHTML = btn.innerHTML;
+
+            const notifySuccess = () => {
+              btn.innerHTML = '<span class="material-symbols-outlined text-[13px]">check</span><span>Copied!</span>';
+              btn.classList.add('bg-emerald-400');
+              setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.classList.remove('bg-emerald-400');
+              }, 2000);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(val).then(notifySuccess).catch(() => {
+                input.select();
+                document.execCommand('copy');
+                notifySuccess();
+              });
+            } else {
+              input.select();
+              document.execCommand('copy');
+              notifySuccess();
+            }
+          });
+        });
+
+        // Publish to Firebase Button (Staff Only)
+        if ($('btn-publish-firebase')) {
+          $('btn-publish-firebase').addEventListener('click', async () => {
+            if (!isStaffUser) return;
+            const btn = $('btn-publish-firebase');
+            const orig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined text-[15px] animate-spin">refresh</span><span>SAVING</span>';
+
+            try {
+              if (window.CECFirebase && window.CECFirebase.db) {
+                const targetId = activeMatchId || 'MATCH-LIVE-01';
+                const cur = getCurrentMatch();
+                const updated = Object.assign({}, cur, {
+                  title: ($('event-title-input') && $('event-title-input').value.trim()) || cur.title,
+                  team1: Object.assign({}, cur.team1, { score: isSidesSwapped ? rightScore : leftScore }),
+                  team2: Object.assign({}, cur.team2, { score: isSidesSwapped ? leftScore : rightScore })
+                });
+
+                await window.CECFirebase.db.ref('liveMatches/' + targetId).update({
+                  title: updated.title,
+                  obsSwap: isSidesSwapped,
+                  'team1/score': isSidesSwapped ? rightScore : leftScore,
+                  'team2/score': isSidesSwapped ? leftScore : rightScore
+                });
+                await window.CECFirebase.db.ref('activeMatchId').set(targetId);
+
+                btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">check</span><span>SYNCED!</span>';
+                setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2000);
+              } else {
+                // Offline fallback notification
+                btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">check</span><span>UPDATED</span>';
+                setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2000);
+              }
+            } catch (err) {
+              console.warn('Firebase publish note:', err);
+              btn.innerHTML = '<span class="material-symbols-outlined text-[15px]">error</span><span>OFFLINE</span>';
+              setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2500);
+            }
+          });
+        }
+      }
+
+      /**
+       * Initialization
+       */
+      async function init() {
+        setupEventListeners();
+
+        // Check if URL specifies a match ID or swap state
+        if (urlParams.has('match')) {
+          activeMatchId = urlParams.get('match');
+        }
+        if (urlParams.has('swap')) {
+          isSidesSwapped = urlParams.get('swap') === '1' || urlParams.get('swap') === 'true';
+        }
+        if (urlParams.has('title') && $('event-title-input')) {
+          $('event-title-input').value = urlParams.get('title');
+        }
+
+        // Initialize Authentication Guard
+        if (window.CECAuth) {
+          try {
+            await window.CECAuth.init();
+            applyStaffPermissions(window.CECAuth.currentUser, window.CECAuth.currentStaffProfile);
+            window.CECAuth.onAuthChange((user, profile) => {
+              applyStaffPermissions(user, profile);
+            });
+          } catch (e) {
+            console.warn('Auth guard init note:', e);
+            applyStaffPermissions(null, null);
+          }
+        } else {
+          applyStaffPermissions(null, null);
+        }
+
+        // Initialize Firebase & Live Manager
+        if (window.CECLiveManager) {
+          try {
+            await window.CECLiveManager.init();
+            matches = window.CECLiveManager.matches || {};
+            if (!activeMatchId) activeMatchId = window.CECLiveManager.activeMatchId;
+
+            window.CECLiveManager.onMatchesChange((active, list) => {
+              matches = window.CECLiveManager.matches || {};
+              if (active && !activeMatchId) activeMatchId = active.id;
+              populateMatchesDropdown();
+              loadSelectedMatch();
+            });
+          } catch (e) {
+            console.warn('Live Manager init note:', e);
+          }
+        }
+
+        // Initial populate and render
+        populateMatchesDropdown();
+        loadSelectedMatch();
+        startCarouselTimer();
+
+        // Responsive scaler for 16:9 preview canvas
+        function handleResize() {
+          const scaler = $('preview-stage-scaler');
+          if (scaler && isObsMode) {
+            scaler.style.maxWidth = '100%';
+            scaler.style.maxHeight = '100%';
+          }
+        }
+        window.addEventListener('resize', handleResize);
+        handleResize();
+      }
+
+      // Execute on DOM ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+
+    })();
+  </script>
+</body>
+
+</html>

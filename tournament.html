@@ -1078,6 +1078,23 @@
 
         <!-- Modal Body -->
         <div class="p-lg overflow-y-auto flex-1 flex flex-col gap-md">
+          <!-- Direct Link to Full Dedicated Hub -->
+          <a href="obs-overlay.html" class="p-4 rounded-xl bg-gradient-to-r from-secondary-container/25 via-primary/15 to-secondary-container/20 border border-secondary/50 flex items-center justify-between hover:border-secondary transition-all text-decoration-none group shadow-lg">
+            <div class="flex items-center gap-3">
+              <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary text-on-secondary shrink-0 shadow-md">
+                <span class="material-symbols-outlined text-[24px]">desktop_windows</span>
+              </span>
+              <div>
+                <div class="font-bold text-sm text-on-surface flex items-center gap-2">
+                  <span>Open Dedicated OBS Overlays &amp; Live Preview Hub</span>
+                  <span class="text-[10px] font-mono-cyber px-2 py-0.5 rounded bg-secondary text-on-secondary font-bold">FULL PAGE</span>
+                </div>
+                <div class="text-xs text-on-surface-variant">Live event title editing, interactive 16:9 preview canvas, and modular copyable links.</div>
+              </div>
+            </div>
+            <span class="material-symbols-outlined text-secondary group-hover:translate-x-1.5 transition-transform text-[22px] shrink-0">arrow_forward</span>
+          </a>
+
           <div class="p-3.5 rounded-xl bg-surface-container-lowest/80 border border-primary/20 flex items-start gap-3">
             <span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">info</span>
             <div class="text-xs font-body-md text-on-surface-variant space-y-1">
@@ -2152,12 +2169,12 @@
         });
       }
 
-      if (obsBtn && obsModal) {
-        obsBtn.addEventListener('click', () => {
-          populateAbsoluteObsUrls();
-          obsModal.classList.remove('hidden');
-          obsModal.classList.add('flex');
+      if (obsBtn) {
+        obsBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.location.href = 'obs-overlay.html';
         });
+      }
         const closeObs = () => {
           obsModal.classList.add('hidden');
           obsModal.classList.remove('flex');
