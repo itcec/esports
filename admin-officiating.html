@@ -54,10 +54,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
     <span class="material-symbols-outlined text-[16px] text-primary">add_circle</span>
     <span>NEW COURT LOBBY</span>
   </button>
-  <a href="obs-overlay.html" target="_blank" class="px-4 py-2.5 rounded-xl bg-secondary-container/20 hover:bg-secondary-container/40 border border-secondary/40 text-secondary font-label-caps text-xs font-bold transition-colors flex items-center gap-2 shadow shrink-0" title="Open OBS Studio Browser Source Overlays & Live Preview Hub">
-    <span class="material-symbols-outlined text-[18px]">podcasts</span>
-    <span>OBS OVERLAYS</span>
-  </a>
+
   <a href="tournament.html" target="_blank" class="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary-fixed-dim text-on-primary font-label-caps text-xs font-bold transition-colors flex items-center gap-2 shadow-lg shrink-0">
     <span class="material-symbols-outlined text-[18px]">live_tv</span>
     <span>LIVE ARENA</span>
@@ -708,9 +705,7 @@ main h1.cyber-title { word-break: normal; overflow-wrap: break-word; }
               <span class="truncate max-w-[150px]">${m.streamUrl ? 'Stream Active' : 'Default Stream'}</span>
             </div>
             <div class="flex items-center gap-1.5 flex-wrap">
-              <a href="obs-overlay.html?match=${m.id}" target="_blank" class="px-2.5 py-1 rounded bg-secondary-container/20 hover:bg-secondary-container/40 text-secondary font-bold text-xs flex items-center gap-1 border border-secondary/40 shadow-sm" title="Launch & Control OBS Overlays for this match">
-                <span class="material-symbols-outlined text-[14px]">podcasts</span> OBS
-              </a>
+
               <button type="button" onclick="toggleObsSwap('${m.id}')" class="px-2.5 py-1 rounded ${m.obsSwap ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' : 'bg-surface-container-high text-on-surface-variant border-white/10'} hover:brightness-110 font-bold text-xs flex items-center gap-1 border" title="Swap Blue and Red team sides in OBS overlay">
                 <span class="material-symbols-outlined text-[14px]">swap_horiz</span> ${m.obsSwap ? 'Swapped' : 'Swap Sides'}
               </button>

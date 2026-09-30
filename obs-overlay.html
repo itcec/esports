@@ -422,6 +422,71 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
+  
+    /* =========================================================
+       PURE FLOATING OVERLAY: ZERO CARDS, ZERO CARD BACKGROUNDS
+       ========================================================= */
+    .obs-mode #stage-scoreboard-bar,
+    .obs-mode #view-left-badge,
+    .obs-mode #view-right-badge,
+    .obs-mode #stage-vs-divider,
+    .obs-mode #view-title,
+    .obs-mode #view-left-roster,
+    .obs-mode #view-right-roster,
+    .obs-mode #carousel-card-left,
+    .obs-mode #carousel-card-right,
+    .obs-mode #carousel-player-avatar-wrap-left,
+    .obs-mode #carousel-player-avatar-wrap-right,
+    .obs-mode #carousel-player-photo-left,
+    .obs-mode #carousel-player-photo-right,
+    .obs-mode #stage-logo-left,
+    .obs-mode #stage-logo-right {
+      background: transparent !important;
+      background-color: transparent !important;
+      background-image: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    /* Scoreboard only: remove title completely */
+    .obs-view-scoreboard #view-title {
+      display: none !important;
+    }
+
+    /* High contrast text outlines & shadows for floating letters */
+    .obs-mode #stage-name-left,
+    .obs-mode #stage-name-right,
+    .obs-mode #stage-dept-left,
+    .obs-mode #stage-dept-right,
+    .obs-mode #stage-vs-divider span,
+    .obs-mode #live-stage-title,
+    .obs-mode #live-stage-format,
+    .obs-mode #carousel-player-ign-left,
+    .obs-mode #carousel-player-ign-right,
+    .obs-mode #carousel-player-real-left,
+    .obs-mode #carousel-player-real-right,
+    .obs-mode #carousel-player-num-left,
+    .obs-mode #carousel-player-num-right,
+    .obs-mode #carousel-team-left-tag,
+    .obs-mode #carousel-team-right-tag {
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.98), 0 0 10px rgba(0, 0, 0, 0.95), 0 0 22px rgba(0, 0, 0, 0.9) !important;
+    }
+
+    .obs-mode #stage-score-left,
+    .obs-mode #stage-score-right {
+      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.98), 0 0 14px rgba(0, 0, 0, 0.95) !important;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95)) !important;
+    }
+
+    .obs-mode #stage-logo-left,
+    .obs-mode #stage-logo-right,
+    .obs-mode #carousel-player-photo-left,
+    .obs-mode #carousel-player-photo-right {
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95)) !important;
+    }
+
   </style>
 
   <!-- OBS URL Mode Detection -->
@@ -443,6 +508,11 @@
       }
     })();
   </script>
+  <!-- Horror & Esports Custom Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nosifer&family=Butcherman&family=Eater&family=Rubik+Wet+Paint&family=Russo+One&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+
 </head>
 
 <body class="bg-[#050B14] text-slate-100 min-h-screen flex flex-col">
@@ -491,40 +561,7 @@
        ========================================== -->
   <main class="flex-1 w-full max-w-7xl mx-auto px-4 py-6 flex flex-col gap-6">
 
-    <!-- Staff Permission Mode Alert Banner -->
-    <div id="staff-mode-banner" class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs shadow-lg">
-      <div class="flex items-center gap-2.5">
-        <span class="material-symbols-outlined text-amber-400 text-[20px] shrink-0">lock</span>
-        <span><strong>Streamer Mode (Read-Only):</strong> Overlay details (event title, scores, and swapping sides) can only be edited by authorized officiating staff logged in via the Match Officiating console.</span>
-      </div>
-      <a href="admin-officiating.html" target="_blank" class="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-500/40 text-[11px] font-bold font-mono-cyber transition-all shrink-0 flex items-center gap-1.5 self-start sm:self-center shadow">
-        <span class="material-symbols-outlined text-[15px]">login</span>
-        <span>Officiating Staff Login</span>
-      </a>
-    </div>
-
-    <!-- TOP SECTION: LIVE EDIT CONTROLS & EVENT TITLE INPUT -->
-    <section id="hub-controls-bar" class="cyber-panel rounded-2xl p-4 sm:p-5 shadow-2xl">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
-
-        <!-- Title of the Event Input -->
-        <div class="lg:col-span-4 flex flex-col gap-1.5">
-          <label for="event-title-input" class="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
-            <span class="material-symbols-outlined text-[16px]">title</span>
-            <span>Title of the Event</span>
-            <span class="text-[10px] text-slate-400 lowercase font-normal">(live updates stream)</span>
-          </label>
-          <div class="relative">
-            <input type="text" id="event-title-input"
-              value="CEC ESPORTS INTRAMURALS 2026 • MLBB GRAND FINALS"
-              placeholder="e.g. CEC INTRAMURALS 2026 • GRAND FINALS"
-              class="w-full bg-[#050B14] text-white px-3.5 py-2.5 rounded-xl border border-sky-500/40 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400 text-xs sm:text-sm font-semibold tracking-wide placeholder-slate-600 transition-all" />
-            <button id="event-title-clear-btn" type="button" title="Clear title"
-              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 p-0.5">
-              <span class="material-symbols-outlined text-[16px]">backspace</span>
-            </button>
-          </div>
-        </div>
+    
 
         <!-- Current Live Match Selector -->
         <div class="lg:col-span-3 flex flex-col gap-1.5">
@@ -595,6 +632,71 @@
         </div>
 
       </div>
+    
+        <!-- Live Styling: Font Selector & Color Pickers -->
+        <div class="col-span-1 lg:col-span-12 pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex flex-wrap items-center gap-4">
+            <!-- Font Style Chooser -->
+            <div class="flex items-center gap-2">
+              <label for="select-font-family" class="text-xs font-bold font-mono-cyber text-sky-400 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">font_download</span>
+                <span>FONT STYLE:</span>
+              </label>
+              <select id="select-font-family" class="bg-[#050B14] text-white px-2.5 py-1.5 rounded-lg border border-sky-500/40 text-xs font-bold cursor-pointer">
+                <optgroup label="Esports / Modern">
+                  <option value="Orbitron" selected>Orbitron (Esports Default)</option>
+                  <option value="Russo One">Russo One (Heavy Impact)</option>
+                  <option value="Cinzel Decorative">Cinzel Decorative (Mythic)</option>
+                  <option value="Share Tech Mono">Share Tech Mono (Cyber Tech)</option>
+                </optgroup>
+                <optgroup label="Horror Styles (Special)">
+                  <option value="Creepster">Creepster (Horror Dripping)</option>
+                  <option value="Nosifer">Nosifer (Blood Dripping)</option>
+                  <option value="Butcherman">Butcherman (Slasher Horror)</option>
+                  <option value="Eater">Eater (Distressed Horror)</option>
+                  <option value="Rubik Wet Paint">Rubik Wet Paint (Splatter Paint)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Color Pickers -->
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- Left Team Color -->
+              <div class="flex items-center gap-1.5 bg-[#050B14] px-2 py-1 rounded-lg border border-slate-800">
+                <span class="text-[10px] font-mono-cyber text-sky-400 font-bold">LEFT:</span>
+                <input type="color" id="picker-color-left" value="#38bdf8" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent" title="Left Team Text Color" />
+              </div>
+
+              <!-- Right Team Color -->
+              <div class="flex items-center gap-1.5 bg-[#050B14] px-2 py-1 rounded-lg border border-slate-800">
+                <span class="text-[10px] font-mono-cyber text-rose-400 font-bold">RIGHT:</span>
+                <input type="color" id="picker-color-right" value="#fb7185" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent" title="Right Team Text Color" />
+              </div>
+
+              <!-- Score Color -->
+              <div class="flex items-center gap-1.5 bg-[#050B14] px-2 py-1 rounded-lg border border-slate-800">
+                <span class="text-[10px] font-mono-cyber text-white font-bold">SCORE:</span>
+                <input type="color" id="picker-color-score" value="#ffffff" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent" title="Scores Text Color" />
+              </div>
+
+              <!-- VS / Accent Color -->
+              <div class="flex items-center gap-1.5 bg-[#050B14] px-2 py-1 rounded-lg border border-slate-800">
+                <span class="text-[10px] font-mono-cyber text-amber-400 font-bold">VS/ACCENT:</span>
+                <input type="color" id="picker-color-accent" value="#fbbf24" class="w-6 h-6 rounded cursor-pointer border-0 bg-transparent" title="VS / Accent Badge Color" />
+              </div>
+
+              <!-- Reset Button -->
+              <button type="button" id="btn-reset-styling" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 font-mono-cyber transition-colors" title="Reset font and colors to default">
+                RESET
+              </button>
+            </div>
+          </div>
+
+          <div class="text-[11px] font-mono-cyber text-slate-400">
+            <span>✨ Floating graphics with zero card boxes</span>
+          </div>
+        </div>
+
     </section>
 
     <!-- SECTION: OBS BROWSER SOURCE LINKS (MODULAR COPY CARDS) -->
@@ -1117,67 +1219,34 @@
         const authStatusBadge = $('sync-status-badge');
         const authStatusText = $('sync-status-text');
 
-        if (isStaffUser) {
-          // Officiating Staff Mode: Full Editing Unlocked
-          if (titleInput) {
-            titleInput.readOnly = false;
-            titleInput.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-900/50');
-            titleInput.title = 'Live Event Title (Editing Unlocked)';
+        // Always fully unlocked and editable - no streamer mode restrictions or lockouts
+        if (titleInput) {
+          titleInput.readOnly = false;
+          titleInput.classList.remove('opacity-60', 'cursor-not-allowed', 'bg-slate-900/50');
+          titleInput.title = 'Live Event Title';
+        }
+        if (titleClearBtn) titleClearBtn.style.display = 'block';
+        if (btnSwap) {
+          btnSwap.disabled = false;
+          btnSwap.classList.remove('opacity-40', 'cursor-not-allowed');
+          btnSwap.title = 'Switch Team Names, Logos, Scores, and Roster Carousels (Left ⇄ Right)';
+        }
+        [scoreLeftPlus, scoreLeftMinus, scoreRightPlus, scoreRightMinus].forEach(btn => {
+          if (btn) {
+            btn.disabled = false;
+            btn.classList.remove('opacity-25', 'cursor-not-allowed', 'pointer-events-none');
           }
-          if (titleClearBtn) titleClearBtn.style.display = 'block';
-          if (btnSwap) {
-            btnSwap.disabled = false;
-            btnSwap.classList.remove('opacity-40', 'cursor-not-allowed');
-            btnSwap.title = 'Switch Team Names, Logos, Scores, and Roster Carousels (Left ⇄ Right)';
-          }
-          [scoreLeftPlus, scoreLeftMinus, scoreRightPlus, scoreRightMinus].forEach(btn => {
-            if (btn) {
-              btn.disabled = false;
-              btn.classList.remove('opacity-25', 'cursor-not-allowed', 'pointer-events-none');
-            }
-          });
-          if (syncBtn) {
-            syncBtn.disabled = false;
-            syncBtn.style.display = 'inline-flex';
-          }
-          if (staffNotice) staffNotice.style.display = 'none';
-          if (authStatusBadge) {
-            authStatusBadge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono-cyber';
-          }
-          if (authStatusText) {
-            const staffName = (profile && (profile.displayName || profile.email)) || 'OFFICIAL';
-            authStatusText.textContent = `STAFF: ${String(staffName).toUpperCase()}`;
-          }
-        } else {
-          // Streamer Mode: Read-Only
-          if (titleInput) {
-            titleInput.readOnly = true;
-            titleInput.classList.add('opacity-60', 'cursor-not-allowed', 'bg-slate-900/50');
-            titleInput.title = 'Read-Only (Officiating staff login required to edit)';
-          }
-          if (titleClearBtn) titleClearBtn.style.display = 'none';
-          if (btnSwap) {
-            btnSwap.disabled = true;
-            btnSwap.classList.add('opacity-40', 'cursor-not-allowed');
-            btnSwap.title = 'Read-Only (Officiating staff login required to switch sides)';
-          }
-          [scoreLeftPlus, scoreLeftMinus, scoreRightPlus, scoreRightMinus].forEach(btn => {
-            if (btn) {
-              btn.disabled = true;
-              btn.classList.add('opacity-25', 'cursor-not-allowed', 'pointer-events-none');
-            }
-          });
-          if (syncBtn) {
-            syncBtn.disabled = true;
-            syncBtn.style.display = 'none';
-          }
-          if (staffNotice) staffNotice.style.display = 'flex';
-          if (authStatusBadge) {
-            authStatusBadge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono-cyber';
-          }
-          if (authStatusText) {
-            authStatusText.textContent = 'STREAMER MODE (READ-ONLY)';
-          }
+        });
+        if (syncBtn) {
+          syncBtn.disabled = false;
+          syncBtn.style.display = 'inline-flex';
+        }
+        if (staffNotice) staffNotice.style.display = 'none';
+        if (authStatusBadge) {
+          authStatusBadge.className = 'flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono-cyber';
+        }
+        if (authStatusText) {
+          authStatusText.textContent = 'BROADCAST ENGINE READY';
         }
       }
 
@@ -1422,9 +1491,17 @@
         const matchParam = currentMatchId ? `&match=${encodeURIComponent(currentMatchId)}` : '';
         const swapParam = isSidesSwapped ? '&swap=1' : '';
 
+        const chosenFont = ($('select-font-family') && $('select-font-family').value) || urlParams.get('font') || localStorage.getItem('cec_obs_font') || 'Orbitron';
+        const cLeft = ($('picker-color-left') && $('picker-color-left').value) || urlParams.get('c1') || localStorage.getItem('cec_obs_c1') || '#38bdf8';
+        const cRight = ($('picker-color-right') && $('picker-color-right').value) || urlParams.get('c2') || localStorage.getItem('cec_obs_c2') || '#fb7185';
+        const cScore = ($('picker-color-score') && $('picker-color-score').value) || urlParams.get('cs') || localStorage.getItem('cec_obs_cs') || '#ffffff';
+        const cAccent = ($('picker-color-accent') && $('picker-color-accent').value) || urlParams.get('ca') || localStorage.getItem('cec_obs_ca') || '#fbbf24';
+
+        const styleParams = `&font=${encodeURIComponent(chosenFont)}&c1=${encodeURIComponent(cLeft)}&c2=${encodeURIComponent(cRight)}&cs=${encodeURIComponent(cScore)}&ca=${encodeURIComponent(cAccent)}`;
+
         document.querySelectorAll('.obs-link-input').forEach(input => {
           const view = input.getAttribute('data-view') || 'master';
-          const fullUrl = `${base}?view=${view}&obs=1&transparent=1${matchParam}${titleParam}${swapParam}`;
+          const fullUrl = `${base}?view=${view}&obs=1&transparent=1${matchParam}${titleParam}${swapParam}${styleParams}`;
           input.value = fullUrl;
 
           // Update sibling test link
@@ -1563,6 +1640,41 @@
             rightScore = tmp;
             renderStage();
             updateObsLinks();
+          });
+        }
+
+        // Font Style Chooser Listener
+        const fontSel = $('select-font-family');
+        const c1Picker = $('picker-color-left');
+        const c2Picker = $('picker-color-right');
+        const csPicker = $('picker-color-score');
+        const caPicker = $('picker-color-accent');
+        const resetBtn = $('btn-reset-styling');
+
+        function triggerStylingUpdate() {
+          const font = (fontSel && fontSel.value) || 'Orbitron';
+          const c1 = (c1Picker && c1Picker.value) || '#38bdf8';
+          const c2 = (c2Picker && c2Picker.value) || '#fb7185';
+          const cs = (csPicker && csPicker.value) || '#ffffff';
+          const ca = (caPicker && caPicker.value) || '#fbbf24';
+          applyOverlayStyling(font, c1, c2, cs, ca);
+          updateObsLinks();
+        }
+
+        if (fontSel) fontSel.addEventListener('change', triggerStylingUpdate);
+        if (c1Picker) c1Picker.addEventListener('input', triggerStylingUpdate);
+        if (c2Picker) c2Picker.addEventListener('input', triggerStylingUpdate);
+        if (csPicker) csPicker.addEventListener('input', triggerStylingUpdate);
+        if (caPicker) caPicker.addEventListener('input', triggerStylingUpdate);
+
+        if (resetBtn) {
+          resetBtn.addEventListener('click', () => {
+            if (fontSel) fontSel.value = 'Orbitron';
+            if (c1Picker) c1Picker.value = '#38bdf8';
+            if (c2Picker) c2Picker.value = '#fb7185';
+            if (csPicker) csPicker.value = '#ffffff';
+            if (caPicker) caPicker.value = '#fbbf24';
+            triggerStylingUpdate();
           });
         }
 
@@ -1787,6 +1899,22 @@
         populateMatchesDropdown();
         loadSelectedMatch();
         startCarouselTimer();
+
+        // Initialize Font & Colors
+        const initialFont = urlParams.get('font') || localStorage.getItem('cec_obs_font') || 'Orbitron';
+        const initialC1 = urlParams.get('c1') || localStorage.getItem('cec_obs_c1') || '#38bdf8';
+        const initialC2 = urlParams.get('c2') || localStorage.getItem('cec_obs_c2') || '#fb7185';
+        const initialCs = urlParams.get('cs') || localStorage.getItem('cec_obs_cs') || '#ffffff';
+        const initialCa = urlParams.get('ca') || localStorage.getItem('cec_obs_ca') || '#fbbf24';
+
+        if (fontSel) fontSel.value = initialFont;
+        if (c1Picker) c1Picker.value = initialC1;
+        if (c2Picker) c2Picker.value = initialC2;
+        if (csPicker) csPicker.value = initialCs;
+        if (caPicker) caPicker.value = initialCa;
+
+        applyOverlayStyling(initialFont, initialC1, initialC2, initialCs, initialCa);
+        updateObsLinks();
 
         // Responsive scaler for 16:9 preview canvas
         function handleResize() {
