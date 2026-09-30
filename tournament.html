@@ -270,6 +270,51 @@
       color: #34d399;
     }
 
+    /* White Card Theme for Tournament Scoreboard & Spotlight */
+    .scoreboard-white-card {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
+    }
+    .spotlight-white-card {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
+    }
+    .spotlight-sub-card {
+      background: #f8fafc !important;
+      color: #0f172a !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+    }
+    .spotlight-sub-card .role-badge-jungler {
+      background: #f3e8ff !important;
+      border-color: #d8b4fe !important;
+      color: #7e22ce !important;
+    }
+    .spotlight-sub-card .role-badge-mid {
+      background: #ecfeff !important;
+      border-color: #a5f3fc !important;
+      color: #0e7490 !important;
+    }
+    .spotlight-sub-card .role-badge-gold {
+      background: #fefce8 !important;
+      border-color: #fef08a !important;
+      color: #a16207 !important;
+    }
+    .spotlight-sub-card .role-badge-exp {
+      background: #fff7ed !important;
+      border-color: #fed7aa !important;
+      color: #c2410c !important;
+    }
+    .spotlight-sub-card .role-badge-roamer {
+      background: #ecfdf5 !important;
+      border-color: #a7f3d0 !important;
+      color: #047857 !important;
+    }
+
     /* Subtle Glassmorphism Card System with High Readability */
     .glass-card,
     .bg-surface-container {
@@ -452,13 +497,14 @@
         </div>
 
         <!-- Match Versus Hero Card -->
+        <!-- Match Versus Hero Card (White Theme) -->
         <div id="match-versus-card"
-          class="bg-surface-container/90 backdrop-blur-xl border border-white/15 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-2xl relative overflow-hidden cyber-panel">
+          class="scoreboard-white-card rounded-2xl p-4 sm:p-6 lg:p-8 relative overflow-hidden">
           <!-- Broadcast stage banner: court + stage of the active match -->
-          <div class="flex items-center justify-center gap-2 mb-4 pb-3 border-b border-white/10">
-            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span>
+          <div class="flex items-center justify-center gap-2 mb-4 pb-3 border-b border-slate-200">
+            <span class="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse shrink-0"></span>
             <span
-              class="font-label-caps text-label-caps text-primary tracking-widest font-bold uppercase text-center cyber-mono"
+              class="font-label-caps text-xs sm:text-sm text-slate-900 tracking-wider font-bold uppercase text-center"
               id="live-stage-title">ARENA &middot; OFFICIAL MATCH</span>
           </div>
           <div class="flex flex-col md:flex-row md:items-center gap-4 md:gap-0">
@@ -466,55 +512,51 @@
             <!-- Team 1 — mirrors on desktop so both crests face the score -->
             <div class="flex-1 min-w-0 flex items-center gap-3 sm:gap-4 md:flex-row-reverse md:pr-5 lg:pr-8">
               <div class="relative shrink-0 flex items-center">
+                <!-- Single Department Crest Container (Department logo only, no chosen icon, no overlapping badge) -->
                 <div
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-[76px] lg:h-[76px] rounded-2xl flex items-center justify-center shadow-lg border-2 border-primary/40 bg-[radial-gradient(circle_at_center,rgba(18,100,255,0.25)_0%,rgba(10,16,30,0.95)_75%)] overflow-hidden shrink-0"
+                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-[74px] lg:h-[74px] rounded-2xl flex items-center justify-center border-2 border-slate-200 bg-slate-50 p-2 overflow-hidden shrink-0 shadow-sm"
                   id="team1-emblem-badge">
                   <img
-                    class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
-                    id="team1-emblem-img" src="assets/icons/dragon-head.svg" alt="Team 1 emblem" />
+                    class="w-full h-full object-contain"
+                    id="team1-dept-logo" src="assets/IT.png" alt="Team 1 Department Logo" />
                 </div>
-                <img
-                  class="w-7 h-7 sm:w-9 sm:h-9 rounded-full border-2 border-white/20 object-contain bg-surface-container-lowest relative z-10 -ml-3"
-                  id="team1-dept-logo" src="assets/IT.png" alt="" />
               </div>
               <div class="min-w-0 flex-1 flex flex-col items-start md:items-end md:text-right">
                 <div class="flex items-center gap-2 flex-wrap md:justify-end">
                   <span
-                    class="text-[10px] sm:text-[11px] font-label-caps font-bold tracking-wider px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary"
+                    class="text-[11px] sm:text-xs font-label-caps font-bold tracking-wider px-2.5 py-0.5 rounded bg-slate-100 border border-slate-300 text-slate-800"
                     id="team1-dept-tag">DEPARTMENT</span>
-                  <span class="text-[10px] sm:text-xs text-on-surface-variant font-label-caps"
-                    id="team1-standing-seed">OFFICIAL ENTRY</span>
                 </div>
                 <h2
-                  class="font-headline-lg text-xl sm:text-2xl md:text-[22px] lg:text-[26px] xl:text-[30px] leading-tight text-on-surface font-black uppercase tracking-tight cyber-title mt-1 w-full break-words"
+                  class="text-xl sm:text-2xl md:text-[22px] lg:text-[28px] font-black uppercase tracking-tight text-slate-900 mt-1 w-full break-words"
                   id="team1-name-display">TBD</h2>
-                <span class="text-[11px] sm:text-xs font-body-md text-on-surface-variant w-full truncate"
+                <span class="text-[11px] sm:text-xs text-slate-600 font-medium w-full truncate"
                   id="team1-sub-desc"></span>
-                <span class="mt-2 h-1 w-14 sm:w-20 rounded-full bg-primary md:self-end"></span>
+                <span class="mt-2 h-1 w-14 sm:w-20 rounded-full bg-blue-600 md:self-end"></span>
               </div>
             </div>
 
             <!-- Central score hub -->
             <div
-              class="shrink-0 flex flex-wrap md:flex-nowrap md:flex-col items-center justify-center gap-x-4 gap-y-2 md:gap-2 py-3 md:py-2 md:px-5 lg:px-8 border-y md:border-y-0 md:border-x border-white/10">
+              class="shrink-0 flex flex-wrap md:flex-nowrap md:flex-col items-center justify-center gap-x-4 gap-y-2 md:gap-2 py-3 md:py-2 md:px-5 lg:px-8 border-y md:border-y-0 md:border-x border-slate-200">
               <span
-                class="hidden md:block font-label-caps text-[10px] tracking-[0.3em] text-on-surface-variant uppercase">VERSUS</span>
+                class="hidden md:block font-label-caps text-[10px] tracking-[0.3em] text-slate-500 font-bold uppercase">VERSUS</span>
               <div class="flex items-center gap-3 sm:gap-4 shrink-0">
                 <span
-                  class="font-headline-xl text-4xl sm:text-5xl lg:text-6xl font-black text-primary cyber-mono leading-none tabular-nums transition-opacity"
+                  class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tabular-nums leading-none transition-opacity"
                   id="team1-score-display">0</span>
-                <span class="text-on-surface-variant text-xl sm:text-2xl font-black leading-none">&ndash;</span>
+                <span class="text-slate-400 text-xl sm:text-2xl font-black leading-none">&ndash;</span>
                 <span
-                  class="font-headline-xl text-4xl sm:text-5xl lg:text-6xl font-black text-secondary cyber-mono leading-none tabular-nums transition-opacity"
+                  class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tabular-nums leading-none transition-opacity"
                   id="team2-score-display">0</span>
               </div>
               <div class="flex items-center gap-1.5" id="series-pips" aria-hidden="true"></div>
               <div class="flex md:flex-col items-center gap-2 md:gap-1.5">
                 <span
-                  class="px-2.5 py-0.5 rounded-full bg-primary/15 border border-primary/30 text-primary text-[10px] sm:text-[11px] font-label-caps font-bold whitespace-nowrap"
+                  class="px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-300 text-slate-800 text-[10px] sm:text-[11px] font-label-caps font-bold whitespace-nowrap"
                   id="match-format-badge">BO3</span>
                 <span
-                  class="text-[9px] sm:text-[10px] text-on-surface-variant uppercase font-label-caps tracking-widest text-center"
+                  class="text-[9px] sm:text-[10px] text-slate-500 uppercase font-label-caps tracking-widest text-center font-bold"
                   id="match-status-note">AWAITING OFFICIAL MATCH</span>
               </div>
             </div>
@@ -522,31 +564,27 @@
             <!-- Team 2 -->
             <div class="flex-1 min-w-0 flex items-center gap-3 sm:gap-4 md:pl-5 lg:pl-8">
               <div class="relative shrink-0 flex items-center md:flex-row-reverse">
+                <!-- Single Department Crest Container (Department logo only, no chosen icon, no overlapping badge) -->
                 <div
-                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-[76px] lg:h-[76px] rounded-2xl flex items-center justify-center shadow-lg border-2 border-secondary/40 bg-[radial-gradient(circle_at_center,rgba(255,75,75,0.25)_0%,rgba(10,16,30,0.95)_75%)] overflow-hidden shrink-0"
+                  class="w-14 h-14 sm:w-16 sm:h-16 lg:w-[74px] lg:h-[74px] rounded-2xl flex items-center justify-center border-2 border-slate-200 bg-slate-50 p-2 overflow-hidden shrink-0 shadow-sm"
                   id="team2-emblem-badge">
                   <img
-                    class="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
-                    id="team2-emblem-img" src="assets/icons/werewolf.svg" alt="Team 2 emblem" />
+                    class="w-full h-full object-contain"
+                    id="team2-dept-logo" src="assets/CRIM.png" alt="Team 2 Department Logo" />
                 </div>
-                <img
-                  class="w-7 h-7 sm:w-9 sm:h-9 rounded-full border-2 border-white/20 object-contain bg-surface-container-lowest relative z-10 -ml-3 md:ml-0 md:-mr-3"
-                  id="team2-dept-logo" src="assets/CRIM.png" alt="" />
               </div>
               <div class="min-w-0 flex-1 flex flex-col items-start md:items-start md:text-left">
                 <div class="flex items-center gap-2 flex-wrap">
                   <span
-                    class="text-[10px] sm:text-[11px] font-label-caps font-bold tracking-wider px-2 py-0.5 rounded bg-secondary/10 border border-secondary/20 text-secondary"
+                    class="text-[11px] sm:text-xs font-label-caps font-bold tracking-wider px-2.5 py-0.5 rounded bg-slate-100 border border-slate-300 text-slate-800"
                     id="team2-dept-tag">DEPARTMENT</span>
-                  <span class="text-[10px] sm:text-xs text-on-surface-variant font-label-caps"
-                    id="team2-standing-seed">OFFICIAL ENTRY</span>
                 </div>
                 <h2
-                  class="font-headline-lg text-xl sm:text-2xl md:text-[22px] lg:text-[26px] xl:text-[30px] leading-tight text-on-surface font-black uppercase tracking-tight cyber-title mt-1 w-full break-words"
+                  class="text-xl sm:text-2xl md:text-[22px] lg:text-[28px] font-black uppercase tracking-tight text-slate-900 mt-1 w-full break-words"
                   id="team2-name-display">TBD</h2>
-                <span class="text-[11px] sm:text-xs font-body-md text-on-surface-variant w-full truncate"
+                <span class="text-[11px] sm:text-xs text-slate-600 font-medium w-full truncate"
                   id="team2-sub-desc"></span>
-                <span class="mt-2 h-1 w-14 sm:w-20 rounded-full bg-secondary md:self-start"></span>
+                <span class="mt-2 h-1 w-14 sm:w-20 rounded-full bg-rose-600 md:self-start"></span>
               </div>
             </div>
 
@@ -624,136 +662,158 @@
           </div>
 
           <!-- 1. Broadcast-Style Roster Carousel with Vignette -->
+          <!-- 1. Broadcast-Style Roster Carousel (White Theme, Separate Carousels) -->
           <div id="broadcast-spotlight-view"
-            class="relative rounded-2xl overflow-hidden border border-white/10 broadcast-vignette p-4 sm:p-6 shadow-2xl">
+            class="spotlight-white-card relative rounded-2xl overflow-hidden p-4 sm:p-6 shadow-xl">
 
-            <!-- Atmospheric Top Tag -->
+            <!-- Top Header -->
             <div
-              class="flex items-center justify-between text-xs font-label-caps text-on-surface-variant mb-4 border-b border-white/10 pb-2">
+              class="flex items-center justify-between text-xs font-label-caps text-slate-600 mb-4 border-b border-slate-200 pb-3">
               <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-[16px]">stars</span>
-                <span class="tracking-widest cyber-mono text-primary">OFFICIAL TOURNAMENT MATCHUP SPOTLIGHT</span>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <button type="button" id="carousel-prev-btn"
-                  class="w-9 h-9 shrink-0 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
-                  title="Previous Player">
-                  <span class="material-symbols-outlined text-[20px]">chevron_left</span>
-                </button>
-                <span class="text-[11px] font-mono px-2" id="carousel-player-index">1 / 5</span>
-                <button type="button" id="carousel-next-btn"
-                  class="w-9 h-9 shrink-0 rounded-lg bg-surface-container hover:bg-surface-container-high border border-white/10 flex items-center justify-center text-on-surface transition-colors"
-                  title="Next Player">
-                  <span class="material-symbols-outlined text-[20px]">chevron_right</span>
-                </button>
+                <span class="material-symbols-outlined text-blue-600 text-[18px]">stars</span>
+                <span class="tracking-widest font-bold text-slate-900 text-xs sm:text-sm">OFFICIAL TOURNAMENT MATCHUP SPOTLIGHT</span>
               </div>
             </div>
 
-            <!-- Dual Player Spotlight Deck (Team 1 vs Team 2 Head-to-Head by Role) -->
+            <!-- Dual Player Spotlight Deck (Team 1 vs Team 2 with Separate Carousels) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 
               <!-- Team 1 Player Spotlight Card -->
               <div
-                class="relative rounded-xl p-4 sm:p-5 bg-surface-container-lowest/80 border border-primary/30 shadow-lg flex flex-col justify-between cyber-panel overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl pointer-events-none">
-                </div>
+                class="spotlight-sub-card relative rounded-xl p-4 sm:p-5 flex flex-col justify-between overflow-hidden group">
 
-                <div class="flex items-center justify-between mb-3 z-10">
-                  <div class="flex items-center gap-2">
-                    <img id="spotlight-t1-dept-logo" src="assets/IT.png" class="w-5 h-5 object-contain" alt="Dept" />
-                    <span class="font-label-caps text-[11px] font-bold text-primary tracking-wider"
+                <!-- Team 1 Header with Independent Carousel Controls -->
+                <div class="flex items-center justify-between mb-3 z-10 pb-2 border-b border-slate-200">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <img id="spotlight-t1-dept-logo" src="assets/IT.png" class="w-6 h-6 object-contain shrink-0" alt="Dept" />
+                    <span class="font-label-caps text-xs sm:text-sm font-bold text-slate-900 tracking-wider truncate"
                       id="spotlight-t1-team-name">TEAM 1</span>
                   </div>
-                  <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded border"
+                  <!-- Team 1 Carousel Stepper -->
+                  <div class="flex items-center gap-1 shrink-0 ml-2">
+                    <button type="button" id="carousel-t1-prev-btn"
+                      class="w-7 h-7 rounded-md bg-white hover:bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-800 transition-colors shadow-sm"
+                      title="Previous Team 1 Player">
+                      <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                    </button>
+                    <span class="text-[11px] font-mono font-bold text-slate-700 px-1.5 min-w-[36px] text-center" id="carousel-t1-index">1 / 5</span>
+                    <button type="button" id="carousel-t1-next-btn"
+                      class="w-7 h-7 rounded-md bg-white hover:bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-800 transition-colors shadow-sm"
+                      title="Next Team 1 Player">
+                      <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Role & Starter Tag -->
+                <div class="flex items-center justify-between mb-2 z-10">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[11px] font-mono text-blue-700 font-bold px-2 py-0.5 bg-blue-50 border border-blue-200 rounded"
+                      id="spotlight-t1-slot">#1</span>
+                    <span class="text-[10px] font-label-caps text-slate-600 uppercase font-bold"
+                      id="spotlight-t1-type">STARTER</span>
+                  </div>
+                  <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded border border-slate-300 bg-white text-slate-800"
                     id="spotlight-t1-role-badge">GOLD LANE</span>
                 </div>
 
                 <!-- Player Hero Feature -->
                 <div class="flex items-center gap-4 py-2 z-10">
                   <div
-                    class="relative shrink-0 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-primary/20 border-2 border-primary/40 player-spotlight-glow shadow-md">
-                    <span class="material-symbols-outlined text-[36px] sm:text-[44px] text-primary"
+                    class="relative shrink-0 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 border-slate-200 shadow-sm text-slate-600">
+                    <span class="material-symbols-outlined text-[36px] sm:text-[44px] text-slate-500"
                       id="spotlight-t1-avatar">person</span>
                     <span
                       class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-amber-400 text-black text-[11px] font-black flex items-center justify-center shadow hidden"
                       id="spotlight-t1-cap-star" title="Team Captain">⭐</span>
                   </div>
                   <div class="flex flex-col min-w-0">
-                    <div class="flex items-center gap-1.5">
-                      <span class="text-[11px] font-mono text-primary font-bold px-1.5 py-0.2 bg-primary/15 rounded"
-                        id="spotlight-t1-slot">#1</span>
-                      <span class="text-[10px] font-label-caps text-on-surface-variant uppercase"
-                        id="spotlight-t1-type">STARTER</span>
-                    </div>
-                    <h4 class="font-headline-lg text-lg sm:text-2xl font-black text-on-surface cyber-title truncate"
+                    <h4 class="font-headline-lg text-lg sm:text-2xl font-black text-slate-900 truncate"
                       id="spotlight-t1-ign">TBD</h4>
-                    <span class="text-xs text-on-surface-variant font-body-md truncate" id="spotlight-t1-real">Player
-                      Real Name</span>
+                    <span class="text-xs text-slate-600 font-medium truncate" id="spotlight-t1-real">Player Real Name</span>
                   </div>
                 </div>
 
                 <!-- Player IDs & Meta -->
                 <div
-                  class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-on-surface-variant font-mono z-10">
-                  <span id="spotlight-t1-mlbb">MLBB ID: —</span>
-                  <span class="text-primary" id="spotlight-t1-student-id">VERIFIED</span>
+                  class="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-mono z-10">
+                  <span id="spotlight-t1-mlbb">ROLE SLOT #1</span>
+                  <span class="text-emerald-700 font-bold" id="spotlight-t1-student-id">VERIFIED ✓</span>
                 </div>
+
+                <!-- Team 1 Individual Position Pills -->
+                <div class="flex items-center justify-center gap-1.5 mt-3 pt-2.5 border-t border-slate-200"
+                  id="carousel-t1-pills"></div>
               </div>
 
               <!-- Team 2 Player Spotlight Card -->
               <div
-                class="relative rounded-xl p-4 sm:p-5 bg-surface-container-lowest/80 border border-secondary/30 shadow-lg flex flex-col justify-between cyber-panel overflow-hidden group">
-                <div class="absolute top-0 right-0 w-32 h-32 bg-secondary/10 rounded-full blur-2xl pointer-events-none">
-                </div>
+                class="spotlight-sub-card relative rounded-xl p-4 sm:p-5 flex flex-col justify-between overflow-hidden group">
 
-                <div class="flex items-center justify-between mb-3 z-10">
-                  <div class="flex items-center gap-2">
-                    <img id="spotlight-t2-dept-logo" src="assets/CRIM.png" class="w-5 h-5 object-contain" alt="Dept" />
-                    <span class="font-label-caps text-[11px] font-bold text-secondary tracking-wider"
+                <!-- Team 2 Header with Independent Carousel Controls -->
+                <div class="flex items-center justify-between mb-3 z-10 pb-2 border-b border-slate-200">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <img id="spotlight-t2-dept-logo" src="assets/CRIM.png" class="w-6 h-6 object-contain shrink-0" alt="Dept" />
+                    <span class="font-label-caps text-xs sm:text-sm font-bold text-slate-900 tracking-wider truncate"
                       id="spotlight-t2-team-name">TEAM 2</span>
                   </div>
-                  <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded border"
+                  <!-- Team 2 Carousel Stepper -->
+                  <div class="flex items-center gap-1 shrink-0 ml-2">
+                    <button type="button" id="carousel-t2-prev-btn"
+                      class="w-7 h-7 rounded-md bg-white hover:bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-800 transition-colors shadow-sm"
+                      title="Previous Team 2 Player">
+                      <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                    </button>
+                    <span class="text-[11px] font-mono font-bold text-slate-700 px-1.5 min-w-[36px] text-center" id="carousel-t2-index">1 / 5</span>
+                    <button type="button" id="carousel-t2-next-btn"
+                      class="w-7 h-7 rounded-md bg-white hover:bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-800 transition-colors shadow-sm"
+                      title="Next Team 2 Player">
+                      <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Role & Starter Tag -->
+                <div class="flex items-center justify-between mb-2 z-10">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[11px] font-mono text-rose-700 font-bold px-2 py-0.5 bg-rose-50 border border-rose-200 rounded"
+                      id="spotlight-t2-slot">#1</span>
+                    <span class="text-[10px] font-label-caps text-slate-600 uppercase font-bold"
+                      id="spotlight-t2-type">STARTER</span>
+                  </div>
+                  <span class="text-[10px] font-label-caps font-bold px-2 py-0.5 rounded border border-slate-300 bg-white text-slate-800"
                     id="spotlight-t2-role-badge">GOLD LANE</span>
                 </div>
 
                 <!-- Player Hero Feature -->
                 <div class="flex items-center gap-4 py-2 z-10">
                   <div
-                    class="relative shrink-0 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-secondary/20 border-2 border-secondary/40 player-spotlight-glow shadow-md">
-                    <span class="material-symbols-outlined text-[36px] sm:text-[44px] text-secondary"
+                    class="relative shrink-0 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white border-2 border-slate-200 shadow-sm text-slate-600">
+                    <span class="material-symbols-outlined text-[36px] sm:text-[44px] text-slate-500"
                       id="spotlight-t2-avatar">person</span>
                     <span
                       class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-amber-400 text-black text-[11px] font-black flex items-center justify-center shadow hidden"
                       id="spotlight-t2-cap-star" title="Team Captain">⭐</span>
                   </div>
                   <div class="flex flex-col min-w-0">
-                    <div class="flex items-center gap-1.5">
-                      <span class="text-[11px] font-mono text-secondary font-bold px-1.5 py-0.2 bg-secondary/15 rounded"
-                        id="spotlight-t2-slot">#1</span>
-                      <span class="text-[10px] font-label-caps text-on-surface-variant uppercase"
-                        id="spotlight-t2-type">STARTER</span>
-                    </div>
-                    <h4 class="font-headline-lg text-lg sm:text-2xl font-black text-on-surface cyber-title truncate"
+                    <h4 class="font-headline-lg text-lg sm:text-2xl font-black text-slate-900 truncate"
                       id="spotlight-t2-ign">TBD</h4>
-                    <span class="text-xs text-on-surface-variant font-body-md truncate" id="spotlight-t2-real">Player
-                      Real Name</span>
+                    <span class="text-xs text-slate-600 font-medium truncate" id="spotlight-t2-real">Player Real Name</span>
                   </div>
                 </div>
 
                 <!-- Player IDs & Meta -->
                 <div
-                  class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-on-surface-variant font-mono z-10">
-                  <span id="spotlight-t2-mlbb">MLBB ID: —</span>
-                  <span class="text-secondary" id="spotlight-t2-student-id">VERIFIED</span>
+                  class="mt-3 pt-2.5 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-mono z-10">
+                  <span id="spotlight-t2-mlbb">ROLE SLOT #1</span>
+                  <span class="text-emerald-700 font-bold" id="spotlight-t2-student-id">VERIFIED ✓</span>
                 </div>
+
+                <!-- Team 2 Individual Position Pills -->
+                <div class="flex items-center justify-center gap-1.5 mt-3 pt-2.5 border-t border-slate-200"
+                  id="carousel-t2-pills"></div>
               </div>
 
-            </div>
-
-            <!-- Position Selector Pills (P1..P5) -->
-            <div class="flex items-center justify-center gap-2 mt-4 pt-3 border-t border-white/10"
-              id="carousel-position-pills">
-              <!-- Populated by JS -->
             </div>
           </div>
 
@@ -1621,9 +1681,9 @@
             const slots = Math.min(Math.max(bestOf, s1 + s2), 9);
             let markup = '';
             for (let i = 0; i < slots; i++) {
-              const cls = i < s1 ? 'bg-primary'
-                : (i >= slots - s2 ? 'bg-secondary' : 'bg-white/15');
-              markup += '<span class="w-2 h-2 rounded-full ' + cls + '"></span>';
+              const cls = i < s1 ? 'bg-blue-600'
+                : (i >= slots - s2 ? 'bg-rose-600' : 'bg-slate-200 border border-slate-300');
+              markup += '<span class="w-2.5 h-2.5 rounded-full ' + cls + '"></span>';
             }
             pipRow.innerHTML = markup;
           }
@@ -1636,14 +1696,12 @@
             score2El.classList.toggle('opacity-40', s2 < s1);
           }
 
-          // Team 1
+          // Team 1 (Department logo only, no custom icons, no official entry)
           const t1 = active.team1 || {};
           setText('team1-name-display', t1.name || 'Team 1');
           setText('team1-score-display', t1.score || '0');
           setText('team1-dept-tag', (t1.dept || 'IT') + ' DEPARTMENT');
-          setText('team1-standing-seed', t1.seed || 'OFFICIAL ENTRY');
           setText('team1-sub-desc', t1.sub || '');
-          setSrc('team1-emblem-img', t1.icon || 'assets/icons/dragon-head.svg');
           setSrc('team1-dept-logo', DEPT_LOGOS[t1.dept] || 'assets/IT.png');
           setText('team1-roster-title', (t1.name || 'Team 1') + ' — Lineup');
           setSrc('team1-roster-dept-logo', DEPT_LOGOS[t1.dept] || 'assets/IT.png');
@@ -1667,14 +1725,12 @@
             setText('team1-subs-display', t1.subs);
           }
 
-          // Team 2
+          // Team 2 (Department logo only, no custom icons, no official entry)
           const t2 = active.team2 || {};
           setText('team2-name-display', t2.name || 'Team 2');
           setText('team2-score-display', t2.score || '0');
           setText('team2-dept-tag', (t2.dept || 'CRIM') + ' DEPARTMENT');
-          setText('team2-standing-seed', t2.seed || 'OFFICIAL ENTRY');
           setText('team2-sub-desc', t2.sub || '');
-          setSrc('team2-emblem-img', t2.icon || 'assets/icons/werewolf.svg');
           setSrc('team2-dept-logo', DEPT_LOGOS[t2.dept] || 'assets/CRIM.png');
           setText('team2-roster-title', (t2.name || 'Team 2') + ' — Lineup');
           setSrc('team2-roster-dept-logo', DEPT_LOGOS[t2.dept] || 'assets/CRIM.png');
@@ -1721,8 +1777,9 @@
           renderRosterSpotlight();
         }
 
-        // Broadcast Spotlight Carousel State & Controller
-        let currentSpotlightIdx = 0;
+        // Broadcast Spotlight Carousel State & Controller (Separate for Team 1 and Team 2)
+        let t1SpotlightIdx = 0;
+        let t2SpotlightIdx = 0;
         let spotlightTimer = null;
         let currentActiveMatch = null;
 
@@ -1760,33 +1817,30 @@
           if (r.includes('gold')) return 'role-badge-gold';
           if (r.includes('exp')) return 'role-badge-exp';
           if (r.includes('roam')) return 'role-badge-roamer';
-          return 'bg-surface-container border-white/10 text-on-surface-variant';
+          return 'bg-slate-100 border-slate-300 text-slate-700';
         }
 
-        function renderRosterSpotlight() {
+        function renderTeam1Spotlight() {
           if (!currentActiveMatch) return;
           const t1 = currentActiveMatch.team1 || {};
-          const t2 = currentActiveMatch.team2 || {};
           const r1 = t1.roster || [];
-          const r2 = t2.roster || [];
-          const maxLen = Math.max(r1.length, r2.length, 1);
+          const len1 = Math.max(r1.length, 1);
 
-          if (currentSpotlightIdx >= maxLen) currentSpotlightIdx = 0;
-          if (currentSpotlightIdx < 0) currentSpotlightIdx = maxLen - 1;
+          if (t1SpotlightIdx >= len1) t1SpotlightIdx = 0;
+          if (t1SpotlightIdx < 0) t1SpotlightIdx = len1 - 1;
 
-          const idxText = document.getElementById('carousel-player-index');
-          if (idxText) idxText.textContent = `${currentSpotlightIdx + 1} / ${maxLen}`;
-
-          // Team 1 Player
-          const p1 = r1[currentSpotlightIdx] || { ign: t1.name || 'Team 1', real: 'Lineup Pending', role: 'STARTER', num: '1' };
+          setText('carousel-t1-index', `${t1SpotlightIdx + 1} / ${len1}`);
           setText('spotlight-t1-team-name', (t1.name || 'TEAM 1').toUpperCase());
           setSrc('spotlight-t1-dept-logo', DEPT_LOGOS[t1.dept] || 'assets/IT.png');
+
+          const p1 = r1[t1SpotlightIdx] || { ign: t1.name || 'Team 1', real: 'Lineup Pending', role: 'STARTER', num: '1' };
           setText('spotlight-t1-ign', p1.ign || p1.real || 'Player 1');
           setText('spotlight-t1-real', p1.real ? `(${p1.real})` : '');
-          setText('spotlight-t1-slot', `#${p1.num || (currentSpotlightIdx + 1)}`);
-          setText('spotlight-t1-type', p1.type || (currentSpotlightIdx < 5 ? 'STARTER' : 'RESERVE'));
-          setText('spotlight-t1-mlbb', p1.mlbb ? `MLBB ID: ${p1.mlbb}` : `ROLE SLOT #${currentSpotlightIdx + 1}`);
+          setText('spotlight-t1-slot', `#${p1.num || (t1SpotlightIdx + 1)}`);
+          setText('spotlight-t1-type', p1.type || (t1SpotlightIdx < 5 ? 'STARTER' : 'RESERVE'));
+          setText('spotlight-t1-mlbb', p1.mlbb ? `MLBB ID: ${p1.mlbb}` : `ROLE SLOT #${t1SpotlightIdx + 1}`);
           setText('spotlight-t1-student-id', p1.verified !== false ? 'VERIFIED ✓' : 'PENDING');
+
           const role1Badge = document.getElementById('spotlight-t1-role-badge');
           if (role1Badge) {
             role1Badge.textContent = (p1.role || 'STARTER').toUpperCase();
@@ -1795,16 +1849,48 @@
           const cap1Star = document.getElementById('spotlight-t1-cap-star');
           if (cap1Star) cap1Star.classList.toggle('hidden', !p1.isCap);
 
-          // Team 2 Player
-          const p2 = r2[currentSpotlightIdx] || { ign: t2.name || 'Team 2', real: 'Lineup Pending', role: 'STARTER', num: '1' };
+          // Position pills for Team 1
+          const pillsWrap1 = document.getElementById('carousel-t1-pills');
+          if (pillsWrap1) {
+            pillsWrap1.innerHTML = '';
+            for (let i = 0; i < len1; i++) {
+              const btn = document.createElement('button');
+              btn.type = 'button';
+              const isCur = i === t1SpotlightIdx;
+              btn.className = `px-2 py-0.5 rounded text-[10px] font-mono font-bold transition-all ${
+                isCur ? 'bg-blue-600 text-white shadow-sm scale-105' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+              }`;
+              btn.textContent = i < 5 ? `P${i + 1}` : `SUB`;
+              btn.addEventListener('click', () => {
+                t1SpotlightIdx = i;
+                renderTeam1Spotlight();
+              });
+              pillsWrap1.appendChild(btn);
+            }
+          }
+        }
+
+        function renderTeam2Spotlight() {
+          if (!currentActiveMatch) return;
+          const t2 = currentActiveMatch.team2 || {};
+          const r2 = t2.roster || [];
+          const len2 = Math.max(r2.length, 1);
+
+          if (t2SpotlightIdx >= len2) t2SpotlightIdx = 0;
+          if (t2SpotlightIdx < 0) t2SpotlightIdx = len2 - 1;
+
+          setText('carousel-t2-index', `${t2SpotlightIdx + 1} / ${len2}`);
           setText('spotlight-t2-team-name', (t2.name || 'TEAM 2').toUpperCase());
           setSrc('spotlight-t2-dept-logo', DEPT_LOGOS[t2.dept] || 'assets/CRIM.png');
+
+          const p2 = r2[t2SpotlightIdx] || { ign: t2.name || 'Team 2', real: 'Lineup Pending', role: 'STARTER', num: '1' };
           setText('spotlight-t2-ign', p2.ign || p2.real || 'Player 2');
           setText('spotlight-t2-real', p2.real ? `(${p2.real})` : '');
-          setText('spotlight-t2-slot', `#${p2.num || (currentSpotlightIdx + 1)}`);
-          setText('spotlight-t2-type', p2.type || (currentSpotlightIdx < 5 ? 'STARTER' : 'RESERVE'));
-          setText('spotlight-t2-mlbb', p2.mlbb ? `MLBB ID: ${p2.mlbb}` : `ROLE SLOT #${currentSpotlightIdx + 1}`);
+          setText('spotlight-t2-slot', `#${p2.num || (t2SpotlightIdx + 1)}`);
+          setText('spotlight-t2-type', p2.type || (t2SpotlightIdx < 5 ? 'STARTER' : 'RESERVE'));
+          setText('spotlight-t2-mlbb', p2.mlbb ? `MLBB ID: ${p2.mlbb}` : `ROLE SLOT #${t2SpotlightIdx + 1}`);
           setText('spotlight-t2-student-id', p2.verified !== false ? 'VERIFIED ✓' : 'PENDING');
+
           const role2Badge = document.getElementById('spotlight-t2-role-badge');
           if (role2Badge) {
             role2Badge.textContent = (p2.role || 'STARTER').toUpperCase();
@@ -1813,44 +1899,62 @@
           const cap2Star = document.getElementById('spotlight-t2-cap-star');
           if (cap2Star) cap2Star.classList.toggle('hidden', !p2.isCap);
 
-          // Position pills
-          const pillsWrap = document.getElementById('carousel-position-pills');
-          if (pillsWrap) {
-            pillsWrap.innerHTML = '';
-            for (let i = 0; i < maxLen; i++) {
+          // Position pills for Team 2
+          const pillsWrap2 = document.getElementById('carousel-t2-pills');
+          if (pillsWrap2) {
+            pillsWrap2.innerHTML = '';
+            for (let i = 0; i < len2; i++) {
               const btn = document.createElement('button');
               btn.type = 'button';
-              const isCur = i === currentSpotlightIdx;
-              btn.className = `px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all ${isCur ? 'bg-primary text-on-primary shadow-[0_0_10px_rgba(18,100,255,0.5)] scale-105' : 'bg-surface-container/60 hover:bg-surface-container-high text-on-surface-variant'
-                }`;
+              const isCur = i === t2SpotlightIdx;
+              btn.className = `px-2 py-0.5 rounded text-[10px] font-mono font-bold transition-all ${
+                isCur ? 'bg-rose-600 text-white shadow-sm scale-105' : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+              }`;
               btn.textContent = i < 5 ? `P${i + 1}` : `SUB`;
               btn.addEventListener('click', () => {
-                currentSpotlightIdx = i;
-                renderRosterSpotlight();
+                t2SpotlightIdx = i;
+                renderTeam2Spotlight();
               });
-              pillsWrap.appendChild(btn);
+              pillsWrap2.appendChild(btn);
             }
           }
         }
 
-        const prevSpotlightBtn = document.getElementById('carousel-prev-btn');
-        const nextSpotlightBtn = document.getElementById('carousel-next-btn');
-        if (prevSpotlightBtn) prevSpotlightBtn.addEventListener('click', () => {
-          currentSpotlightIdx--;
-          renderRosterSpotlight();
+        function renderRosterSpotlight() {
+          renderTeam1Spotlight();
+          renderTeam2Spotlight();
+        }
+
+        const prevT1Btn = document.getElementById('carousel-t1-prev-btn');
+        const nextT1Btn = document.getElementById('carousel-t1-next-btn');
+        if (prevT1Btn) prevT1Btn.addEventListener('click', () => {
+          t1SpotlightIdx--;
+          renderTeam1Spotlight();
         });
-        if (nextSpotlightBtn) nextSpotlightBtn.addEventListener('click', () => {
-          currentSpotlightIdx++;
-          renderRosterSpotlight();
+        if (nextT1Btn) nextT1Btn.addEventListener('click', () => {
+          t1SpotlightIdx++;
+          renderTeam1Spotlight();
         });
 
-        // Auto-cycle carousel spotlight every 4.5 seconds
+        const prevT2Btn = document.getElementById('carousel-t2-prev-btn');
+        const nextT2Btn = document.getElementById('carousel-t2-next-btn');
+        if (prevT2Btn) prevT2Btn.addEventListener('click', () => {
+          t2SpotlightIdx--;
+          renderTeam2Spotlight();
+        });
+        if (nextT2Btn) nextT2Btn.addEventListener('click', () => {
+          t2SpotlightIdx++;
+          renderTeam2Spotlight();
+        });
+
+        // Auto-cycle carousel spotlight every 5 seconds
         if (spotlightTimer) clearInterval(spotlightTimer);
         spotlightTimer = setInterval(() => {
           if (document.hidden) return;
-          currentSpotlightIdx++;
+          t1SpotlightIdx++;
+          t2SpotlightIdx++;
           renderRosterSpotlight();
-        }, 4500);
+        }, 5000);
 
         const spotlightContainer = document.getElementById('broadcast-spotlight-view');
         if (spotlightContainer) {
@@ -1861,9 +1965,10 @@
             if (spotlightTimer) clearInterval(spotlightTimer);
             spotlightTimer = setInterval(() => {
               if (document.hidden) return;
-              currentSpotlightIdx++;
+              t1SpotlightIdx++;
+              t2SpotlightIdx++;
               renderRosterSpotlight();
-            }, 4500);
+            }, 5000);
           });
         }
 
