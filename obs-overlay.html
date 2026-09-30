@@ -489,7 +489,7 @@
 
   </style>
 
-  <!-- OBS URL Mode Detection -->
+  <!-- OBS URL Mode Detection & Instant Font Injector -->
   <script>
     (function () {
       const p = new URLSearchParams(window.location.search);
@@ -505,6 +505,18 @@
           if (p.get('bg') === 'green') document.body.classList.add('chroma-green');
           document.body.classList.add('obs-view-' + view);
         });
+      }
+      // Instant font injection from URL
+      const font = p.get('font');
+      if (font) {
+        const s = document.createElement('style');
+        s.id = 'dynamic-overlay-font';
+        s.textContent = `
+          #obs-live-stage, #obs-live-stage *, .font-orbitron, .font-mono-cyber {
+            font-family: "${font}", cursive, sans-serif !important;
+          }
+        `;
+        document.head.appendChild(s);
       }
     })();
   </script>
@@ -562,6 +574,29 @@
   <main class="flex-1 w-full max-w-7xl mx-auto px-4 py-6 flex flex-col gap-6">
 
     
+
+            <!-- TOP SECTION: LIVE EDIT CONTROLS & EVENT TITLE INPUT -->
+    <section id="hub-controls-bar" class="cyber-panel rounded-2xl p-4 sm:p-5 shadow-2xl">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+
+        <!-- Title of the Event Input -->
+        <div class="lg:col-span-4 flex flex-col gap-1.5">
+          <label for="event-title-input" class="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">title</span>
+            <span>Title of the Event</span>
+            <span class="text-[10px] text-slate-400 lowercase font-normal">(live updates stream)</span>
+          </label>
+          <div class="relative">
+            <input type="text" id="event-title-input"
+              value="CEC ESPORTS INTRAMURALS 2026 • MLBB GRAND FINALS"
+              placeholder="e.g. CEC INTRAMURALS 2026 • GRAND FINALS"
+              class="w-full bg-[#050B14] text-white px-3.5 py-2.5 rounded-xl border border-sky-500/40 focus:border-sky-400 focus:outline-none focus:ring-1 focus:ring-sky-400 text-xs sm:text-sm font-semibold tracking-wide placeholder-slate-600 transition-all" />
+            <button id="event-title-clear-btn" type="button" title="Clear title"
+              class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 p-0.5">
+              <span class="material-symbols-outlined text-[16px]">backspace</span>
+            </button>
+          </div>
+        </div>
 
         <!-- Current Live Match Selector -->
         <div class="lg:col-span-3 flex flex-col gap-1.5">
@@ -1483,6 +1518,77 @@
       /**
        * Populate Absolute Links for OBS Studio Browser Sources
        */
+      
+      /**
+       * Dynamic High-Priority Font Injector
+       */
+      function setOverlayFont(fontName) {
+        fontName = fontName || 'Orbitron';
+        let styleTag = document.getElementById('dynamic-overlay-font');
+        if (!styleTag) {
+          styleTag = document.createElement('style');
+          styleTag.id = 'dynamic-overlay-font';
+          document.head.appendChild(styleTag);
+        }
+        styleTag.textContent = `
+          #obs-live-stage,
+          #obs-live-stage *,
+          .font-orbitron,
+          .font-mono-cyber,
+          #stage-name-left,
+          #stage-name-right,
+          #stage-score-left,
+          #stage-score-right,
+          #stage-vs-divider,
+          #stage-vs-divider span,
+          #live-stage-title,
+          #live-stage-format,
+          #carousel-player-ign-left,
+          #carousel-player-ign-right,
+          #carousel-team-left-tag,
+          #carousel-team-right-tag {
+            font-family: "${fontName}", cursive, sans-serif !important;
+          }
+        `;
+      }
+
+      /**
+       * Apply Custom Font and Colors to Overlay Elements
+       */
+      function applyOverlayStyling(font, cLeft, cRight, cScore, cAccent) {
+        font = font || 'Orbitron';
+        cLeft = cLeft || '#38bdf8';
+        cRight = cRight || '#fb7185';
+        cScore = cScore || '#ffffff';
+        cAccent = cAccent || '#fbbf24';
+
+        // Apply font
+        setOverlayFont(font);
+
+        // Apply colors
+        const nameL = $('stage-name-left'); if (nameL) nameL.style.color = cLeft;
+        const tagL = $('carousel-team-left-tag'); if (tagL) tagL.style.color = cLeft;
+        const ignL = $('carousel-player-ign-left'); if (ignL) ignL.style.color = cLeft;
+
+        const nameR = $('stage-name-right'); if (nameR) nameR.style.color = cRight;
+        const tagR = $('carousel-team-right-tag'); if (tagR) tagR.style.color = cRight;
+        const ignR = $('carousel-player-ign-right'); if (ignR) ignR.style.color = cRight;
+
+        const scoreL = $('stage-score-left'); if (scoreL) scoreL.style.color = cScore;
+        const scoreR = $('stage-score-right'); if (scoreR) scoreR.style.color = cScore;
+
+        const vsSpan = document.querySelector('#stage-vs-divider span');
+        if (vsSpan) vsSpan.style.color = cAccent;
+
+        try {
+          localStorage.setItem('cec_obs_font', font);
+          localStorage.setItem('cec_obs_c1', cLeft);
+          localStorage.setItem('cec_obs_c2', cRight);
+          localStorage.setItem('cec_obs_cs', cScore);
+          localStorage.setItem('cec_obs_ca', cAccent);
+        } catch (_) {}
+      }
+
       function updateObsLinks() {
         const base = window.location.origin + window.location.pathname;
         const currentMatchId = activeMatchId || '';
@@ -1906,6 +2012,12 @@
         const initialC2 = urlParams.get('c2') || localStorage.getItem('cec_obs_c2') || '#fb7185';
         const initialCs = urlParams.get('cs') || localStorage.getItem('cec_obs_cs') || '#ffffff';
         const initialCa = urlParams.get('ca') || localStorage.getItem('cec_obs_ca') || '#fbbf24';
+
+        const fontSel = $('select-font-family');
+        const c1Picker = $('picker-color-left');
+        const c2Picker = $('picker-color-right');
+        const csPicker = $('picker-color-score');
+        const caPicker = $('picker-color-accent');
 
         if (fontSel) fontSel.value = initialFont;
         if (c1Picker) c1Picker.value = initialC1;
