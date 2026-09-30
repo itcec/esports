@@ -1417,6 +1417,14 @@
               </select>
             </div>
 
+            <!-- Overlay Text Size -->
+            <div class="flex items-center gap-2 bg-[#050B14] px-2.5 py-1.5 rounded-lg border border-slate-800">
+              <label for="overlay-text-size" class="text-[10px] font-mono-cyber text-sky-400 font-bold whitespace-nowrap">TEXT SIZE:</label>
+              <input id="overlay-text-size" type="range" min="60" max="180" step="5" value="100"
+                class="w-28 accent-sky-400 cursor-pointer" title="Text size used in generated OBS links" />
+              <output id="overlay-text-size-value" for="overlay-text-size" class="w-10 text-right text-[10px] font-mono-cyber text-white font-bold">100%</output>
+            </div>
+
             <!-- Color Pickers -->
             <div class="flex flex-wrap items-center gap-3">
               <!-- Left Team Color -->
@@ -2400,6 +2408,65 @@
         } catch (_) {}
       }
 
+      /**
+       * Scale overlay typography without resizing logos, panels, or source canvases.
+       * The same value is carried in OBS links as the `ts` query parameter.
+       */
+      function applyOverlayTextScale(rawPercent) {
+        const percent = Math.max(60, Math.min(180, Number(rawPercent) || 100));
+        const factor = percent / 100;
+        const size = base => `${Number((base * factor).toFixed(3))}cqw`;
+        let styleTag = document.getElementById('dynamic-overlay-text-size');
+        if (!styleTag) {
+          styleTag = document.createElement('style');
+          styleTag.id = 'dynamic-overlay-text-size';
+          document.head.appendChild(styleTag);
+        }
+
+        const rules = [
+          [['#stage-name-left', '#stage-name-right'], .94],
+          [['#stage-dept-left', '#stage-dept-right'], .56],
+          [['#stage-score-left', '#stage-score-right'], 2.35],
+          [['#stage-vs-divider span:first-of-type'], .95],
+          [['#stage-match-status'], .48],
+          [['#live-stage-title'], .57],
+          [['#live-stage-format'], .55],
+          [['#carousel-team-left-tag', '#carousel-team-right-tag'], .62],
+          [['#carousel-player-badge-left', '#carousel-player-badge-right'], .47],
+          [['#carousel-player-role-badge-left', '#carousel-player-role-badge-right'], .5],
+          [['#carousel-player-ign-left', '#carousel-player-ign-right'], 1.08],
+          [['#carousel-player-real-left', '#carousel-player-real-right'], .65],
+          [['#carousel-player-num-left', '#carousel-player-num-right'], .52],
+          [['.obs-view-left-badge #stage-name-left', '.obs-view-right-badge #stage-name-right'], 4],
+          [['.obs-view-left-badge #stage-dept-left', '.obs-view-right-badge #stage-dept-right'], 2.3],
+          [['.obs-view-left-badge #stage-score-left', '.obs-view-right-badge #stage-score-right'], 9],
+          [['.obs-view-left-name #stage-name-left', '.obs-view-right-name #stage-name-right'], 7],
+          [['.obs-view-left-name #stage-dept-left', '.obs-view-right-name #stage-dept-right'], 3.4],
+          [['.obs-view-left-score #stage-score-left', '.obs-view-right-score #stage-score-right'], 52],
+          [['.obs-view-left-roster #carousel-team-left-tag', '.obs-view-right-roster #carousel-team-right-tag'], 2.6],
+          [['.obs-view-left-roster #carousel-player-badge-left', '.obs-view-right-roster #carousel-player-badge-right'], 2],
+          [['.obs-view-left-roster #carousel-player-role-badge-left', '.obs-view-right-roster #carousel-player-role-badge-right'], 2.2],
+          [['.obs-view-left-roster #carousel-player-num-left', '.obs-view-right-roster #carousel-player-num-right'], 2.2],
+          [['.obs-view-left-roster #carousel-player-ign-left', '.obs-view-right-roster #carousel-player-ign-right'], 4.5],
+          [['.obs-view-left-roster #carousel-player-real-left', '.obs-view-right-roster #carousel-player-real-right'], 2.6],
+          [['.obs-view-title #live-stage-title'], 2.4],
+          [['.obs-view-title #live-stage-format'], 1.8]
+        ];
+
+        styleTag.textContent = rules.map(([selectors, base]) =>
+          `${selectors.join(',')} { font-size: ${size(base)} !important; }`
+        ).join('\n');
+
+        const control = $('overlay-text-size');
+        const output = $('overlay-text-size-value');
+        if (control) control.value = String(percent);
+        if (output) output.textContent = `${percent}%`;
+        if (!isObsMode) {
+          try { localStorage.setItem('cec_obs_text_size', String(percent)); } catch (_) {}
+        }
+        return percent;
+      }
+
       function updateObsLinks() {
         const base = window.location.origin + window.location.pathname;
         const currentMatchId = activeMatchId || '';
@@ -2413,8 +2480,9 @@
         const cRight = ($('picker-color-right') && $('picker-color-right').value) || urlParams.get('c2') || localStorage.getItem('cec_obs_c2') || '#fb7185';
         const cScore = ($('picker-color-score') && $('picker-color-score').value) || urlParams.get('cs') || localStorage.getItem('cec_obs_cs') || '#ffffff';
         const cAccent = ($('picker-color-accent') && $('picker-color-accent').value) || urlParams.get('ca') || localStorage.getItem('cec_obs_ca') || '#fbbf24';
+        const textSize = ($('overlay-text-size') && $('overlay-text-size').value) || urlParams.get('ts') || localStorage.getItem('cec_obs_text_size') || '100';
 
-        const styleParams = `&font=${encodeURIComponent(chosenFont)}&c1=${encodeURIComponent(cLeft)}&c2=${encodeURIComponent(cRight)}&cs=${encodeURIComponent(cScore)}&ca=${encodeURIComponent(cAccent)}`;
+        const styleParams = `&font=${encodeURIComponent(chosenFont)}&c1=${encodeURIComponent(cLeft)}&c2=${encodeURIComponent(cRight)}&cs=${encodeURIComponent(cScore)}&ca=${encodeURIComponent(cAccent)}&ts=${encodeURIComponent(textSize)}`;
 
         document.querySelectorAll('.obs-link-input').forEach(input => {
           const view = input.getAttribute('data-view') || 'master';
@@ -2566,6 +2634,7 @@
         const c2Picker = $('picker-color-right');
         const csPicker = $('picker-color-score');
         const caPicker = $('picker-color-accent');
+        const textSizeControl = $('overlay-text-size');
         const resetBtn = $('btn-reset-styling');
 
         function triggerStylingUpdate() {
@@ -2575,6 +2644,7 @@
           const cs = (csPicker && csPicker.value) || '#ffffff';
           const ca = (caPicker && caPicker.value) || '#fbbf24';
           applyOverlayStyling(font, c1, c2, cs, ca);
+          applyOverlayTextScale((textSizeControl && textSizeControl.value) || 100);
           updateObsLinks();
         }
 
@@ -2583,6 +2653,7 @@
         if (c2Picker) c2Picker.addEventListener('input', triggerStylingUpdate);
         if (csPicker) csPicker.addEventListener('input', triggerStylingUpdate);
         if (caPicker) caPicker.addEventListener('input', triggerStylingUpdate);
+        if (textSizeControl) textSizeControl.addEventListener('input', triggerStylingUpdate);
 
         if (resetBtn) {
           resetBtn.addEventListener('click', () => {
@@ -2591,6 +2662,7 @@
             if (c2Picker) c2Picker.value = '#fb7185';
             if (csPicker) csPicker.value = '#ffffff';
             if (caPicker) caPicker.value = '#fbbf24';
+            if (textSizeControl) textSizeControl.value = '100';
             triggerStylingUpdate();
           });
         }
@@ -2823,20 +2895,24 @@
         const initialC2 = urlParams.get('c2') || localStorage.getItem('cec_obs_c2') || '#fb7185';
         const initialCs = urlParams.get('cs') || localStorage.getItem('cec_obs_cs') || '#ffffff';
         const initialCa = urlParams.get('ca') || localStorage.getItem('cec_obs_ca') || '#fbbf24';
+        const initialTextSize = urlParams.get('ts') || localStorage.getItem('cec_obs_text_size') || '100';
 
         const fontSel = $('select-font-family');
         const c1Picker = $('picker-color-left');
         const c2Picker = $('picker-color-right');
         const csPicker = $('picker-color-score');
         const caPicker = $('picker-color-accent');
+        const textSizeControl = $('overlay-text-size');
 
         if (fontSel) fontSel.value = initialFont;
         if (c1Picker) c1Picker.value = initialC1;
         if (c2Picker) c2Picker.value = initialC2;
         if (csPicker) csPicker.value = initialCs;
         if (caPicker) caPicker.value = initialCa;
+        if (textSizeControl) textSizeControl.value = initialTextSize;
 
         applyOverlayStyling(initialFont, initialC1, initialC2, initialCs, initialCa);
+        applyOverlayTextScale(initialTextSize);
         updateObsLinks();
 
         // Responsive scaler for 16:9 preview canvas
