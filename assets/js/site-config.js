@@ -574,12 +574,16 @@
     var docEl = document.documentElement;
     if (isObsHost) docEl.classList.add('obs-host');
 
-    if (isOverlayRequested) {
+    if (isOverlayRequested || isObsHost) {
       docEl.classList.add('obs-mode');
-      var transparent = params.has('transparent') || params.has('alpha') || params.get('bg') === 'transparent';
-      if (transparent) docEl.classList.add('obs-transparent');
+      docEl.classList.add('obs-transparent');
       var view = params.get('view');
       if (view) docEl.classList.add('obs-view-' + view);
+      if (document.body) {
+        document.body.classList.add('obs-mode');
+        document.body.classList.add('obs-transparent');
+        if (view) document.body.classList.add('obs-view-' + view);
+      }
     }
 
     // Inject high-priority global scrollbar & OBS styles
@@ -647,22 +651,37 @@
         '  overflow-y: auto !important;',
         '  height: auto !important;',
         '}',
-        '/* Hide scrollbar ONLY if explicitly transparent or minimal scoreboard HUD */',
+        '/* All OBS Overlay Modes are 100% transparent in background */',
+        'html.obs-mode,',
+        'body.obs-mode,',
+        '.obs-mode,',
+        '.obs-mode html,',
+        '.obs-mode body,',
         '.obs-mode.obs-transparent,',
         '.obs-mode.obs-transparent body {',
         '  background: transparent !important;',
         '  background-color: transparent !important;',
+        '  background-image: none !important;',
+        '}',
+        '.obs-mode .site-bg,',
+        '.obs-mode .site-overlay,',
+        '.obs-mode .site-bg-overlay {',
+        '  display: none !important;',
+        '  opacity: 0 !important;',
+        '  background: transparent !important;',
+        '}',
+        '/* Hide scrollbar in OBS overlay HUD modes */',
+        '.obs-mode,',
+        '.obs-mode body,',
+        '.obs-mode.obs-transparent,',
+        '.obs-mode.obs-transparent body {',
         '  scrollbar-width: none !important;',
         '}',
+        '.obs-mode ::-webkit-scrollbar,',
         '.obs-mode.obs-transparent ::-webkit-scrollbar {',
         '  display: none !important;',
         '  width: 0 !important;',
         '  height: 0 !important;',
-        '}',
-        '.obs-mode.obs-transparent .site-bg,',
-        '.obs-mode.obs-transparent .site-overlay {',
-        '  display: none !important;',
-        '  opacity: 0 !important;',
         '}',
         '',
         '/* OBS View: Scoreboard Only Overlay */',

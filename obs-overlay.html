@@ -172,17 +172,46 @@
 
     /* =========================================================
        OBS BROWSER SOURCE STANDALONE OVERLAY MODE
-       Active when loaded via ?obs=1 or in OBS Browser Source
+       100% transparent background for game & stream capture
        ========================================================= */
+    html.obs-mode,
+    body.obs-mode,
+    .obs-mode,
     .obs-mode html,
     .obs-mode body {
       background: transparent !important;
       background-color: transparent !important;
+      background-image: none !important;
       overflow: hidden !important;
       width: 100% !important;
       height: 100% !important;
       margin: 0 !important;
       padding: 0 !important;
+    }
+
+    /* Glassmorphic Translucency for OBS Overlay Panels */
+    .obs-mode #stage-scoreboard-bar {
+      background-color: rgba(5, 11, 20, 0.45) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+    }
+    .obs-mode #view-title {
+      background-color: rgba(5, 11, 20, 0.45) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+    }
+    .obs-mode #stage-vs-divider {
+      background-color: rgba(5, 11, 20, 0.45) !important;
+    }
+    .obs-mode #view-left-roster,
+    .obs-mode #view-right-roster {
+      background-color: rgba(5, 11, 20, 0.5) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+    }
+    .obs-mode #carousel-player-avatar-wrap-left,
+    .obs-mode #carousel-player-avatar-wrap-right {
+      background-color: rgba(10, 20, 35, 0.55) !important;
     }
 
     .obs-mode #hub-header,
@@ -216,12 +245,18 @@
       padding: 0 !important;
       margin: 0 !important;
       background: transparent !important;
+      background-color: transparent !important;
       background-image: none !important;
       box-shadow: none !important;
       width: 100% !important;
       height: 100% !important;
       position: absolute !important;
       inset: 0 !important;
+    }
+    .obs-mode #preview-stage-scaler {
+      background: transparent !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
     }
 
     .obs-mode #preview-stage-scaler {
@@ -393,15 +428,15 @@
   <script>
     (function () {
       const p = new URLSearchParams(window.location.search);
-      const isObs = p.has('obs') || p.has('overlay') || typeof window.obsstudio !== 'undefined' ||
+      const isObs = p.has('obs') || p.has('overlay') || p.has('view') || p.has('stream') || typeof window.obsstudio !== 'undefined' ||
         (navigator.userAgent && /OBS\/|obs-browser/i.test(navigator.userAgent));
       if (isObs) {
-        document.documentElement.classList.add('obs-mode');
+        document.documentElement.classList.add('obs-mode', 'obs-transparent');
         if (p.get('bg') === 'green') document.documentElement.classList.add('chroma-green');
         const view = p.get('view') || 'master';
         document.documentElement.classList.add('obs-view-' + view);
         document.addEventListener('DOMContentLoaded', () => {
-          document.body.classList.add('obs-mode');
+          document.body.classList.add('obs-mode', 'obs-transparent');
           if (p.get('bg') === 'green') document.body.classList.add('chroma-green');
           document.body.classList.add('obs-view-' + view);
         });
@@ -836,7 +871,7 @@
             <div id="view-scoreboard" class="absolute top-4 inset-x-4 sm:top-6 sm:inset-x-8 flex flex-col items-center gap-2 pointer-events-auto">
 
               <!-- Floating Event Title Banner (#view-title) -->
-              <div id="view-title" class="flex items-center gap-2 px-4 py-1 rounded-full bg-slate-950/90 border border-sky-400/40 shadow-lg backdrop-blur-md">
+              <div id="view-title" class="flex items-center gap-2 px-4 py-1 rounded-full bg-slate-950/50 border border-sky-400/40 shadow-lg backdrop-blur-md">
                 <span class="flex h-2 w-2 rounded-full bg-sky-400 animate-pulse"></span>
                 <span id="live-stage-title" class="font-orbitron font-bold text-[10px] sm:text-xs md:text-sm tracking-wider uppercase text-sky-300 drop-shadow">
                   CEC ESPORTS INTRAMURALS 2026 • MLBB GRAND FINALS
@@ -847,10 +882,10 @@
               </div>
 
               <!-- Main Scoreboard Bar -->
-              <div id="stage-scoreboard-bar" class="w-full max-w-4xl grid grid-cols-12 items-stretch h-14 sm:h-18 md:h-20 rounded-2xl overflow-hidden shadow-2xl border border-white/15 bg-slate-950/95 backdrop-blur-xl">
+              <div id="stage-scoreboard-bar" class="w-full max-w-4xl grid grid-cols-12 items-stretch h-14 sm:h-18 md:h-20 rounded-2xl overflow-hidden shadow-2xl border border-white/20 bg-slate-950/50 backdrop-blur-xl">
 
                 <!-- Left Side Team Card (#view-left-badge) -->
-                <div id="view-left-badge" class="col-span-5 flex items-center justify-between px-3 sm:px-6 bg-gradient-to-r from-sky-950/90 via-sky-900/60 to-slate-950/90 border-r border-sky-400/30 blue-glow">
+                <div id="view-left-badge" class="col-span-5 flex items-center justify-between px-3 sm:px-6 bg-gradient-to-r from-sky-950/70 via-sky-900/40 to-slate-950/50 border-r border-sky-400/30 blue-glow">
                   <!-- Team Logo & Info -->
                   <div class="flex items-center gap-2.5 sm:gap-4 min-w-0">
                     <div class="relative shrink-0">
@@ -874,7 +909,7 @@
                 </div>
 
                 <!-- Center VS Divider -->
-                <div id="stage-vs-divider" class="col-span-2 flex flex-col items-center justify-center bg-slate-950 border-x border-amber-400/40 relative">
+                <div id="stage-vs-divider" class="col-span-2 flex flex-col items-center justify-center bg-slate-950/50 border-x border-amber-400/40 relative">
                   <div class="absolute inset-0 bg-gradient-to-b from-amber-500/10 via-transparent to-amber-500/10"></div>
                   <span class="font-orbitron font-black text-xs sm:text-base md:text-lg tracking-widest text-amber-400 gold-glow">
                     VS
@@ -885,7 +920,7 @@
                 </div>
 
                 <!-- Right Side Team Card (#view-right-badge) -->
-                <div id="view-right-badge" class="col-span-5 flex items-center justify-between px-3 sm:px-6 bg-gradient-to-l from-rose-950/90 via-rose-900/60 to-slate-950/90 border-l border-rose-400/30 red-glow">
+                <div id="view-right-badge" class="col-span-5 flex items-center justify-between px-3 sm:px-6 bg-gradient-to-l from-rose-950/70 via-rose-900/40 to-slate-950/50 border-l border-rose-400/30 red-glow">
                   <!-- Score -->
                   <div id="stage-score-right" class="font-orbitron font-black text-2xl sm:text-4xl md:text-5xl text-rose-400 pr-2 shrink-0 drop-shadow-[0_0_12px_rgba(244,63,94,0.6)]">
                     0
@@ -915,9 +950,9 @@
             <div id="view-dual-roster" class="absolute bottom-4 inset-x-4 sm:bottom-6 sm:inset-x-8 flex items-end justify-between pointer-events-auto">
 
               <!-- Left Side Team Member Showcase Carousel (#view-left-roster) -->
-              <div id="view-left-roster" class="w-64 sm:w-80 md:w-96 rounded-2xl overflow-hidden bg-slate-950/95 border border-sky-400/40 shadow-2xl backdrop-blur-xl blue-glow">
+              <div id="view-left-roster" class="w-64 sm:w-80 md:w-96 rounded-2xl overflow-hidden bg-slate-950/50 border border-sky-400/40 shadow-2xl backdrop-blur-xl blue-glow">
                 <!-- Header: Team Label & Current Player Indicator -->
-                <div class="px-3.5 py-1.5 bg-gradient-to-r from-sky-900/80 to-slate-950 border-b border-sky-400/30 flex items-center justify-between">
+                <div class="px-3.5 py-1.5 bg-gradient-to-r from-sky-900/60 to-slate-950/60 border-b border-sky-400/30 flex items-center justify-between">
                   <div class="flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-[14px] text-sky-400">group</span>
                     <span id="carousel-team-left-tag" class="text-[10px] sm:text-xs font-orbitron font-bold text-sky-300 tracking-wider truncate max-w-[150px]">
@@ -962,9 +997,9 @@
               </div>
 
               <!-- Right Side Team Member Showcase Carousel (#view-right-roster) -->
-              <div id="view-right-roster" class="w-64 sm:w-80 md:w-96 rounded-2xl overflow-hidden bg-slate-950/95 border border-rose-400/40 shadow-2xl backdrop-blur-xl red-glow">
+              <div id="view-right-roster" class="w-64 sm:w-80 md:w-96 rounded-2xl overflow-hidden bg-slate-950/50 border border-rose-400/40 shadow-2xl backdrop-blur-xl red-glow">
                 <!-- Header: Team Label & Current Player Indicator -->
-                <div class="px-3.5 py-1.5 bg-gradient-to-l from-rose-900/80 to-slate-950 border-b border-rose-400/30 flex items-center justify-between flex-row-reverse">
+                <div class="px-3.5 py-1.5 bg-gradient-to-l from-rose-900/60 to-slate-950/60 border-b border-rose-400/30 flex items-center justify-between flex-row-reverse">
                   <div class="flex items-center gap-1.5 flex-row-reverse">
                     <span class="material-symbols-outlined text-[14px] text-rose-400">group</span>
                     <span id="carousel-team-right-tag" class="text-[10px] sm:text-xs font-orbitron font-bold text-rose-300 tracking-wider truncate max-w-[150px]">
