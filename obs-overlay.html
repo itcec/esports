@@ -139,6 +139,10 @@
       order: -2;
     }
 
+    .compact-link-card {
+      order: -1;
+    }
+
     #obs-links-grid {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
@@ -409,6 +413,10 @@
     }
 
     #stage-vs-divider::before {
+      display: none;
+    }
+
+    .compact-event-logo {
       display: none;
     }
 
@@ -769,6 +777,153 @@
 
     .obs-view-scoreboard #view-scoreboard {
       top: .52cqw;
+    }
+
+    /* Compact match bar: designed to sit below an external live-data strip. */
+    .obs-view-compact-scoreboard #view-dual-roster,
+    .obs-view-compact-scoreboard #view-title {
+      display: none !important;
+    }
+
+    .obs-view-compact-scoreboard #view-scoreboard {
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      justify-content: flex-start;
+    }
+
+    .obs-view-compact-scoreboard #stage-scoreboard-bar {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) 16cqw minmax(0, 1fr);
+      width: min(100cqw, 888.889cqh) !important;
+      height: auto !important;
+      aspect-ratio: 80 / 9;
+      container-type: inline-size;
+      flex: none;
+      overflow: hidden;
+      background: #111827;
+    }
+
+    .obs-view-compact-scoreboard .broadcast-team-badge {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      clip-path: none;
+      box-shadow: inset 0 -.4cqw 0 var(--side-color);
+    }
+
+    .obs-view-compact-scoreboard .broadcast-team-badge::after {
+      display: none;
+    }
+
+    .obs-view-compact-scoreboard .broadcast-team-identity {
+      display: contents;
+    }
+
+    .obs-view-compact-scoreboard .broadcast-team-badge--left {
+      grid-template-columns: 19% 13% minmax(0, 1fr);
+      grid-template-areas: 'logo score name';
+    }
+
+    .obs-view-compact-scoreboard .broadcast-team-badge--right {
+      grid-template-columns: minmax(0, 1fr) 13% 19%;
+      grid-template-areas: 'name score logo';
+    }
+
+    .obs-view-compact-scoreboard .broadcast-logo-shell {
+      grid-area: logo !important;
+      width: 100%;
+      height: 100%;
+      padding: .65cqw;
+      border: 0;
+      background: #f7f7f4;
+    }
+
+    .obs-view-compact-scoreboard .broadcast-team-copy {
+      grid-area: name !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-width: 0;
+      padding-inline: 1.25cqw;
+      color: #fff;
+      background: #30334c;
+      text-align: center;
+    }
+
+    .obs-view-compact-scoreboard .broadcast-team-badge--right .broadcast-team-copy {
+      background: #4a3048;
+    }
+
+    .obs-view-compact-scoreboard #stage-name-left,
+    .obs-view-compact-scoreboard #stage-name-right {
+      width: 100%;
+      color: #fff !important;
+      font-size: 2.15cqw;
+      font-style: normal;
+      letter-spacing: .03em;
+      text-align: center;
+    }
+
+    .obs-view-compact-scoreboard #stage-dept-left,
+    .obs-view-compact-scoreboard #stage-dept-right {
+      display: none;
+    }
+
+    .obs-view-compact-scoreboard .broadcast-score {
+      grid-area: score;
+      width: 100%;
+      height: 100%;
+      color: #0a1423 !important;
+      background: #f7f7f4;
+      font-size: 3.5cqw;
+      font-style: normal;
+      border-inline: .35cqw solid #cfd4da;
+    }
+
+    .obs-view-compact-scoreboard #stage-vs-divider {
+      display: grid;
+      grid-template-columns: 44% minmax(0, 1fr);
+      grid-template-rows: 1fr 1fr;
+      gap: 0;
+      padding: 1.5cqw 1.7cqw;
+      clip-path: none;
+      background: #17213b;
+      box-shadow: inset 0 -.4cqw 0 #f4bf2a;
+    }
+
+    .obs-view-compact-scoreboard .compact-event-logo {
+      display: block;
+      grid-column: 1;
+      grid-row: 1 / 3;
+      align-self: center;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .obs-view-compact-scoreboard #stage-vs-divider span:first-of-type {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: end;
+      color: #fff !important;
+      font-size: 1.7cqw;
+      font-style: normal;
+      line-height: 1;
+      text-align: center;
+    }
+
+    .obs-view-compact-scoreboard #stage-match-status {
+      grid-column: 2;
+      grid-row: 2;
+      align-self: start;
+      color: #70d5ff;
+      font-size: .9cqw;
+      line-height: 1.2;
+      text-align: center;
     }
 
     /* Single-team sources (recommended: 450 x 110). */
@@ -1758,6 +1913,22 @@
           </div>
         </div>
 
+        <!-- Compact match bar -->
+        <div class="compact-link-card cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-amber-500/30">
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-bold text-xs text-white">Compact Match Bar</span>
+              <span class="text-[10px] font-mono-cyber text-amber-300">1600 &times; 180</span>
+            </div>
+            <p class="mt-1 text-[11px] text-slate-400">Compact logo, score, team-name and event strip for placement below tournament live data.</p>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="compact-scoreboard" class="obs-link-input flex-1 min-w-0 bg-[#050B14] text-amber-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs">Copy</button>
+            <a href="?view=compact-scoreboard&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 text-slate-300" title="Test in new tab"><span class="material-symbols-outlined text-[15px]">open_in_new</span></a>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -1861,6 +2032,7 @@
 
                 <!-- Center VS Divider -->
                 <div id="stage-vs-divider" class="flex flex-col items-center justify-center relative">
+                  <img class="compact-event-logo" src="assets/e-sportslogo.png" alt="CEC Esports" loading="eager" decoding="sync" />
                   <span class="font-orbitron">
                     VS
                   </span>
@@ -2440,6 +2612,10 @@
           [['.obs-view-left-badge #stage-name-left', '.obs-view-right-badge #stage-name-right'], 4],
           [['.obs-view-left-badge #stage-dept-left', '.obs-view-right-badge #stage-dept-right'], 2.3],
           [['.obs-view-left-badge #stage-score-left', '.obs-view-right-badge #stage-score-right'], 9],
+          [['.obs-view-compact-scoreboard #stage-name-left', '.obs-view-compact-scoreboard #stage-name-right'], 2.15],
+          [['.obs-view-compact-scoreboard #stage-score-left', '.obs-view-compact-scoreboard #stage-score-right'], 3.5],
+          [['.obs-view-compact-scoreboard #stage-vs-divider span:first-of-type'], 1.7],
+          [['.obs-view-compact-scoreboard #stage-match-status'], .9],
           [['.obs-view-left-name #stage-name-left', '.obs-view-right-name #stage-name-right'], 7],
           [['.obs-view-left-name #stage-dept-left', '.obs-view-right-name #stage-dept-right'], 3.4],
           [['.obs-view-left-score #stage-score-left', '.obs-view-right-score #stage-score-right'], 52],
