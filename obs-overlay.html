@@ -130,6 +130,33 @@
       box-shadow: 0 0 20px -3px rgba(255, 211, 108, 0.45);
     }
 
+    /* Keep the independently positionable OBS links above combined presets. */
+    .separate-links-heading {
+      order: -3;
+    }
+
+    .separate-link-card {
+      order: -2;
+    }
+
+    #obs-links-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: .875rem;
+    }
+
+    @media (min-width: 768px) {
+      #obs-links-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 1280px) {
+      #obs-links-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
     /* Checkered transparency pattern */
     .bg-checkered {
       background-color: #0b1320;
@@ -171,47 +198,517 @@
     }
 
     /* =========================================================
-       OBS BROWSER SOURCE STANDALONE OVERLAY MODE
-       100% transparent background for game & stream capture
+       BROADCAST GRAPHICS
+       A single, crisp layout is shared by the preview and OBS.
+       The stage is the size container, so all modules resize together.
        ========================================================= */
-    html.obs-mode,
-    body.obs-mode,
-    .obs-mode,
-    .obs-mode html,
-    .obs-mode body {
-      background: transparent !important;
-      background-color: transparent !important;
-      background-image: none !important;
-      overflow: hidden !important;
-      width: 100% !important;
-      height: 100% !important;
-      margin: 0 !important;
-      padding: 0 !important;
+    #obs-live-stage {
+      container-type: size;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Glassmorphic Translucency for OBS Overlay Panels */
-    .obs-mode #stage-scoreboard-bar {
-      background-color: rgba(5, 11, 20, 0.45) !important;
-      backdrop-filter: blur(12px) !important;
-      -webkit-backdrop-filter: blur(12px) !important;
+    #obs-live-stage,
+    #obs-live-stage *,
+    #obs-live-stage *::before,
+    #obs-live-stage *::after {
+      box-sizing: border-box;
     }
-    .obs-mode #view-title {
-      background-color: rgba(5, 11, 20, 0.45) !important;
-      backdrop-filter: blur(12px) !important;
-      -webkit-backdrop-filter: blur(12px) !important;
+
+    #view-scoreboard {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      top: 1.45cqw;
+      left: 0;
+      right: 0;
+      width: 68cqw;
+      margin-inline: auto;
+      gap: 0;
     }
-    .obs-mode #stage-vs-divider {
-      background-color: rgba(5, 11, 20, 0.45) !important;
+
+    #stage-scoreboard-bar {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 6.4cqw minmax(0, 1fr);
+      width: 100%;
+      max-width: none;
+      height: 4.8cqw;
+      overflow: visible;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
     }
-    .obs-mode #view-left-roster,
-    .obs-mode #view-right-roster {
-      background-color: rgba(5, 11, 20, 0.5) !important;
-      backdrop-filter: blur(12px) !important;
-      -webkit-backdrop-filter: blur(12px) !important;
+
+    .broadcast-team-badge {
+      --side-color: #1677ff;
+      position: relative;
+      z-index: 1;
+      display: grid;
+      align-items: stretch;
+      min-width: 0;
+      overflow: hidden;
+      color: #0a1423;
+      background: #f4f5f2;
+      box-shadow: inset 0 -.26cqw 0 var(--side-color);
     }
-    .obs-mode #carousel-player-avatar-wrap-left,
-    .obs-mode #carousel-player-avatar-wrap-right {
-      background-color: rgba(10, 20, 35, 0.55) !important;
+
+    .broadcast-team-badge::after {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      bottom: .26cqw;
+      width: .55cqw;
+      background: var(--side-color);
+    }
+
+    .broadcast-team-badge--left {
+      grid-template-columns: minmax(0, 1fr) 5cqw;
+      padding-right: 1.4cqw;
+      clip-path: polygon(0 0, 95% 0, 100% 100%, 0 100%);
+    }
+
+    .broadcast-team-badge--left::after {
+      left: 0;
+    }
+
+    .broadcast-team-badge--right {
+      --side-color: #f23645;
+      grid-template-columns: 5cqw minmax(0, 1fr);
+      padding-left: 1.4cqw;
+      clip-path: polygon(5% 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .broadcast-team-badge--right::after {
+      right: 0;
+    }
+
+    .broadcast-team-identity {
+      display: grid;
+      grid-template-columns: 4.25cqw minmax(0, 1fr);
+      align-items: center;
+      min-width: 0;
+      height: 100%;
+      gap: .75cqw;
+      padding-inline: 1cqw;
+    }
+
+    .broadcast-team-identity--right {
+      grid-template-columns: minmax(0, 1fr) 4.25cqw;
+      text-align: right;
+    }
+
+    .broadcast-team-identity--right .broadcast-logo-shell {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .broadcast-team-identity--right .broadcast-team-copy {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .broadcast-logo-shell {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: calc(100% - .625cqw);
+      min-height: 0;
+      padding: .21cqw;
+      background: #e4e7e8;
+      border: 0;
+      border-inline: .052cqw solid #c9ced3;
+      border-radius: 0;
+    }
+
+    .broadcast-logo-shell img,
+    #stage-logo-left,
+    #stage-logo-right {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      padding: 0;
+      object-fit: contain;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      filter: none;
+    }
+
+    .broadcast-team-copy {
+      min-width: 0;
+      line-height: 1.05;
+    }
+
+    #stage-name-left,
+    #stage-name-right {
+      overflow: hidden;
+      color: #0a1423;
+      font-size: .94cqw;
+      font-style: italic;
+      font-weight: 900;
+      letter-spacing: .02em;
+      line-height: 1.08;
+      text-overflow: ellipsis;
+      text-shadow: none;
+      white-space: nowrap;
+    }
+
+    #stage-dept-left,
+    #stage-dept-right {
+      overflow: hidden;
+      margin-top: .18cqw;
+      color: #53606d;
+      font-size: .56cqw;
+      font-weight: 800;
+      letter-spacing: .12em;
+      line-height: 1;
+      text-overflow: ellipsis;
+      text-shadow: none;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .broadcast-score {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      color: #fff;
+      background: #0a1423;
+      font-size: 2.35cqw;
+      font-style: italic;
+      font-weight: 900;
+      line-height: 1;
+      text-shadow: none;
+      filter: none;
+    }
+
+    .broadcast-team-badge--left .broadcast-score,
+    .broadcast-team-badge--right .broadcast-score {
+      border: 0;
+    }
+
+    #stage-vs-divider {
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .1cqw;
+      color: #fff;
+      background: #0a1423;
+      border: 0;
+      clip-path: polygon(13% 0, 87% 0, 100% 100%, 0 100%);
+      box-shadow: inset 0 -.26cqw 0 #f4bf2a;
+    }
+
+    #stage-vs-divider::before {
+      display: none;
+    }
+
+    #stage-vs-divider span:first-of-type {
+      color: #fff;
+      font-size: .95cqw;
+      font-style: italic;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-shadow: none;
+    }
+
+    #stage-match-status {
+      color: #f4bf2a;
+      font-size: .48cqw;
+      font-weight: 800;
+      letter-spacing: .13em;
+    }
+
+    #view-title {
+      position: absolute;
+      z-index: 3;
+      top: calc(100% - .26cqw);
+      left: 50%;
+      display: flex;
+      width: 38%;
+      min-width: 0;
+      height: 1.65cqw;
+      padding: 0 1cqw;
+      transform: translateX(-50%);
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      color: #fff;
+      background: #0a1423;
+      box-shadow: none;
+      clip-path: polygon(4% 0, 96% 0, 92% 100%, 8% 100%);
+      backdrop-filter: none;
+    }
+
+    #view-title > span:first-child {
+      display: none;
+    }
+
+    #live-stage-title {
+      flex: 1;
+      overflow: hidden;
+      color: #fff;
+      font-size: .57cqw;
+      font-style: italic;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-overflow: ellipsis;
+      text-shadow: none;
+      white-space: nowrap;
+    }
+
+    #live-stage-format {
+      flex: none;
+      margin-left: 0;
+      padding: 0;
+      border: 0;
+      color: #f4bf2a;
+      background: transparent;
+      font-size: .55cqw;
+      font-weight: 900;
+    }
+
+    /* Minimal lower thirds: solid colors, no glass or soft shadows. */
+    #view-dual-roster {
+      position: absolute;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      right: 2cqw;
+      bottom: 2cqw;
+      left: 2cqw;
+    }
+
+    #view-left-roster > div:first-child,
+    #view-right-roster > div:first-child,
+    #view-left-roster > div:first-child > div,
+    #view-right-roster > div:first-child > div,
+    #carousel-card-left,
+    #carousel-card-right,
+    #carousel-card-left > div:first-child,
+    #carousel-card-right > div:first-child,
+    #carousel-card-left > div:last-child > div:first-child,
+    #carousel-card-right > div:last-child > div:first-child {
+      display: flex;
+      align-items: center;
+    }
+
+    #view-left-roster > div:first-child,
+    #view-right-roster > div:first-child {
+      justify-content: space-between;
+    }
+
+    #view-right-roster > div:first-child,
+    #view-right-roster > div:first-child > div,
+    #carousel-card-right {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+
+    #carousel-card-left,
+    #carousel-card-right {
+      gap: .75cqw;
+    }
+
+    #carousel-card-left > div:first-child,
+    #carousel-card-right > div:first-child {
+      position: relative;
+      flex: none;
+    }
+
+    #carousel-card-left > div:last-child,
+    #carousel-card-right > div:last-child {
+      flex: 1;
+      min-width: 0;
+    }
+
+    #carousel-card-left > div:last-child > div:first-child,
+    #carousel-card-right > div:last-child > div:first-child,
+    #view-left-roster > div:first-child > div,
+    #view-right-roster > div:first-child > div {
+      gap: .31cqw;
+    }
+
+    #carousel-card-right > div:last-child > div:first-child {
+      justify-content: flex-end;
+    }
+
+    #view-left-roster,
+    #view-right-roster {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr);
+      width: 21cqw;
+      min-height: 7cqw;
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background: #f4f5f2;
+      box-shadow: none;
+      clip-path: polygon(0 0, 96% 0, 100% 14%, 100% 100%, 0 100%);
+      backdrop-filter: none;
+    }
+
+    #view-right-roster {
+      clip-path: polygon(4% 0, 100% 0, 100% 100%, 0 100%, 0 14%);
+    }
+
+    /* Player carousel intentionally contains player information only. */
+    #view-left-roster > div:first-child,
+    #view-right-roster > div:first-child {
+      display: none !important;
+    }
+
+    #view-left-roster > div:first-child,
+    #view-right-roster > div:first-child {
+      height: 1.65cqw;
+      padding: 0 .75cqw;
+      border: 0;
+      color: #fff;
+      background: #1677ff;
+    }
+
+    #view-right-roster > div:first-child {
+      background: #f23645;
+    }
+
+    #carousel-team-left-tag,
+    #carousel-team-right-tag {
+      max-width: 15cqw;
+      color: #fff;
+      font-size: .62cqw;
+      font-style: italic;
+      text-shadow: none;
+    }
+
+    #carousel-card-left,
+    #carousel-card-right {
+      height: 100%;
+      min-height: 5.35cqw;
+      padding: .7cqw;
+      color: #0a1423;
+      background: #f4f5f2;
+    }
+
+    #carousel-player-avatar-wrap-left,
+    #carousel-player-avatar-wrap-right {
+      width: 4cqw;
+      height: 4cqw;
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background: #dfe3e5;
+      box-shadow: inset 0 -.21cqw 0 #1677ff;
+    }
+
+    #carousel-player-avatar-wrap-right {
+      box-shadow: inset 0 -.21cqw 0 #f23645;
+    }
+
+    #carousel-player-photo-left,
+    #carousel-player-photo-right {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: none;
+    }
+
+    #view-left-roster .material-symbols-outlined,
+    #view-right-roster .material-symbols-outlined,
+    #carousel-dots-left,
+    #carousel-dots-right {
+      display: none !important;
+    }
+
+    #carousel-player-badge-left,
+    #carousel-player-badge-right {
+      position: absolute;
+      z-index: 2;
+      top: -.26cqw;
+      display: inline-flex;
+      align-items: center;
+      padding: .1cqw .26cqw;
+      border-radius: 0;
+      color: #0a1423;
+      background: #f4bf2a;
+      font-size: .47cqw;
+      font-weight: 900;
+      line-height: 1.2;
+    }
+
+    #carousel-player-badge-left {
+      right: -.26cqw;
+    }
+
+    #carousel-player-badge-right {
+      left: -.26cqw;
+    }
+
+    #carousel-player-role-badge-left,
+    #carousel-player-role-badge-right {
+      padding: .1cqw .31cqw;
+      border: .052cqw solid currentColor;
+      border-radius: 0;
+      color: #1677ff;
+      background: rgba(22, 119, 255, .08);
+      font-size: .5cqw;
+      font-weight: 900;
+      letter-spacing: .06em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    #carousel-player-role-badge-right {
+      color: #f23645;
+      background: rgba(242, 54, 69, .08);
+    }
+
+    #carousel-player-ign-left,
+    #carousel-player-ign-right {
+      color: #0a1423;
+      font-size: 1.08cqw;
+      font-style: italic;
+      line-height: 1.05;
+      text-shadow: none;
+    }
+
+    #carousel-player-real-left,
+    #carousel-player-real-right,
+    #carousel-player-num-left,
+    #carousel-player-num-right {
+      color: #59636d;
+      text-shadow: none;
+    }
+
+    #carousel-player-real-left,
+    #carousel-player-real-right {
+      font-size: .65cqw;
+    }
+
+    #carousel-player-num-left,
+    #carousel-player-num-right {
+      font-size: .52cqw;
+    }
+
+    /* =========================================================
+       OBS BROWSER SOURCE SHELL
+       ========================================================= */
+    html.obs-mode,
+    body.obs-mode {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent !important;
     }
 
     .obs-mode #hub-header,
@@ -222,65 +719,41 @@
       display: none !important;
     }
 
-    .obs-mode main {
-      padding: 0 !important;
-      margin: 0 !important;
-      max-width: 100% !important;
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    .obs-mode #hub-preview-section {
-      padding: 0 !important;
-      margin: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      position: absolute !important;
-      inset: 0 !important;
-    }
-
-    .obs-mode #preview-container-frame {
-      border: none !important;
-      border-radius: 0 !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      background: transparent !important;
-      background-color: transparent !important;
-      background-image: none !important;
-      box-shadow: none !important;
-      width: 100% !important;
-      height: 100% !important;
-      position: absolute !important;
-      inset: 0 !important;
-    }
-    .obs-mode #preview-stage-scaler {
-      background: transparent !important;
-      background-color: transparent !important;
-      box-shadow: none !important;
-    }
-
-    .obs-mode #preview-stage-scaler {
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
-      aspect-ratio: auto !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      position: absolute !important;
-      inset: 0 !important;
-    }
-
+    .obs-mode main,
+    .obs-mode #hub-preview-section,
+    .obs-mode #preview-container-frame,
+    .obs-mode #preview-stage-scaler,
     .obs-mode #obs-live-stage {
       position: absolute !important;
       inset: 0 !important;
       width: 100% !important;
       height: 100% !important;
-      padding: 0 !important;
+      max-width: none !important;
       margin: 0 !important;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
+      padding: 0 !important;
       overflow: hidden !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .obs-mode #preview-stage-scaler {
+      aspect-ratio: auto !important;
+    }
+
+    .obs-mode #obs-live-stage *,
+    .obs-mode #obs-live-stage *::before,
+    .obs-mode #obs-live-stage *::after {
+      text-shadow: none !important;
+      filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    .obs-mode .carousel-item {
+      transform: none !important;
+      transition: opacity .18s linear !important;
     }
 
     .obs-mode.chroma-green body,
@@ -288,203 +761,453 @@
       background: #00b961 !important;
     }
 
-    /* Isolated Modular Views for OBS Browser Sources */
-    /* 1. Left Badge Only (e.g. 450x110) */
+    /* Full-width top scoreboard source (recommended: 1920 x 130). */
+    .obs-view-scoreboard #view-dual-roster,
+    .obs-view-scoreboard #view-title {
+      display: none !important;
+    }
+
+    .obs-view-scoreboard #view-scoreboard {
+      top: .52cqw;
+    }
+
+    /* Single-team sources (recommended: 450 x 110). */
     .obs-view-left-badge #view-dual-roster,
     .obs-view-left-badge #view-title,
     .obs-view-left-badge #stage-vs-divider,
-    .obs-view-left-badge #view-right-badge {
-      display: none !important;
-    }
-    .obs-view-left-badge #view-scoreboard {
-      inset: 0 !important;
-      top: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-    }
-    .obs-view-left-badge #stage-scoreboard-bar {
-      display: block !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      height: 100% !important;
-      grid-template-columns: 1fr !important;
-    }
-    .obs-view-left-badge #view-left-badge {
-      width: 100% !important;
-      height: 100% !important;
-      border-radius: 1rem !important;
-    }
-
-    /* 2. Right Badge Only (e.g. 450x110) */
+    .obs-view-left-badge #view-right-badge,
     .obs-view-right-badge #view-dual-roster,
     .obs-view-right-badge #view-title,
     .obs-view-right-badge #stage-vs-divider,
     .obs-view-right-badge #view-left-badge {
       display: none !important;
     }
+
+    .obs-view-left-badge #view-scoreboard,
     .obs-view-right-badge #view-scoreboard {
       inset: 0 !important;
-      top: 0 !important;
       width: 100% !important;
       height: 100% !important;
-    }
-    .obs-view-right-badge #stage-scoreboard-bar {
-      display: block !important;
-      width: 100% !important;
-      max-width: 100% !important;
-      height: 100% !important;
-      grid-template-columns: 1fr !important;
-    }
-    .obs-view-right-badge #view-right-badge {
-      width: 100% !important;
-      height: 100% !important;
-      border-radius: 1rem !important;
+      margin: 0 !important;
     }
 
-    /* 3. Left Roster Carousel Only (e.g. 460x220) */
-    .obs-view-left-roster #view-scoreboard,
-    .obs-view-left-roster #view-right-roster {
+    .obs-view-left-badge #stage-scoreboard-bar,
+    .obs-view-right-badge #stage-scoreboard-bar {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) !important;
+      width: min(100cqw, 409.091cqh) !important;
+      height: auto !important;
+      aspect-ratio: 45 / 11;
+      container-type: inline-size;
+      flex: none;
+    }
+
+    .obs-view-left-badge .broadcast-team-badge--left,
+    .obs-view-right-badge .broadcast-team-badge--right {
+      width: 100%;
+      height: 100%;
+      box-shadow: inset 0 -1.1cqw 0 var(--side-color);
+    }
+
+    .obs-view-left-badge .broadcast-team-badge::after,
+    .obs-view-right-badge .broadcast-team-badge::after {
+      bottom: 1.1cqw;
+      width: 1.8cqw;
+    }
+
+    .obs-view-left-badge .broadcast-team-badge--left {
+      grid-template-columns: minmax(0, 1fr) 19cqw;
+      padding-right: 7cqw;
+      clip-path: polygon(0 0, 92% 0, 100% 100%, 0 100%);
+    }
+
+    .obs-view-right-badge .broadcast-team-badge--right {
+      grid-template-columns: 19cqw minmax(0, 1fr);
+      padding-left: 7cqw;
+      clip-path: polygon(8% 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .obs-view-left-badge .broadcast-team-identity,
+    .obs-view-right-badge .broadcast-team-identity {
+      gap: 2.5cqw;
+      padding-inline: 3cqw;
+    }
+
+    .obs-view-left-badge .broadcast-team-identity {
+      grid-template-columns: 20cqw minmax(0, 1fr);
+    }
+
+    .obs-view-right-badge .broadcast-team-identity {
+      grid-template-columns: minmax(0, 1fr) 20cqw;
+    }
+
+    .obs-view-left-badge .broadcast-logo-shell,
+    .obs-view-right-badge .broadcast-logo-shell {
+      height: calc(100% - 2.7cqw);
+      padding: .9cqw;
+      border-inline-width: .22cqw;
+    }
+
+    .obs-view-left-badge #stage-name-left,
+    .obs-view-right-badge #stage-name-right {
+      font-size: 4cqw;
+    }
+
+    .obs-view-left-badge #stage-dept-left,
+    .obs-view-right-badge #stage-dept-right {
+      margin-top: .8cqw;
+      font-size: 2.3cqw;
+    }
+
+    .obs-view-left-badge .broadcast-score,
+    .obs-view-right-badge .broadcast-score {
+      font-size: 9cqw;
+    }
+
+    /* Independently positionable team elements for OBS. */
+    .obs-view-left-logo #view-dual-roster,
+    .obs-view-left-logo #view-title,
+    .obs-view-left-logo #stage-vs-divider,
+    .obs-view-left-logo #view-right-badge,
+    .obs-view-left-name #view-dual-roster,
+    .obs-view-left-name #view-title,
+    .obs-view-left-name #stage-vs-divider,
+    .obs-view-left-name #view-right-badge,
+    .obs-view-left-score #view-dual-roster,
+    .obs-view-left-score #view-title,
+    .obs-view-left-score #stage-vs-divider,
+    .obs-view-left-score #view-right-badge,
+    .obs-view-right-logo #view-dual-roster,
+    .obs-view-right-logo #view-title,
+    .obs-view-right-logo #stage-vs-divider,
+    .obs-view-right-logo #view-left-badge,
+    .obs-view-right-name #view-dual-roster,
+    .obs-view-right-name #view-title,
+    .obs-view-right-name #stage-vs-divider,
+    .obs-view-right-name #view-left-badge,
+    .obs-view-right-score #view-dual-roster,
+    .obs-view-right-score #view-title,
+    .obs-view-right-score #stage-vs-divider,
+    .obs-view-right-score #view-left-badge {
       display: none !important;
     }
-    .obs-view-left-roster #view-dual-roster {
+
+    .obs-view-left-logo #view-scoreboard,
+    .obs-view-left-name #view-scoreboard,
+    .obs-view-left-score #view-scoreboard,
+    .obs-view-right-logo #view-scoreboard,
+    .obs-view-right-name #view-scoreboard,
+    .obs-view-right-score #view-scoreboard {
       inset: 0 !important;
-      bottom: 0 !important;
       width: 100% !important;
       height: 100% !important;
-      justify-content: flex-start !important;
-    }
-    .obs-view-left-roster #view-left-roster {
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
+      margin: 0 !important;
     }
 
-    /* 4. Right Roster Carousel Only (e.g. 460x220) */
+    .obs-view-left-logo #stage-scoreboard-bar,
+    .obs-view-left-name #stage-scoreboard-bar,
+    .obs-view-left-score #stage-scoreboard-bar,
+    .obs-view-right-logo #stage-scoreboard-bar,
+    .obs-view-right-name #stage-scoreboard-bar,
+    .obs-view-right-score #stage-scoreboard-bar {
+      display: block !important;
+      height: auto !important;
+      container-type: inline-size;
+      flex: none;
+    }
+
+    .obs-view-left-logo #stage-scoreboard-bar,
+    .obs-view-right-logo #stage-scoreboard-bar,
+    .obs-view-left-score #stage-scoreboard-bar,
+    .obs-view-right-score #stage-scoreboard-bar {
+      width: min(100cqw, 100cqh) !important;
+      aspect-ratio: 1;
+    }
+
+    .obs-view-left-name #stage-scoreboard-bar,
+    .obs-view-right-name #stage-scoreboard-bar {
+      width: min(100cqw, 355.556cqh) !important;
+      aspect-ratio: 32 / 9;
+    }
+
+    .obs-view-left-logo .broadcast-team-badge,
+    .obs-view-right-logo .broadcast-team-badge,
+    .obs-view-left-name .broadcast-team-badge,
+    .obs-view-right-name .broadcast-team-badge,
+    .obs-view-left-score .broadcast-team-badge,
+    .obs-view-right-score .broadcast-team-badge {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Logo-only source: transparent image with no plate. */
+    .obs-view-left-logo .broadcast-team-badge,
+    .obs-view-right-logo .broadcast-team-badge {
+      display: block;
+      padding: 0;
+      clip-path: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .obs-view-left-logo .broadcast-team-badge::after,
+    .obs-view-right-logo .broadcast-team-badge::after,
+    .obs-view-left-logo .broadcast-team-copy,
+    .obs-view-right-logo .broadcast-team-copy,
+    .obs-view-left-logo .broadcast-score,
+    .obs-view-right-logo .broadcast-score {
+      display: none !important;
+    }
+
+    .obs-view-left-logo .broadcast-team-identity,
+    .obs-view-right-logo .broadcast-team-identity {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+    }
+
+    .obs-view-left-logo .broadcast-logo-shell,
+    .obs-view-right-logo .broadcast-logo-shell {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      padding: 4cqw;
+      border: 0;
+      background: transparent;
+    }
+
+    .obs-view-left-logo #stage-logo-left,
+    .obs-view-right-logo #stage-logo-right {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      object-fit: contain;
+    }
+
+    /* Name-only source: compact side-colored broadcast plate. */
+    .obs-view-left-name .broadcast-team-badge,
+    .obs-view-right-name .broadcast-team-badge {
+      display: block;
+      padding: 0;
+      background: #f4f5f2;
+      box-shadow: inset 0 -2cqw 0 var(--side-color);
+    }
+
+    .obs-view-left-name .broadcast-team-badge {
+      clip-path: polygon(0 0, 94% 0, 100% 100%, 0 100%);
+    }
+
+    .obs-view-right-name .broadcast-team-badge {
+      clip-path: polygon(6% 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .obs-view-left-name .broadcast-team-badge::after,
+    .obs-view-right-name .broadcast-team-badge::after,
+    .obs-view-left-name .broadcast-logo-shell,
+    .obs-view-right-name .broadcast-logo-shell,
+    .obs-view-left-name .broadcast-score,
+    .obs-view-right-name .broadcast-score {
+      display: none !important;
+    }
+
+    .obs-view-left-name .broadcast-team-identity,
+    .obs-view-right-name .broadcast-team-identity {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding-inline: 8cqw 12cqw;
+    }
+
+    .obs-view-right-name .broadcast-team-identity {
+      justify-content: flex-end;
+      padding-inline: 12cqw 8cqw;
+      text-align: right;
+    }
+
+    .obs-view-left-name .broadcast-team-copy,
+    .obs-view-right-name .broadcast-team-copy {
+      width: 100%;
+    }
+
+    .obs-view-left-name #stage-name-left,
+    .obs-view-right-name #stage-name-right {
+      font-size: 7cqw;
+    }
+
+    .obs-view-left-name #stage-dept-left,
+    .obs-view-right-name #stage-dept-right {
+      margin-top: 1.5cqw;
+      font-size: 3.4cqw;
+    }
+
+    /* Score-only source: square dark score tile. */
+    .obs-view-left-score .broadcast-team-badge,
+    .obs-view-right-score .broadcast-team-badge {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      padding: 0;
+      clip-path: polygon(10% 0, 90% 0, 100% 100%, 0 100%);
+      background: #0a1423;
+      box-shadow: inset 0 -5cqw 0 var(--side-color);
+    }
+
+    .obs-view-left-score .broadcast-team-badge::after,
+    .obs-view-right-score .broadcast-team-badge::after,
+    .obs-view-left-score .broadcast-team-identity,
+    .obs-view-right-score .broadcast-team-identity {
+      display: none !important;
+    }
+
+    .obs-view-left-score .broadcast-score,
+    .obs-view-right-score .broadcast-score {
+      display: grid;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: transparent;
+      font-size: 52cqw;
+    }
+
+    /* Standalone lower thirds (recommended: 460 x 220). */
+    .obs-view-left-roster #view-scoreboard,
+    .obs-view-left-roster #view-right-roster,
     .obs-view-right-roster #view-scoreboard,
     .obs-view-right-roster #view-left-roster {
       display: none !important;
     }
+
+    .obs-view-left-roster #view-dual-roster,
     .obs-view-right-roster #view-dual-roster {
       inset: 0 !important;
-      bottom: 0 !important;
       width: 100% !important;
       height: 100% !important;
+    }
+
+    .obs-view-left-roster #view-left-roster,
+    .obs-view-right-roster #view-right-roster {
+      width: min(100cqw, 209.091cqh) !important;
+      height: auto !important;
+      aspect-ratio: 23 / 11;
+      container-type: inline-size;
+      flex: none;
+      min-height: 0;
+    }
+
+    .obs-view-left-roster #view-dual-roster {
+      justify-content: flex-start !important;
+    }
+
+    .obs-view-right-roster #view-dual-roster {
       justify-content: flex-end !important;
     }
-    .obs-view-right-roster #view-right-roster {
-      width: 100% !important;
-      height: 100% !important;
-      max-width: 100% !important;
+
+    .obs-view-left-roster #view-left-roster > div:first-child,
+    .obs-view-right-roster #view-right-roster > div:first-child {
+      height: 7cqw;
+      padding-inline: 3cqw;
     }
 
-    /* 5. Scoreboard Only (e.g. 1920x130) */
-    .obs-view-scoreboard #view-dual-roster {
-      display: none !important;
+    .obs-view-left-roster #carousel-team-left-tag,
+    .obs-view-right-roster #carousel-team-right-tag {
+      max-width: 70cqw;
+      font-size: 2.6cqw;
     }
 
-    /* 6. Title Banner Only (e.g. 800x80) */
+    .obs-view-left-roster #carousel-card-left,
+    .obs-view-right-roster #carousel-card-right {
+      min-height: 0;
+      gap: 3cqw;
+      padding: 3cqw;
+    }
+
+    .obs-view-left-roster #carousel-player-avatar-wrap-left,
+    .obs-view-right-roster #carousel-player-avatar-wrap-right {
+      width: 16cqw;
+      height: 16cqw;
+      box-shadow: inset 0 -.9cqw 0 #1677ff;
+    }
+
+    .obs-view-right-roster #carousel-player-avatar-wrap-right {
+      box-shadow: inset 0 -.9cqw 0 #f23645;
+    }
+
+    .obs-view-left-roster #carousel-player-badge-left,
+    .obs-view-right-roster #carousel-player-badge-right {
+      top: -1.1cqw;
+      padding: .45cqw 1.1cqw;
+      font-size: 2cqw;
+    }
+
+    .obs-view-left-roster #carousel-player-badge-left {
+      right: -1.1cqw;
+    }
+
+    .obs-view-right-roster #carousel-player-badge-right {
+      left: -1.1cqw;
+    }
+
+    .obs-view-left-roster #carousel-player-role-badge-left,
+    .obs-view-right-roster #carousel-player-role-badge-right {
+      padding: .45cqw 1.35cqw;
+      border-width: .22cqw;
+      font-size: 2.2cqw;
+    }
+
+    .obs-view-left-roster #carousel-player-num-left,
+    .obs-view-right-roster #carousel-player-num-right {
+      font-size: 2.2cqw;
+    }
+
+    .obs-view-left-roster #carousel-player-ign-left,
+    .obs-view-right-roster #carousel-player-ign-right {
+      font-size: 4.5cqw;
+    }
+
+    .obs-view-left-roster #carousel-player-real-left,
+    .obs-view-right-roster #carousel-player-real-right {
+      font-size: 2.6cqw;
+    }
+
+    /* Title-only source (recommended: 800 x 80). */
     .obs-view-title #stage-scoreboard-bar,
     .obs-view-title #view-dual-roster {
       display: none !important;
     }
+
     .obs-view-title #view-scoreboard {
       inset: 0 !important;
-      top: 0 !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
+      width: 100% !important;
       height: 100% !important;
+      margin: 0 !important;
     }
 
-    /* 7. Dual Roster Lower-Third Only (e.g. 1920x240) */
+    .obs-view-title #view-title {
+      top: 1cqw;
+      left: 1cqw;
+      width: calc(100% - 2cqw);
+      min-width: 0;
+      height: calc(100% - 2cqw);
+      transform: none;
+    }
+
+    .obs-view-title #live-stage-title {
+      font-size: 2.4cqw;
+    }
+
+    .obs-view-title #live-stage-format {
+      font-size: 1.8cqw;
+    }
+
+    /* Dual lower-third source (recommended: 1920 x 240). */
     .obs-view-dual-roster #view-scoreboard {
       display: none !important;
     }
-    .obs-view-title #view-left-badge,
-    .obs-view-title #view-right-badge,
-    .obs-view-title #view-left-roster,
-    .obs-view-title #view-right-roster,
-    .obs-view-title #view-dual-roster {
-      display: none !important;
-    }
 
-    .obs-view-dual-roster #view-scoreboard,
-    .obs-view-dual-roster #view-left-badge,
-    .obs-view-dual-roster #view-right-badge,
-    .obs-view-dual-roster #view-title {
-      display: none !important;
-    }
-
-    /* Center isolated elements when viewed directly */
-    .obs-isolated-center {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-  
-    /* =========================================================
-       PURE FLOATING OVERLAY: ZERO CARDS, ZERO CARD BACKGROUNDS
-       ========================================================= */
-    .obs-mode #stage-scoreboard-bar,
-    .obs-mode #view-left-badge,
-    .obs-mode #view-right-badge,
-    .obs-mode #stage-vs-divider,
-    .obs-mode #view-title,
-    .obs-mode #view-left-roster,
-    .obs-mode #view-right-roster,
-    .obs-mode #carousel-card-left,
-    .obs-mode #carousel-card-right,
-    .obs-mode #carousel-player-avatar-wrap-left,
-    .obs-mode #carousel-player-avatar-wrap-right,
-    .obs-mode #carousel-player-photo-left,
-    .obs-mode #carousel-player-photo-right,
-    .obs-mode #stage-logo-left,
-    .obs-mode #stage-logo-right {
-      background: transparent !important;
-      background-color: transparent !important;
-      background-image: none !important;
-      border: none !important;
-      box-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-    }
-
-    /* Scoreboard only: remove title completely */
-    .obs-view-scoreboard #view-title {
-      display: none !important;
-    }
-
-    /* High contrast text outlines & shadows for floating letters */
-    .obs-mode #stage-name-left,
-    .obs-mode #stage-name-right,
-    .obs-mode #stage-dept-left,
-    .obs-mode #stage-dept-right,
-    .obs-mode #stage-vs-divider span,
-    .obs-mode #live-stage-title,
-    .obs-mode #live-stage-format,
-    .obs-mode #carousel-player-ign-left,
-    .obs-mode #carousel-player-ign-right,
-    .obs-mode #carousel-player-real-left,
-    .obs-mode #carousel-player-real-right,
-    .obs-mode #carousel-player-num-left,
-    .obs-mode #carousel-player-num-right,
-    .obs-mode #carousel-team-left-tag,
-    .obs-mode #carousel-team-right-tag {
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.98), 0 0 10px rgba(0, 0, 0, 0.95), 0 0 22px rgba(0, 0, 0, 0.9) !important;
-    }
-
-    .obs-mode #stage-score-left,
-    .obs-mode #stage-score-right {
-      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.98), 0 0 14px rgba(0, 0, 0, 0.95) !important;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95)) !important;
-    }
-
-    .obs-mode #stage-logo-left,
-    .obs-mode #stage-logo-right,
-    .obs-mode #carousel-player-photo-left,
-    .obs-mode #carousel-player-photo-right {
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.95)) !important;
+    .obs-view-dual-roster #view-dual-roster {
+      bottom: .625cqw;
     }
 
   </style>
@@ -750,7 +1473,7 @@
       </div>
 
       <!-- Grid of Modular Link Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3.5">
+      <div id="obs-links-grid">
 
         <!-- Card 1: Master Full Stream HUD -->
         <div class="cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-sky-400/40 hover:border-sky-400 transition-colors">
@@ -944,6 +1667,89 @@
           </div>
         </div>
 
+        <div class="separate-links-heading md:col-span-2 xl:col-span-4 pt-1">
+          <h3 class="text-xs font-orbitron font-bold tracking-wider uppercase text-white">Separate Team Elements</h3>
+          <p class="mt-1 text-[11px] text-slate-400">Add each link as its own OBS Browser Source, then move and resize the logo, name, and score independently.</p>
+        </div>
+
+        <!-- Left logo only -->
+        <div class="separate-link-card cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-sky-500/30">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-xs text-white">Left Team Logo</span>
+            <span class="text-[10px] font-mono-cyber text-sky-300">120 &times; 120</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="left-logo" class="obs-link-input flex-1 min-w-0 bg-[#050B14] text-sky-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-sky-500 text-slate-950 font-bold text-xs">Copy</button>
+            <a href="?view=left-logo&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 text-slate-300" title="Test in new tab"><span class="material-symbols-outlined text-[15px]">open_in_new</span></a>
+          </div>
+        </div>
+
+        <!-- Left team name only -->
+        <div class="separate-link-card cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-sky-500/30">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-xs text-white">Left Team Name</span>
+            <span class="text-[10px] font-mono-cyber text-sky-300">320 &times; 90</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="left-name" class="obs-link-input flex-1 min-w-0 bg-[#050B14] text-sky-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-sky-500 text-slate-950 font-bold text-xs">Copy</button>
+            <a href="?view=left-name&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 text-slate-300" title="Test in new tab"><span class="material-symbols-outlined text-[15px]">open_in_new</span></a>
+          </div>
+        </div>
+
+        <!-- Left score only -->
+        <div class="separate-link-card cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-sky-500/30">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-xs text-white">Left Team Score</span>
+            <span class="text-[10px] font-mono-cyber text-sky-300">100 &times; 100</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="left-score" class="obs-link-input flex-1 min-w-0 bg-[#050B14] text-sky-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-sky-500 text-slate-950 font-bold text-xs">Copy</button>
+            <a href="?view=left-score&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 text-slate-300" title="Test in new tab"><span class="material-symbols-outlined text-[15px]">open_in_new</span></a>
+          </div>
+        </div>
+
+        <!-- Right logo only -->
+        <div class="separate-link-card cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-rose-500/30">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-xs text-white">Right Team Logo</span>
+            <span class="text-[10px] font-mono-cyber text-rose-300">120 &times; 120</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="right-logo" class="obs-link-input flex-1 min-w-0 bg-[#050B14] text-rose-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-rose-500 text-white font-bold text-xs">Copy</button>
+            <a href="?view=right-logo&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 text-slate-300" title="Test in new tab"><span class="material-symbols-outlined text-[15px]">open_in_new</span></a>
+          </div>
+        </div>
+
+        <!-- Right team name only -->
+        <div class="separate-link-card cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-rose-500/30">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-xs text-white">Right Team Name</span>
+            <span class="text-[10px] font-mono-cyber text-rose-300">320 &times; 90</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="right-name" class="obs-link-input flex-1 min-w-0 bg-[#050B14] text-rose-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-rose-500 text-white font-bold text-xs">Copy</button>
+            <a href="?view=right-name&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 text-slate-300" title="Test in new tab"><span class="material-symbols-outlined text-[15px]">open_in_new</span></a>
+          </div>
+        </div>
+
+        <!-- Right score only -->
+        <div class="separate-link-card cyber-panel rounded-xl p-3.5 flex flex-col justify-between gap-2.5 border-rose-500/30">
+          <div class="flex items-center justify-between gap-2">
+            <span class="font-bold text-xs text-white">Right Team Score</span>
+            <span class="text-[10px] font-mono-cyber text-rose-300">100 &times; 100</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <input type="text" readonly data-view="right-score" class="obs-link-input flex-1 min-w-0 bg-[#050B14] text-rose-300 px-2.5 py-1.5 rounded-lg border border-slate-800 text-[11px] font-mono-cyber select-all" />
+            <button type="button" class="btn-copy-obs px-2.5 py-1.5 rounded-lg bg-rose-500 text-white font-bold text-xs">Copy</button>
+            <a href="?view=right-score&obs=1&transparent=1" target="_blank" class="p-1.5 rounded-lg bg-slate-800 text-slate-300" title="Test in new tab"><span class="material-symbols-outlined text-[15px]">open_in_new</span></a>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -1008,7 +1814,7 @@
             <div id="view-scoreboard" class="absolute top-4 inset-x-4 sm:top-6 sm:inset-x-8 flex flex-col items-center gap-2 pointer-events-auto">
 
               <!-- Floating Event Title Banner (#view-title) -->
-              <div id="view-title" class="flex items-center gap-2 px-4 py-1 rounded-full bg-slate-950/50 border border-sky-400/40 shadow-lg backdrop-blur-md">
+              <div id="view-title" class="flex items-center gap-2">
                 <span class="flex h-2 w-2 rounded-full bg-sky-400 animate-pulse"></span>
                 <span id="live-stage-title" class="font-orbitron font-bold text-[10px] sm:text-xs md:text-sm tracking-wider uppercase text-sky-300 drop-shadow">
                   CEC ESPORTS INTRAMURALS 2026 • MLBB GRAND FINALS
@@ -1019,36 +1825,35 @@
               </div>
 
               <!-- Main Scoreboard Bar -->
-              <div id="stage-scoreboard-bar" class="w-full max-w-4xl grid grid-cols-12 items-stretch h-14 sm:h-18 md:h-20 rounded-2xl overflow-hidden shadow-2xl border border-white/20 bg-slate-950/50 backdrop-blur-xl">
+              <div id="stage-scoreboard-bar">
 
                 <!-- Left Side Team Card (#view-left-badge) -->
-                <div id="view-left-badge" class="col-span-5 flex items-center justify-between px-3 sm:px-6 bg-gradient-to-r from-sky-950/70 via-sky-900/40 to-slate-950/50 border-r border-sky-400/30 blue-glow">
+                <div id="view-left-badge" class="broadcast-team-badge broadcast-team-badge--left">
                   <!-- Team Logo & Info -->
-                  <div class="flex items-center gap-2.5 sm:gap-4 min-w-0">
-                    <div class="relative shrink-0">
+                  <div class="broadcast-team-identity">
+                    <div class="broadcast-logo-shell">
                       <img id="stage-logo-left" src="assets/intrams_logo.png" alt="Left Team Logo"
-                        class="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl object-contain bg-slate-900/80 p-1 border border-sky-400/40 shadow" />
+                        loading="eager" decoding="sync" />
                     </div>
-                    <div class="min-w-0">
-                      <div id="stage-name-left" class="font-orbitron font-extrabold text-xs sm:text-base md:text-lg text-white truncate drop-shadow">
+                    <div class="broadcast-team-copy">
+                      <div id="stage-name-left" class="font-orbitron">
                         TECHPRO HTM
                       </div>
-                      <div id="stage-dept-left" class="font-mono-cyber text-[9px] sm:text-xs text-sky-300/80 tracking-wider truncate">
+                      <div id="stage-dept-left" class="font-mono-cyber">
                         SHS SHOWDOWN
                       </div>
                     </div>
                   </div>
 
                   <!-- Score -->
-                  <div id="stage-score-left" class="font-orbitron font-black text-2xl sm:text-4xl md:text-5xl text-sky-400 pl-2 shrink-0 drop-shadow-[0_0_12px_rgba(56,189,248,0.6)]">
+                  <div id="stage-score-left" class="broadcast-score font-orbitron">
                     0
                   </div>
                 </div>
 
                 <!-- Center VS Divider -->
-                <div id="stage-vs-divider" class="col-span-2 flex flex-col items-center justify-center bg-slate-950/50 border-x border-amber-400/40 relative">
-                  <div class="absolute inset-0 bg-gradient-to-b from-amber-500/10 via-transparent to-amber-500/10"></div>
-                  <span class="font-orbitron font-black text-xs sm:text-base md:text-lg tracking-widest text-amber-400 gold-glow">
+                <div id="stage-vs-divider" class="flex flex-col items-center justify-center relative">
+                  <span class="font-orbitron">
                     VS
                   </span>
                   <span id="stage-match-status" class="text-[8px] sm:text-[10px] font-mono-cyber text-slate-400 uppercase tracking-widest">
@@ -1057,23 +1862,23 @@
                 </div>
 
                 <!-- Right Side Team Card (#view-right-badge) -->
-                <div id="view-right-badge" class="col-span-5 flex items-center justify-between px-3 sm:px-6 bg-gradient-to-l from-rose-950/70 via-rose-900/40 to-slate-950/50 border-l border-rose-400/30 red-glow">
+                <div id="view-right-badge" class="broadcast-team-badge broadcast-team-badge--right">
                   <!-- Score -->
-                  <div id="stage-score-right" class="font-orbitron font-black text-2xl sm:text-4xl md:text-5xl text-rose-400 pr-2 shrink-0 drop-shadow-[0_0_12px_rgba(244,63,94,0.6)]">
+                  <div id="stage-score-right" class="broadcast-score font-orbitron">
                     0
                   </div>
 
                   <!-- Team Logo & Info -->
-                  <div class="flex items-center gap-2.5 sm:gap-4 min-w-0 flex-row-reverse text-right">
-                    <div class="relative shrink-0">
+                  <div class="broadcast-team-identity broadcast-team-identity--right">
+                    <div class="broadcast-logo-shell">
                       <img id="stage-logo-right" src="assets/e-sportslogo.png" alt="Right Team Logo"
-                        class="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl object-contain bg-slate-900/80 p-1 border border-rose-400/40 shadow" />
+                        loading="eager" decoding="sync" />
                     </div>
-                    <div class="min-w-0">
-                      <div id="stage-name-right" class="font-orbitron font-extrabold text-xs sm:text-base md:text-lg text-white truncate drop-shadow">
+                    <div class="broadcast-team-copy">
+                      <div id="stage-name-right" class="font-orbitron">
                         ABM • GAS • TVL
                       </div>
-                      <div id="stage-dept-right" class="font-mono-cyber text-[9px] sm:text-xs text-rose-300/80 tracking-wider truncate">
+                      <div id="stage-dept-right" class="font-mono-cyber">
                         SHS SHOWDOWN
                       </div>
                     </div>
@@ -1567,11 +2372,17 @@
 
         // Apply colors
         const nameL = $('stage-name-left'); if (nameL) nameL.style.color = cLeft;
-        const tagL = $('carousel-team-left-tag'); if (tagL) tagL.style.color = cLeft;
+        const badgeL = $('view-left-badge'); if (badgeL) badgeL.style.setProperty('--side-color', cLeft);
+        const rosterL = $('view-left-roster');
+        if (rosterL && rosterL.firstElementChild) rosterL.firstElementChild.style.backgroundColor = cLeft;
+        const tagL = $('carousel-team-left-tag'); if (tagL) tagL.style.color = '#ffffff';
         const ignL = $('carousel-player-ign-left'); if (ignL) ignL.style.color = cLeft;
 
         const nameR = $('stage-name-right'); if (nameR) nameR.style.color = cRight;
-        const tagR = $('carousel-team-right-tag'); if (tagR) tagR.style.color = cRight;
+        const badgeR = $('view-right-badge'); if (badgeR) badgeR.style.setProperty('--side-color', cRight);
+        const rosterR = $('view-right-roster');
+        if (rosterR && rosterR.firstElementChild) rosterR.firstElementChild.style.backgroundColor = cRight;
+        const tagR = $('carousel-team-right-tag'); if (tagR) tagR.style.color = '#ffffff';
         const ignR = $('carousel-player-ign-right'); if (ignR) ignR.style.color = cRight;
 
         const scoreL = $('stage-score-left'); if (scoreL) scoreL.style.color = cScore;
